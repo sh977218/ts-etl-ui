@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Request Creation</h2>
+<form [formGroup]="loadRequestCreationForm" (ngSubmit)="submitCreateReloadRequest();">
+  <mat-dialog-content class="mat-typography">
+    <div class="flex flex-col">
+      <mat-form-field appearance="outline">
+        <mat-label>Code System Name</mat-label>
+        <mat-select placeholder="Code System Name" formControlName="codeSystemName">
+          <mat-option value="">Select Code System</mat-option>
+          <mat-option value="rxnorm">RXNORM</mat-option>
+          <mat-option value="cdcrec">CDCREC</mat-option>
+          <mat-option value="cpt">CPT</mat-option>
+          <mat-option value="hpo">HPO</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Source File Path</mat-label>
+        <input matInput placeholder="Source File Path" formControlName="sourceFilePath">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Request Subject</mat-label>
+        <input matInput placeholder="Request Subject" formControlName="requestSubject">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Requester</mat-label>
+        <input matInput placeholder="Requester" formControlName="requester">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Request Date</mat-label>
+        <input matInput placeholder="Request Date" formControlName="requestDate">
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button color="primary" mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="warn" type="submit" [disabled]="loadRequestCreationForm.invalid">Submit</button>
+  </mat-dialog-actions>
+</form>
+
