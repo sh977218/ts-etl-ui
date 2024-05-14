@@ -32,7 +32,7 @@ export class UserService {
             this._user$.next(res);
             this.router.navigate(['/'])
           },
-          error: (err) => {
+          error: () => {
             this.alertService.addAlert('danger', 'error log in');
             this._user$.next(null);
             this.router.navigate(['/'])

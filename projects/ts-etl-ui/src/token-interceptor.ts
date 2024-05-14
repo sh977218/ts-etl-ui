@@ -1,18 +1,15 @@
-import { Injectable, Injector } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpInterceptor, HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { HttpRequest, HttpHandler, HttpInterceptor } from '@angular/common/http';
 
 const localStorageJwtTokenKey = 'jwtToken';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private injector: Injector) {
+  constructor() {
   }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler) {
-    const http = this.injector.get(HttpClient);
-    const router = this.injector.get(Router);
-
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  intercept(request: HttpRequest<any>, next: HttpHandler){
     const jwtToken = localStorage.getItem(localStorageJwtTokenKey);
 
     if (jwtToken) {

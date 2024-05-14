@@ -15,7 +15,7 @@ function filterByFieldsFunc(obj, term, fields) {
     fields = Object.keys(obj)
   }
   for (const k of fields) {
-    const v = obj[k]
+    const v = obj[k].toString();
     if (v.includes && v.includes(term)) {
       found = true;
     }
