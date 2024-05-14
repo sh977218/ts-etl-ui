@@ -37,7 +37,6 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
 import { LoadRequestDataSource } from './load-request-data-source';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { SelectionModel } from '@angular/cdk/collections';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { MatSelect } from '@angular/material/select';

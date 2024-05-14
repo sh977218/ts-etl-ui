@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000;
+
 app.use(express.json());
+app.use(express.static('dist/ts-etl-ui/browser'))
 
 const userData = require('./data/user.json');
 const loadRequests = require('./data/loadRequests.json');
@@ -60,7 +62,7 @@ function formatResponse(originalArray, paginatedArray) {
   }
 }
 
-app.get('/api/loadRequests', (req, res, next) => {
+app.get('/api/loadRequests', (req, res) => {
   const {q, sort, order, pageNumber, pageSize} = req.query;
   const paginatedArray = calculate(loadRequests, q, sort, order, Number.parseInt(pageNumber), Number.parseInt(pageSize))
 
