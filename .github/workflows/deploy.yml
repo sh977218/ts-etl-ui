@@ -12,7 +12,7 @@ jobs:
     name: Build and deploy
     steps:
       - name: Trigger auto deploy to render on PR merge
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master' && github.event.pull_request.merged == true
         uses: johnbeynon/render-deploy-action@v0.0.8
         with: 
             service-id: ${{ secrets.MY_RENDER_SERVICE_ID }}
