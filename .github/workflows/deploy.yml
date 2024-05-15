@@ -13,7 +13,8 @@ jobs:
     steps:
       - name: Trigger auto deploy to render on PR merge
         if: github.ref == 'refs/heads/master'
-        uses: indiesdev/curl@v1.1
+        uses: johnbeynon/render-deploy-action@v0.0.8
         with: 
-            url: ${{secrets.TRIGGER_DEPLOY_TO_RENDER }}
-            method: "GET"
+            service-id: ${{ secrets.MY_RENDER_SERVICE_ID }}
+            api-key: ${{ secrets.MY_RENDER_API_KEY }}
+            wait-for-success: true
