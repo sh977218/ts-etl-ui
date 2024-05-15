@@ -13,6 +13,12 @@
     "name": "Node Mocking API Server",
     "request": "launch",
     "type": "node-terminal"
-}
-  ]
+  },
+  {
+    "command": "npm run test:debug",
+    "name": "Playwright test debug",
+    "request": "launch",
+    "type": "node-terminal"
+  }
+]
 }
