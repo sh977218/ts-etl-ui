@@ -3,11 +3,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "ng serve",
-      "type": "chrome",
+      "command": "npm run serve",
+      "name": "Angular CLI Server",
       "request": "launch",
-      "preLaunchTask": "npm: start",
-      "url": "http://localhost:4200/"
-    }
+      "type": "node-terminal"
+  },
+  {
+    "command": "npm run start",
+    "name": "Node Mocking API Server",
+    "request": "launch",
+    "type": "node-terminal"
+}
   ]
 }

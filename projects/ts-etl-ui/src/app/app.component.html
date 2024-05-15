@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-raised-button routerLink="/">Home</button>
+  <button mat-raised-button routerLink="/">Home - v{{currentApplicationVersion}}</button>
   <span class="example-spacer"></span>
   <ng-container *ngIf="(userService.user$ | async) as user;  else logInTemplate">
     <button mat-button [matMenuTriggerFor]="userMenu">{{user.utsUser.username}}</button>

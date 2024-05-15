@@ -17,6 +17,9 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
+    "types": [
+      "jasmine"
+    ],
     "useDefineForClassFields": false,
     "lib": [
       "ES2022",
