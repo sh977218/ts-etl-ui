@@ -15,20 +15,23 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.44.0-jammy
 
     steps:
+      - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
           node-version: 18
-
+          
       - name: Install dependencies
         run: npm ci
-
+  
       - name: Start Node Mocking API Server
         run: npm run start
-
+  
       - name: Run Playwright tests
         run: npm run test
-
+  
       - name: Upload playwright report to Artifacts
         uses: actions/upload-artifact@v3
         if: always()
