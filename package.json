@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "serve": "ng serve",
-    "start": "npm run mock:server",
+    "start": "node server/server.js",
     "prebuild": "npm --no-git-tag-version version patch",
     "build": "ng build -c development",
     "watch": "ng build --watch --configuration development",
