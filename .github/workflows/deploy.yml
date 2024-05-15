@@ -1,0 +1,19 @@
+name: Deployment to Render
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  trigger_deploy_to_render:
+    runs-on: ubuntu-latest
+    name: Build and deploy
+    steps:
+      - name: Trigger auto deploy to render on PR merge
+        if: github.ref == 'refs/heads/master'
+        uses: indiesdev/curl@v1.1
+        with: 
+            url: ${{secrets.TRIGGER_DEPLOY_TO_RENDER }}
+            method: "GET"
