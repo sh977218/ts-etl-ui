@@ -6,7 +6,7 @@
     "serve": "ng serve",
     "start": "npm run mock:server",
     "prebuild": "npm --no-git-tag-version version patch",
-    "build": "ng build",
+    "build": "ng build -c development",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "prepare": "husky"
