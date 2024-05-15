@@ -13,3 +13,10 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 ## Running mocking api server
 
 Run `npm run start` to start NodeJS mocking api server
+
+## Running test
+Add `@debug` to desired test
+Run `npm run test:debug` to start debug respect test
+
+## Auto deploy latest master branch to render.com
+https://ts-etl-ui-xrvh.onrender.com/

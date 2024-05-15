@@ -43,4 +43,6 @@ Thumbs.db
 
 # Playwright files
 /test-results/
-/playwright-report
+/playwright-report/
+/blob-report/
+/playwright/.cache/
