@@ -31,7 +31,7 @@ import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
-  catchError, debounceTime, distinctUntilChanged, map, merge, of, pairwise, startWith, switchMap, tap
+  catchError, map, merge, of, startWith, switchMap, tap
 } from 'rxjs';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
@@ -124,11 +124,10 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      filterTerm: new FormControl<string | null>(null),
+      filterTerm: new FormControl(''),
       requestDateType: new FormControl(0),
       requestType: new FormControl(0),
-    },
-    {updateOn: 'submit'}
+    }, {updateOn: 'submit',}
   );
 
 
@@ -144,17 +143,11 @@ export class LoadRequestComponent implements AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
-    merge(this.searchCriteria.valueChanges.pipe(
-        debounceTime(150),
-        distinctUntilChanged(),
-        startWith(null),
-        pairwise(),
+    merge(this.searchCriteria.valueChanges, this.sort.sortChange, this.paginator.page)
+      .pipe(
         tap({
           next: () => this.paginator.firstPage(),
-        })
-      ),
-      this.sort.sortChange, this.paginator.page)
-      .pipe(
+        }),
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -186,12 +179,8 @@ export class LoadRequestComponent implements AfterViewInit {
       .subscribe(data => (this.data = data));
   }
 
-  onSubmit() {
-    this.searchCriteria.updateValueAndValidity({onlySelf: false, emitEvent: true});
-  }
-
   onClear() {
-    this.searchCriteria.get('filterTerm')?.reset('', {emitEvent: false});
+    this.searchCriteria.get('filterTerm')?.reset('', {emitEvent: true});
   }
 
   openCreateLoadRequestModal() {
