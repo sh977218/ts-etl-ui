@@ -15,7 +15,7 @@ function filterByFieldsFunc(obj, term, fields) {
     fields = Object.keys(obj)
   }
   for (const k of fields) {
-    const v = obj[k]
+    const v = obj[k].toString();
     if (v.includes && v.includes(term)) {
       found = true;
     }
@@ -89,6 +89,11 @@ app.get('/api/loadRequestActivities/:requestId', (req, res) => {
   }
 })
 
+// if you need to login as different user, create an endpoint to change this response (later)
+app.get('/api/serviceValidate', (req, res) => {
+  res.send(userData.data.users[0]);
+})
+
 app.listen(port, () => {
-  console.log('TS ELT UI mock server listening on port 3000');
+  console.log(`TS ELT UI mock server listening on port ${port}`);
 });

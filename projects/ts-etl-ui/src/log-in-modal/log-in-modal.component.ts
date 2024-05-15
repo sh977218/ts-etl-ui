@@ -3,6 +3,7 @@ import {
   MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogTitle
 } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
+import { environment } from '../environments/environment';
 
 @Component({
   standalone: true,
@@ -22,7 +23,7 @@ export class LogInModalComponent {
   }
 
   redirectToLogin(){
-    window.location.href = 'https://uts.nlm.nih.gov/uts/login?service='+encodeURIComponent(window.location.origin)
+    window.location.href = `${environment.loginServiceUrl}?service=`+encodeURIComponent(window.location.origin)
   }
 
 }
