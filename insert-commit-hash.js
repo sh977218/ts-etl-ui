@@ -8,6 +8,8 @@ fs.readFile(indexHtmlPath, 'utf8', function (err, data) {
   if (err) {
     return console.log(err);
   }
+
+  console.info(`latest master commit hash: ${commitHash}`);
   const result = data.replace(/<!--COMMIT_HASH-->/g, commitHash);
 
   fs.writeFile(indexHtmlPath, result, 'utf8', function (err) {
