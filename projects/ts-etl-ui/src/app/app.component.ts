@@ -52,7 +52,7 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent {
   title = 'ts-etl-ui';
-  currentApplicationVersion = `${environment.appVersion}-${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`
+  currentApplicationVersion = `${environment.appVersion}`
 
   constructor(public activatedRoute: ActivatedRoute,
               public http: HttpClient,
