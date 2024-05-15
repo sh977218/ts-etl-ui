@@ -15,6 +15,7 @@ import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { LoadRequestComponent } from '../load-request/load-request.component';
 import { VersionQaComponent } from '../version-qa/version-qa.component';
 import { CodeSystemComponent } from '../code-system/code-system.component';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -51,7 +52,7 @@ import { CodeSystemComponent } from '../code-system/code-system.component';
 })
 export class AppComponent {
   title = 'ts-etl-ui';
-
+  currentApplicationVersion = `${environment.appVersion}-${new Date().getDate()}`
 
   constructor(public activatedRoute: ActivatedRoute,
               public http: HttpClient,
