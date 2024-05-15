@@ -11,7 +11,7 @@
     "test": "ng test",
     "prepare": "husky"
   },
-  "private": false,
+  "private": true,
   "engines": {
     "node": ">=18",
     "npm": ">=9"
