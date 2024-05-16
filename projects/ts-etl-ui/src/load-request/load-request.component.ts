@@ -4,17 +4,7 @@ import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Vie
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatNoDataRow,
-  MatRow,
-  MatRowDef,
-  MatTable,
+  MatTableModule,
 } from '@angular/material/table';
 import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
 import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
@@ -50,17 +40,7 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
   imports: [
     ReactiveFormsModule,
     MatFormField,
-    MatTable,
-    MatColumnDef,
-    MatHeaderCell,
-    MatCell,
-    MatHeaderCellDef,
-    MatCellDef,
-    MatHeaderRow,
-    MatRow,
-    MatRowDef,
-    MatHeaderRowDef,
-    MatNoDataRow,
+    MatTableModule,
     MatInput,
     MatButton,
     MatIcon,
@@ -117,7 +97,6 @@ export class LoadRequestComponent implements AfterViewInit {
 
   resultsLength = 0;
   isLoadingResults = true;
-  isRateLimitReached = false;
 
   @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort!: MatSort;
@@ -130,12 +109,10 @@ export class LoadRequestComponent implements AfterViewInit {
     }, {updateOn: 'submit',}
   );
 
-
   constructor(private _httpClient: HttpClient,
               public dialog: MatDialog,
               public alertService: AlertService) {
   }
-
 
   ngAfterViewInit() {
     this.loadRequestDatabase = new LoadRequestDataSource(this._httpClient);
@@ -161,17 +138,12 @@ export class LoadRequestComponent implements AfterViewInit {
           ).pipe(catchError(() => of(null)));
         }),
         map((data: LoadRequestsApiResponse | null) => {
-          // Flip flag to show that loading has finished.
           this.isLoadingResults = false;
-          this.isRateLimitReached = data === null;
 
           if (data === null) {
             return [];
           }
 
-          // Only refresh the result length if there is new data. In case of rate
-          // limit errors, we do not want to reset the paginator to zero, as that
-          // would prevent users from re-triggering requests.
           this.resultsLength = data.total_count;
           return data.items;
         }),

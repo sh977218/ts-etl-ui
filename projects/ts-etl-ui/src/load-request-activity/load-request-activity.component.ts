@@ -13,6 +13,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 
 import { LoadRequestActivity } from '../model/load-request-activity';
+import { catchError } from 'rxjs';
 
 @Component({
   selector: 'app-load-request-activity',
@@ -57,6 +58,10 @@ export class LoadRequestActivityComponent implements OnInit {
 
   ngOnInit(): void {
     this.http.get<LoadRequestActivity[]>(`/api/loadRequestActivities/${this.requestId}`)
+      .pipe(catchError(() => {
+        this.isLoadingResults = false;
+        return [];
+      }))
       .subscribe(data => {
         this.isLoadingResults = false;
         this.dataSource = new MatTableDataSource(data);

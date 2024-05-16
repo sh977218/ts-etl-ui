@@ -1,1 +1,1 @@
-ng lint
+npx ng lint
