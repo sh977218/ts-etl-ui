@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { NgIf } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { saveAs } from 'file-saver';
 
 import {
   MatTableModule,
@@ -21,7 +22,7 @@ import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
-  catchError, map, merge, of, startWith, switchMap, tap
+  catchError, map, merge, of, startWith, switchMap
 } from 'rxjs';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
@@ -119,12 +120,11 @@ export class LoadRequestComponent implements AfterViewInit {
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+    this.searchCriteria.valueChanges.subscribe(() => this.paginator.pageIndex = 0);
 
+    // @TODO request gets called twice and causes network error. See why later.
     merge(this.searchCriteria.valueChanges, this.sort.sortChange, this.paginator.page)
       .pipe(
-        tap({
-          next: () => this.paginator.firstPage(),
-        }),
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -174,5 +174,12 @@ export class LoadRequestComponent implements AfterViewInit {
   fetchLoadRequestActivity(event: MouseEvent, loadRequest: LoadRequest) {
     this.expandedElement = this.expandedElement === loadRequest ? null : loadRequest
     event.stopPropagation();
+  }
+
+  // @TODO get all pages
+  download() {
+    const blob = new Blob([JSON.stringify(this.data)], { type: 'application/json' });
+    saveAs(blob, 'loadRequests-export.json');
+    this.alertService.addAlert('', 'Export downloaded.');
   }
 }
