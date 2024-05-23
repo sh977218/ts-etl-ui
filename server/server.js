@@ -1,9 +1,12 @@
-const express = require('express')
+const express = require('express');
+const fs = require('fs');
 const app = express()
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+
 app.use(express.static('dist/ts-etl-ui/browser'))
+
 
 const userData = require('./data/user.json');
 const loadRequests = require('./data/loadRequests.json');
@@ -89,10 +92,18 @@ app.get('/api/loadRequestActivities/:requestId', (req, res) => {
   }
 })
 
-// if you need to login as different user, create an endpoint to change this response (later)
+// in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', (req, res) => {
-  res.send(userData.data.users[0]);
+  const user = userData.data.users.find(u => u.utsUser.username === req.query.ticket) || userData.data.users[0];
+  res.send(user);
 })
+
+app.use((req, res, next) => {
+  res.writeHead(200, { 'content-type': 'text/html' })
+  console.log('LAST')
+  fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res)
+});
+
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
