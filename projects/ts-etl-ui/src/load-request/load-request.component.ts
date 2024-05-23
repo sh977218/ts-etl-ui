@@ -2,20 +2,22 @@ import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Vie
 import { NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { saveAs } from 'file-saver';
 
-import {  MatTableModule,} from '@angular/material/table';
-import {  MatInputModule } from '@angular/material/input';
+import { MatTableModule,} from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatOptionModule } from '@angular/material/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { LoadRequestDataSource } from './load-request-data-source';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { catchError, map, merge, of, startWith, switchMap, tap} from 'rxjs';
+import { catchError, map, merge, of, startWith, switchMap} from 'rxjs';
 
 import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
 import { AlertService } from '../alert-service';
@@ -89,12 +91,11 @@ export class LoadRequestComponent implements AfterViewInit {
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+    this.searchCriteria.valueChanges.subscribe(() => this.paginator.pageIndex = 0);
 
+    // @TODO request gets called twice and causes network error. See why later.
     merge(this.searchCriteria.valueChanges, this.sort.sortChange, this.paginator.page)
       .pipe(
-        tap({
-          next: () => this.paginator.firstPage(),
-        }),
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -144,5 +145,12 @@ export class LoadRequestComponent implements AfterViewInit {
   fetchLoadRequestActivity(event: MouseEvent, loadRequest: LoadRequest) {
     this.expandedElement = this.expandedElement === loadRequest ? null : loadRequest
     event.stopPropagation();
+  }
+
+  // @TODO get all pages
+  download() {
+    const blob = new Blob([JSON.stringify(this.data)], { type: 'application/json' });
+    saveAs(blob, 'loadRequests-export.json');
+    this.alertService.addAlert('', 'Export downloaded.');
   }
 }
