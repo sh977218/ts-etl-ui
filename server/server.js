@@ -70,14 +70,15 @@ app.get('/api/loadRequests', (req, res) => {
   const paginatedArray = calculate(loadRequests, q, sort, order, Number.parseInt(pageNumber), Number.parseInt(pageSize))
 
   // simulating a delay network to test application's resilience
-    setTimeout(() => {
+  setTimeout(() => {
     res.status(200).send(formatResponse(loadRequests, paginatedArray));
-  }, 1000)
+  }, Math.floor(Math.random() * 1500) + 1)
 });
 
 app.post('/api/loadRequest', (req, res) => {
   const loadRequest = req.body;
   loadRequest.requestId = loadRequests.length;
+  loadRequest.requestStatus = 'In Progress';
   loadRequests.push(loadRequest);
   res.status(200).send();
 })
