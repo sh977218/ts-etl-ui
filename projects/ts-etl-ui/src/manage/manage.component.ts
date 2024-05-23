@@ -1,45 +1,41 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Router, RouterModule } from '@angular/router';
 import { MatDrawer, MatDrawerContainer, MatSidenav, MatSidenavContainer } from '@angular/material/sidenav';
 import { MatListItem, MatNavList } from '@angular/material/list';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { AsyncPipe, NgIf } from '@angular/common';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { MatMenuModule, } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
+
+import { UserService } from '../user-service';
+import { CodeSystemComponent } from '../code-system/code-system.component';
 import { LoadRequestComponent } from '../load-request/load-request.component';
 import { VersionQaComponent } from '../version-qa/version-qa.component';
-import { CodeSystemComponent } from '../code-system/code-system.component';
-import { HttpClient } from '@angular/common/http';
-import { UserService } from '../user-service';
 
 @Component({
   selector: 'app-manage',
   standalone: true,
   imports: [
-    RouterLink,
-    RouterOutlet,
-    RouterLinkActive,
+    NgIf,
+    AsyncPipe,
+    RouterModule,
     MatDialogModule,
     MatSidenavContainer,
     MatNavList,
-    MatIcon,
+    MatIconModule,
     MatListItem,
-    MatButton,
+    MatButtonModule,
     MatIconButton,
     MatSidenav,
     MatDrawerContainer,
     MatDrawer,
-    MatToolbar,
-    NgIf,
-    AsyncPipe,
-    MatMenu,
-    MatMenuTrigger,
-    MatMenuItem,
-    MatTabGroup,
-    MatTab,
+    MatToolbarModule,
+    MatMenuModule,
+    MatTabsModule,
     LoadRequestComponent,
     VersionQaComponent,
     CodeSystemComponent
