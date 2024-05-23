@@ -51,9 +51,8 @@ export class CreateLoadRequestModalComponent {
       sourceFilePath: new FormControl<string>('', [Validators.required]),
       requestSubject: new FormControl<string>('', [Validators.required]),
       requester: new FormControl({value: '', disabled: true}),
-      requestDate: new FormControl({value: new Date(), disabled: true})
+      requestTime: new FormControl({value: new Date(), disabled: true})
     },
-    {updateOn: 'submit'}
   );
 
   constructor(public http: HttpClient,

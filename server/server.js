@@ -72,12 +72,13 @@ app.get('/api/loadRequests', (req, res) => {
   // simulating a delay network to test application's resilience
   setTimeout(() => {
     res.status(200).send(formatResponse(loadRequests, paginatedArray));
-  }, 1000)
+  }, Math.floor(Math.random() * 1500) + 1)
 });
 
 app.post('/api/loadRequest', (req, res) => {
   const loadRequest = req.body;
   loadRequest.requestId = loadRequests.length;
+  loadRequest.requestStatus = 'In Progress';
   loadRequests.push(loadRequest);
   res.status(200).send();
 })
@@ -100,7 +101,6 @@ app.get('/api/serviceValidate', (req, res) => {
 
 app.use((req, res, next) => {
   res.writeHead(200, { 'content-type': 'text/html' })
-  console.log('LAST')
   fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res)
 });
 
