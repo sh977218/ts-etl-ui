@@ -6,10 +6,12 @@
         <mat-label>Code System Name</mat-label>
         <mat-select placeholder="Code System Name" formControlName="codeSystemName">
           <mat-option value="">Select Code System</mat-option>
-          <mat-option value="rxnorm">RXNORM</mat-option>
-          <mat-option value="cdcrec">CDCREC</mat-option>
-          <mat-option value="cpt">CPT</mat-option>
-          <mat-option value="hpo">HPO</mat-option>
+          <mat-option value="RXNORM">RXNORM</mat-option>
+          <mat-option value="LOINC">LOINC</mat-option>
+          <mat-option value="SNOMEDCT">SNOMEDCT</mat-option>
+          <mat-option value="CDCREC">CDCREC</mat-option>
+          <mat-option value="CPT">CPT</mat-option>
+          <mat-option value="HPO">HPO</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">
@@ -26,7 +28,7 @@
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Request Date</mat-label>
-        <input matInput placeholder="Request Date" formControlName="requestDate">
+        <input matInput placeholder="Request Date" formControlName="requestTime">
       </mat-form-field>
     </div>
   </mat-dialog-content>

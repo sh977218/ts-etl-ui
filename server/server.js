@@ -70,7 +70,7 @@ app.get('/api/loadRequests', (req, res) => {
   const paginatedArray = calculate(loadRequests, q, sort, order, Number.parseInt(pageNumber), Number.parseInt(pageSize))
 
   // simulating a delay network to test application's resilience
-  setTimeout(() => {
+    setTimeout(() => {
     res.status(200).send(formatResponse(loadRequests, paginatedArray));
   }, 1000)
 });
@@ -100,7 +100,6 @@ app.get('/api/serviceValidate', (req, res) => {
 
 app.use((req, res, next) => {
   res.writeHead(200, { 'content-type': 'text/html' })
-  console.log('LAST')
   fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res)
 });
 
