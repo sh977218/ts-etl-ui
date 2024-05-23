@@ -1,37 +1,26 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle
-} from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
-import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { MatInput, MatInputModule } from '@angular/material/input';
-import { MatOption, MatSelect, MatSelectModule } from '@angular/material/select';
+import { HttpClient } from '@angular/common/http';
+import { MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
+import { tap } from 'rxjs';
 
 import { UserService } from '../user-service';
-import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
 
 @Component({
   standalone: true,
   imports: [
-    MatDialogModule,
-    MatButton,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    MatFormField,
-    MatIcon,
-    MatInput,
+    FormsModule,
     ReactiveFormsModule,
-    FormsModule,
-    MatSelect,
-    MatOption,
-    FormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatDialogModule,
     ReactiveFormsModule,
     MatCheckboxModule,
     MatRadioModule,

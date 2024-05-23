@@ -1,19 +1,13 @@
 import { Component } from '@angular/core';
-import {
-  MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogTitle
-} from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
+import { MatDialogModule} from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { environment } from '../environments/environment';
 
 @Component({
   standalone: true,
   imports: [
     MatDialogModule,
-    MatButton,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
+    MatButtonModule
   ],
   templateUrl: './log-in-modal.component.html'
 })

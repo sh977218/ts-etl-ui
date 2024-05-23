@@ -1,80 +1,51 @@
-import { HttpClient } from '@angular/common/http';
-import { NgIf } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { saveAs } from 'file-saver';
 
-import {
-  MatTableModule,
-} from '@angular/material/table';
-import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
-import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import {
-  MatDatepicker,
-  MatDatepickerInput,
-  MatDatepickerModule,
-  MatDatepickerToggle,
-  MatDateRangeInput,
-  MatDateRangePicker
-} from '@angular/material/datepicker';
-import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
-import {
-  catchError, map, merge, of, startWith, switchMap
-} from 'rxjs';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
+import { MatTableModule,} from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatOptionModule } from '@angular/material/core';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { LoadRequestDataSource } from './load-request-data-source';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatDialog } from '@angular/material/dialog';
-import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
-import { MatSelect } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { catchError, map, merge, of, startWith, switchMap} from 'rxjs';
+
+import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
 import { AlertService } from '../alert-service';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
+import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 
 @Component({
   selector: 'app-load-request',
   standalone: true,
   imports: [
-    ReactiveFormsModule,
-    MatFormField,
-    MatTableModule,
-    MatInput,
-    MatButton,
-    MatIcon,
-    MatIconButton,
-    MatDatepicker,
-    MatDatepickerToggle,
-    MatDatepickerInput,
-    MatDateRangeInput,
-    MatDateRangePicker,
-    MatProgressSpinner,
-    MatDatepickerModule,
     NgIf,
-    MatSort,
-    MatSortHeader,
-    MatPaginator,
-    MatLabel,
-    MatSuffix,
-    MatFabButton,
-    MatCheckbox,
-    MatOption,
-    MatSelect,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatCheckboxModule,
+    MatOptionModule,
+    MatSelectModule,
     LoadRequestActivityComponent
   ],
   templateUrl: './load-request.component.html',
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed,void', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
   styleUrl: './load-request.component.scss',
-  providers: [provideNativeDateAdapter()],
+  providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class LoadRequestComponent implements AfterViewInit {
