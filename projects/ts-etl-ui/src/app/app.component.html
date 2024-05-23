@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-raised-button routerLink="/">Home - v{{currentApplicationVersion}}</button>
+  <button mat-raised-button routerLink="/">Home</button>
   <span class="example-spacer"></span>
   <ng-container *ngIf="(userService.user$ | async) as user;  else logInTemplate">
     <button mat-button [matMenuTriggerFor]="userMenu">{{user.utsUser.username}}</button>
@@ -16,21 +16,5 @@
     </button>
   </ng-template>
 </mat-toolbar>
-<mat-drawer-container class="example-container" autosize>
-  <div class="example-sidenav-content">
-    <main>
-      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" fitInkBarToContent>
-        <mat-tab label="Load Request">
-          <app-load-request></app-load-request>
-        </mat-tab>
-        <mat-tab label="Version QA">
-          <app-version-qa></app-version-qa>
-        </mat-tab>
-        <mat-tab label="Code System">
-          <app-code-system></app-code-system>
-        </mat-tab>
-      </mat-tab-group>
-    </main>
-  </div>
 
-</mat-drawer-container>
+<router-outlet></router-outlet>
