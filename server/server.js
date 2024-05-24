@@ -98,11 +98,11 @@ app.get('/api/loadRequestActivities/:requestId', (req, res) => {
   }, Math.floor(Math.random() * 1500) + 1)
 })
 
-app.get('/api/versionQAs', (req, res) => {
+app.get("/api/versionQAs", (req, res) => {
   // simulating a delay network to test application's resilience
   setTimeout(() => {
     res.status(200).send(formatResponse(versionQAs, versionQAs));
-  }, 1000)
+  }, Math.floor(Math.random() * 1500) + 1);
 });
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
