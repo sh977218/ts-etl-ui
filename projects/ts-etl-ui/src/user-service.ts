@@ -14,6 +14,10 @@ export class UserService {
   constructor(public http: HttpClient,
               public router: Router,
               public alertService: AlertService) {
+    const locUser = localStorage.getItem('user');
+    if (locUser) {
+      this._user$.next(JSON.parse(locUser));
+    }
   }
 
   get user$() {
@@ -30,6 +34,7 @@ export class UserService {
         tap({
           next: (res) => {
             this._user$.next(res);
+            localStorage.setItem('user', JSON.stringify(res));
             this.router.navigate(['/'])
           },
           error: () => {
