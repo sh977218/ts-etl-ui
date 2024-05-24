@@ -41,7 +41,6 @@ import { VersionQaComponent } from '../version-qa/version-qa.component';
     CodeSystemComponent
   ],
   templateUrl: './manage.component.html',
-  styleUrl: './manage.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class ManageComponent {

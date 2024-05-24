@@ -1,19 +1,21 @@
 import {
   Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit, ViewChild
 } from '@angular/core';
-import { NgIf } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import {NgIf} from '@angular/common';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import {
   MatTableDataSource, MatTableModule
 } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import {MatInputModule} from '@angular/material/input';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatSort, MatSortModule} from '@angular/material/sort';
 
-import { LoadRequestActivity } from '../model/load-request-activity';
-import { catchError } from 'rxjs';
+import {LoadRequestActivity} from '../model/load-request-activity';
+import {catchError, throwError} from 'rxjs';
+import {LoadingService} from "../loading-service";
+import {AlertService} from "../alert-service";
 
 @Component({
   selector: 'app-load-request-activity',
@@ -28,8 +30,6 @@ import { catchError } from 'rxjs';
     MatProgressSpinner
   ],
   templateUrl: './load-request-activity.component.html',
-  styleUrl: './load-request-activity.component.scss',
-  providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class LoadRequestActivityComponent implements OnInit {
@@ -49,25 +49,32 @@ export class LoadRequestActivityComponent implements OnInit {
     'creationTime'
   ];
 
-  isLoadingResults = true;
-
   dataSource: MatTableDataSource<LoadRequestActivity> = new MatTableDataSource<LoadRequestActivity>([]);
 
-  constructor(public http: HttpClient) {
+  constructor(public http: HttpClient,
+              private loadingService: LoadingService,
+              private alertService: AlertService) {
   }
 
   ngOnInit(): void {
+    this.loadingService.showLoading();
     this.http.get<LoadRequestActivity[]>(`/api/loadRequestActivities/${this.requestId}`)
-      .pipe(catchError(() => {
-        this.isLoadingResults = false;
-        return [];
+      .pipe(catchError((err: HttpErrorResponse) => {
+        if (err.status === 404) {
+          return [];
+        } else {
+          return throwError(() => err)
+        }
       }))
-      .subscribe(data => {
-        this.isLoadingResults = false;
-        this.dataSource = new MatTableDataSource(data);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+      .subscribe({
+        next: data => {
+          this.dataSource = new MatTableDataSource(data);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        },
+        error: () => this.alertService.addAlert('success', 'Error loading.')
       })
+      .add(() => this.loadingService.hideLoading())
   }
 
 

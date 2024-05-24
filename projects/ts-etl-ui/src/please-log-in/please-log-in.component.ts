@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   standalone: true,
-  imports: [],
-  templateUrl: './please-log-in.component.html',
-  styleUrl: './please-log-in.component.scss'
+  templateUrl: './please-log-in.component.html'
 })
 export class PleaseLogInComponent {
 }

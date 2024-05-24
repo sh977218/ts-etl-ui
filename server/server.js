@@ -86,11 +86,15 @@ app.post('/api/loadRequest', (req, res) => {
 app.get('/api/loadRequestActivities/:requestId', (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
   const filteredLoadRequestActivities = loadRequestActivities.filter(loadRequestActivity => loadRequestActivity.requestId === requestId)
-  if (filteredLoadRequestActivities.length) {
-    res.status(200).send(filteredLoadRequestActivities);
-  } else {
-    res.status(404).send();
-  }
+  // simulating a delay network to test application's resilience
+  setTimeout(() => {
+    if (filteredLoadRequestActivities.length) {
+      res.status(200).send(filteredLoadRequestActivities);
+    } else {
+      const randomFail = (Math.floor(Math.random() * 2)) % 2;
+      res.status(randomFail ? 404 : 500).send();
+    }
+  }, Math.floor(Math.random() * 1500) + 1)
 })
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
@@ -100,7 +104,7 @@ app.get('/api/serviceValidate', (req, res) => {
 })
 
 app.use((req, res, next) => {
-  res.writeHead(200, { 'content-type': 'text/html' })
+  res.writeHead(200, {'content-type': 'text/html'})
   fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res)
 });
 
