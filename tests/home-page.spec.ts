@@ -17,15 +17,33 @@ test.describe('e2e test', async () => {
     await test.step('login', async () => {
       await page.getByRole('button', {name: 'Log In'}).click();
       await page.getByRole('button', {name: 'UTS'}).click();
+    })
 
+    await test.step('Load Request Tab', async () => {
       await expect(page.getByRole('tab', {name: 'Load Request'})).toBeVisible();
-      await expect(page.getByRole('tab', {name: 'Version QA'})).toBeVisible();
-      await expect(page.getByRole('tab', {name: 'Code System'})).toBeVisible();
 
       await expect(page.getByRole('button', {name: 'Search'})).toBeVisible();
       await expect(page.getByRole('button', {name: 'Reset'})).toBeVisible();
       await expect(page.getByRole('button', {name: 'Create Request'})).toBeVisible();
       await expect(page.getByRole('button', {name: 'Download'})).toBeVisible();
+
+      await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(10)
+    })
+    await test.step('Version QA Tab', async () => {
+      await page.getByRole('tab', {name: 'Version QA'}).click();
+
+      await expect(page.getByRole('button', {name: 'Search'})).toBeHidden();
+      await expect(page.getByRole('button', {name: 'Reset'})).toBeHidden();
+      await expect(page.getByRole('button', {name: 'Create Request'})).toBeHidden();
+      await expect(page.getByRole('button', {name: 'Download'})).toBeHidden();
+
+      await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(1)
+    })
+    await test.step('Code System Tab', async () => {
+      await page.getByRole('tab', {name: 'Code System'}).click()
+
+      // @todo be implemented
+      await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(0)
     })
   })
 });

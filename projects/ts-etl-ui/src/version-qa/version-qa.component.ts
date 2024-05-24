@@ -1,8 +1,8 @@
 import {AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
-import { ReactiveFormsModule} from '@angular/forms';
-import {merge,startWith, switchMap, catchError, of, map} from 'rxjs';
+import {ReactiveFormsModule} from '@angular/forms';
+import {merge, startWith, switchMap, catchError, of, map} from 'rxjs';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
@@ -99,7 +99,10 @@ export class VersionQaComponent implements AfterViewInit {
       });
   }
 
-  openVersionDetailModal(versionQA:VersionQA){
-    this.dialog.open(VersionQaDetailModalComponent,{data:versionQA})
+  openVersionDetailModal(versionQA: VersionQA) {
+    this.dialog.open(VersionQaDetailModalComponent, {
+      width: '90%',
+      data: versionQA
+    })
   }
 }
