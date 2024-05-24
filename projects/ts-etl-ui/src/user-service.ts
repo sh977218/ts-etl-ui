@@ -48,5 +48,6 @@ export class UserService {
 
   logOut() {
     this._user$.next(null);
+    localStorage.removeItem('user');
   }
 }
