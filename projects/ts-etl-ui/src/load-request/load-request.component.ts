@@ -1,28 +1,30 @@
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
-import { NgIf } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { saveAs } from 'file-saver';
+import {AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild} from '@angular/core';
+import {NgIf} from '@angular/common';
+import {HttpClient} from '@angular/common/http';
+import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {saveAs} from 'file-saver';
 
-import { MatTableModule,} from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatOptionModule } from '@angular/material/core';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {MatTableModule,} from '@angular/material/table';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatOptionModule} from '@angular/material/core';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatSort, MatSortModule} from '@angular/material/sort';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
-import { LoadRequestDataSource } from './load-request-data-source';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatSelectModule } from '@angular/material/select';
-import { catchError, map, merge, of, startWith, switchMap} from 'rxjs';
+import {LoadRequestDataSource} from './load-request-data-source';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatSelectModule} from '@angular/material/select';
+import {catchError, map, merge, of, startWith, switchMap} from 'rxjs';
 
-import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
-import { AlertService } from '../alert-service';
-import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
-import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
+import {LoadRequest, LoadRequestsApiResponse} from '../model/load-request';
+import {AlertService} from '../alert-service';
+import {LoadRequestActivityComponent} from '../load-request-activity/load-request-activity.component';
+import {CreateLoadRequestModalComponent} from '../create-load-request-modal/create-load-request-modal.component';
+import {LoadingService} from "../loading-service";
 
 @Component({
   selector: 'app-load-request',
@@ -44,8 +46,13 @@ import { CreateLoadRequestModalComponent } from '../create-load-request-modal/cr
     LoadRequestActivityComponent
   ],
   templateUrl: './load-request.component.html',
-  styleUrl: './load-request.component.scss',
-  providers: [],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed,void', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class LoadRequestComponent implements AfterViewInit {
@@ -68,7 +75,6 @@ export class LoadRequestComponent implements AfterViewInit {
   expandedElement: LoadRequest | null = null;
 
   resultsLength = 0;
-  isLoadingResults = true;
 
   @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort!: MatSort;
@@ -83,6 +89,7 @@ export class LoadRequestComponent implements AfterViewInit {
 
   constructor(private _httpClient: HttpClient,
               public dialog: MatDialog,
+              private loadingService: LoadingService,
               public alertService: AlertService) {
   }
 
@@ -98,7 +105,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .pipe(
         startWith({}),
         switchMap(() => {
-          this.isLoadingResults = true;
+          this.loadingService.showLoading();
           const filter = this.searchCriteria.getRawValue().filterTerm || '';
           const sort = this.sort.active;
           const order = this.sort.direction;
@@ -109,8 +116,6 @@ export class LoadRequestComponent implements AfterViewInit {
           ).pipe(catchError(() => of(null)));
         }),
         map((data: LoadRequestsApiResponse | null) => {
-          this.isLoadingResults = false;
-
           if (data === null) {
             return [];
           }
@@ -119,7 +124,10 @@ export class LoadRequestComponent implements AfterViewInit {
           return data.items;
         }),
       )
-      .subscribe(data => (this.data = data));
+      .subscribe(data => {
+        this.data = data;
+        this.loadingService.hideLoading()
+      });
   }
 
   onClear() {
@@ -149,7 +157,7 @@ export class LoadRequestComponent implements AfterViewInit {
 
   // @TODO get all pages
   download() {
-    const blob = new Blob([JSON.stringify(this.data)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
     saveAs(blob, 'loadRequests-export.json');
     this.alertService.addAlert('', 'Export downloaded.');
   }

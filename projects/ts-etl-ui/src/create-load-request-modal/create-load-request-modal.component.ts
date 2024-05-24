@@ -30,7 +30,6 @@ import { UserService } from '../user-service';
     MatIconModule,
   ],
   templateUrl: './create-load-request-modal.component.html',
-  styleUrl: './create-load-request-modal.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class CreateLoadRequestModalComponent {

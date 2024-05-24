@@ -1,4 +1,4 @@
-<div class="flex justify-between m-5">
+<div class="flex justify-between mx-5">
   <form [formGroup]="searchCriteria" class="flex justify-between">
     <mat-form-field>
       <mat-label>Filter by all fields</mat-label>
@@ -47,11 +47,7 @@
   </div>
 </div>
 
-<div class="example-container mat-elevation-z8 m-5">
-  <div class="example-loading-shade" *ngIf="isLoadingResults">
-    <mat-spinner></mat-spinner>
-  </div>
-
+<div class="mat-elevation-z8 m-5">
   <div class="example-table-container">
     <table mat-table [dataSource]="data" class="example-table" multiTemplateDataRows
            matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc">
@@ -156,7 +152,6 @@
       </tr>
     </table>
   </div>
-
   <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50]" [pageSize]="10"
                  aria-label="Select page of load requests"></mat-paginator>
 </div>

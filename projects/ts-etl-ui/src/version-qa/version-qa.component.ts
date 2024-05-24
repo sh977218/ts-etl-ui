@@ -5,7 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './version-qa.component.html',
-  styleUrl: './version-qa.component.scss'
 })
 export class VersionQaComponent {
 
