@@ -16,7 +16,7 @@ test.describe('e2e test', async () => {
 
     await test.step('login', async () => {
       await page.getByRole('button', {name: 'Log In'}).click();
-      await page.getByRole('list', {name: 'UTS'}).click();
+      await page.getByRole('link', {name: 'UTS'}).click();
 
       await expect(page.getByRole('tab', {name: 'Load Request'})).toBeVisible();
       await expect(page.getByRole('tab', {name: 'Version QA'})).toBeVisible();
