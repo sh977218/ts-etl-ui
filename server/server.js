@@ -8,9 +8,9 @@ app.use(express.json());
 app.use(express.static('dist/ts-etl-ui/browser'))
 
 
-const userData = require('./data/user.json');
-const loadRequests = require('./data/loadRequests.json');
-const loadRequestActivities = require('./data/loadRequestActivities.json');
+const userData = require('./data/user.json').data;
+const loadRequests = require('./data/loadRequests.json').data;
+const loadRequestActivities = require('./data/loadRequestActivities.json').data;
 
 function filterByFieldsFunc(obj, term, fields) {
   let found = false;
@@ -99,7 +99,7 @@ app.get('/api/loadRequestActivities/:requestId', (req, res) => {
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', (req, res) => {
-  const user = userData.data.users.find(u => u.utsUser.username === req.query.ticket) || userData.data.users[0];
+  const user = userData.find(u => u.utsUser.username === req.query.ticket) || userData[0];
   res.send(user);
 })
 
