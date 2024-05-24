@@ -27,7 +27,8 @@ test.describe('e2e test', async () => {
       await expect(page.getByRole('button', {name: 'Create Request'})).toBeVisible();
       await expect(page.getByRole('button', {name: 'Download'})).toBeVisible();
 
-      await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(10)
+      await expect(page.getByRole('table').locator('tbody tr.example-element-row')).toHaveCount(10)
+      await expect(page.getByRole('table').locator('tbody tr.example-detail-row')).toHaveCount(10)
     })
     await test.step('Version QA Tab', async () => {
       await page.getByRole('tab', {name: 'Version QA'}).click();
