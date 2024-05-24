@@ -12,6 +12,8 @@ const userData = require('./data/user.json');
 const loadRequests = require('./data/loadRequests.json');
 const loadRequestActivities = require('./data/loadRequestActivities.json');
 
+const versionQAs = require('./data/versionQAs.json');
+
 function filterByFieldsFunc(obj, term, fields) {
   let found = false;
   if (!fields) {
@@ -54,8 +56,7 @@ function calculate(originalArray, term, sort, order, pageNumber, pageSize) {
 
   const startPos = pageNumber * pageSize;
   const endPos = (pageNumber + 1) * pageSize
-  const paginatedArray = sortedArray.slice(startPos, endPos)
-  return paginatedArray
+  return sortedArray.slice(startPos, endPos)
 }
 
 function formatResponse(originalArray, paginatedArray) {
@@ -96,6 +97,13 @@ app.get('/api/loadRequestActivities/:requestId', (req, res) => {
     }
   }, Math.floor(Math.random() * 1500) + 1)
 })
+
+app.get('/api/versionQAs', (req, res) => {
+  // simulating a delay network to test application's resilience
+  setTimeout(() => {
+    res.status(200).send(formatResponse(versionQAs, versionQAs));
+  }, 1000)
+});
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', (req, res) => {
