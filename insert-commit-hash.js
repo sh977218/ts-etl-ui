@@ -1,5 +1,5 @@
-const fs = require('fs');
-const child_process = require('child_process');
+import fs from 'fs';
+import child_process from 'child_process';
 
 const commitHash = child_process.execSync('git rev-parse HEAD').toString().trim();
 const indexHtmlPath = './dist/ts-etl-ui/browser/index.html';

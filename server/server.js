@@ -1,5 +1,12 @@
-const express = require('express');
-const fs = require('fs');
+import express from 'express';
+import fs from 'fs';
+import userJsonData from './data/user.json' assert { type: 'json' };
+import loadRequestJsonData from './data/loadRequests.json' assert { type: 'json' };
+import loadRequestactivityJsonData from './data/loadRequestActivities.json' assert { type: 'json' };
+import versionQAsJsonData from './data/versionQAs.json' assert {type: 'json'};
+
+import { getCollection, saveCollection } from './db.js';
+
 const app = express()
 const port = process.env.PORT || 3000;
 
@@ -7,12 +14,28 @@ app.use(express.json());
 
 app.use(express.static('dist/ts-etl-ui/browser'))
 
+let userData;
+let loadRequests;
+let loadRequestActivities;
+let versionQAs;
 
-const userData = require('./data/user.json').data;
-const loadRequests = require('./data/loadRequests.json').data;
-const loadRequestActivities = require('./data/loadRequestActivities.json').data;
+async function loadMockData(collType, defaultData) {
+  let dbData = await getCollection(collType);
+  if (dbData && dbData.data) {
+    return dbData.data;
+  } else {
+    return defaultData.data;
+  }
+}
 
-const versionQAs = require('./data/versionQAs.json');
+async function loadAllMockData() {
+  userData = await loadMockData('users1', userJsonData);
+  loadRequests = await loadMockData('loadRequests1', loadRequestJsonData);
+  loadRequestActivities = await loadMockData('loadRequestActivities1', loadRequestactivityJsonData);
+  versionQAs = await loadMockData('versionQAs1', versionQAsJsonData);
+}
+
+loadAllMockData();
 
 function filterByFieldsFunc(obj, term, fields) {
   let found = false;
@@ -76,11 +99,12 @@ app.get('/api/loadRequests', (req, res) => {
   }, Math.floor(Math.random() * 1500) + 1)
 });
 
-app.post('/api/loadRequest', (req, res) => {
+app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
   loadRequest.requestId = loadRequests.length;
   loadRequest.requestStatus = 'In Progress';
   loadRequests.push(loadRequest);
+  await saveCollection('loadRequests1', {data: loadRequests});
   res.status(200).send();
 })
 
