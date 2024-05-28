@@ -3,6 +3,8 @@ import fs from 'fs';
 import userJsonData from './data/user.json' assert { type: 'json' };
 import loadRequestJsonData from './data/loadRequests.json' assert { type: 'json' };
 import loadRequestactivityJsonData from './data/loadRequestActivities.json' assert { type: 'json' };
+import versionQAsJsonData from './data/versionQAs.json' assert {type: 'json'};
+
 import { getCollection, saveCollection } from './db.js';
 
 const app = express()
@@ -15,6 +17,7 @@ app.use(express.static('dist/ts-etl-ui/browser'))
 let userData;
 let loadRequests;
 let loadRequestActivities;
+let versionQAs;
 
 async function loadMockData(collType, defaultData) {
   let dbData = await getCollection(collType);
@@ -29,6 +32,7 @@ async function loadAllMockData() {
   userData = await loadMockData('users1', userJsonData);
   loadRequests = await loadMockData('loadRequests1', loadRequestJsonData);
   loadRequestActivities = await loadMockData('loadRequestActivities1', loadRequestactivityJsonData);
+  versionQAs = await loadMockData('versionQAs1', versionQAsJsonData);
 }
 
 loadAllMockData();
@@ -117,6 +121,13 @@ app.get('/api/loadRequestActivities/:requestId', (req, res) => {
     }
   }, Math.floor(Math.random() * 1500) + 1)
 })
+
+app.get("/api/versionQAs", (req, res) => {
+  // simulating a delay network to test application's resilience
+  setTimeout(() => {
+    res.status(200).send(formatResponse(versionQAs, versionQAs));
+  }, Math.floor(Math.random() * 1500) + 1);
+});
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', (req, res) => {
