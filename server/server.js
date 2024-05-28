@@ -1,5 +1,10 @@
-const express = require('express');
-const fs = require('fs');
+import express from 'express';
+import fs from 'fs';
+import userJsonData from './data/user.json' assert { type: 'json' };
+import loadRequestJsonData from './data/loadRequests.json' assert { type: 'json' };
+import loadRequestactivityJsonData from './data/loadRequestActivities.json' assert { type: 'json' };
+import { getCollection, saveCollection } from './db.js';
+
 const app = express()
 const port = process.env.PORT || 3000;
 
@@ -7,10 +12,26 @@ app.use(express.json());
 
 app.use(express.static('dist/ts-etl-ui/browser'))
 
+let userData;
+let loadRequests;
+let loadRequestActivities;
 
-const userData = require('./data/user.json').data;
-const loadRequests = require('./data/loadRequests.json').data;
-const loadRequestActivities = require('./data/loadRequestActivities.json').data;
+async function loadMockData(collType, defaultData) {
+  let dbData = await getCollection(collType);
+  if (dbData && dbData.data) {
+    return dbData.data;
+  } else {
+    return defaultData.data;
+  }
+}
+
+async function loadAllMockData() {
+  userData = await loadMockData('users1', userJsonData);
+  loadRequests = await loadMockData('loadRequests1', loadRequestJsonData);
+  loadRequestActivities = await loadMockData('loadRequestActivities1', loadRequestactivityJsonData);
+}
+
+loadAllMockData();
 
 function filterByFieldsFunc(obj, term, fields) {
   let found = false;
@@ -54,8 +75,7 @@ function calculate(originalArray, term, sort, order, pageNumber, pageSize) {
 
   const startPos = pageNumber * pageSize;
   const endPos = (pageNumber + 1) * pageSize
-  const paginatedArray = sortedArray.slice(startPos, endPos)
-  return paginatedArray
+  return sortedArray.slice(startPos, endPos)
 }
 
 function formatResponse(originalArray, paginatedArray) {
@@ -75,11 +95,12 @@ app.get('/api/loadRequests', (req, res) => {
   }, Math.floor(Math.random() * 1500) + 1)
 });
 
-app.post('/api/loadRequest', (req, res) => {
+app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
   loadRequest.requestId = loadRequests.length;
   loadRequest.requestStatus = 'In Progress';
   loadRequests.push(loadRequest);
+  await saveCollection('loadRequests1', {data: loadRequests});
   res.status(200).send();
 })
 

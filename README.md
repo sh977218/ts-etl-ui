@@ -10,7 +10,19 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
+## Pantry
+
+Pantry can be used as perishable storage. 
+
+Create these baskets: `users1, loadRequests1, loadRequestActivities1`
+
+The baskets will be populated when data is saved to them. 
+
 ## Running mocking api server
+
+To use Pantry for perishable storage
+
+$> export PANTRY_ID=<YOUR_PANTRY_ID>
 
 Run `npm run start` to start NodeJS mocking api server
 
