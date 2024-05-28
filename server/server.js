@@ -29,10 +29,11 @@ async function loadMockData(collType, defaultData) {
 }
 
 async function loadAllMockData() {
-  userData = await loadMockData('users1', userJsonData);
-  loadRequests = await loadMockData('loadRequests1', loadRequestJsonData);
-  loadRequestActivities = await loadMockData('loadRequestActivities1', loadRequestActivityJsonData);
-  versionQAs = await loadMockData('versionQAs1', versionQAsJsonData);
+  let pr = '' || process.env.PR;
+  userData = await loadMockData(`users${pr}`, userJsonData);
+  loadRequests = await loadMockData(`loadRequests${pr}`, loadRequestJsonData);
+  loadRequestActivities = await loadMockData(`loadRequestActivities${pr}`, loadRequestActivityJsonData);
+  versionQAs = await loadMockData(`versionQAs${pr}`, versionQAsJsonData);
 }
 
 loadAllMockData();
