@@ -1,11 +1,11 @@
 import express from 'express';
 import fs from 'fs';
-import userJsonData from './data/user.json' assert { type: 'json' };
-import loadRequestJsonData from './data/loadRequests.json' assert { type: 'json' };
-import loadRequestActivityJsonData from './data/loadRequestActivities.json' assert { type: 'json' };
+import userJsonData from './data/user.json' assert {type: 'json'};
+import loadRequestJsonData from './data/loadRequests.json' assert {type: 'json'};
+import loadRequestActivityJsonData from './data/loadRequestActivities.json' assert {type: 'json'};
 import versionQAsJsonData from './data/versionQAs.json' assert {type: 'json'};
 
-import { getCollection, saveCollection } from './db.js';
+import {createOrReplaceCollection, getCollection, saveCollection} from './db.js';
 
 const app = express()
 const port = process.env.PORT || 3000;
@@ -20,23 +20,34 @@ let loadRequestActivities;
 let versionQAs;
 
 async function loadMockData(collType, defaultData) {
+  const PANTRY_ID = process.env.PANTRY_ID;
+  let pr = '' || process.env.PR;
+  if (!PANTRY_ID) {
+    return defaultData.data;
+  }
+  await createOrReplaceCollection(collType + pr);
   let dbData = await getCollection(collType);
   if (dbData && dbData.data) {
     return dbData.data;
-  } else {
-    return defaultData.data;
   }
+  return defaultData.data;
 }
 
 async function loadAllMockData() {
-  let pr = '' || process.env.PR;
-  userData = await loadMockData(`users${pr}`, userJsonData);
-  loadRequests = await loadMockData(`loadRequests${pr}`, loadRequestJsonData);
-  loadRequestActivities = await loadMockData(`loadRequestActivities${pr}`, loadRequestActivityJsonData);
-  versionQAs = await loadMockData(`versionQAs${pr}`, versionQAsJsonData);
+  userData = await loadMockData(`users`, userJsonData);
+  loadRequests = await loadMockData(`loadRequests`, loadRequestJsonData);
+  loadRequestActivities = await loadMockData(`loadRequestActivities`, loadRequestActivityJsonData);
+  versionQAs = await loadMockData(`versionQAs`, versionQAsJsonData);
 }
 
-loadAllMockData();
+loadAllMockData().then(() => {
+}, (reason) => {
+  console.log(
+    '********** Expected error: ************\n',
+    `${reason}\n`,
+    '*************************************\n'
+  )
+});
 
 function filterByFieldsFunc(obj, term, fields) {
   let found = false;
@@ -145,7 +156,7 @@ app.use((req, res, next) => {
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
 
-  if(!process.env.PANTRY_ID){
-    console.warn('No PANTRY_ID configurated. Using local in-memory cache.')
+  if (!process.env.PANTRY_ID) {
+    console.warn('No PANTRY_ID configured. Using local in-memory cache.')
   }
 });

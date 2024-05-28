@@ -1,15 +1,34 @@
 import fetch from "node-fetch";
-import { Headers } from "node-fetch";
+import {Headers} from "node-fetch";
+
+export async function createOrReplaceCollection(collType) {
+  const PANTRY_ID = process.env.PANTRY_ID;
+  let pr = '' || process.env.PR;
+  let resp = await fetch(
+    `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${collType}${pr}`,
+    {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "application/json",
+      }),
+    }
+  );
+  return await resp.text();
+}
 
 export async function getCollection(collType) {
   const PANTRY_ID = process.env.PANTRY_ID;
   let pr = '' || process.env.PR;
   let resp = await fetch(
-    `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${collType}${pr}`
+    `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${collType}${pr}`,
+    {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "application/json",
+      }),
+    }
   );
-  if (resp.ok) {
-    return await resp.json();
-  }
+  return await resp.text();
 }
 
 // It's possible that pantry suffers from performance issues or running out of credit.
