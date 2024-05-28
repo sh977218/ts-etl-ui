@@ -18,25 +18,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+      - name: Output Node Version
+        run: node -v
+
+      - name: Output NPM Version
+        run: npm -v
 
       - name: Install dependencies
         run: npm ci
 
       - name: Grant git permission
         run: git config --global --add safe.directory /__w/ts-etl-ui/ts-etl-ui
-        
+
       - name: Build Angular
         run: npm run build
-  
+
       - name: Run Playwright tests
         run: npm run test
-  
+
       - name: Upload playwright report to Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
