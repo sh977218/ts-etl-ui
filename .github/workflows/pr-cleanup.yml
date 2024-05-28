@@ -1,0 +1,20 @@
+name: Close Pull Request
+
+# only trigger on pull request closed events
+on:
+  pull_request:
+    types: [ closed ]
+
+jobs:
+  deploy:
+    name: Remove Pantry basket
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Remove Pantry basket of for pr ${{ github.event.number }}
+        run: PR=${{ github.event.number }} npm run cleanup:ci

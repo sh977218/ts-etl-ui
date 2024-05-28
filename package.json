@@ -8,6 +8,8 @@
     "serve": "ng serve",
     "start": "node --env-file=.development.env server/server.js",
     "start:ci": "node --env-file=.ci.env server/server.js",
+    "cleanup": "node --env-file=.development.env clean-up-pantry-basket.js.js",
+    "cleanup:ci": "node --env-file=.ci.env clean-up-pantry-basket.js.js",
     "prebuild": "npm --no-git-tag-version version patch",
     "build": "ng build -c development && node insert-commit-hash.js",
     "watch": "ng build --watch --configuration development",
