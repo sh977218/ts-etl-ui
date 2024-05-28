@@ -21,11 +21,10 @@ let versionQAs;
 
 async function loadMockData(collType, defaultData) {
   const PANTRY_ID = process.env.PANTRY_ID;
-  let pr = '' || process.env.PR;
   if (!PANTRY_ID) {
     return defaultData.data;
   }
-  await createOrReplaceCollection(collType + pr);
+  await createOrReplaceCollection(collType);
   let dbData = await getCollection(collType);
   if (dbData && dbData.data) {
     return dbData.data;
@@ -34,10 +33,11 @@ async function loadMockData(collType, defaultData) {
 }
 
 async function loadAllMockData() {
-  userData = await loadMockData(`users`, userJsonData);
-  loadRequests = await loadMockData(`loadRequests`, loadRequestJsonData);
-  loadRequestActivities = await loadMockData(`loadRequestActivities`, loadRequestActivityJsonData);
-  versionQAs = await loadMockData(`versionQAs`, versionQAsJsonData);
+  let pr = '' || process.env.PR;
+  userData = await loadMockData(`users${pr}`, userJsonData);
+  loadRequests = await loadMockData(`loadRequests${pr}`, loadRequestJsonData);
+  loadRequestActivities = await loadMockData(`loadRequestActivities${pr}`, loadRequestActivityJsonData);
+  versionQAs = await loadMockData(`versionQAs${pr}`, versionQAsJsonData);
 }
 
 loadAllMockData().then(() => {
