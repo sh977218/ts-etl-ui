@@ -4,15 +4,15 @@ export type VersionQAsApiResponse={
   }
   
   export type VersionQA={
-    requestId:string;
-    loadNumber:number;
-    codeSystemName:string;
-    sourceFilePath:string;
-    requestSubject:string;
-    versionStatus:string;
-    version:string;
-    effectiveDate:Date;
-    availableDate:Date;
-    requester:string;
+      requestId: string
+      loadNumber: number
+      codeSystemName: string
+      sourceFilePath: string
+      requestSubject: string
+      versionStatus: string
+      version: string
+      effectiveDate: Date
+      availableDate: Date
+      requester: string;
   }
   

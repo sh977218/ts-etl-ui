@@ -11,7 +11,7 @@
       <ng-container matColumnDef="loadNumber">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Load Number</th>
         <td mat-cell *matCellDef="let row">
-          <button mat-button color="primary" (click)="openVersionDetailModal()">{{row.loadNumber}}</button>
+          <button mat-button color="primary" (click)="openVersionDetailModal(row)">{{row.loadNumber}}</button>
         </td>
       </ng-container>
 
