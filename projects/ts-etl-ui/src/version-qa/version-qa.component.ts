@@ -1,8 +1,8 @@
 import {AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
-import { ReactiveFormsModule} from '@angular/forms';
-import {merge,startWith, switchMap, catchError, of, map} from 'rxjs';
+import {ReactiveFormsModule} from '@angular/forms';
+import {merge, startWith, switchMap, catchError, of, map} from 'rxjs';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
@@ -62,13 +62,13 @@ export class VersionQaComponent implements AfterViewInit {
   @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort!: MatSort;
 
-  constructor(private _httpClient: HttpClient,
+  constructor(private http: HttpClient,
               public dialog: MatDialog,
               private loadingService: LoadingService) {
   }
 
   ngAfterViewInit() {
-    this.versionQaDatabase = new VersionQaDataSource(this._httpClient);
+    this.versionQaDatabase = new VersionQaDataSource(this.http);
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
@@ -99,7 +99,10 @@ export class VersionQaComponent implements AfterViewInit {
       });
   }
 
-  openVersionDetailModal(){
-    this.dialog.open(VersionQaDetailModalComponent)
+  openVersionDetailModal(versionQA: VersionQA) {
+    this.dialog.open(VersionQaDetailModalComponent, {
+      width: '90%',
+      data: versionQA
+    })
   }
 }
