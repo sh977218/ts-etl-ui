@@ -2,7 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import userJsonData from './data/user.json' assert { type: 'json' };
 import loadRequestJsonData from './data/loadRequests.json' assert { type: 'json' };
-import loadRequestactivityJsonData from './data/loadRequestActivities.json' assert { type: 'json' };
+import loadRequestActivityJsonData from './data/loadRequestActivities.json' assert { type: 'json' };
 import versionQAsJsonData from './data/versionQAs.json' assert {type: 'json'};
 
 import { getCollection, saveCollection } from './db.js';
@@ -31,7 +31,7 @@ async function loadMockData(collType, defaultData) {
 async function loadAllMockData() {
   userData = await loadMockData('users1', userJsonData);
   loadRequests = await loadMockData('loadRequests1', loadRequestJsonData);
-  loadRequestActivities = await loadMockData('loadRequestActivities1', loadRequestactivityJsonData);
+  loadRequestActivities = await loadMockData('loadRequestActivities1', loadRequestActivityJsonData);
   versionQAs = await loadMockData('versionQAs1', versionQAsJsonData);
 }
 
@@ -143,4 +143,8 @@ app.use((req, res, next) => {
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
+
+  if(!process.env.PANTRY_ID){
+    console.warn('No PANTRY_ID configurated. Using local in-memory cache.')
+  }
 });
