@@ -18,6 +18,9 @@ Create these baskets: `users1, loadRequests1, loadRequestActivities1`
 
 The baskets will be populated when data is saved to them. 
 
+for CI, .ci.env is used to playwright test
+for local development, .development.env is used to test
+
 ## Running mocking api server
 
 To use Pantry for perishable storage
