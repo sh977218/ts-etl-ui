@@ -1,0 +1,20 @@
+name: Close Pull Request
+
+# only trigger on pull request closed events
+on:
+  pull_request:
+    types: [ closed ]
+
+jobs:
+  deploy:
+    name: PR clean up
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Close pr ${{ github.event.number }}
+        run: echo 'close pr ${{ github.event.number }}'
