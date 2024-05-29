@@ -15,3 +15,14 @@ export async function deleteAllCollections() {
       })
   );
 }
+
+deleteAllCollections()
+  .then(() => {
+    console.log('All pantry baskets deleted')
+  })
+  .catch((e) => {
+    console.log('Not all pantry baskets deleted: ' + e)
+  })
+  .finally(() => {
+    console.log('finally block')
+  })
