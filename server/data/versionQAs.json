@@ -11,6 +11,17 @@
       "availableDate": "2018-10-28",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17 +05:00"
+    }, {
+      "requestId": 1,
+      "loadNumber": 1000001,
+      "codeSystemName": "RXNORM",
+      "sourceFilePath": "C:\\Talley\\RXNOEM\\Hoffman",
+      "versionStatus": "Pending QA",
+      "version": 77176,
+      "effectiveDate": "2020-1-1",
+      "availableDate": "2018-10-28",
+      "requester": "hoffmantalley@zilphur.com",
+      "requestTime": "2023-12-11T07:53:17 +05:00"
     }
   ]
 }

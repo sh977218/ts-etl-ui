@@ -1,4 +1,5 @@
 import {AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild} from '@angular/core';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 import {NgIf} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {ReactiveFormsModule} from '@angular/forms';
@@ -18,7 +19,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {VersionQA, VersionQAsApiResponse} from '../model/version-qa';
 import {VersionQaDataSource} from './version-qa-data-source';
 import {LoadingService} from "../loading-service";
-import {VersionQaDetailModalComponent} from "../version-qa-detail-modal/version-qa-detail-modal.component";
+import {VersionQaDetailComponent} from "../version-qa-detail/version-qa-detail.component";
 
 @Component({
   selector: 'app-version-qa',
@@ -35,10 +36,18 @@ import {VersionQaDetailModalComponent} from "../version-qa-detail-modal/version-
     MatPaginatorModule,
     MatCheckboxModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule,
+    VersionQaDetailComponent,
   ],
   templateUrl: './version-qa.component.html',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed,void', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class VersionQaComponent implements AfterViewInit {
   displayedColumns: string[] = [
@@ -58,6 +67,7 @@ export class VersionQaComponent implements AfterViewInit {
   data: VersionQA[] = [];
 
   resultsLength = 0;
+  expandedElement: VersionQA | null = null;
 
   @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort!: MatSort;
@@ -99,10 +109,4 @@ export class VersionQaComponent implements AfterViewInit {
       });
   }
 
-  openVersionDetailModal(versionQA: VersionQA) {
-    this.dialog.open(VersionQaDetailModalComponent, {
-      width: '90%',
-      data: versionQA
-    })
-  }
 }

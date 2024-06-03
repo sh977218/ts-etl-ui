@@ -2,8 +2,16 @@ export type VersionQAsApiResponse={
     total_count:number,
     items:VersionQA[]
   }
-  
-  export type VersionQA={
+
+export type VersionQAActivityHistory = {
+  tag: string,
+  createdBy: string,
+  availableDate: Date,
+  notes: string
+}
+
+
+export type VersionQA = {
       requestId: string
       loadNumber: number
       codeSystemName: string
@@ -14,5 +22,11 @@ export type VersionQAsApiResponse={
       effectiveDate: Date
       availableDate: Date
       requester: string;
-  }
-  
+      activityHistory: VersionQAActivityHistory[]
+}
+
+export type VersionQAReviewModalData = {
+  tag: string,
+  username: string
+}
+
