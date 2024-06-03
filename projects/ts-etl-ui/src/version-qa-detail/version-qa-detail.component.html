@@ -1,8 +1,6 @@
-<h2 mat-dialog-title>Version QA Detail</h2>
-<mat-dialog-content class="mat-typography">
-  <mat-card class="example-card">
+  <mat-card>
     <mat-card-content>
-      <table mat-table class="example-table-container" [dataSource]="dataSource">
+      <table mat-table [dataSource]="dataSource">
         <!-- Key Column -->
         <ng-container matColumnDef="key">
           <th mat-header-cell *matHeaderCellDef>Key</th>
@@ -30,41 +28,41 @@
       <mat-divider></mat-divider>
     </mat-card-content>
   </mat-card>
-  <mat-divider class="my-5"></mat-divider>
-  <mat-card class="example-card">
-    <mat-card-header>
-      <mat-card-subtitle>Activity History</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <table class="example-table-container">
-        <thead>
-        <tr>
-          <th>Sequence</th>
-          <th>Action</th>
-          <th>Updated Time</th>
-          <th>Number of Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr class="example-element-row">
-          <td>Current</td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr class="example-element-row">
-          <td>1st</td>
-          <td>Reject</td>
-          <td></td>
-          <td>1</td>
-        </tr>
-        </tbody>
-      </table>
-    </mat-card-content>
-  </mat-card>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-raised-button color="primary">Accept</button>
-  <button mat-raised-button color="warn">Reject</button>
-  <button mat-raised-button mat-dialog-close cdkFocusInitial>Close</button>
-</mat-dialog-actions>
+
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-subtitle>Activity History</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <table>
+      <thead>
+      <tr>
+        <th>Sequence</th>
+        <th>Action</th>
+        <th>Updated Time</th>
+        <th>Number of Notes</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Current</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>1st</td>
+        <td>Reject</td>
+        <td></td>
+        <td>1</td>
+      </tr>
+      </tbody>
+    </table>
+  </mat-card-content>
+</mat-card>
+<div class="m-10">
+  <button mat-raised-button color="primary" (click)="accept()">Accept</button>
+  <button mat-raised-button color="warn">Reject</button>    
+</div>
+

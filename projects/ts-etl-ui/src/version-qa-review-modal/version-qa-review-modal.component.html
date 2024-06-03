@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>{{dataSource.tag}} Version Notes</h2>
+<form [formGroup]="reviewForm" (ngSubmit)="save()">
+  <mat-dialog-content class="mat-typography">
+    <div class="flex flex-col">
+      <mat-form-field appearance="outline">
+        <mat-label>Tag</mat-label>
+        <input matInput placeholder="Tag" formControlName="tag">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Created By</mat-label>
+        <input matInput formControlName="createdBy">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Available Date</mat-label>
+        <input matInput formControlName="availableDate" >
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Notes</mat-label>
+        <textarea matInput placeholder="Notes" formControlName="notes"></textarea>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button color="primary" type="submit" [disabled]="reviewForm.invalid">Save</button>
+    <button mat-raised-button mat-dialog-close cdkFocusInitial>Cancel</button>
+  </mat-dialog-actions>
+</form>
