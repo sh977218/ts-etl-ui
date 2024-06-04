@@ -143,7 +143,7 @@ app.get("/api/versionQAs", (req, res) => {
     res.status(200).send(formatResponse(versionQAs, versionQAs));
   }, Math.floor(Math.random() * 1500) + 1);
 });
-45
+
 app.get("/api/file/:id",(req,res)=>{
     const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
     const fileContent = fs.readFileSync(fileLocation);

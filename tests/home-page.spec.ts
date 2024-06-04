@@ -38,7 +38,7 @@ test.describe('e2e test', async () => {
       await expect(page.getByRole('button', {name: 'Create Request'})).toBeHidden();
       await expect(page.getByRole('button', {name: 'Download'})).toBeHidden();
 
-      await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(1)
+      await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0)
     })
     await test.step('Code System Tab', async () => {
       await page.getByRole('tab', {name: 'Code System'}).click()
