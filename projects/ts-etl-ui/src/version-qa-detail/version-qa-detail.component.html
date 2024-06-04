@@ -13,10 +13,10 @@
           <td mat-cell *matCellDef="let element">
             <div class="flex justify-between" [ngSwitch]="element.key">
               {{element.value}}
-              <button mat-raised-button *ngSwitchCase="'codeSystemName'">Go to QA Report</button>
+              <button mat-raised-button *ngSwitchCase="'requestId'">Go to QA Report</button>
               <button mat-raised-button *ngSwitchCase="'version'">Analyze Code System Data</button>
               <button mat-raised-button *ngSwitchCase="'loadNumber'">Analyze Row Source Data</button>
-              <button mat-raised-button *ngSwitchCase="'requestId'">View Source Data Files</button>
+              <button mat-raised-button *ngSwitchCase="'sourceFilePath'">View Source Data Files</button>
               <ng-container *ngSwitchDefault></ng-container>
             </div>
           </td>
@@ -35,33 +35,35 @@
     <mat-card-subtitle>Activity History</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <table>
-      <thead>
-      <tr>
-        <th>Sequence</th>
-        <th>Action</th>
-        <th>Updated Time</th>
-        <th>Number of Notes</th>
-      </tr>
-      </thead>
-      <tbody>
+    <table mat-table [dataSource]="qaActivityHistory">
+      <ng-container matColumnDef="sequence">
+        <th mat-header-cell *matHeaderCellDef> Sequence </th>
+        <td mat-cell *matCellDef="let i = index"> {{i}} </td>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element"> {{element.action}} </td>
+      </ng-container>
+      <ng-container matColumnDef="updatedTime">
+        <th mat-header-cell *matHeaderCellDef> Updated Time </th>
+        <td mat-cell *matCellDef="let element"> {{element.updatedTime}} </td>
+      </ng-container>
+      <ng-container matColumnDef="nbNotes">
+        <th mat-header-cell *matHeaderCellDef> # of Notes </th>
+        <td mat-cell *matCellDef="let element"> {{element.notes.length}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="qaActivityColumns"></tr>
       <tr>
         <td>Current</td>
         <td></td>
         <td></td>
         <td></td>
       </tr>
-      <tr>
-        <td>1st</td>
-        <td>Reject</td>
-        <td></td>
-        <td>1</td>
-      </tr>
-      </tbody>
+      <tr mat-row *matRowDef="let row; columns: qaActivityColumns;"></tr>
     </table>
   </mat-card-content>
 </mat-card>
-<div class="m-10">
+<div class="m-7">
   <button mat-raised-button color="primary" (click)="accept()">Accept</button>
   <button mat-raised-button color="warn">Reject</button>    
 </div>
