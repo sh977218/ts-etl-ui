@@ -1,5 +1,8 @@
 import express from 'express';
 import fs from 'fs';
+
+const DEFAULT_FILE_FOLDER = 'server/data/'
+
 import DEFAULT_USER_DATA from './data/user.json' assert {type: 'json'};
 import DEFAULT_LOAD_REQUEST_DATA from './data/loadRequests.json' assert {type: 'json'};
 import DEFAULT_LOAD_REQUEST_ACTIVITY_DATA from './data/loadRequestActivities.json' assert {type: 'json'};
@@ -140,6 +143,12 @@ app.get("/api/versionQAs", (req, res) => {
     res.status(200).send(formatResponse(versionQAs, versionQAs));
   }, Math.floor(Math.random() * 1500) + 1);
 });
+45
+app.get("/api/file/:id",(req,res)=>{
+    const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
+    const fileContent = fs.readFileSync(fileLocation);
+    res.send(fileContent)
+})
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', (req, res) => {

@@ -16,7 +16,7 @@
               <button mat-raised-button *ngSwitchCase="'requestId'">Go to QA Report</button>
               <button mat-raised-button *ngSwitchCase="'version'">Analyze Code System Data</button>
               <button mat-raised-button *ngSwitchCase="'loadNumber'">Analyze Row Source Data</button>
-              <button mat-raised-button *ngSwitchCase="'sourceFilePath'">View Source Data Files</button>
+              <button mat-raised-button *ngSwitchCase="'sourceFilePath'" (click)="openSourceDataFileModal()">View Source Data Files</button>
               <ng-container *ngSwitchDefault></ng-container>
             </div>
           </td>
