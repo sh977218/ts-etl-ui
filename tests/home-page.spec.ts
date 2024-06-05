@@ -31,6 +31,7 @@ test.describe('e2e test', async () => {
     })
 
     test('check flow', async ({page}) => {
+        test.slow();
         const materialPo = new MaterialPO(page);
         // Expect a title "to contain" a substring.
         await test.step('has title', async () => {

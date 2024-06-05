@@ -121,7 +121,7 @@ export class LoadRequestComponent implements AfterViewInit {
                     const pageNumber = this.paginator.pageIndex;
                     const pageSize = this.paginator.pageSize
                     return this.loadRequestDatabase!.getLoadRequests(
-                        filter, sort, order, pageNumber, pageSize
+                        filter.trim(), sort, order, pageNumber, pageSize
                     ).pipe(catchError(() => of(null)));
                 }),
                 map((data: LoadRequestsApiResponse | null) => {
