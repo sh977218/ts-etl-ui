@@ -144,10 +144,20 @@ app.get("/api/versionQAs", (req, res) => {
   }, Math.floor(Math.random() * 1500) + 1);
 });
 
-app.get("/api/file/:id",(req,res)=>{
+app.get("/api/file/:id", (req,res) => {
     const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
     const fileContent = fs.readFileSync(fileLocation);
     res.send(fileContent)
+});
+
+app.post('/api/qaActivity', async (req, res) => {
+  const versionQA = versionQAs.find(v => v.requestId === req.body.requestId);
+  if (!versionQA.activityHistory) {
+    versionQA.activityHistory = [];
+  }
+  versionQA.activityHistory.push(req.body.qaActivity);
+  await saveCollection('versionQA1', {data: versionQA});
+  res.send();
 })
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc

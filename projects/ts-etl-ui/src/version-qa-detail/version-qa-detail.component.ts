@@ -4,13 +4,15 @@ import {MatButtonModule} from "@angular/material/button"
 import {MatTableModule} from '@angular/material/table'
 import {MatDialog, MatDialogModule} from "@angular/material/dialog"
 import {MatCardModule} from "@angular/material/card";
-
-import type {VersionQA, VersionQAActivityHistory} from '../model/version-qa'
-import {MatDivider} from "@angular/material/divider";
-import {VersionQaReviewModalComponent} from '../version-qa-review-modal/version-qa-review-modal.component';
 import {
   VersionQaSourceDataFileModalComponent
 } from '../version-qa-source-data-file-modal/version-qa-source-data-file-modal.component'
+import type { VersionQA, VersionQAActivityHistory } from '../model/version-qa'
+import { MatDivider } from "@angular/material/divider";
+import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
+import { HttpClient } from '@angular/common/http'
+import { tap } from 'rxjs'
+import { animate, state, style, transition, trigger } from '@angular/animations'
 
 export interface RowElement {
   label: string;
@@ -21,6 +23,13 @@ export interface RowElement {
 @Component({
   selector: 'app-version-qa-detail',
   standalone: true,
+  animations: [
+    trigger('detailExpand1', [
+      state('collapsed,void', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
   imports: [
     NgSwitch,
     NgSwitchCase,
@@ -35,19 +44,22 @@ export interface RowElement {
   templateUrl: './version-qa-detail.component.html'
 })
 export class VersionQaDetailComponent implements OnInit {
-  displayedColumns: string[] = ["key", "value"];
-  qaActivityColumns: string[] = ['sequence', 'action', 'updatedTime', 'nbNotes'];
-  dataSource: RowElement[] = [];
-  qaActivityHistory!: VersionQAActivityHistory[];
   @Input() data!: VersionQA;
 
+  displayedColumns: string[] = ["key", "value"];
+  qaActivityColumns: string[] = ['sequence', 'action', 'updatedTime', 'nbNotes'];
+  notesColumns: string[] = ['tags', 'notes', 'createdBy', 'createdTime', 'action'];
+  dataSource: RowElement[] = [];
+  qaActivityHistory!: VersionQAActivityHistory[];
+  expandedActivity: VersionQAActivityHistory | null = null;
 
   constructor(
     public dialog: MatDialog,
+    private http: HttpClient,
   ) {
   }
 
-  ngOnInit() {
+  initDataSource() {
     this.dataSource = Object.keys(this.data).map(key => ({
       label: key.toUpperCase(),
       key: key,
@@ -56,16 +68,32 @@ export class VersionQaDetailComponent implements OnInit {
     this.qaActivityHistory = this.data.activityHistory;
   }
 
+  ngOnInit() {
+    this.initDataSource();
+  }
+
   accept() {
     const dialogRef = this.dialog.open(VersionQaReviewModalComponent, {
       width: '600px',
       data: {tag: 'Accept'}
     })
     dialogRef.afterClosed().subscribe(result => {
-      this.data.activityHistory.push({
+      const newQaActivity = {
         action: 'Accept', updatedTime: new Date(),
-        notes: [{tag: 'Accept', createdBy: result.createdBy, notes: result.notes, availableDate: result.availableDate}]
-      })
+        notes: [{ tag: 'Accept', createdBy: result.createdBy, notes: result.notes, availableDate: result.availableDate, createdTime: new Date() }]
+      };
+      this.http.post('/api/qaActivity', {
+        requestId: this.data.requestId, qaActivity: newQaActivity
+      }).pipe(
+          tap({
+            next: () => dialogRef.close('success'),
+            error: () => dialogRef.close('error')
+          })
+        )
+        .subscribe();
+
+      this.data.activityHistory = [...this.data.activityHistory, newQaActivity];
+      this.initDataSource();
     });
   }
 
