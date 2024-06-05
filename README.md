@@ -14,11 +14,12 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 
 Pantry can be used as perishable storage. 
 
-Create these baskets: `users1, loadRequests1, loadRequestActivities1`
+Create these baskets: `users, loadRequests, loadRequestActivities`
 
 The baskets will be populated when data is saved to them. 
 
 for CI, .ci.env is used to playwright test
+
 for local development, .development.env is used to test
 
 ## Running mocking api server

@@ -1,4 +1,4 @@
-import {Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA} from '@angular/core';
+import {ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA} from '@angular/core';
 import {AsyncPipe, NgIf} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
@@ -20,6 +20,7 @@ import {LoadingService} from "../loading-service";
 @Component({
   selector: 'app-root',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgIf,
     AsyncPipe,
