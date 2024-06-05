@@ -7,6 +7,14 @@ class MaterialPO {
         this.page = page;
     }
 
+    matOverlay() {
+        return this.page.locator('.cdk-overlay-container')
+    }
+
+    matDialog() {
+        return this.page.locator('mat-dialog-container')
+    }
+
     async checkAndCloseAlert(text: string) {
         const snackBarContainer = this.page.locator('mat-snack-bar-container');
         const snackBarLabel = this.page.locator('.mat-mdc-snack-bar-label.mdc-snackbar__label')
@@ -50,10 +58,12 @@ test.describe('e2e test', async () => {
 
             await test.step('add load request', async () => {
                 await page.getByRole('button', {name: 'Create Request'}).click();
-                await page.getByLabel('Code System Name').selectOption('HPO');
+                await page.getByLabel('Code System Name').click();
+                await page.getByRole('option', {name: 'HPO'}).click()
                 await page.getByLabel('Source File Path').fill('newly/add/file/path');
                 await page.getByLabel('Request Subject').fill('newly created load request');
                 await page.getByRole('button', {name: 'Submit'}).click();
+                await materialPo.matDialog().waitFor({state: 'hidden'})
                 await materialPo.checkAndCloseAlert('Successfully created load request.')
             })
 
