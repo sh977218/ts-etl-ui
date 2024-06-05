@@ -1,13 +1,16 @@
-import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common'
-import { Component, Input, OnInit } from '@angular/core'
-import { MatButtonModule } from "@angular/material/button"
-import { MatTableModule } from '@angular/material/table'
-import { MatDialog, MatDialogModule } from "@angular/material/dialog"
-import { MatCardModule } from "@angular/material/card";
+import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common'
+import {Component, Input, OnInit} from '@angular/core'
+import {MatButtonModule} from "@angular/material/button"
+import {MatTableModule} from '@angular/material/table'
+import {MatDialog, MatDialogModule} from "@angular/material/dialog"
+import {MatCardModule} from "@angular/material/card";
 
-import type { VersionQA, VersionQAActivityHistory } from '../model/version-qa'
-import { MatDivider } from "@angular/material/divider";
-import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
+import type {VersionQA, VersionQAActivityHistory} from '../model/version-qa'
+import {MatDivider} from "@angular/material/divider";
+import {VersionQaReviewModalComponent} from '../version-qa-review-modal/version-qa-review-modal.component';
+import {
+  VersionQaSourceDataFileModalComponent
+} from '../version-qa-source-data-file-modal/version-qa-source-data-file-modal.component'
 
 export interface RowElement {
   label: string;
@@ -35,7 +38,7 @@ export class VersionQaDetailComponent implements OnInit {
   displayedColumns: string[] = ["key", "value"];
   qaActivityColumns: string[] = ['sequence', 'action', 'updatedTime', 'nbNotes'];
   dataSource: RowElement[] = [];
-  qaActivityHistory!: VersionQAActivityHistory[]; 
+  qaActivityHistory!: VersionQAActivityHistory[];
   @Input() data!: VersionQA;
 
 
@@ -56,12 +59,23 @@ export class VersionQaDetailComponent implements OnInit {
   accept() {
     const dialogRef = this.dialog.open(VersionQaReviewModalComponent, {
       width: '600px',
-      data: { tag: 'Accept' }
+      data: {tag: 'Accept'}
     })
     dialogRef.afterClosed().subscribe(result => {
-      this.data.activityHistory.push({ action: 'Accept', updatedTime: new Date(), 
-        notes: [{tag: 'Accept', createdBy: result.createdBy, notes: result.notes, availableDate: result.availableDate}]})
+      this.data.activityHistory.push({
+        action: 'Accept', updatedTime: new Date(),
+        notes: [{tag: 'Accept', createdBy: result.createdBy, notes: result.notes, availableDate: result.availableDate}]
+      })
     });
+  }
+
+  openSourceDataFileModal() {
+    this.dialog.open(VersionQaSourceDataFileModalComponent, {
+      width: '600px',
+      data: this.data.version
+    })
+      .afterClosed()
+      .subscribe();
   }
 
 }
