@@ -12,6 +12,7 @@ export type VersionQAActivityHistory = {
 export type QAActivityNote = {
   tag: string,
   createdBy: string,
+  createdTime: Date,
   availableDate: Date,
   notes: string
 }

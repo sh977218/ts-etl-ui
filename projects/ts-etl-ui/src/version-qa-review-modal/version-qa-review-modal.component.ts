@@ -1,8 +1,8 @@
-import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common'
-import {Component, Inject} from '@angular/core'
-import {MatButtonModule} from "@angular/material/button"
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common'
+import { Component, Inject } from '@angular/core'
+import { MatButtonModule } from "@angular/material/button"
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from "@angular/material/dialog"
-import {MatCardModule} from "@angular/material/card";
+import { MatCardModule } from "@angular/material/card";
 
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../user-service';
@@ -32,20 +32,20 @@ import { provideNativeDateAdapter } from '@angular/material/core'
 })
 export class VersionQaReviewModalComponent {
 
-  dataSource: {tag: string};
+  dataSource: { tag: string };
   reviewForm = new FormGroup(
     {
-      createdBy: new FormControl({value: '', disabled: true}),
-      tag: new FormControl({value: '', disabled: true}),
+      createdBy: new FormControl({ value: '', disabled: true }),
+      tag: new FormControl({ value: '', disabled: true }),
       notes: new FormControl<string>('', [Validators.required]),
       availableDate: new FormControl(new Date(), [Validators.required]),
     },
   );
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: {tag: string},
-              public dialogRef: MatDialogRef<VersionQaReviewModalComponent>,
-              public userService: UserService,
-              public dialog: MatDialog,
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { tag: string },
+    public dialogRef: MatDialogRef<VersionQaReviewModalComponent>,
+    public userService: UserService,
+    public dialog: MatDialog,
   ) {
     this.dataSource = data;
     userService.user$.subscribe(user => this.reviewForm.get('createdBy')?.setValue(user?.utsUser.username || ''))
