@@ -45,6 +45,7 @@ jobs:
         run: PR=${{ github.event.number }} npm run test
 
       - name: Setup Pages
+        if: always()
         uses: actions/configure-pages@v4
 
       - name: Upload playwright report to github-pages
@@ -54,9 +55,9 @@ jobs:
           path: playwright-report/
 
       - name: Deploy Playwright result to Github Pages
+        if: always()
         id: deploy-playwright-to-github
         uses: actions/deploy-pages@v4
 
       - name: update job summary
-        if: always()
         run: echo "# Deployed playwright result to ${{ steps.deploy-playwright-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
