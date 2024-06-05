@@ -4,6 +4,8 @@ import { ErrorHandler, Injectable } from '@angular/core';
 export class GlobalErrorHandler implements ErrorHandler {
   constructor() {}
 
-  handleError() {
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  handleError(error:any) {
+    console.error(error)
   }
 }
