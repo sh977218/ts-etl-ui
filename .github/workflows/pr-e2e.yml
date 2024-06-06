@@ -41,8 +41,8 @@ jobs:
       - name: Build Angular
         run: npm run build
 
-      - name: Start Node Server
-        run: npm run start
+      - name: Start Node Server - in background
+        run: npm run start &
 
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} MONGO_USERNAME=${{ secrets.MONGO_USERNAME }} MONGO_HOSTNAME=${{ secrets.MONGO_HOSTNAME }} npm run test
