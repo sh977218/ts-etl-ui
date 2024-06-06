@@ -12,7 +12,7 @@
             "runtimeArgs": [
                 "run-script", "start"
             ],
-            "runtimeExecutable": "npm",
+            "runtimeExecutable": "npm"
         },
         {
             "name": "Angular CLI Server",
@@ -22,7 +22,7 @@
             "runtimeArgs": [
                 "run-script", "serve"
             ],
-            "runtimeExecutable": "npm",
+            "runtimeExecutable": "npm"
         },
         {
             "name": "Debug Playwright Test",
@@ -30,9 +30,9 @@
             "request": "launch",
             "cwd": "${workspaceRoot}/",
             "runtimeArgs": [
-                "run-script", "test:debu"
+                "run-script", "test:debug"
             ],
-            "runtimeExecutable": "npm",
+            "runtimeExecutable": "npm"
         },
     ]
 }

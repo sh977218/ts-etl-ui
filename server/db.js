@@ -1,48 +1,47 @@
-import fetch from "node-fetch";
-import {Headers} from "node-fetch";
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
-export async function createOrReplaceCollection(collType) {
-  const PANTRY_ID = process.env.PANTRY_ID;
-  let resp = await fetch(
-    `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${collType}`,
-    {
-      method: "POST",
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
+import DEFAULT_USER_DATA from './data/user.json' assert { type: 'json' };
+import DEFAULT_LOAD_REQUEST_DATA from './data/loadRequests.json' assert { type: 'json' };
+import DEFAULT_LOAD_REQUEST_ACTIVITY_DATA from './data/loadRequestActivities.json' assert { type: 'json' };
+import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'json' };
+
+const pr = '' || process.env.PR;
+const MONGO_USERNAME = '' || process.env.MONGO_USERNAME;
+const MONGO_PASSWORD = '' || process.env.MONGO_PASSWORD;
+const MONGO_HOSTNAME = '' || process.env.MONGO_HOSTNAME;
+
+export async function connectToMongo() {
+    const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}?retryWrites=true&w=majority&appName=ts-etl-ui`;
+    const client = new MongoClient(uri, {
+        serverApi: {
+            version: ServerApiVersion.v1,
+            strict: true,
+            deprecationErrors: true,
+        }
+    });
+    await client.connect().catch(reason => {
+        console.error(`Mongo connect failed: ${reason.toString()}`)
+    });
+    const db = await client.db('ts-etl-ui')
+    if (pr) {
+        await restoreMongoDb(db);
     }
-  );
-  return await resp.text();
+    return {
+        db,
+        usersCollection: db.collection(`users${pr}`),
+        loadRequestsCollection: db.collection(`loadRequests${pr}`),
+        loadRequestActivitiesCollection: db.collection(`loadRequestActivities${pr}`),
+        versionQAsCollection: db.collection(`versionQAs${pr}`)
+    };
 }
 
-export async function getCollection(collType) {
-  const PANTRY_ID = process.env.PANTRY_ID;
-  let resp = await fetch(
-    `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${collType}`,
-    {
-      method: "POST",
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
+async function restoreMongoDb(db) {
+    for (const collection of [`users${pr}`, `loadRequests${pr}`, `loadRequestActivities${pr}`, `versionQAs${pr}`]) {
+        await db.dropCollection(collection);
+        await db.createCollection(collection);
     }
-  );
-  return await resp.text();
-}
-
-// It's possible that pantry suffers from performance issues or running out of credit.
-// We can consider a cancellable timeout if too many saves is too much.
-// We can also consider a merge instead of update all, but it might be even more expensive...
-export async function saveCollection(collType, payload) {
-  const PANTRY_ID = process.env.PANTRY_ID;
-  let pr = '' || process.env.PR;
-  await fetch(
-    `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${collType}${pr}`,
-    {
-      method: "PUT",
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
-      body: JSON.stringify(payload),
-    }
-  );
+    await db.collection(`users${pr}`).insertMany(DEFAULT_USER_DATA.data)
+    await db.collection(`loadRequests${pr}`).insertMany(DEFAULT_LOAD_REQUEST_DATA.data)
+    await db.collection(`loadRequestActivities${pr}`).insertMany(DEFAULT_LOAD_REQUEST_ACTIVITY_DATA.data)
+    await db.collection(`versionQAs${pr}`).insertMany(DEFAULT_VERSION_QA_DATA.data)
 }

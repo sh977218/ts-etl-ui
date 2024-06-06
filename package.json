@@ -6,10 +6,7 @@
   "scripts": {
     "ng": "ng",
     "serve": "ng serve",
-    "start": "node --env-file .development.env server/server.js",
-    "start:ci": "node --env-file=.ci.env server/server.js",
-    "cleanup": "node --env-file .development.env clean-up-pantry-basket.js",
-    "cleanup:ci": "node --env-file=.ci.env clean-up-pantry-basket.js",
+    "start": "node --env-file .env server/server.js",
     "prebuild": "npm --no-git-tag-version version patch",
     "build": "ng build -c development && node insert-commit-hash.js",
     "watch": "ng build --watch --configuration development",
@@ -35,6 +32,7 @@
     "@angular/router": "^17.0.3",
     "express": "^4.19.2",
     "file-saver": "^2.0.5",
+    "mongodb": "^6.7.0",
     "node-fetch": "^3.3.2",
     "rxjs": "~7.5.0"
   },
