@@ -60,4 +60,5 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: update job summary
+        if: always()
         run: echo "# Deployed playwright result to ${{ steps.deploy-playwright-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
