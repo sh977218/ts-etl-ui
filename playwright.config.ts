@@ -32,7 +32,7 @@ export default defineConfig({
         screenshot: 'on',
         browserName: 'chromium',
         ignoreHTTPSErrors: true,
-        baseURL: 'http://localhost:4200'
+        baseURL: process.env.CI ? 'http://localhost:3000/' : 'http://localhost:4200'
     },
 
     /* Configure projects for major browsers */
