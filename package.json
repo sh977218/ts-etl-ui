@@ -1,6 +1,6 @@
 {
   "name": "ts-etl-ui",
-  "version": "0.0.3",
+  "version": "0.0.2",
   "type": "module",
   "main": "server/server.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "serve": "ng serve",
     "start": "node --env-file .env server/server.js",
     "prebuild": "npm --no-git-tag-version version patch",
-    "build": "ng build && node insert-commit-hash.js",
+    "build": "ng build -c development && node insert-commit-hash.js",
     "watch": "ng build --watch --configuration development",
     "test": "playwright test --project=chromium",
     "test:debug": "playwright test --project=debug",
