@@ -14,99 +14,98 @@ app.use(express.json());
 app.use(express.static('dist/ts-etl-ui/browser'))
 
 const {
-    db,
-    usersCollection,
-    loadRequestsCollection,
-    loadRequestActivitiesCollection,
-    versionQAsCollection
+  db,
+  usersCollection,
+  loadRequestsCollection,
+  loadRequestActivitiesCollection,
+  versionQAsCollection
 } = await connectToMongo().catch(err => {
-    console.log(`Mongo connect failed ${err.toString()}`)
+  console.log(`Mongo connect failed ${err.toString()}`)
 });
 
 app.get('/api/loadRequests', async (req, res) => {
-    const {q, sort, order, pageNumber, pageSize} = req.query;
-    const $match = {};
-    if (q) {
-        const $or = [];
-        $or.push({codeSystemName: new RegExp(q)});
-        $or.push({sourceFilePath: new RegExp(q)});
-        $or.push({requestSubject: new RegExp(q)});
-        $or.push({requestStatus: new RegExp(q)});
-        $or.push({requester: new RegExp(q)});
-        $match.$or = $or
-    }
-    const $sort = {};
-    $sort[sort] = order === 'asc' ? 1 : -1;
-    const pageNumberInt = Number.parseInt(pageNumber);
-    const pageSizeInt = Number.parseInt(pageSize);
-    const aggregation = [
-        {$match},
-        {$sort},
-        {$skip: pageNumberInt * pageSizeInt},
-        {$limit: pageSizeInt}
-    ]
-    const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
-    res.send({
-        total_count: await loadRequestsCollection.countDocuments(),
-        items: loadRequests,
-    });
+  const {q, sort, order, pageNumber, pageSize} = req.query;
+  const $match = {};
+  if (q) {
+    const $or = [];
+    $or.push({codeSystemName: new RegExp(q)});
+    $or.push({sourceFilePath: new RegExp(q)});
+    $or.push({requestSubject: new RegExp(q)});
+    $or.push({requestStatus: new RegExp(q)});
+    $or.push({requester: new RegExp(q)});
+    $match.$or = $or
+  }
+  const $sort = {};
+  $sort[sort] = order === 'asc' ? 1 : -1;
+  const pageNumberInt = Number.parseInt(pageNumber);
+  const pageSizeInt = Number.parseInt(pageSize);
+  const aggregation = [
+    {$match},
+    {$sort},
+    {$skip: pageNumberInt * pageSizeInt},
+    {$limit: pageSizeInt}
+  ]
+  const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
+  res.send({
+    total_count: await loadRequestsCollection.countDocuments(),
+    items: loadRequests,
+  });
 });
 
 app.post('/api/loadRequest', async (req, res) => {
-    const loadRequest = req.body;
-    loadRequest.requestId = randomUUID();
-    loadRequest.requestStatus = 'In Progress';
-    await loadRequestsCollection.insertOne(loadRequest)
-    res.status(200).send();
+  const loadRequest = req.body;
+  loadRequest.requestId = randomUUID();
+  loadRequest.requestStatus = 'In Progress';
+  await loadRequestsCollection.insertOne(loadRequest)
+  res.status(200).send();
 })
 
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
-    const requestId = Number.parseInt(req.params.requestId);
-    const loadRequestActivity = await loadRequestActivitiesCollection.findOne({requestId})
-    res.send(loadRequestActivity);
+  const requestId = Number.parseInt(req.params.requestId);
+  const loadRequestActivity = await loadRequestActivitiesCollection.findOne({requestId})
+  res.send(loadRequestActivity);
 })
 
 app.get("/api/versionQAs", async (req, res) => {
-    const versionQAs = await versionQAsCollection.find({}).toArray();
-    res.status(200).send({
-        total_count: versionQAs.length,
-        items: versionQAs,
-    });
+  const versionQAs = await versionQAsCollection.find({}).toArray();
+  res.status(200).send({
+    total_count: versionQAs.length,
+    items: versionQAs,
+  });
 });
 
 app.get("/api/file/:id", (req, res) => {
-    const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
-    const fileContent = fs.readFileSync(fileLocation);
-    res.send(fileContent)
+  const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
+  const fileContent = fs.readFileSync(fileLocation);
+  res.send(fileContent)
 });
 
 app.post('/api/qaActivity', async (req, res) => {
-    const versionQA = await versionQAsCollection.findOne({requestId: req.body.requestId});
-    if (!versionQA.activityHistory) {
-        versionQA.activityHistory = [];
+  await versionQAsCollection.updateOne({requestId: req.body.requestId}, {
+    $push: {
+      activityHistory: req.body.qaActivity
     }
-    versionQA.activityHistory.push(req.body.qaActivity);
-    await versionQA.save();
-    res.send();
+  });
+  res.send();
 })
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
-    if (req.query.ticket.includes('anything')) {
-        const user = await usersCollection.findOne({});
-        res.send(user);
-        return
-    }
-    const user = await usersCollection.findOne({'utsUser.username': req.query.ticket});
+  if (req.query.ticket.includes('anything')) {
+    const user = await usersCollection.findOne({});
     res.send(user);
+    return
+  }
+  const user = await usersCollection.findOne({'utsUser.username': req.query.ticket});
+  res.send(user);
 })
 
 app.use((req, res, next) => {
-    res.writeHead(200, {'content-type': 'text/html'})
-    fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res)
+  res.writeHead(200, {'content-type': 'text/html'})
+  fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res)
 });
 
 
 app.listen(port, () => {
-    console.log(`TS ELT UI mock server listening on port ${port}`);
+  console.log(`TS ELT UI mock server listening on port ${port}aaaaaa`);
 });

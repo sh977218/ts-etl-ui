@@ -10,10 +10,20 @@
             "request": "launch",
             "cwd": "${workspaceRoot}/",
             "runtimeArgs": [
-                "run-script", "start"
+                "run-script", "start:peter"
             ],
             "runtimeExecutable": "npm"
         },
+      {
+        "name": "API Mocking Server",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceRoot}/",
+        "runtimeArgs": [
+          "run-script", "start:christophe"
+        ],
+        "runtimeExecutable": "npm"
+      },
         {
             "name": "Angular CLI Server",
             "type": "node",
