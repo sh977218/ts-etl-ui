@@ -10,25 +10,38 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Pantry
+## Mongo
 
-Pantry can be used as perishable storage. 
+Mongo can be used as perishable storage. 
+- Register a free account: https://www.mongodb.com/products/platform/atlas-database
+- Create `Database` called `ts-etl-ui`
+- Create Collections called `users, loadRequests, loadRequestActivities, versionQAs`
+- Inject/load data from /server/data/
 
-Create these baskets: `users, loadRequests, loadRequestActivities`
-
-The baskets will be populated when data is saved to them. 
-
-for CI, .ci.env is used to playwright test
+for CI, .ci.env is used to playwright test, with collection name appendix with ${pr_number}
 
 for local development, .development.env is used to test
 
+for prod, .ci.env is used. The collection names are `users, loadRequests, loadRequestActivities, versionQAs`
+
 ## Running mocking api server
 
-To use Pantry for perishable storage
+To use Mongo for perishable storage
 
-$> export PANTRY_ID=<YOUR_PANTRY_ID>
+$> export MONGO_USERNAME=secret_username
+$> export MONGO_PASSWORD=secret_password
+$> export MONGO_HOSTNAME=secret_hostname
 
-Run `npm run start` to start NodeJS mocking api server
+or
+
+using `.development.env`, put
+```angular2html
+MONGO_USERNAME=secret_username
+MONGO_PASSWORD=secret_password
+MONGO_HOSTNAME=secret_hostname
+```
+
+Run `npm run start:development` to start NodeJS mocking api server
 
 ## Running test
 Add `@debug` to desired test
