@@ -9,8 +9,16 @@ concurrency:
 
 jobs:
   e2e-test:
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     name: e2e-test
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     container:
       image: mcr.microsoft.com/playwright:v1.44.0-jammy
 
@@ -33,13 +41,27 @@ jobs:
       - name: Build Angular
         run: npm run build
 
-      - name: Run Playwright tests
-        run: PR=${{ github.event.number }} MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} MONGO_USERNAME=${{ secrets.MONGO_USERNAME }} MONGO_HOSTNAME=${{ secrets.MONGO_HOSTNAME }} npm run test
+      - name: Start Node Server - in background
+        run: npm run start &
 
-      - name: Upload playwright report to Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Run Playwright tests
+        run: PR=${{ github.event.number }} npm run test
+
+      - name: Setup Pages
         if: always()
+        uses: actions/configure-pages@v4
+
+      - name: Upload playwright report to github-pages
+        if: always()
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: playwright-report
           path: playwright-report/
-          retention-days: 30
+
+      - name: Deploy Playwright result to Github Pages
+        if: always()
+        id: deploy-playwright-to-github
+        uses: actions/deploy-pages@v4
+
+      - name: update job summary
+        if: always()
+        run: echo "# Deployed playwright result to ${{ steps.deploy-playwright-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY

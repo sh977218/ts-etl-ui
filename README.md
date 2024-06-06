@@ -16,32 +16,13 @@ Mongo can be used as perishable storage.
 - Register a free account: https://www.mongodb.com/products/platform/atlas-database
 - Create `Database` called `ts-etl-ui`
 - Create Collections called `users, loadRequests, loadRequestActivities, versionQAs`
-- Inject/load data from /server/data/
+- Inject/load data from `/server/data/`
 
-for CI, .ci.env is used to playwright test, with collection name appendix with ${pr_number}
-
-for local development, .development.env is used to test
-
-for prod, .ci.env is used. The collection names are `users, loadRequests, loadRequestActivities, versionQAs`
+for CI, collection name appendix with ${pr_number}
 
 ## Running mocking api server
 
-To use Mongo for perishable storage
-
-$> export MONGO_USERNAME=secret_username
-$> export MONGO_PASSWORD=secret_password
-$> export MONGO_HOSTNAME=secret_hostname
-
-or
-
-using `.development.env`, put
-```angular2html
-MONGO_USERNAME=secret_username
-MONGO_PASSWORD=secret_password
-MONGO_HOSTNAME=secret_hostname
-```
-
-Run `npm run start:development` to start NodeJS mocking api server
+Run `npm run start` to start NodeJS mocking api server
 
 ## Running test
 Add `@debug` to desired test
