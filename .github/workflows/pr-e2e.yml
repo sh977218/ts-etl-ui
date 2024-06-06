@@ -34,7 +34,7 @@ jobs:
         run: npm run build
 
       - name: Run Playwright tests
-        run: PR=${{ github.event.number }} npm run test
+        run: PR=${{ github.event.number }} MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} MONGO_USERNAME=${{ secrets.MONGO_USERNAME }} npm run test
 
       - name: Upload playwright report to Artifacts
         uses: actions/upload-artifact@v4
