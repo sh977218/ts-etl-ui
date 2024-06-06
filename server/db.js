@@ -11,7 +11,7 @@ const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
 const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || '';
 const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
-export async function connectToMongo() {
+async function connectToMongo() {
     const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}?retryWrites=true&w=majority&appName=ts-etl-ui`;
     const client = new MongoClient(uri, {
         serverApi: {
@@ -23,9 +23,15 @@ export async function connectToMongo() {
     await client.connect().catch(reason => {
         console.error(`Mongo connect failed: ${reason.toString()}`)
     });
-    const db = await client.db(MONGO_DBNAME)
+    return client.db(MONGO_DBNAME);
+}
+
+export async function mongoInit() {
+    const db = await connectToMongo();
     if (pr) {
-        await restoreMongoDb(db);
+        await dropMongoCollection(db);
+        await createMongoCollections(db);
+        await restoreMongoCollections(db);
     }
     return {
         db,
@@ -36,10 +42,31 @@ export async function connectToMongo() {
     };
 }
 
-async function restoreMongoDb(db) {
-    for (const collection of [`users${pr}`, `loadRequests${pr}`, `loadRequestActivities${pr}`, `versionQAs${pr}`]) {
-        await db.dropCollection(collection);
-        await db.createCollection(collection);
+export async function createMongoCollections(db) {
+    if (!db) {
+        db = await connectToMongo();
+    }
+    if (pr) {
+        for (const collection of [`users${pr}`, `loadRequests${pr}`, `loadRequestActivities${pr}`, `versionQAs${pr}`]) {
+            await db.createCollection(collection);
+        }
+    }
+}
+
+export async function dropMongoCollection(db) {
+    if (!db) {
+        db = await connectToMongo();
+    }
+    if (pr) {
+        for (const collection of [`users${pr}`, `loadRequests${pr}`, `loadRequestActivities${pr}`, `versionQAs${pr}`]) {
+            await db.dropCollection(collection);
+        }
+    }
+}
+
+async function restoreMongoCollections(db) {
+    if (!db) {
+        db = await connectToMongo();
     }
     await db.collection(`users${pr}`).insertMany(DEFAULT_USER_DATA.data)
     await db.collection(`loadRequests${pr}`).insertMany(DEFAULT_LOAD_REQUEST_DATA.data)

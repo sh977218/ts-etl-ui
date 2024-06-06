@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 
-import { connectToMongo } from './db.js';
+import { mongoInit } from './db.js';
 import { randomUUID } from "crypto";
 
 const DEFAULT_FILE_FOLDER = 'server/data/'
@@ -19,7 +19,7 @@ const {
   loadRequestsCollection,
   loadRequestActivitiesCollection,
   versionQAsCollection
-} = await connectToMongo().catch(err => {
+} = await mongoInit().catch(err => {
   console.log(`Mongo connect failed ${err.toString()}`)
 });
 
