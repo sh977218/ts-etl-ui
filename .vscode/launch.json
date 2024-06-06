@@ -10,7 +10,7 @@
             "request": "launch",
             "cwd": "${workspaceRoot}/",
             "runtimeArgs": [
-                "run-script", "start"
+                "run-script", "start:development"
             ],
             "runtimeExecutable": "npm",
         },

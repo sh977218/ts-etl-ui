@@ -8,9 +8,10 @@ import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'jso
 const pr = '' || process.env.PR;
 const MONGO_USERNAME = '' || process.env.MONGO_USERNAME;
 const MONGO_PASSWORD = '' || process.env.MONGO_PASSWORD;
+const MONGO_HOSTNAME = '' || process.env.MONGO_HOSTNAME;
 
 export async function connectToMongo() {
-    const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@ts-etl-ui.oyinipt.mongodb.net/?retryWrites=true&w=majority&appName=ts-etl-ui`;
+    const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}?retryWrites=true&w=majority&appName=ts-etl-ui`;
     const client = new MongoClient(uri, {
         serverApi: {
             version: ServerApiVersion.v1,
