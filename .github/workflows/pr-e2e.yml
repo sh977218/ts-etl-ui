@@ -42,7 +42,7 @@ jobs:
         run: npm run build
 
       - name: Start Node Server - in background
-        run: npm run start &
+        run: npm run start:ci &
 
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npm run test

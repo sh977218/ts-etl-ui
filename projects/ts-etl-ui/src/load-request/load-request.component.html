@@ -3,10 +3,6 @@
     <mat-form-field>
       <mat-label>Filter by all fields</mat-label>
       <input matInput formControlName="filterTerm" placeholder="Ex. LOINC" #filterTerm>
-      <button *ngIf="filterTerm.value" matSuffix mat-icon-button aria-label="Clear"
-              (click)="onClear()">
-        <mat-icon>close</mat-icon>
-      </button>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Any Request date</mat-label>
@@ -49,7 +45,7 @@
 
 <div class="mat-elevation-z8 m-5">
   <div class="example-table-container">
-    <table mat-table [dataSource]="data" class="example-table" multiTemplateDataRows
+    <table mat-table [dataSource]="data()" class="example-table" multiTemplateDataRows
            matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc">
 
       <ng-container matColumnDef="requestId">

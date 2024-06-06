@@ -5,10 +5,11 @@ import DEFAULT_LOAD_REQUEST_DATA from './data/loadRequests.json' assert { type: 
 import DEFAULT_LOAD_REQUEST_ACTIVITY_DATA from './data/loadRequestActivities.json' assert { type: 'json' };
 import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'json' };
 
-const pr = '' || process.env.PR;
-const MONGO_USERNAME = '' || process.env.MONGO_USERNAME;
-const MONGO_PASSWORD = '' || process.env.MONGO_PASSWORD;
-const MONGO_HOSTNAME = '' || process.env.MONGO_HOSTNAME;
+const pr = process.env.PR || '';
+const MONGO_USERNAME = process.env.MONGO_USERNAME || '';
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
+const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || '';
+const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
 export async function connectToMongo() {
     const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}?retryWrites=true&w=majority&appName=ts-etl-ui`;
@@ -22,7 +23,7 @@ export async function connectToMongo() {
     await client.connect().catch(reason => {
         console.error(`Mongo connect failed: ${reason.toString()}`)
     });
-    const db = await client.db('ts-etl-ui')
+    const db = await client.db(MONGO_DBNAME)
     if (pr) {
         await restoreMongoDb(db);
     }
