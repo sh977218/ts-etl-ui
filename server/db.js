@@ -19,7 +19,9 @@ export async function connectToMongo() {
             deprecationErrors: true,
         }
     });
-    await client.connect();
+    await client.connect().catch(reason => {
+        console.error(`Mongo connect failed: ${reason.toString()}`)
+    });
     const db = await client.db('ts-etl-ui')
     if (pr) {
         await restoreMongoDb(db);
