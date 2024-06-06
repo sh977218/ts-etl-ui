@@ -28,10 +28,11 @@ export default defineConfig({
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         video: 'on',
         trace: 'on',
+        headless: !!process.env.CI,
         screenshot: 'on',
         browserName: 'chromium',
         ignoreHTTPSErrors: true,
-        baseURL: process.env.CI ? 'http://localhost:3000/' : 'http://localhost:4200'
+        baseURL: 'http://localhost:4200'
     },
 
     /* Configure projects for major browsers */
@@ -42,16 +43,16 @@ export default defineConfig({
         },
         {
             name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
+            use: {...devices['Desktop Chrome']},
         },
         {
             name: 'firefox',
-            use: { ...devices['Desktop Firefox'] },
+            use: {...devices['Desktop Firefox']},
         },
 
         {
             name: 'webkit',
-            use: { ...devices['Desktop Safari'] },
+            use: {...devices['Desktop Safari']},
         },
 
         /* Test against mobile viewports. */

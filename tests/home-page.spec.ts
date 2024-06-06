@@ -30,7 +30,7 @@ test.describe('e2e test', async () => {
         await page.goto('/');
     })
 
-    test('check flow', async ({page}) => {
+    test('check flow', async ({page, baseURL}) => {
         test.slow();
         const materialPo = new MaterialPO(page);
         // Expect a title "to contain" a substring.
@@ -44,6 +44,7 @@ test.describe('e2e test', async () => {
         await test.step('login', async () => {
             await page.getByRole('button', {name: 'Log In'}).click();
             await page.getByRole('button', {name: 'UTS'}).click();
+            await page.waitForURL(baseURL || '')
         })
 
         await test.step('Load Request Tab', async () => {
