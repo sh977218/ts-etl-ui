@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: Remove Pantry basket
+    name: Remove Mongo Collection on PR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
