@@ -24,9 +24,9 @@ export async function connectToMongo() {
         console.error(`Mongo connect failed: ${reason.toString()}`)
     });
     const db = await client.db(MONGO_DBNAME)
-//    if (pr) {
+    if (pr) {
         await restoreMongoDb(db);
-//    }
+    }
     return {
         db,
         usersCollection: db.collection(`users${pr}`),
