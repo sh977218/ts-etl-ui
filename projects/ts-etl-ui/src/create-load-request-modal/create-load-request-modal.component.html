@@ -14,15 +14,11 @@
           <mat-option value="HPO">HPO</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Code System Name</mat-label>
-        <mat-select placeholder="Type" formControlName="type">
-          <mat-option value="">Select Type</mat-option>
-          <mat-option value="regular">Regular</mat-option>
-          <mat-option value="emergency">Emergency</mat-option>
-          <mat-option value="scheduled">Scheduled</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <mat-radio-group aria-label="Select A Type" formControlName="type">
+        <mat-radio-button value="regular">Regular</mat-radio-button>
+        <mat-radio-button value="emergency">Emergency</mat-radio-button>
+        <mat-radio-button value="scheduled">Scheduled</mat-radio-button>
+      </mat-radio-group>
       <mat-form-field appearance="outline">
         <mat-label>Source File Path</mat-label>
         <input matInput placeholder="Source File Path" formControlName="sourceFilePath">
