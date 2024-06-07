@@ -19,7 +19,7 @@
         <input matInput placeholder="Request Subject" formControlName="requestSubject">
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Source File Path</mat-label>
+        <mat-label for="sourcePathFile">Source File Path</mat-label>
         <input matInput formControlName="sourceFilePath" class="hidden">
         <input type="file" #fileUpload class="hidden" (change)="onFileSelected($event)" id="sourcePathFile">
         <div class="file-upload">
