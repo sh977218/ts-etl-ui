@@ -5,6 +5,7 @@ export type LoadRequestsApiResponse={
 
 export type LoadRequest={
   requestId:string;
+  type:string;
   codeSystemName:string;
   sourceFilePath:string;
   requestSubject:string;
