@@ -15,6 +15,15 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">
+        <mat-label>Code System Name</mat-label>
+        <mat-select placeholder="Type" formControlName="type">
+          <mat-option value="">Select Type</mat-option>
+          <mat-option value="regular">Regular</mat-option>
+          <mat-option value="emergency">Emergency</mat-option>
+          <mat-option value="scheduled">Scheduled</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
         <mat-label>Source File Path</mat-label>
         <input matInput placeholder="Source File Path" formControlName="sourceFilePath">
       </mat-form-field>
