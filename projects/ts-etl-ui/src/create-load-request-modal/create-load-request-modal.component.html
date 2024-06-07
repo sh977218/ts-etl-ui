@@ -14,13 +14,21 @@
           <mat-option value="HPO">HPO</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Source File Path</mat-label>
-        <input matInput placeholder="Source File Path" formControlName="sourceFilePath">
-      </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Request Subject</mat-label>
         <input matInput placeholder="Request Subject" formControlName="requestSubject">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label for="sourcePathFile">Source File Path</mat-label>
+        <input matInput formControlName="sourceFilePath" class="hidden">
+        <input type="file" #fileUpload class="hidden" (change)="onFileSelected($event)" id="sourcePathFile">
+        <div class="file-upload">
+          {{loadRequestCreationForm.get('sourceFilePath')?.value || "No file selected yet."}}
+          <button mat-mini-fab color="primary" class="upload-btn float-right" type="button"
+                  (click)="fileUpload.click()">
+            <mat-icon>attach_file</mat-icon>
+          </button>
+        </div>
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Requester</mat-label>

@@ -49,6 +49,16 @@ export class CreateLoadRequestModalComponent {
     userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''))
   }
 
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (file) {
+        this.loadRequestCreationForm.get('sourceFilePath')?.setValue(file.name);
+      }
+    }
+  }
+
   submitCreateReloadRequest() {
     const newLoadRequest = this.loadRequestCreationForm.getRawValue();
     this.http.post('/api/loadRequest', newLoadRequest)
