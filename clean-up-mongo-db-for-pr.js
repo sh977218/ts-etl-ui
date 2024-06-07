@@ -10,5 +10,6 @@ dropMongoCollection()
         console.log(`Not all mongo db of pr ${pr} deleted: ` + e)
     })
     .finally(() => {
-        console.log('finally block')
+        console.log('finally block');
+        process.exit(0);
     })

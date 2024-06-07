@@ -1,0 +1,151 @@
+{
+  "data": [
+    {
+      "codeSystemName": "ICD10CM",
+      "title": "International Classification of Disease 10th Edition Clinical Modification",
+      "versions": [
+        {
+          "versionName": "HPO2021_10_10",
+          "status": "Draft",
+          "publishedDate": "2021/10/10",
+          "effectiveDate": "2021/10/10",
+          "availableDate": "2021/10/10",
+          "codes": [
+            {
+              "code": 1007412,
+              "name": "ambroxol / doxycycline",
+              "status": "ACTIVE",
+              "termType": "PT",
+              "isActive": "Yes"
+            },
+            {
+              "code": 1007580,
+              "name": "ambroxol / cefadroxil",
+              "status": "ACTIVE",
+              "termType": "DP",
+              "isActive": "Yes"
+            },
+            {
+              "code": 1008081,
+              "name": "ambroxol / amaxicillin",
+              "status": "ACTIVE",
+              "termType": "PT",
+              "isActive": "Yes"
+            },
+            {
+              "code": 1008406,
+              "name": "albuterol / ambroxol",
+              "status": "ACTIVE",
+              "termType": "DP",
+              "isActive": "Yes"
+            },
+            {
+              "code": 1008523,
+              "name": "ambroxol / chiophedianol",
+              "status": "ACTIVE",
+              "termType": "PT",
+              "isActive": "Yes"
+            },
+            {
+              "code": 1008668,
+              "name": "ambroxol / cephalexin",
+              "status": "ACTIVE",
+              "termType": "DP",
+              "isActive": "Yes"
+            },
+            {
+              "code": 1009036,
+              "name": "ambroxol / ampicillin",
+              "status": "ACTIVE",
+              "termType": "PT",
+              "isActive": "Yes"
+            },
+            {
+              "code": 1009134,
+              "name": "ambroxol / theophylline",
+              "status": "ACTIVE",
+              "termType": "DP",
+              "isActive": "Yes"
+            },
+            {
+              "code": 186010,
+              "name": "ambroxol-theophjylline-7-acetate",
+              "status": "ACTIVE",
+              "termType": "DP",
+              "isActive": "Yes"
+            }
+          ]
+        },
+        {
+          "versionName": "HPO2021_10_10",
+          "status": "Draft",
+          "publishedDate": "2021/10/10",
+          "effectiveDate": "2021/10/10",
+          "availableDate": "2021/10/10"
+        },
+        {
+          "versionName": "HPO2021_10_12",
+          "status": "Rejected",
+          "publishedDate": "2021/10/12",
+          "effectiveDate": "2021/10/12",
+          "availableDate": "2021/10/12"
+        },
+        {
+          "versionName": "2021",
+          "status": "Rejected",
+          "publishedDate": "2021/10/12",
+          "effectiveDate": "2021/10/12",
+          "availableDate": "2021/10/12"
+        },
+        {
+          "versionName": "HPO2021_06_08",
+          "status": "Rejected",
+          "publishedDate": "2021/06/08",
+          "effectiveDate": "2021/06/08",
+          "availableDate": "2021/06/08"
+        },
+        {
+          "versionName": "HPO2021_06_08",
+          "status": "Rejected",
+          "publishedDate": "2021/06/08",
+          "effectiveDate": "2021/06/08",
+          "availableDate": "2021/06/08"
+        },
+        {
+          "versionName": "HPO2021_10_12",
+          "status": "Rejected",
+          "publishedDate": "2021/10/12",
+          "effectiveDate": "2021/10/12",
+          "availableDate": "2021/10/12"
+        },
+        {
+          "versionName": "HPO2021_10_10",
+          "status": "Rejected",
+          "publishedDate": "2021/10/10",
+          "effectiveDate": "2021/10/10",
+          "availableDate": "2021/10/10"
+        }
+      ]
+    },
+    {
+      "codeSystemName": "ICD10PCS",
+      "title": "The International Classification of Disease Tenth Revision Procedure Coding System"
+    },
+    {
+      "codeSystemName": "MESH-CZE",
+      "title": "Medical Subject Headings (MeSH). Czech"
+    },
+    {
+      "codeSystemName": "LOINC",
+      "title": "Logical Observation Identifier Names and Codes"
+    },
+    {
+      "codeSystemName": "HPO",
+      "title": "Human Phenotype Ontology"
+    },
+    {
+      "codeSystemName": "MESH",
+      "title": "Medical Subject Headings (MeSH)."
+    }
+  ]
+}

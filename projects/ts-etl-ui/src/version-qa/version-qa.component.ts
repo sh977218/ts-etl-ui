@@ -1,5 +1,4 @@
 import {AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild} from '@angular/core';
-import {animate, state, style, transition, trigger} from '@angular/animations';
 import {NgIf} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {ReactiveFormsModule} from '@angular/forms';
@@ -20,6 +19,7 @@ import {VersionQA, VersionQAsApiResponse} from '../model/version-qa';
 import {VersionQaDataSource} from './version-qa-data-source';
 import {LoadingService} from "../loading-service";
 import {VersionQaDetailComponent} from "../version-qa-detail/version-qa-detail.component";
+import { triggerExpandTableAnimation } from "../animations";
 
 @Component({
   selector: 'app-version-qa',
@@ -41,13 +41,7 @@ import {VersionQaDetailComponent} from "../version-qa-detail/version-qa-detail.c
   ],
   templateUrl: './version-qa.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed,void', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+  animations: [triggerExpandTableAnimation],
 })
 export class VersionQaComponent implements AfterViewInit {
   displayedColumns: string[] = [
