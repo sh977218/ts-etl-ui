@@ -41,9 +41,6 @@ jobs:
       - name: Build Angular
         run: npm run build
 
-      - name: Start Node Server - in background
-        run: PR=${{ github.event.number }} npm run start:ci &
-
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npm run test
 

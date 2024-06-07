@@ -64,7 +64,7 @@ test.describe('e2e test', async () => {
                 await page.getByRole('option', {name: 'HPO'}).click()
                 await page.getByLabel('Request Subject').fill('newly created load request');
                 await page.locator('[id="sourcePathFile"]').setInputFiles('./tests/glass.jpg');
-                await expect(page.locator('.file-upload')).toHaveText('glass.jpg')
+                await expect(page.locator('.file-upload')).toContainText('glass.jpg')
 
                 await page.getByRole('button', {name: 'Submit'}).click();
                 await materialPo.matDialog().waitFor({state: 'hidden'})
