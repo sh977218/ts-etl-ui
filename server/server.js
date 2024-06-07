@@ -53,11 +53,18 @@ app.get('/api/loadRequests', async (req, res) => {
     });
 });
 
+async function getNextSequence(name) {
+    const ret = await loadRequestsCollection.countDocuments({});
+    return ret;
+}
+
 app.post('/api/loadRequest', async (req, res) => {
     const loadRequest = req.body;
-    loadRequest.requestId = randomUUID();
-    loadRequest.requestStatus = 'In Progress';
-    await loadRequestsCollection.insertOne(loadRequest)
+    await loadRequestsCollection.insertOne({
+        requestId: await getNextSequence(),
+        requestStatus: 'In Progress',
+        ...loadRequest
+    })
     res.status(200).send();
 })
 
@@ -91,8 +98,8 @@ app.post('/api/qaActivity', async (req, res) => {
 })
 
 app.get("/api/codeSystems", async (req, res) => {
-  const codeSystems = await codeSystemsCollection.find({}).toArray();
-  res.status(200).send(codeSystems);
+    const codeSystems = await codeSystemsCollection.find({}).toArray();
+    res.status(200).send(codeSystems);
 });
 
 
