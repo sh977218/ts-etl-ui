@@ -12,7 +12,7 @@ import { MatDivider } from "@angular/material/divider";
 import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
 import { HttpClient } from '@angular/common/http'
 import { tap } from 'rxjs'
-import { animate, state, style, transition, trigger } from '@angular/animations'
+import { triggerExpandTableAnimation } from "../animations";
 
 export interface RowElement {
   label: string;
@@ -21,27 +21,21 @@ export interface RowElement {
 }
 
 @Component({
-  selector: 'app-version-qa-detail',
-  standalone: true,
-  animations: [
-    trigger('detailExpand1', [
-      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
-  imports: [
-    NgSwitch,
-    NgSwitchCase,
-    NgSwitchDefault,
-    MatDialogModule,
-    MatButtonModule,
-    MatTableModule,
-    MatCardModule,
-    MatDivider,
-    VersionQaReviewModalComponent
-  ],
-  templateUrl: './version-qa-detail.component.html'
+    selector: 'app-version-qa-detail',
+    standalone: true,
+    animations: [triggerExpandTableAnimation],
+    imports: [
+        NgSwitch,
+        NgSwitchCase,
+        NgSwitchDefault,
+        MatDialogModule,
+        MatButtonModule,
+        MatTableModule,
+        MatCardModule,
+        MatDivider,
+        VersionQaReviewModalComponent
+    ],
+    templateUrl: './version-qa-detail.component.html'
 })
 export class VersionQaDetailComponent implements OnInit {
   @Input() data!: VersionQA;

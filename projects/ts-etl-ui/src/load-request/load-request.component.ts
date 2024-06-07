@@ -9,7 +9,6 @@ import {
 import { AsyncPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { saveAs } from 'file-saver';
 
 import { MatTableModule, } from '@angular/material/table';
@@ -32,6 +31,7 @@ import { AlertService } from '../alert-service';
 import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { LoadingService } from "../loading-service";
+import { triggerExpandTableAnimation } from "../animations";
 
 @Component({
     selector: 'app-load-request',
@@ -55,13 +55,7 @@ import { LoadingService } from "../loading-service";
         AsyncPipe
     ],
     templateUrl: './load-request.component.html',
-    animations: [
-        trigger('detailExpand', [
-            state('collapsed,void', style({height: '0px', minHeight: '0'})),
-            state('expanded', style({height: '*'})),
-            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-        ]),
-    ],
+    animations: [triggerExpandTableAnimation],
     schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class LoadRequestComponent implements AfterViewInit {
