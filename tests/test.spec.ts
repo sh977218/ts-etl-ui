@@ -62,7 +62,9 @@ test.describe('e2e test', async () => {
                 await page.getByRole('button', {name: 'Create Request'}).click();
                 await page.getByLabel('Code System Name').click();
                 await page.getByRole('option', {name: 'HPO'}).click()
-                await page.getByLabel('Source File Path').fill('newly/add/file/path');
+                await page.setInputFiles(`[id="sourcePathFile"]`, '/some/path');
+
+                // await page.getByLabel('Source File Path').fill('newly/add/file/path');
                 await page.getByLabel('Request Subject').fill('newly created load request');
                 await page.getByRole('button', {name: 'Submit'}).click();
                 await materialPo.matDialog().waitFor({state: 'hidden'})
