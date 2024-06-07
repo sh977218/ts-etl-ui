@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "API Mocking Server",
+            "name": "Peter Server",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceRoot}/",
@@ -15,14 +15,17 @@
             "runtimeExecutable": "npm"
         },
       {
-        "name": "API Mocking Server",
+        "name": "Christophe Server",
         "type": "node",
         "request": "launch",
         "cwd": "${workspaceRoot}/",
         "runtimeArgs": [
-          "run-script", "start:christophe"
+          "run-script", "start"
         ],
-        "runtimeExecutable": "npm"
+        "runtimeExecutable": "npm",
+        "env": {
+            "MONGO_DBNAME": "christophe"
+        }
       },
         {
             "name": "Angular CLI Server",
