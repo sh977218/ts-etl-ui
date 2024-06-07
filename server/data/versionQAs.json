@@ -10,7 +10,8 @@
       "effectiveDate": "2020-1-1",
       "availableDate": "2018-10-28",
       "requester": "hoffmantalley@zilphur.com",
-      "requestTime": "2023-12-11T07:53:17 +05:00"
+      "requestTime": "2023-12-11T07:53:17 +05:00",
+      "activityHistory": []
     }, {
       "requestId": 1,
       "loadNumber": 1000001,

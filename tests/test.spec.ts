@@ -91,9 +91,7 @@ test.describe('e2e test', async () => {
 
         await test.step('Code System Tab', async () => {
             await page.getByRole('tab', {name: 'Code System'}).click()
-
-            // @todo be implemented
-            await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(0)
+            await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0)
         })
     })
 });
