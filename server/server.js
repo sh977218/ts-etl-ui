@@ -53,15 +53,14 @@ app.get('/api/loadRequests', async (req, res) => {
     });
 });
 
-async function getNextSequence(name) {
-    const ret = await loadRequestsCollection.countDocuments({});
-    return ret;
+function getNextLoadRequestSequenceId(name) {
+    return loadRequestsCollection.countDocuments({});
 }
 
 app.post('/api/loadRequest', async (req, res) => {
     const loadRequest = req.body;
     await loadRequestsCollection.insertOne({
-        requestId: await getNextSequence(),
+        requestId: (await getNextLoadRequestSequenceId()) + 1,
         requestStatus: 'In Progress',
         ...loadRequest
     })
