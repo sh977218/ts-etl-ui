@@ -24,7 +24,7 @@ import { LoadRequestDataSource } from './load-request-data-source';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { catchError, map, merge, of, startWith, switchMap } from 'rxjs';
+import { catchError, filter, map, merge, of, startWith, Subject, switchMap } from 'rxjs';
 
 import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
 import { AlertService } from '../alert-service';
@@ -59,6 +59,7 @@ import { triggerExpandTableAnimation } from "../animations";
     schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class LoadRequestComponent implements AfterViewInit {
+    reloadAllRequests$ = new Subject();
     displayedColumns: string[] = [
         'requestId',
         'codeSystemName',
@@ -103,8 +104,10 @@ export class LoadRequestComponent implements AfterViewInit {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.searchCriteria.valueChanges.subscribe(() => this.paginator.pageIndex = 0);
 
-        // @TODO request gets called twice and causes network error. See why later.
-        merge(this.searchCriteria.valueChanges, this.sort.sortChange, this.paginator.page)
+        merge(this.reloadAllRequests$.pipe(filter(reload => !!reload)),
+            this.searchCriteria.valueChanges,
+            this.sort.sortChange,
+            this.paginator.page)
             .pipe(
                 startWith({}),
                 switchMap(() => {
@@ -133,10 +136,6 @@ export class LoadRequestComponent implements AfterViewInit {
             });
     }
 
-    onClear() {
-        this.searchCriteria.get('filterTerm')?.reset('', {emitEvent: true});
-    }
-
     openCreateLoadRequestModal() {
         this.dialog.open(CreateLoadRequestModalComponent, {
             width: '700px'
@@ -146,7 +145,7 @@ export class LoadRequestComponent implements AfterViewInit {
                 next: res => {
                     if (res === 'success') {
                         this.alertService.addAlert('info', 'Successfully created load request.')
-                        this.paginator.pageIndex = 0;
+                        this.reloadAllRequests$.next(true);
                     } else if (res === 'error') {
                         this.alertService.addAlert('danger', 'Error create load request.')
                     }
