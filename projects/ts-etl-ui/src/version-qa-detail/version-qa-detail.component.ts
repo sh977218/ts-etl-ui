@@ -1,4 +1,4 @@
-import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common'
+import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common'
 import { Component, Input, OnInit, signal, WritableSignal } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { MatButtonModule } from "@angular/material/button"
@@ -17,6 +17,7 @@ import {
 } from '../version-qa-source-data-file-modal/version-qa-source-data-file-modal.component'
 import type { VersionQA, VersionQAActivityHistory } from '../model/version-qa'
 import { triggerExpandTableAnimation } from "../animations";
+import { MatIcon } from "@angular/material/icon";
 
 export interface RowElement {
     label: string;
@@ -37,7 +38,9 @@ export interface RowElement {
         MatTableModule,
         MatCardModule,
         MatDivider,
-        VersionQaReviewModalComponent
+        VersionQaReviewModalComponent,
+        MatIcon,
+        NgIf
     ],
     templateUrl: './version-qa-detail.component.html'
 })

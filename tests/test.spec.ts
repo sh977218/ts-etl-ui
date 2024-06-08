@@ -76,7 +76,7 @@ test.describe('e2e test', async () => {
         })
     })
 
-    test.only('Version QA Tab', async ({page}) => {
+    test('Version QA Tab', async ({page}) => {
         await page.getByRole('tab', {name: 'Version QA'}).click();
 
         await expect(page.getByRole('button', {name: 'Search'})).toBeHidden();
@@ -90,8 +90,12 @@ test.describe('e2e test', async () => {
         await page.getByRole('button', { name: 'Accept' }).click();
         await page.getByPlaceholder('Notes').fill('Accepted by me');
         await page.getByRole('button', {name: 'Save'}).click();
-        const activityHistoryLastRow = page.locator('mat-card').nth(1).locator('app-version-qa-detail table tbody tr').nth(-1)
-        await activityHistoryLastRow.click();
+
+        const activityHistoryFirstRow = page.locator('mat-card-content > table')
+            .nth(1)
+            .locator('tbody tr')
+            .first()
+        await activityHistoryFirstRow.click();
         await expect(page.getByText('Accepted by me')).toBeVisible()
     })
 
