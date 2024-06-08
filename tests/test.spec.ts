@@ -89,6 +89,12 @@ test.describe('e2e test', async () => {
             await expect(page.getByRole('button', {name: 'Download'})).toBeHidden();
 
             await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0)
+            await page.getByRole('table').locator('tbody tr').first().click();
+            await page.getByRole('button', {name: 'Accept'}).click();
+            await page.getByLabel('Notes').fill('Accepted by me');
+            await page.getByRole('button', {name: 'Save'}).click();
+            await page.getByRole('table').locator('tbody tr').last().click();
+            await expect(page.getByText('Accepted by me')).toBeVisible()
         })
 
         await test.step('Code System Tab', async () => {

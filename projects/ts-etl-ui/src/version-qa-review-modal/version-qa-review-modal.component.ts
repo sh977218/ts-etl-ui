@@ -11,49 +11,62 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core'
 
+export type VersionQaReviewDataReturn = {
+    action: string;
+    availableDate: Date;
+    createdTime: Date;
+    createdBy: string;
+    notes: string;
+    tag: string;
+}
+
 @Component({
-  selector: 'app-version-qa-review-modal',
-  standalone: true,
-  providers: [provideNativeDateAdapter()],
-  imports: [
-    FormsModule,
-    NgSwitch,
-    NgSwitchCase,
-    NgSwitchDefault,
-    MatDialogModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    MatDatepickerModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './version-qa-review-modal.component.html'
+    selector: 'app-version-qa-review-modal',
+    standalone: true,
+    providers: [provideNativeDateAdapter()],
+    imports: [
+        FormsModule,
+        NgSwitch,
+        NgSwitchCase,
+        NgSwitchDefault,
+        MatDialogModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCardModule,
+        MatDatepickerModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './version-qa-review-modal.component.html'
 })
 export class VersionQaReviewModalComponent {
 
-  dataSource: { tag: string };
-  reviewForm = new FormGroup(
-    {
-      createdBy: new FormControl({ value: '', disabled: true }),
-      tag: new FormControl({ value: '', disabled: true }),
-      notes: new FormControl<string>('', [Validators.required]),
-      availableDate: new FormControl(new Date(), [Validators.required]),
-    },
-  );
+    dataSource: { tag: string };
+    reviewForm = new FormGroup(
+        {
+            createdBy: new FormControl({value: '', disabled: true}),
+            tag: new FormControl({value: '', disabled: true}),
+            notes: new FormControl<string>('', [Validators.required]),
+            availableDate: new FormControl(new Date(), [Validators.required]),
+        },
+    );
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { tag: string },
-    public dialogRef: MatDialogRef<VersionQaReviewModalComponent>,
-    public userService: UserService,
-    public dialog: MatDialog,
-  ) {
-    this.dataSource = data;
-    userService.user$.subscribe(user => this.reviewForm.get('createdBy')?.setValue(user?.utsUser.username || ''))
-    this.reviewForm.get('tag')?.setValue(this.dataSource.tag);
-  }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: { tag: string },
+                public dialogRef: MatDialogRef<VersionQaReviewModalComponent>,
+                public userService: UserService,
+                public dialog: MatDialog,
+    ) {
+        this.dataSource = data;
+        userService.user$.subscribe(user => this.reviewForm.get('createdBy')?.setValue(user?.utsUser.username || ''))
+        this.reviewForm.get('tag')?.setValue(this.dataSource.tag);
+    }
 
-  save() {
-    this.dialogRef.close(this.reviewForm.getRawValue());
-  }
+    save() {
+        this.dialogRef.close({
+            action: this.dataSource.tag,
+            createdTime: new Date(),
+            ...this.reviewForm.getRawValue()
+        } as VersionQaReviewDataReturn);
+    }
 
 }
