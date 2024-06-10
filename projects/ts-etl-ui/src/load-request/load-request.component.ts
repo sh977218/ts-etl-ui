@@ -61,6 +61,7 @@ import { triggerExpandTableAnimation } from "../animations";
 export class LoadRequestComponent implements AfterViewInit {
     displayedColumns: string[] = [
         'requestId',
+        'type',
         'codeSystemName',
         'sourceFilePath',
         'requestSubject',
