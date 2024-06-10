@@ -5,11 +5,11 @@
         <mat-label>Any Request date</mat-label>
         <mat-select placeholder="Any Request date" formControlName="requestDateType">
           <mat-option value="0">Any Request date</mat-option>
-          <mat-option value="1">Today's requests</mat-option>
-          <mat-option value="2">Requests of this week</mat-option>
-          <mat-option value="3">Requests of last week</mat-option>
-          <mat-option value="4">Requests of this month</mat-option>
-          <mat-option value="5">Requests of last month</mat-option>
+          <mat-option value="1">Today's</mat-option>
+          <mat-option value="2">This week's</mat-option>
+          <mat-option value="3">Last week's</mat-option>
+          <mat-option value="4">This month's</mat-option>
+          <mat-option value="5">Last month's</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field>
@@ -47,9 +47,7 @@
              formGroupName="filters">
 
         <ng-container matColumnDef="requestId">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-            Request ID
-          </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Request ID</th>
           <td mat-cell *matCellDef="let row">{{row.requestId}}</td>
         </ng-container>
 
@@ -169,5 +167,4 @@
     <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50, 100]" [pageSize]="10"
                    aria-label="Select page of load requests"></mat-paginator>
   </div>
-
 </form>

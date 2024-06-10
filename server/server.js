@@ -26,7 +26,7 @@ const {
 app.get('/api/loadRequests', async (req, res) => {
   const {requestId, sort, order, pageNumber, pageSize} = req.query;
   const $match = {};
-  if (requestId) {
+  if (requestId !== "null") {
     // $or/$and will be used for multiple fields search, the logic will be decided later
     const $or = [];
     const $and = [];

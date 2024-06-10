@@ -86,7 +86,7 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      filters: new FormGroup({requestId: new FormControl('')}),
+      filters: new FormGroup({requestId: new FormControl()}),
       requestDateType: new FormControl(0),
       requestType: new FormControl(0),
     }, {updateOn: 'submit',}
