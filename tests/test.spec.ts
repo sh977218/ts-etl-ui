@@ -65,7 +65,10 @@ test.describe('e2e test', async () => {
        */
       await matDialog.getByRole('radio', {name: 'Regular'}).check();
       await matDialog.getByLabel('Code System Name').click();
-      await matDialog.getByRole('option', {name: 'HPO'}).click()
+      /**
+       * mat-option is not attached to modal, it appends to end of app root tag, so using page instead of `matDialog`.
+       */
+      await page.getByRole('option', {name: 'HPO'}).click()
       await matDialog.getByLabel('Request Subject').fill('newly created load request');
       await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/glass.jpg');
       await expect(matDialog.locator('.file-upload')).toContainText('glass.jpg')
