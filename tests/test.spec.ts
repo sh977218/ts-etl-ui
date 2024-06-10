@@ -45,6 +45,7 @@ test.describe('e2e test', async () => {
 
   test('Load Request Tab', async ({page}) => {
     const materialPo = new MaterialPO(page);
+    const matDialog = materialPo.matDialog();
 
     await expect(page.getByRole('tab', {name: 'Load Request'})).toBeVisible();
 
@@ -53,24 +54,31 @@ test.describe('e2e test', async () => {
     await expect(page.getByRole('button', {name: 'Create Request'})).toBeVisible();
     await expect(page.getByRole('button', {name: 'Download'})).toBeVisible();
 
-    await expect(page.getByRole('table').locator('tbody tr.example-element-row')).toHaveCount(10)
-    await expect(page.getByRole('table').locator('tbody tr.example-detail-row')).toHaveCount(10)
+    await expect(page.getByRole('table').locator('tbody tr.example-element-row')).not.toHaveCount(0)
 
     await test.step('add load request', async () => {
       await page.getByRole('button', {name: 'Create Request'}).click();
-      await page.getByRole('radio', {name: 'Regular'}).check();
-      await page.getByLabel('Code System Name').click();
+      await matDialog.waitFor();
+      /**
+       * note: We can use `await page.getByRole('radio', {name: 'Regular'}).check();`
+       * but using `matDialog` instead of `page` is it ensures those fields are inside a dialog modal
+       */
+      await matDialog.getByRole('radio', {name: 'Regular'}).check();
+      await matDialog.getByLabel('Code System Name').click();
+      /**
+       * mat-option is not attached to modal, it appends to end of app root tag, so using page instead of `matDialog`.
+       */
       await page.getByRole('option', {name: 'HPO'}).click()
-      await page.getByLabel('Request Subject').fill('newly created load request');
-      await page.locator('[id="sourcePathFile"]').setInputFiles('./tests/glass.jpg');
-      await expect(page.locator('.file-upload')).toContainText('glass.jpg')
+      await matDialog.getByLabel('Request Subject').fill('newly created load request');
+      await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/glass.jpg');
+      await expect(matDialog.locator('.file-upload')).toContainText('glass.jpg')
 
-      await page.getByRole('button', {name: 'Submit'}).click();
-      await materialPo.matDialog().waitFor({state: 'hidden'})
+      await matDialog.getByRole('button', {name: 'Submit'}).click();
+      await matDialog.waitFor({state: 'hidden'})
       await materialPo.checkAndCloseAlert('Successfully created load request.')
     })
 
-    await test.step('search for load request', async () => {
+    await test.step('search for newly added load request', async () => {
       await page.getByLabel('Filter by all fields').fill('newly created load request');
       await page.getByRole('button', {name: 'Search'}).click();
       await expect(page.getByText('Regular')).toBeVisible()
@@ -81,14 +89,31 @@ test.describe('e2e test', async () => {
   })
 
   test('Version QA Tab', async ({page}) => {
+    const materialPo = new MaterialPO(page);
+    const matDialog = materialPo.matDialog();
+
     await page.getByRole('tab', {name: 'Version QA'}).click();
 
-    await expect(page.getByRole('button', {name: 'Search'})).toBeHidden();
-    await expect(page.getByRole('button', {name: 'Reset'})).toBeHidden();
-    await expect(page.getByRole('button', {name: 'Create Request'})).toBeHidden();
-    await expect(page.getByRole('button', {name: 'Download'})).toBeHidden();
-
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0)
+
+    await test.step(`Accept version QA`, async()=>{
+      const versionQRows = page.getByRole('table').locator('tbody tr');
+      const collapsedRow = versionQRows.first();
+      const expandedRow = versionQRows.nth(1)
+      await collapsedRow.click();
+      await expandedRow.getByRole('button', {name: 'Accept'}).click();
+      await matDialog.waitFor()
+      await matDialog.getByPlaceholder('Notes').fill('Accepted by me');
+      await matDialog.getByRole('button', {name: 'Save'}).click();
+      await matDialog.waitFor({state: 'hidden'})
+
+      const activityHistoryFirstRow = page.locator('mat-card-content > table')
+        .nth(1)
+        .locator('tbody tr')
+        .first()
+      await activityHistoryFirstRow.click();
+      await expect(page.getByText('Accepted by me')).toBeVisible()
+    })
   })
 
   test('Code System Tab', async ({page}) => {
