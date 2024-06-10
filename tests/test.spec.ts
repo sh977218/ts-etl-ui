@@ -80,7 +80,7 @@ test.describe('e2e test', async () => {
     })
   })
 
-  test('Version QA Tab', async ({page}) => {
+  test.only('Version QA Tab', async ({page}) => {
     await page.getByRole('tab', {name: 'Version QA'}).click();
 
     await expect(page.getByRole('button', {name: 'Search'})).toBeHidden();
@@ -91,7 +91,7 @@ test.describe('e2e test', async () => {
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0)
     const versionQRows = page.getByRole('table').locator('tbody tr').first()
     await versionQRows.first().click();
-    await page.getByRole('button', { name: 'Accept' }).click();
+    await page.getByRole('button', { name: 'Accept' }).locator('visible=true').click();
     await page.getByPlaceholder('Notes').fill('Accepted by me');
     await page.getByRole('button', {name: 'Save'}).click();
 
