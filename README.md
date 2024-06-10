@@ -28,7 +28,7 @@ You can pass `RESET_DB=true` to reset MongoDB to `/server/data/`
 Run `npm run start` to start NodeJS mocking api server
 
 ## Running test
-Using `test.only()` to only run desired tests
+Add `@debug` to desired test
 Run `npm run test:debug` to start debug those tests
 
 ## Auto deploy latest master branch to render.com

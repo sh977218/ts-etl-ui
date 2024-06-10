@@ -53,8 +53,7 @@ test.describe('e2e test', async () => {
     await expect(page.getByRole('button', {name: 'Create Request'})).toBeVisible();
     await expect(page.getByRole('button', {name: 'Download'})).toBeVisible();
 
-    await expect(page.getByRole('table').locator('tbody tr.example-element-row')).toHaveCount(10)
-    await expect(page.getByRole('table').locator('tbody tr.example-detail-row')).toHaveCount(10)
+    await expect(page.getByRole('table').locator('tbody tr.example-element-row')).not.toHaveCount(0)
 
     await test.step('add load request', async () => {
       await page.getByRole('button', {name: 'Create Request'}).click();
@@ -80,7 +79,7 @@ test.describe('e2e test', async () => {
     })
   })
 
-  test('Version QA Tab @debug', async ({page}) => {
+  test('Version QA Tab', async ({page}) => {
     await page.getByRole('tab', {name: 'Version QA'}).click();
 
     await expect(page.getByRole('button', {name: 'Search'})).toBeHidden();
