@@ -12,6 +12,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { tap } from 'rxjs';
 
 import { UserService } from '../user-service';
+import { MatListModule } from "@angular/material/list";
 
 @Component({
   standalone: true,
@@ -28,6 +29,7 @@ import { UserService } from '../user-service';
     MatInputModule,
     MatSelectModule,
     MatIconModule,
+    MatListModule
   ],
   templateUrl: './create-load-request-modal.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
@@ -35,6 +37,7 @@ import { UserService } from '../user-service';
 export class CreateLoadRequestModalComponent {
   loadRequestCreationForm = new FormGroup(
     {
+      type: new FormControl<string>('', [Validators.required]),
       codeSystemName: new FormControl<string>('', [Validators.required]),
       sourceFilePath: new FormControl<string>('', [Validators.required]),
       requestSubject: new FormControl<string>('', [Validators.required]),

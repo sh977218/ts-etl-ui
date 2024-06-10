@@ -1,13 +1,14 @@
   <div class="example-sidenav-content mx-5">
-      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" fitInkBarToContent>
-        <mat-tab label="Load Request">
-          <app-load-request></app-load-request>
+      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start"
+                     fitInkBarToContent>
+        <mat-tab label="Load Request" #tab1>
+          <app-load-request *ngIf="tab1.isActive"></app-load-request>
         </mat-tab>
-        <mat-tab label="Version QA">
-          <app-version-qa></app-version-qa>
+        <mat-tab label="Version QA" #tab2>
+          <app-version-qa *ngIf="tab2.isActive"></app-version-qa>
         </mat-tab>
-        <mat-tab label="Code System">
-          <app-code-system></app-code-system>
+        <mat-tab label="Code System" #tab3>
+          <app-code-system *ngIf="tab3.isActive"></app-code-system>
         </mat-tab>
       </mat-tab-group>
   </div>

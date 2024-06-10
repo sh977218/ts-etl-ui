@@ -62,6 +62,7 @@ export class LoadRequestComponent implements AfterViewInit {
     reloadAllRequests$ = new Subject();
     displayedColumns: string[] = [
         'requestId',
+        'type',
         'codeSystemName',
         'sourceFilePath',
         'requestSubject',
