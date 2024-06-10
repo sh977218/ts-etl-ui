@@ -64,7 +64,7 @@ app.post('/api/loadRequest', async (req, res) => {
         requestStatus: 'In Progress',
         ...loadRequest
     })
-    res.status(200).send();
+    res.send();
 })
 
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
@@ -75,7 +75,7 @@ app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
 
 app.get("/api/versionQAs", async (req, res) => {
     const versionQAs = await versionQAsCollection.find({}).toArray();
-    res.status(200).send({
+    res.send({
         total_count: versionQAs.length,
         items: versionQAs,
     });
@@ -98,7 +98,7 @@ app.post('/api/qaActivity', async (req, res) => {
 
 app.get("/api/codeSystems", async (req, res) => {
     const codeSystems = await codeSystemsCollection.find({}).toArray();
-    res.status(200).send(codeSystems);
+    res.send(codeSystems);
 });
 
 
