@@ -2,7 +2,6 @@ import express from 'express';
 import fs from 'fs';
 
 import { mongoInit } from './db.js';
-import _ from 'lodash';
 
 const DEFAULT_FILE_FOLDER = 'server/data/'
 
@@ -24,17 +23,16 @@ const {
   console.log(`Mongo connect failed ${err.toString()}`)
 });
 
-app.post('/api/loadRequests', async (req, res) => {
-  const {q, filters, sort, order, pageNumber, pageSize} = req.body;
+app.get('/api/loadRequests', async (req, res) => {
+  const {requestId, sort, order, pageNumber, pageSize} = req.query;
   const $match = {};
-  const {requestId} = filters;
-  if (requestId || requestId === 0) {
+  if (requestId) {
     // $or/$and will be used for multiple fields search, the logic will be decided later
     const $or = [];
     const $and = [];
     $or.push();
     $and.push();
-    $match.requestId = requestId
+    $match.requestId = Number.parseInt(requestId)
   }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;

@@ -86,7 +86,6 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      filterTerm: new FormControl(''),
       filters: new FormGroup({requestId: new FormControl('')}),
       requestDateType: new FormControl(0),
       requestType: new FormControl(0),
@@ -114,14 +113,13 @@ export class LoadRequestComponent implements AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.loadingService.showLoading();
-          const filter = this.searchCriteria.get('filterTerm')?.getRawValue() || '';
           const filters = this.searchCriteria.get('filters')?.getRawValue() || '';
           const sort = this.sort.active;
           const order = this.sort.direction;
           const pageNumber = this.paginator.pageIndex;
           const pageSize = this.paginator.pageSize
           return this.loadRequestDatabase!.getLoadRequests(
-            filter.trim(), filters, sort, order, pageNumber, pageSize
+            filters, sort, order, pageNumber, pageSize
           ).pipe(catchError(() => of(null)));
         }),
         map((data: LoadRequestsApiResponse | null) => {
