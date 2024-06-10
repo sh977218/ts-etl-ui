@@ -60,6 +60,7 @@ test.describe('e2e test', async () => {
 
             await test.step('add load request', async () => {
                 await page.getByRole('button', {name: 'Create Request'}).click();
+                await page.getByRole('radio', {name: 'Regular'}).check();
                 await page.getByLabel('Code System Name').click();
                 await page.getByRole('option', {name: 'HPO'}).click()
                 await page.getByLabel('Request Subject').fill('newly created load request');
@@ -74,6 +75,7 @@ test.describe('e2e test', async () => {
             await test.step('search for load request', async () => {
                 await page.getByLabel('Filter by all fields').fill('newly created load request');
                 await page.getByRole('button', {name: 'Search'}).click();
+                await expect(page.getByText('Regular')).toBeVisible()
                 await expect(page.getByText('glass.jpg')).toBeVisible()
                 await expect(page.getByText('HPO')).toBeVisible()
                 await expect(page.getByText('newly created load request')).toBeVisible()

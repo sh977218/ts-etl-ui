@@ -1,51 +1,58 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Peter Server",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceRoot}/",
-            "runtimeArgs": [
-                "run-script", "start:peter"
-            ],
-            "runtimeExecutable": "npm"
-        },
-      {
-        "name": "Christophe Server",
-        "type": "node",
-        "request": "launch",
-        "cwd": "${workspaceRoot}/",
-        "runtimeArgs": [
-          "run-script", "start"
-        ],
-        "runtimeExecutable": "npm",
-        "env": {
-            "MONGO_DBNAME": "christophe"
-        }
-      },
-        {
-            "name": "Angular CLI Server",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceRoot}/",
-            "runtimeArgs": [
-                "run-script", "serve"
-            ],
-            "runtimeExecutable": "npm"
-        },
-        {
-            "name": "Debug Playwright Test",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceRoot}/",
-            "runtimeArgs": [
-                "run-script", "test:debug"
-            ],
-            "runtimeExecutable": "npm"
-        },
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Peter Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/",
+      "runtimeArgs": [
+        "run-script",
+        "start"
+      ],
+      "runtimeExecutable": "npm",
+      "env": {
+        "MONGO_DBNAME": "peter"
+      }
+    },
+    {
+      "name": "Christophe Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/",
+      "runtimeArgs": [
+        "run-script",
+        "start"
+      ],
+      "runtimeExecutable": "npm",
+      "env": {
+        "MONGO_DBNAME": "christophe"
+      }
+    },
+    {
+      "name": "Angular CLI Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/",
+      "runtimeArgs": [
+        "run-script",
+        "serve"
+      ],
+      "runtimeExecutable": "npm"
+    },
+    {
+      "name": "Debug Playwright Test",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/",
+      "runtimeArgs": [
+        "run-script",
+        "test:debug"
+      ],
+      "runtimeExecutable": "npm"
+    }
+  ]
 }
