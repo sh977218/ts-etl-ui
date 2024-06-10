@@ -80,7 +80,7 @@ test.describe('e2e test', async () => {
     })
   })
 
-  test('Version QA Tab', async ({page}) => {
+  test('Version QA Tab @debug', async ({page}) => {
     await page.getByRole('tab', {name: 'Version QA'}).click();
 
     await expect(page.getByRole('button', {name: 'Search'})).toBeHidden();
