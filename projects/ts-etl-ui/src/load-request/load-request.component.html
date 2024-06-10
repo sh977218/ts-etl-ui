@@ -47,17 +47,16 @@
              formGroupName="filters">
 
         <ng-container matColumnDef="requestId">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Request ID</th>
-          <td mat-cell *matCellDef="let row">{{row.requestId}}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="request-id-filter">
           <th mat-header-cell *matHeaderCellDef>
-            <mat-form-field>
-              <mat-label>Filter Request ID</mat-label>
-              <input matInput formControlName="requestId" placeholder="Ex. 152" type="number">
-            </mat-form-field>
+            <div class="flex flex-col m-2">
+              <span class="m-2" mat-sort-header disableClear>Request ID</span>
+              <mat-form-field floatLabel="auto">
+                <mat-label>Filter Request ID</mat-label>
+                <input matInput formControlName="requestId" placeholder="Ex. 152" type="number">
+              </mat-form-field>
+            </div>
           </th>
+          <td mat-cell *matCellDef="let row">{{row.requestId}}</td>
         </ng-container>
 
         <ng-container matColumnDef="type">
@@ -147,9 +146,6 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
-        <tr mat-header-row *matHeaderRowDef="['request-id-filter']"
-            class="example-second-header-row">
-        </tr>
 
         <tr mat-row *matRowDef="let row; columns: columnsToDisplayWithExpand;"
             class="example-element-row"
