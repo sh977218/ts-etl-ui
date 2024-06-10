@@ -7,19 +7,19 @@ export class LoadRequestDataSource {
   }
 
   getLoadRequests(filter: string = '',
+                  filters = [],
                   sort: string = 'requestId',
                   order: SortDirection = 'asc',
                   pageNumber: number = 0,
-                  pageSize:number = 10) {
-    const params = {
+                  pageSize: number = 10) {
+    const body = {
       q: filter,
+      filters,
       sort,
       order,
       pageNumber,
       pageSize
     }
-    return this._httpClient.get<LoadRequestsApiResponse>('/api/loadRequests', {
-      params
-    });
+    return this._httpClient.post<LoadRequestsApiResponse>('/api/loadRequests', body);
   }
 }
