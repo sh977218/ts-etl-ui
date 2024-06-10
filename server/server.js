@@ -53,12 +53,18 @@ app.get('/api/loadRequests', async (req, res) => {
     });
 });
 
+function getNextLoadRequestSequenceId(name) {
+    return loadRequestsCollection.countDocuments({});
+}
+
 app.post('/api/loadRequest', async (req, res) => {
     const loadRequest = req.body;
-    loadRequest.requestId = randomUUID();
-    loadRequest.requestStatus = 'In Progress';
-    await loadRequestsCollection.insertOne(loadRequest)
-    res.status(200).send();
+    await loadRequestsCollection.insertOne({
+        requestId: (await getNextLoadRequestSequenceId()) + 1,
+        requestStatus: 'In Progress',
+        ...loadRequest
+    })
+    res.send();
 })
 
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
@@ -69,7 +75,7 @@ app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
 
 app.get("/api/versionQAs", async (req, res) => {
     const versionQAs = await versionQAsCollection.find({}).toArray();
-    res.status(200).send({
+    res.send({
         total_count: versionQAs.length,
         items: versionQAs,
     });
@@ -91,8 +97,8 @@ app.post('/api/qaActivity', async (req, res) => {
 })
 
 app.get("/api/codeSystems", async (req, res) => {
-  const codeSystems = await codeSystemsCollection.find({}).toArray();
-  res.status(200).send(codeSystems);
+    const codeSystems = await codeSystemsCollection.find({}).toArray();
+    res.send(codeSystems);
 });
 
 
