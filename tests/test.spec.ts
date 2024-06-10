@@ -79,7 +79,7 @@ test.describe('e2e test', async () => {
     })
 
     await test.step('search for newly added load request', async () => {
-      await page.getByLabel('Filter by all fields').fill('newly created load request');
+      await page.getByLabel('Filter Request ID').fill('149');
       await page.getByRole('button', {name: 'Search'}).click();
       await expect(page.getByText('Regular')).toBeVisible()
       await expect(page.getByText('glass.jpg')).toBeVisible()
