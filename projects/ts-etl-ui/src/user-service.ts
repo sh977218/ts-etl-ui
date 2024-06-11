@@ -10,9 +10,14 @@ import { Router } from '@angular/router';
 export class UserService {
   private _user$ = new BehaviorSubject<User | null>(null);
 
+
   constructor(public http: HttpClient,
               public router: Router,
               public alertService: AlertService) {
+    const locUser = localStorage.getItem('user');
+    if (locUser) {
+      this._user$.next(JSON.parse(locUser));
+    }
   }
 
   get user$() {
@@ -28,8 +33,8 @@ export class UserService {
       .pipe(
         tap({
           next: (res) => {
-            this.alertService.addAlert('danger', 'logged in');
             this._user$.next(res);
+            localStorage.setItem('user', JSON.stringify(res));
             this.router.navigate(['/'])
           },
           error: () => {
@@ -43,5 +48,6 @@ export class UserService {
 
   logOut() {
     this._user$.next(null);
+    localStorage.removeItem('user');
   }
 }

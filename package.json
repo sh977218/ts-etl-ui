@@ -1,19 +1,24 @@
 {
   "name": "ts-etl-ui",
-  "version": "0.0.0",
+  "version": "0.0.6",
+  "type": "module",
+  "main": "server/server.js",
   "scripts": {
     "ng": "ng",
     "serve": "ng serve",
-    "start": "node server/server.js",
-    "build": "ng build",
+    "start": "node --env-file .prod.env server/server.js",
+    "start:ci": "node --env-file .ci.env server/server.js",
+    "prebuild": "npm --no-git-tag-version version patch",
+    "build": "ng build -c development && node insert-commit-hash.js",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "playwright test --project=chromium",
+    "test:debug": "playwright test --project=debug --debug",
     "prepare": "husky"
   },
   "private": true,
   "engines": {
-    "node": ">=18",
-    "npm": ">=9"
+    "node": ">=20 <21",
+    "npm": ">=10"
   },
   "dependencies": {
     "@angular/animations": "^17.0.3",
@@ -27,6 +32,9 @@
     "@angular/platform-browser-dynamic": "^17.0.3",
     "@angular/router": "^17.0.3",
     "express": "^4.19.2",
+    "file-saver": "^2.0.5",
+    "mongodb": "^6.7.0",
+    "node-fetch": "^3.3.2",
     "rxjs": "~7.5.0"
   },
   "devDependencies": {
@@ -40,6 +48,9 @@
     "@angular/cli": "~17.0.1",
     "@angular/compiler-cli": "^17.0.3",
     "@angular/material": "^17.0.1",
+    "@playwright/test": "^1.44.0",
+    "@types/file-saver": "^2.0.7",
+    "@types/node": "^20.12.12",
     "@typescript-eslint/eslint-plugin": "^7.9.0",
     "@typescript-eslint/parser": "^7.9.0",
     "autoprefixer": "^10.4.19",

@@ -1,20 +1,58 @@
 {
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "ng serve",
-      "type": "chrome",
+      "name": "Peter Server",
+      "type": "node",
       "request": "launch",
-      "preLaunchTask": "npm: start",
-      "url": "http://localhost:4200/"
+      "cwd": "${workspaceRoot}/",
+      "runtimeArgs": [
+        "run-script",
+        "start"
+      ],
+      "runtimeExecutable": "npm",
+      "env": {
+        "MONGO_DBNAME": "peter"
+      }
     },
     {
-      "name": "ng test",
-      "type": "chrome",
+      "name": "Christophe Server",
+      "type": "node",
       "request": "launch",
-      "preLaunchTask": "npm: test",
-      "url": "http://localhost:9876/debug.html"
+      "cwd": "${workspaceRoot}/",
+      "runtimeArgs": [
+        "run-script",
+        "start"
+      ],
+      "runtimeExecutable": "npm",
+      "env": {
+        "MONGO_DBNAME": "christophe"
+      }
+    },
+    {
+      "name": "Angular CLI Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/",
+      "runtimeArgs": [
+        "run-script",
+        "serve"
+      ],
+      "runtimeExecutable": "npm"
+    },
+    {
+      "name": "Debug Playwright Test",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/",
+      "runtimeArgs": [
+        "run-script",
+        "test:debug"
+      ],
+      "runtimeExecutable": "npm"
     }
   ]
 }

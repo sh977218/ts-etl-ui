@@ -1,37 +1,31 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle
-} from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
-import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { MatInput, MatInputModule } from '@angular/material/input';
-import { MatOption, MatSelect, MatSelectModule } from '@angular/material/select';
+import { HttpClient } from '@angular/common/http';
+import { MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
+import { tap } from 'rxjs';
 
 import { UserService } from '../user-service';
-import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { MatListModule } from "@angular/material/list";
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { NgIf } from '@angular/common';
 
 @Component({
   standalone: true,
+  providers: [provideNativeDateAdapter()],
   imports: [
-    MatDialogModule,
-    MatButton,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    MatFormField,
-    MatIcon,
-    MatInput,
+    FormsModule,
     ReactiveFormsModule,
-    FormsModule,
-    MatSelect,
-    MatOption,
-    FormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatDialogModule,
     ReactiveFormsModule,
     MatCheckboxModule,
     MatRadioModule,
@@ -39,27 +33,53 @@ import { tap } from 'rxjs';
     MatInputModule,
     MatSelectModule,
     MatIconModule,
+    MatListModule,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    NgIf,
   ],
   templateUrl: './create-load-request-modal.component.html',
-  styleUrl: './create-load-request-modal.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
-export class CreateLoadRequestModalComponent {
+export class CreateLoadRequestModalComponent implements AfterViewInit {
   loadRequestCreationForm = new FormGroup(
     {
+      type: new FormControl<string>('', [Validators.required]),
       codeSystemName: new FormControl<string>('', [Validators.required]),
       sourceFilePath: new FormControl<string>('', [Validators.required]),
       requestSubject: new FormControl<string>('', [Validators.required]),
       requester: new FormControl({value: '', disabled: true}),
-      requestDate: new FormControl({value: new Date(), disabled: true})
+      requestTime: new FormControl({value: new Date(), disabled: true}),
+      scheduleDate: new FormControl({value: '', disabled: false}),
     },
-    {updateOn: 'submit'}
   );
 
   constructor(public http: HttpClient,
               public dialogRef: MatDialogRef<CreateLoadRequestModalComponent>,
               public userService: UserService) {
     userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''))
+  }
+
+  ngAfterViewInit() {
+    this.loadRequestCreationForm.get('type')!.valueChanges.subscribe(value => {
+      if (value === 'scheduled') {
+        this.loadRequestCreationForm.get('scheduleDate')?.setValidators([Validators.required]);
+      } else {
+        this.loadRequestCreationForm.get('scheduleDate')?.clearValidators();
+      }
+      this.loadRequestCreationForm.get('scheduleDate')?.updateValueAndValidity();
+    });
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (file) {
+        this.loadRequestCreationForm.get('sourceFilePath')?.setValue(file.name);
+      }
+    }
   }
 
   submitCreateReloadRequest() {

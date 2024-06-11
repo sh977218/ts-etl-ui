@@ -1,98 +1,122 @@
-const express = require('express')
+import express from 'express';
+import fs from 'fs';
+
+import { mongoInit } from './db.js';
+
+const DEFAULT_FILE_FOLDER = 'server/data/'
+
 const app = express()
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+
 app.use(express.static('dist/ts-etl-ui/browser'))
 
-const userData = require('./data/user.json');
-const loadRequests = require('./data/loadRequests.json');
-const loadRequestActivities = require('./data/loadRequestActivities.json');
-
-function filterByFieldsFunc(obj, term, fields) {
-  let found = false;
-  if (!fields) {
-    fields = Object.keys(obj)
-  }
-  for (const k of fields) {
-    const v = obj[k].toString();
-    if (v.includes && v.includes(term)) {
-      found = true;
-    }
-  }
-  return !term || found;
-}
-
-function sortByFieldFunc(obj1, obj2, sort, order) {
-  const value1 = obj1[sort];
-  const value2 = obj2[sort];
-  if (typeof value1 === 'number' && typeof value2 === 'number') {
-    if (order === 'asc') {
-      return obj1[sort] - obj2[sort];
-    } else {
-      return obj2[sort] - obj1[sort]
-    }
-  } else {
-    if (order === 'asc') {
-      return obj1[sort].toString().localeCompare(obj2[sort].toString())
-    } else {
-      return obj2[sort].toString().localeCompare(obj1[sort].toString())
-    }
-  }
-}
-
-function calculate(originalArray, term, sort, order, pageNumber, pageSize) {
-  const filteredArray = originalArray.filter(obj => {
-    return filterByFieldsFunc(obj, term)
-  })
-  const sortedArray = filteredArray.sort((a, b) => {
-    return sortByFieldFunc(a, b, sort, order)
-  })
-
-  const startPos = pageNumber * pageSize;
-  const endPos = (pageNumber + 1) * pageSize
-  const paginatedArray = sortedArray.slice(startPos, endPos)
-  return paginatedArray
-}
-
-function formatResponse(originalArray, paginatedArray) {
-  return {
-    total_count: originalArray.length,
-    items: paginatedArray,
-  }
-}
-
-app.get('/api/loadRequests', (req, res) => {
-  const {q, sort, order, pageNumber, pageSize} = req.query;
-  const paginatedArray = calculate(loadRequests, q, sort, order, Number.parseInt(pageNumber), Number.parseInt(pageSize))
-
-  // simulating a delay network to test application's resilience
-  setTimeout(() => {
-    res.status(200).send(formatResponse(loadRequests, paginatedArray));
-  }, 1000)
+const {
+  db,
+  usersCollection,
+  loadRequestsCollection,
+  loadRequestActivitiesCollection,
+  versionQAsCollection,
+  codeSystemsCollection
+} = await mongoInit().catch(err => {
+  console.log(`Mongo connect failed ${err.toString()}`)
 });
 
-app.post('/api/loadRequest', (req, res) => {
-  const loadRequest = req.body;
-  loadRequest.requestId = loadRequests.length;
-  loadRequests.push(loadRequest);
-  res.status(200).send();
-})
-
-app.get('/api/loadRequestActivities/:requestId', (req, res) => {
-  const requestId = Number.parseInt(req.params.requestId);
-  const filteredLoadRequestActivities = loadRequestActivities.filter(loadRequestActivity => loadRequestActivity.requestId === requestId)
-  if (filteredLoadRequestActivities.length) {
-    res.status(200).send(filteredLoadRequestActivities);
-  } else {
-    res.status(404).send();
+app.get('/api/loadRequests', async (req, res) => {
+  const {requestId, sort, order, pageNumber, pageSize} = req.query;
+  const $match = {};
+  if (requestId !== "null") {
+    // $or/$and will be used for multiple fields search, the logic will be decided later
+    const $or = [];
+    const $and = [];
+    $or.push();
+    $and.push();
+    $match.requestId = Number.parseInt(requestId)
   }
+  const $sort = {};
+  $sort[sort] = order === 'asc' ? 1 : -1;
+  const pageNumberInt = Number.parseInt(pageNumber);
+  const pageSizeInt = Number.parseInt(pageSize);
+  const aggregation = [
+    {$match},
+    {$sort},
+    {$skip: pageNumberInt * pageSizeInt},
+    {$limit: pageSizeInt}
+  ]
+  const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
+  res.send({
+    total_count: await loadRequestsCollection.countDocuments(),
+    items: loadRequests,
+  });
+})
+;
+
+function getNextLoadRequestSequenceId(name) {
+  return loadRequestsCollection.countDocuments({});
+}
+
+app.post('/api/loadRequest', async (req, res) => {
+  const loadRequest = req.body;
+  await loadRequestsCollection.insertOne({
+    requestId: (await getNextLoadRequestSequenceId()) + 1,
+    requestStatus: 'In Progress',
+    ...loadRequest
+  })
+  res.send();
 })
 
-// if you need to login as different user, create an endpoint to change this response (later)
-app.get('/api/serviceValidate', (req, res) => {
-  res.send(userData.data.users[0]);
+app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
+  const requestId = Number.parseInt(req.params.requestId);
+  const loadRequestActivity = await loadRequestActivitiesCollection.findOne({requestId})
+  res.send(loadRequestActivity);
 })
+
+app.get("/api/versionQAs", async (req, res) => {
+  const versionQAs = await versionQAsCollection.find({}).toArray();
+  res.send({
+    total_count: versionQAs.length,
+    items: versionQAs,
+  });
+});
+
+app.get("/api/file/:id", (req, res) => {
+  const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
+  const fileContent = fs.readFileSync(fileLocation);
+  res.send(fileContent)
+});
+
+app.post('/api/qaActivity', async (req, res) => {
+  await versionQAsCollection.updateOne({requestId: req.body.requestId}, {
+    $push: {
+      activityHistory: req.body.qaActivity
+    }
+  });
+  res.send();
+})
+
+app.get("/api/codeSystems", async (req, res) => {
+  const codeSystems = await codeSystemsCollection.find({}).toArray();
+  res.send(codeSystems);
+});
+
+
+// in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
+app.get('/api/serviceValidate', async (req, res) => {
+  if (req.query.ticket.includes('anything')) {
+    const user = await usersCollection.findOne({});
+    res.send(user);
+    return
+  }
+  const user = await usersCollection.findOne({'utsUser.username': req.query.ticket});
+  res.send(user);
+})
+
+app.use((req, res, next) => {
+  res.writeHead(200, {'content-type': 'text/html'})
+  fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res)
+});
+
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
