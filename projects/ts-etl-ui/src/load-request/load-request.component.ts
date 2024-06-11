@@ -98,14 +98,12 @@ export class LoadRequestComponent implements AfterViewInit {
     }, {updateOn: 'submit',}
   );
 
-  isXLargeScreen$;
-
   constructor(private _httpClient: HttpClient,
               public dialog: MatDialog,
               private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
               public alertService: AlertService) {
-    this.isXLargeScreen$ = breakpointObserver
+    breakpointObserver
       .observe([
         Breakpoints.Large,
         Breakpoints.XLarge,
