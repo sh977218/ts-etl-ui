@@ -1,158 +1,166 @@
-<div class="flex justify-between mx-5">
-  <form [formGroup]="searchCriteria" class="flex justify-between">
-    <mat-form-field>
-      <mat-label>Filter by all fields</mat-label>
-      <input matInput formControlName="filterTerm" placeholder="Ex. LOINC" #filterTerm>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Any Request date</mat-label>
-      <mat-select placeholder="Any Request date" formControlName="requestDateType">
-        <mat-option value="0">Any Request date</mat-option>
-        <mat-option value="1">Today's</mat-option>
-        <mat-option value="2">This week's</mat-option>
-        <mat-option value="3">Last week's</mat-option>
-        <mat-option value="4">This month's</mat-option>
-        <mat-option value="5">Last month's</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>All Requests</mat-label>
-      <mat-select placeholder="All Requests" formControlName="requestType">
-        <mat-option value="0">All Requests</mat-option>
-        <mat-option value="1">My Requests</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button mat-fab extended color="primary" type="submit">
-      <mat-icon fontIcon="search"></mat-icon>
-      Search
-    </button>
-    <button mat-fab extended type="reset">
-      <mat-icon fontIcon="clear"></mat-icon>
-      Reset
-    </button>
-  </form>
-  <div class="flex align-middle">
-    <button mat-fab extended color="primary" (click)="openCreateLoadRequestModal()">
-      <mat-icon fontIcon="add"></mat-icon>
-      Create Request
-    </button>
-    <button mat-fab extended color="primary" (click)="download()">
-      <mat-icon fontIcon="file_download"></mat-icon>
-      Download
-    </button>
+<form [formGroup]="searchCriteria">
+  <div class="flex justify-between mx-5">
+    <div class="flex justify-between">
+      <mat-form-field>
+        <mat-label>Any Request date</mat-label>
+        <mat-select placeholder="Any Request date" formControlName="requestDateType">
+          <mat-option value="0">Any Request date</mat-option>
+          <mat-option value="1">Today's</mat-option>
+          <mat-option value="2">This week's</mat-option>
+          <mat-option value="3">Last week's</mat-option>
+          <mat-option value="4">This month's</mat-option>
+          <mat-option value="5">Last month's</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>All Requests</mat-label>
+        <mat-select placeholder="All Requests" formControlName="requestType">
+          <mat-option value="0">All Requests</mat-option>
+          <mat-option value="1">My Requests</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-fab extended color="primary" type="submit">
+        <mat-icon fontIcon="search"></mat-icon>
+        Search
+      </button>
+      <button mat-fab extended type="reset">
+        <mat-icon fontIcon="clear"></mat-icon>
+        Reset
+      </button>
+    </div>
+    <div class="flex align-middle">
+      <button mat-fab extended color="primary" (click)="openCreateLoadRequestModal()">
+        <mat-icon fontIcon="add"></mat-icon>
+        Create Request
+      </button>
+      <button mat-fab extended color="primary" (click)="download()">
+        <mat-icon fontIcon="file_download"></mat-icon>
+        Download
+      </button>
+    </div>
   </div>
-</div>
 
-<div class="mat-elevation-z8 m-5">
-  <div class="example-table-container">
-    <table mat-table [dataSource]="data()" class="example-table" multiTemplateDataRows
-           matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc">
+  <div class="mat-elevation-z8 m-5">
+    <div class="example-table-container">
+      <table mat-table [dataSource]="data()" class="example-table" multiTemplateDataRows
+             matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc"
+             formGroupName="filters">
 
-      <ng-container matColumnDef="requestId">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Request ID</th>
-        <td mat-cell *matCellDef="let row">{{row.requestId}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Type</th>
-        <td mat-cell *matCellDef="let row">{{row.type}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="codeSystemName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Code System Name</th>
-        <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="sourceFilePath">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Source File Path
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.sourceFilePath}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="requestSubject">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Request Subject
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.requestSubject}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="requestStatus">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Request Status
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.requestStatus}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="version">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Version
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.version}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="availableDate">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Available Date
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.availableDate}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="requester">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Requester
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.requester}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="requestTime">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Request Time
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.requestTime}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="expand">
-        <th mat-header-cell *matHeaderCellDef aria-label="row actions">Request Activity Detail</th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-flat-button aria-label="expand row" color="primary"
-                  (click)="fetchLoadRequestActivity($event,element)">
-            <ng-container *ngIf="expandedElement === element; else expandTemplate">
-              <mat-icon fontIcon="keyboard_arrow_up"></mat-icon>
-            </ng-container>
-            <ng-template #expandTemplate>
-              <mat-icon fontIcon="keyboard_arrow_down"></mat-icon>
-            </ng-template>
-          </button>
-        </td>
-      </ng-container>
-
-      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-      <ng-container matColumnDef="expandedDetail">
-        <td mat-cell *matCellDef="let row" [attr.colspan]="columnsToDisplayWithExpand.length">
-          <div class="example-element-detail"
-               [@detailExpand]="row === expandedElement ? 'expanded' : 'collapsed'">
-            <div class="example-element-description" *ngIf="expandedElement === row">
-              <app-load-request-activity [requestId]="row.requestId"></app-load-request-activity>
+        <ng-container matColumnDef="requestId">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex flex-col m-2">
+              <span class="m-2" mat-sort-header disableClear>Request ID</span>
+              <mat-form-field floatLabel="auto">
+                <mat-label>Filter Request ID</mat-label>
+                <input matInput formControlName="requestId" placeholder="Ex. 152" type="number">
+              </mat-form-field>
             </div>
-          </div>
-        </td>
-      </ng-container>
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.requestId}}</td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
-      <tr mat-row *matRowDef="let row; columns: columnsToDisplayWithExpand;"
-          class="example-element-row"
-          [class.example-expanded-row]="expandedElement === row">
-      </tr>
-      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Type</th>
+          <td mat-cell *matCellDef="let row">{{row.type}}</td>
+        </ng-container>
 
-      <tr *matNoDataRow>
-        <td class="mat-cell" colspan="9">
-          No results found.
-        </td>
-      </tr>
-    </table>
+        <ng-container matColumnDef="codeSystemName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Code System Name</th>
+          <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="sourceFilePath">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Source File Path
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.sourceFilePath}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="requestSubject">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Request Subject
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.requestSubject}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="requestStatus">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Request Status
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.requestStatus}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="version">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Version
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.version}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="availableDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Available Date
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.availableDate}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="requester">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Requester
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.requester}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="requestTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Request Time
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.requestTime}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef aria-label="row actions">Request Activity Detail</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-flat-button aria-label="expand row" color="primary"
+                    (click)="fetchLoadRequestActivity($event,element)">
+              <ng-container *ngIf="expandedElement === element; else expandTemplate">
+                <mat-icon fontIcon="keyboard_arrow_up"></mat-icon>
+              </ng-container>
+              <ng-template #expandTemplate>
+                <mat-icon fontIcon="keyboard_arrow_down"></mat-icon>
+              </ng-template>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let row" [attr.colspan]="columnsToDisplayWithExpand.length">
+            <div class="example-element-detail"
+                 [@detailExpand]="row === expandedElement ? 'expanded' : 'collapsed'">
+              <div class="example-element-description" *ngIf="expandedElement === row">
+                <app-load-request-activity [requestId]="row.requestId"></app-load-request-activity>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplayWithExpand;"
+            class="example-element-row"
+            [class.example-expanded-row]="expandedElement === row">
+        </tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+        <tr *matNoDataRow>
+          <td class="mat-cell" colspan="9">
+            No results found.
+          </td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50, 100]" [pageSize]="10"
+                   aria-label="Select page of load requests"></mat-paginator>
   </div>
-  <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50, 100]" [pageSize]="10"
-                 aria-label="Select page of load requests"></mat-paginator>
-</div>
+</form>
