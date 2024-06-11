@@ -55,6 +55,12 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
     },
   );
 
+  futureDateFilter = (d: Date | null): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return (d || new Date()) >= today;
+  };
+
   constructor(public http: HttpClient,
               public dialogRef: MatDialogRef<CreateLoadRequestModalComponent>,
               public userService: UserService) {

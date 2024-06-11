@@ -41,7 +41,8 @@
             <mat-form-field appearance="outline" class="ml-20"
                             *ngIf="loadRequestCreationForm.get('type')?.value === 'scheduled'">
               <mat-label>Date</mat-label>
-              <input matInput formControlName="scheduleDate" [matDatepicker]="picker">
+              <input matInput formControlName="scheduleDate" [matDatepicker]="picker"
+                     [matDatepickerFilter]="futureDateFilter">
               <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
