@@ -24,7 +24,7 @@ import { LoadRequestDataSource } from './load-request-data-source';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { catchError, filter, map, merge, of, startWith, Subject, switchMap } from 'rxjs';
+import { catchError, filter, map, merge, of, startWith, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
 import { AlertService } from '../alert-service';
@@ -32,6 +32,7 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { LoadingService } from "../loading-service";
 import { triggerExpandTableAnimation } from "../animations";
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-load-request',
@@ -59,6 +60,9 @@ import { triggerExpandTableAnimation } from "../animations";
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class LoadRequestComponent implements AfterViewInit {
+  destroyed = new Subject<void>();
+
+
   reloadAllRequests$ = new Subject();
   displayedColumns: string[] = [
     'requestId',
@@ -70,8 +74,10 @@ export class LoadRequestComponent implements AfterViewInit {
     'version',
     'availableDate',
     'requester',
-    'requestTime'
   ];
+
+  displayedColumnsForLargeScreen: string[] = ['requestTime']
+
   columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
 
   loadRequestDatabase: LoadRequestDataSource | null = null;
@@ -92,10 +98,27 @@ export class LoadRequestComponent implements AfterViewInit {
     }, {updateOn: 'submit',}
   );
 
+  isXLargeScreen$;
+
   constructor(private _httpClient: HttpClient,
               public dialog: MatDialog,
+              private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
               public alertService: AlertService) {
+    this.isXLargeScreen$ = breakpointObserver
+      .observe([
+        Breakpoints.Large,
+        Breakpoints.XLarge,
+      ])
+      .pipe(takeUntil(this.destroyed))
+      .subscribe(result => {
+        if (result.matches) {
+          this.columnsToDisplayWithExpand = [...this.displayedColumns, ...this.displayedColumnsForLargeScreen, 'expand'];
+        } else {
+          this.columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
+        }
+      });
+
   }
 
   ngAfterViewInit() {
@@ -164,5 +187,10 @@ export class LoadRequestComponent implements AfterViewInit {
     const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
     saveAs(blob, 'loadRequests-export.json');
     this.alertService.addAlert('', 'Export downloaded.');
+  }
+
+  ngOnDestroy() {
+    this.destroyed.next();
+    this.destroyed.complete();
   }
 }
