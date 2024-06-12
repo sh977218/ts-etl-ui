@@ -1,13 +1,12 @@
 import { resetMongoCollection } from './server/db.js';
 
 resetMongoCollection()
-  .then(() => {
-    console.log(`Reset all mongo db of pr ${pr}`);
-  })
-  .catch((e) => {
-    console.log(`Not all mongo db of pr ${pr} reset: ` + e);
+  .then(() => console.log('Reset DB successfully from reset-mongo-db.js'))
+  .catch((reason) => {
+    console.log('Reset DB failed from reset-mongo-db.js' + ` ${reason}`);
+    process.exit(1);
   })
   .finally(() => {
-    console.log('finally block');
+    console.log('Reset DB final callback from reset-mongo-db.js');
     process.exit(0);
   });

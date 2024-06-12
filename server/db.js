@@ -81,10 +81,24 @@ async function restoreMongoCollections(db, pr) {
   await db.collection(`codeSystems${pr}`).insertMany(DEFAULT_CODE_SYSTEM_DATA.data);
 }
 
-export async function resetMongoCollection(db) {
+
+export async function resetMongoCollection() {
+  const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}?retryWrites=true&w=majority&appName=ts-etl-ui`;
+  const client = new MongoClient(uri, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    },
+  });
+  await client.connect().catch(reason => {
+    console.error(`Mongo connect failed: ${reason.toString()}`);
+  });
+  const db = client.db(MONGO_DBNAME);
   const pr = process.env.PR || '';
   console.log('resetting DB');
   await dropMongoCollection(db, pr);
   await createMongoCollections(db, pr);
   await restoreMongoCollections(db, pr);
+  await client.close();
 }
