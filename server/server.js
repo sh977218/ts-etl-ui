@@ -13,16 +13,12 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('dist/ts-etl-ui/browser'));
 
-const {
-  db,
-  usersCollection,
-  loadRequestsCollection,
-  loadRequestActivitiesCollection,
-  versionQAsCollection,
-  codeSystemsCollection,
-} = await mongoInit().catch(err => {
-  console.log(`Mongo connect failed ${err.toString()}`);
-});
+async function mongoInitPerPr(pr) {
+  if (!pr) pr = '';
+  return await mongoInit(pr).catch(err => {
+    console.log(`Mongo connect failed ${err.toString()}`);
+  });
+}
 
 function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -48,18 +44,27 @@ app.get('/api/loadRequests', async (req, res) => {
   const pageNumberInt = Number.parseInt(pageNumber);
   const pageSizeInt = Number.parseInt(pageSize);
   const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
+
+  const pr = req.headers.pr;
+  const loadRequestsCollection = (await mongoInitPerPr(pr)).loadRequestsCollection;
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: await loadRequestsCollection.countDocuments(), items: loadRequests,
   });
 });
 
-function getNextLoadRequestSequenceId(name) {
+async function getNextLoadRequestSequenceId(name) {
+  const pr = req.headers.pr;
+  const loadRequestsCollection = (await mongoInitPerPr(pr)).loadRequestsCollection;
+
   return loadRequestsCollection.countDocuments({});
 }
 
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
+
+  const pr = req.headers.pr;
+  const loadRequestsCollection = (await mongoInitPerPr(pr)).loadRequestsCollection;
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId()) + 1, requestStatus: 'In Progress', ...loadRequest,
   });
@@ -68,11 +73,17 @@ app.post('/api/loadRequest', async (req, res) => {
 
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
+
+  const pr = req.headers.pr;
+  const loadRequestActivitiesCollection = (await mongoInitPerPr(pr)).loadRequestActivitiesCollection;
   const loadRequestActivity = await loadRequestActivitiesCollection.findOne({ requestId });
   res.send([loadRequestActivity]);
 });
 
 app.get('/api/versionQAs', async (req, res) => {
+  const pr = req.headers.pr;
+  const versionQAsCollection = (await mongoInitPerPr(pr)).versionQAsCollection;
+
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
     total_count: versionQAs.length, items: versionQAs,
@@ -86,6 +97,9 @@ app.get('/api/file/:id', (req, res) => {
 });
 
 app.post('/api/qaActivity', async (req, res) => {
+  const pr = req.headers.pr;
+  const versionQAsCollection = (await mongoInitPerPr(pr)).versionQAsCollection;
+
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       activityHistory: req.body.qaActivity,
@@ -95,6 +109,9 @@ app.post('/api/qaActivity', async (req, res) => {
 });
 
 app.get('/api/codeSystems', async (req, res) => {
+  const pr = req.headers.pr;
+  const codeSystemsCollection = (await mongoInitPerPr(pr)).codeSystemsCollection;
+
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
 });
@@ -102,6 +119,9 @@ app.get('/api/codeSystems', async (req, res) => {
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
+  const pr = req.headers.pr;
+  const usersCollection = (await mongoInitPerPr(pr)).usersCollection;
+
   if (req.query.ticket.includes('anything')) {
     const user = await usersCollection.findOne({});
     res.send(user);
@@ -112,6 +132,9 @@ app.get('/api/serviceValidate', async (req, res) => {
 });
 
 app.get('/api/serverInfo', async (req, res) => {
+  const pr = req.headers.pr;
+  const db = (await mongoInitPerPr(pr)).db;
+
   res.send({
     pr, db: db.s.namespace.db,
   });
