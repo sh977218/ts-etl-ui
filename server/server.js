@@ -140,7 +140,7 @@ app.use((req, res, next) => {
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
 
-  if (RESET_DB) {
+  if (RESET_DB || prFromEnv) {
     resetMongoCollection(undefined, prFromEnv);
   }
 });

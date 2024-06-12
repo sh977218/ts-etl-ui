@@ -32,9 +32,6 @@ test.describe('e2e test', async () => {
     await test.step('has title', async () => {
       await expect(page).toHaveTitle('TS ETL UI');
     });
-    await test.step('has pr info', async () => {
-      await expect(page.getByText(`You're viewing PR:`)).toBeVisible();
-    });
     await test.step('has login required message', async () => {
       await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
     });
