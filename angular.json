@@ -19,8 +19,8 @@
           "skipTests": true
         }
       },
-      "root": "projects/ts-etl-ui",
-      "sourceRoot": "projects/ts-etl-ui/src",
+      "root": "",
+      "sourceRoot": "projects/ts-etl-ui",
       "prefix": "app",
       "architect": {
         "build": {
@@ -32,10 +32,13 @@
             "polyfills": [
               "zone.js"
             ],
+            "allowedCommonJsDependencies": [
+              "file-saver"
+            ],
             "tsConfig": "projects/ts-etl-ui/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "projects/ts-etl-ui/src/public/favicon.ico"
+              "projects/ts-etl-ui/public"
             ],
             "styles": [
               "projects/ts-etl-ui/src/styles.scss"
