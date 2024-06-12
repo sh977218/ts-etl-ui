@@ -1,35 +1,26 @@
-import { MongoClient, ServerApiVersion } from "mongodb"
+import { MongoClient, ServerApiVersion } from 'mongodb'
 
-import DEFAULT_USER_DATA from "./data/user.json" assert { type: "json" }
-import DEFAULT_LOAD_REQUEST_DATA from "./data/loadRequests.json" assert { type: "json" }
-import DEFAULT_LOAD_REQUEST_ACTIVITY_DATA from "./data/loadRequestActivities.json" assert { type: "json" }
-import DEFAULT_LOAD_REQUEST_MESSAGE_DATA from "./data/loadRequestMessages.json" assert { type: "json" }
-import DEFAULT_VERSION_QA_DATA from "./data/versionQAs.json" assert { type: "json" }
-import DEFAULT_CODE_SYSTEM_DATA from "./data/codeSystem.json" assert { type: "json" }
+import DEFAULT_USER_DATA from './data/user.json' assert { type: 'json' }
+import DEFAULT_LOAD_REQUEST_DATA from './data/loadRequests.json' assert { type: 'json' }
+import DEFAULT_LOAD_REQUEST_ACTIVITY_DATA from './data/loadRequestActivities.json' assert { type: 'json' }
+import DEFAULT_LOAD_REQUEST_MESSAGE_DATA from './data/loadRequestMessages.json' assert { type: 'json' }
+import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'json' }
+import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'json' }
 
-const pr = process.env.PR || ""
-const RESET_DB = ["true", true, 1].includes(process.env.RESET_DB)
-const MONGO_USERNAME = process.env.MONGO_USERNAME || ""
-const MONGO_PASSWORD = process.env.MONGO_PASSWORD || ""
-const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || ""
-const MONGO_DBNAME = process.env.MONGO_DBNAME || ""
+const pr = process.env.PR || ''
+const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB)
+const MONGO_USERNAME = process.env.MONGO_USERNAME || ''
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD || ''
+const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || ''
+const MONGO_DBNAME = process.env.MONGO_DBNAME || ''
 
-const COLLECTIONS = [
-  `users${pr}`,
-  `loadRequests${pr}`,
-  `loadRequestActivities${pr}`,
-  `loadRequestMessages${pr}`,
-  `versionQAs${pr}`,
-  `codeSystems${pr}`,
-]
+const COLLECTIONS = [`users${pr}`, `loadRequests${pr}`, `loadRequestActivities${pr}`, `loadRequestMessages${pr}`, `versionQAs${pr}`, `codeSystems${pr}`]
 
 async function connectToMongo() {
   const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}?retryWrites=true&w=majority&appName=ts-etl-ui`
   const client = new MongoClient(uri, {
     serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
+      version: ServerApiVersion.v1, strict: true, deprecationErrors: true,
     },
   })
   await client.connect().catch(reason => {
@@ -41,7 +32,7 @@ async function connectToMongo() {
 export async function mongoInit() {
   const db = await connectToMongo()
   if (pr || RESET_DB) {
-    console.log("resetting DB")
+    console.log('resetting DB')
     await dropMongoCollection(db)
     await createMongoCollections(db)
     await restoreMongoCollections(db)

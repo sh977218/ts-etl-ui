@@ -5,40 +5,40 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   NO_ERRORS_SCHEMA, signal,
   ViewChild, WritableSignal,
-} from "@angular/core"
-import { AsyncPipe, NgIf } from "@angular/common"
-import { HttpClient } from "@angular/common/http"
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms"
-import { saveAs } from "file-saver"
+} from '@angular/core'
+import { AsyncPipe, NgIf } from '@angular/common'
+import { HttpClient } from '@angular/common/http'
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms'
+import { saveAs } from 'file-saver'
 
-import { MatTableModule } from "@angular/material/table"
-import { MatInputModule } from "@angular/material/input"
-import { MatButtonModule } from "@angular/material/button"
-import { MatIconModule } from "@angular/material/icon"
-import { MatOptionModule } from "@angular/material/core"
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator"
-import { MatSort, MatSortModule } from "@angular/material/sort"
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
+import { MatTableModule } from '@angular/material/table'
+import { MatInputModule } from '@angular/material/input'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { MatOptionModule } from '@angular/material/core'
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator'
+import { MatSort, MatSortModule } from '@angular/material/sort'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
-import { LoadRequestDataSource } from "./load-request-data-source"
-import { MatCheckboxModule } from "@angular/material/checkbox"
-import { MatDialog, MatDialogModule } from "@angular/material/dialog"
-import { MatSelectModule } from "@angular/material/select"
-import { catchError, filter, map, merge, of, startWith, Subject, switchMap } from "rxjs"
+import { LoadRequestDataSource } from './load-request-data-source'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
+import { MatSelectModule } from '@angular/material/select'
+import { catchError, filter, map, merge, of, startWith, Subject, switchMap } from 'rxjs'
 
-import { LoadRequest, LoadRequestsApiResponse } from "../model/load-request"
-import { AlertService } from "../alert-service"
-import { LoadRequestActivityComponent } from "../load-request-activity/load-request-activity.component"
-import { CreateLoadRequestModalComponent } from "../create-load-request-modal/create-load-request-modal.component"
-import { LoadingService } from "../loading-service"
-import { triggerExpandTableAnimation } from "../animations"
-import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout"
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop"
-import { LoadRequestDetailComponent } from "../load-request-detail/load-request-detail.component"
-import { LoadRequestMessageComponent } from "../load-request-message/load-request-message.component"
+import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request'
+import { AlertService } from '../alert-service'
+import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component'
+import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component'
+import { LoadingService } from '../loading-service'
+import { triggerExpandTableAnimation } from '../animations'
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
+import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component'
+import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component'
 
 @Component({
-  selector: "app-load-request",
+  selector: 'app-load-request',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -60,21 +60,21 @@ import { LoadRequestMessageComponent } from "../load-request-message/load-reques
     LoadRequestDetailComponent,
     LoadRequestMessageComponent,
   ],
-  templateUrl: "./load-request.component.html",
+  templateUrl: './load-request.component.html',
   animations: [triggerExpandTableAnimation],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class LoadRequestComponent implements AfterViewInit {
   reloadAllRequests$ = new Subject()
   displayedColumns: string[] = [
-    "requestId",
-    "codeSystemName",
-    "requestSubject",
-    "requestStatus",
-    "type",
-    "requestTime",
-    "requester",
-    "creationTime",
+    'requestId',
+    'codeSystemName',
+    'requestSubject',
+    'requestStatus',
+    'type',
+    'requestTime',
+    'requester',
+    'creationTime',
   ]
   displayedColumnsForLargeScreen: string[] = []
 
@@ -94,13 +94,13 @@ export class LoadRequestComponent implements AfterViewInit {
     {
       filters: new FormGroup({
         requestId: new FormControl(),
-        codeSystemName: new FormControl("", { updateOn: "change" }),
+        codeSystemName: new FormControl('', { updateOn: 'change' }),
         requestSubject: new FormControl(),
-        type: new FormControl("", { updateOn: "change" }),
+        type: new FormControl('', { updateOn: 'change' }),
       }),
       requestDateType: new FormControl(0),
       requestType: new FormControl(0),
-    }, { updateOn: "submit" },
+    }, { updateOn: 'submit' },
   )
 
   constructor(private _httpClient: HttpClient,
@@ -138,7 +138,7 @@ export class LoadRequestComponent implements AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.loadingService.showLoading()
-          const filters = this.searchCriteria.get("filters")?.getRawValue() || ""
+          const filters = this.searchCriteria.get('filters')?.getRawValue() || ''
           const sort = this.sort.active
           const order = this.sort.direction
           const pageNumber = this.paginator.pageIndex
@@ -163,16 +163,16 @@ export class LoadRequestComponent implements AfterViewInit {
 
   openCreateLoadRequestModal() {
     this.dialog.open(CreateLoadRequestModalComponent, {
-      width: "700px",
+      width: '700px',
     })
       .afterClosed()
       .subscribe({
         next: res => {
-          if (res === "success") {
-            this.alertService.addAlert("info", "Successfully created load request.")
+          if (res === 'success') {
+            this.alertService.addAlert('info', 'Successfully created load request.')
             this.reloadAllRequests$.next(true)
-          } else if (res === "error") {
-            this.alertService.addAlert("danger", "Error create load request.")
+          } else if (res === 'error') {
+            this.alertService.addAlert('danger', 'Error create load request.')
           }
         },
       })
@@ -185,8 +185,8 @@ export class LoadRequestComponent implements AfterViewInit {
 
   // @TODO get all pages
   download() {
-    const blob = new Blob([JSON.stringify(this.data)], { type: "application/json" })
-    saveAs(blob, "loadRequests-export.json")
-    this.alertService.addAlert("", "Export downloaded.")
+    const blob = new Blob([JSON.stringify(this.data)], { type: 'application/json' })
+    saveAs(blob, 'loadRequests-export.json')
+    this.alertService.addAlert('', 'Export downloaded.')
   }
 }
