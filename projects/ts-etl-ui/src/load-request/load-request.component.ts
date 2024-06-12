@@ -91,7 +91,8 @@ export class LoadRequestComponent implements AfterViewInit {
     {
       filters: new FormGroup({
         requestId: new FormControl(),
-        codeSystemName: new FormControl('', {updateOn: "change"})
+        codeSystemName: new FormControl('', {updateOn: "change"}),
+        sourceFilePath: new FormControl(),
       }),
       requestDateType: new FormControl(0),
       requestType: new FormControl(0),

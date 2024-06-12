@@ -1,7 +1,7 @@
-import express from 'express';
-import fs from 'fs';
+import express from "express"
+import fs from "fs"
 
-import { mongoInit } from './db.js';
+import { mongoInit } from "./db.js"
 
 const DEFAULT_FILE_FOLDER = 'server/data/'
 
@@ -21,14 +21,20 @@ const {
   console.log(`Mongo connect failed ${err.toString()}`)
 });
 
+function escapeRegex(input) {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 app.get('/api/loadRequests', async (req, res) => {
-  const {requestId, codeSystemName, sort, order, pageNumber, pageSize} = req.query;
+  const {requestId, codeSystemName, sourceFilePath, sort, order, pageNumber, pageSize} = req.query;
   const $match = {};
   if (requestId !== "null") {
     $match.requestId = Number.parseInt(requestId)
   }
   if (!!codeSystemName && codeSystemName !== "null") {
     $match.codeSystemName = codeSystemName;
+  }
+  if (!!sourceFilePath && sourceFilePath !== "null") {
+    $match.sourceFilePath = new RegExp(escapeRegex(sourceFilePath), 'i');
   }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
@@ -113,6 +119,9 @@ app.use((req, res, next) => {
   fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res)
 });
 
+app.use(async (err, req, res, next) => {
+  return res.status(500).send({ name: 'Unexpected Error', message: 'Something broke!', status: 500 });
+});
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
