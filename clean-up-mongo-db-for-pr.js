@@ -2,7 +2,7 @@ import { dropMongoCollection } from './server/db.js';
 
 const pr = process.env.PR || '';
 
-dropMongoCollection(undefined, pr)
+dropMongoCollection()
   .then(() => {
     console.log(`Dropped all mongo db of pr ${pr}`);
   })
