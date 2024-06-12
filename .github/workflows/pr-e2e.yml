@@ -1,7 +1,7 @@
 name: Playwright Tests
 on:
   pull_request:
-    branches: [master]
+    branches: [ master ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -41,8 +41,8 @@ jobs:
       - name: Build Angular
         run: npm run build
 
-      - name: Start Node Server - in background
-        run: PR=${{ github.event.number }} npm run start:ci &
+      - name: Reset MongoDb
+        run: PR=${{ github.event.number }} node --env-file .ci.env reset-mongo-db.js
 
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npm run test

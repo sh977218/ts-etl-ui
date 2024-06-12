@@ -1,24 +1,26 @@
 import express from 'express';
 import fs from 'fs';
 
-import { mongoInit } from './db.js';
+import { mongoInit, resetMongoCollection } from './db.js';
 
-const DEFAULT_FILE_FOLDER = 'server/data/'
+const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
 
-const app = express()
+const DEFAULT_FILE_FOLDER = 'server/data/';
+
+const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static('dist/ts-etl-ui/browser'))
+app.use(express.static('dist/ts-etl-ui/browser'));
 
 const {
   usersCollection,
   loadRequestsCollection,
   loadRequestActivitiesCollection,
   versionQAsCollection,
-  codeSystemsCollection
+  codeSystemsCollection,
 } = await mongoInit().catch(err => {
-  console.log(`Mongo connect failed ${err.toString()}`)
+  console.log(`Mongo connect failed ${err.toString()}`);
 });
 
 function escapeRegex(input) {
@@ -26,18 +28,18 @@ function escapeRegex(input) {
 }
 
 app.get('/api/loadRequests', async (req, res) => {
-  const {requestId, codeSystemName, requestSubject, type, sort, order, pageNumber, pageSize} = req.query;
+  const { requestId, codeSystemName, requestSubject, type, sort, order, pageNumber, pageSize } = req.query;
   const $match = {};
-  if (requestId !== "null") {
-    $match.requestId = Number.parseInt(requestId)
+  if (requestId !== 'null') {
+    $match.requestId = Number.parseInt(requestId);
   }
-  if (!!codeSystemName && codeSystemName !== "null") {
+  if (!!codeSystemName && codeSystemName !== 'null') {
     $match.codeSystemName = codeSystemName;
   }
-  if (!!type && type !== "null") {
+  if (!!type && type !== 'null') {
     $match.type = type;
   }
-  if (!!requestSubject && requestSubject !== "null") {
+  if (!!requestSubject && requestSubject !== 'null') {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
   const $sort = {};
@@ -45,11 +47,11 @@ app.get('/api/loadRequests', async (req, res) => {
   const pageNumberInt = Number.parseInt(pageNumber);
   const pageSizeInt = Number.parseInt(pageSize);
   const aggregation = [
-    {$match},
-    {$sort},
-    {$skip: pageNumberInt * pageSizeInt},
-    {$limit: pageSizeInt}
-  ]
+    { $match },
+    { $sort },
+    { $skip: pageNumberInt * pageSizeInt },
+    { $limit: pageSizeInt },
+  ];
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: await loadRequestsCollection.countDocuments(),
@@ -67,18 +69,18 @@ app.post('/api/loadRequest', async (req, res) => {
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId()) + 1,
     requestStatus: 'In Progress',
-    ...loadRequest
-  })
+    ...loadRequest,
+  });
   res.send();
-})
+});
 
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
-  const loadRequestActivity = await loadRequestActivitiesCollection.findOne({requestId})
+  const loadRequestActivity = await loadRequestActivitiesCollection.findOne({ requestId });
   res.send([loadRequestActivity]);
-})
+});
 
-app.get("/api/versionQAs", async (req, res) => {
+app.get('/api/versionQAs', async (req, res) => {
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
     total_count: versionQAs.length,
@@ -86,22 +88,22 @@ app.get("/api/versionQAs", async (req, res) => {
   });
 });
 
-app.get("/api/file/:id", (req, res) => {
+app.get('/api/file/:id', (req, res) => {
   const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
   const fileContent = fs.readFileSync(fileLocation);
-  res.send(fileContent)
+  res.send(fileContent);
 });
 
 app.post('/api/qaActivity', async (req, res) => {
-  await versionQAsCollection.updateOne({requestId: req.body.requestId}, {
+  await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
-      activityHistory: req.body.qaActivity
-    }
+      activityHistory: req.body.qaActivity,
+    },
   });
   res.send();
-})
+});
 
-app.get("/api/codeSystems", async (req, res) => {
+app.get('/api/codeSystems', async (req, res) => {
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
 });
@@ -112,18 +114,24 @@ app.get('/api/serviceValidate', async (req, res) => {
   if (req.query.ticket.includes('anything')) {
     const user = await usersCollection.findOne({});
     res.send(user);
-    return
+    return;
   }
-  const user = await usersCollection.findOne({'utsUser.username': req.query.ticket});
+  const user = await usersCollection.findOne({ 'utsUser.username': req.query.ticket });
   res.send(user);
-})
+});
 
 app.use((req, res, next) => {
-  res.writeHead(200, {'content-type': 'text/html'})
-  fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res)
+  res.writeHead(200, { 'content-type': 'text/html' });
+  fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
 });
 
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
+  if (RESET_DB) {
+    resetMongoCollection()
+      .then(() => console.log('Reset DB successfully from server.js'))
+      .catch(() => console.log('Reset DB failed from server.js'))
+      .finally(() => console.log('Reset DB final callback from server.js'));
+  }
 });
