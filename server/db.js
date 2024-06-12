@@ -42,13 +42,8 @@ export async function mongoCollectionByPrNumber(PR_NUMBER) {
 }
 
 export async function createMongoCollections(db) {
-  if (!db) {
-    db = await mongoDb();
-  }
-  if (pr) {
-    for (const collection of COLLECTIONS) {
-      await db.createCollection(collection);
-    }
+  for (const collection of COLLECTIONS) {
+    await db.createCollection(collection);
   }
 }
 
@@ -56,17 +51,12 @@ export async function dropMongoCollection(db) {
   if (!db) {
     db = await mongoDb();
   }
-  if (pr) {
-    for (const collection of COLLECTIONS) {
-      await db.dropCollection(collection);
-    }
+  for (const collection of COLLECTIONS) {
+    await db.dropCollection(collection);
   }
 }
 
 async function restoreMongoCollections(db) {
-  if (!db) {
-    db = await mongoDb();
-  }
   await db.collection(`users${pr}`).insertMany(DEFAULT_USER_DATA.data);
   await db.collection(`loadRequests${pr}`).insertMany(DEFAULT_LOAD_REQUEST_DATA.data);
   await db.collection(`loadRequestActivities${pr}`).insertMany(DEFAULT_LOAD_REQUEST_ACTIVITY_DATA.data);
