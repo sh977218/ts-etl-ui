@@ -1,8 +1,6 @@
 import { resetMongoCollection } from './server/db.js';
 
-const pr = process.env.PR || '';
-
-resetMongoCollection(undefined, pr)
+resetMongoCollection()
   .then(() => {
     console.log(`Reset all mongo db of pr ${pr}`);
   })

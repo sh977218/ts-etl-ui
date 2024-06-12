@@ -81,7 +81,8 @@ async function restoreMongoCollections(db, pr) {
   await db.collection(`codeSystems${pr}`).insertMany(DEFAULT_CODE_SYSTEM_DATA.data);
 }
 
-export async function resetMongoCollection(db, pr) {
+export async function resetMongoCollection(db) {
+  const pr = process.env.PR || '';
   console.log('resetting DB');
   await dropMongoCollection(db, pr);
   await createMongoCollections(db, pr);
