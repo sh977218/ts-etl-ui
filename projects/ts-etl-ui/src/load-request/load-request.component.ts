@@ -64,12 +64,11 @@ export class LoadRequestComponent implements AfterViewInit {
   reloadAllRequests$ = new Subject();
   displayedColumns: string[] = [
     'requestId',
-    'type',
     'codeSystemName',
-    'sourceFilePath',
     'requestSubject',
+    'sourceFilePath',
     'requestStatus',
-    'version',
+    'type',
     'availableDate',
     'requester',
   ];
@@ -91,7 +90,8 @@ export class LoadRequestComponent implements AfterViewInit {
     {
       filters: new FormGroup({
         requestId: new FormControl(),
-        codeSystemName: new FormControl('', {updateOn: "change"})
+        codeSystemName: new FormControl('', {updateOn: "change"}),
+        requestSubject: new FormControl(),
       }),
       requestDateType: new FormControl(0),
       requestType: new FormControl(0),

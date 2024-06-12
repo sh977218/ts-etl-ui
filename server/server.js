@@ -21,14 +21,21 @@ const {
   console.log(`Mongo connect failed ${err.toString()}`)
 });
 
+function escapeRegex(input) {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 app.get('/api/loadRequests', async (req, res) => {
-  const {requestId, codeSystemName, sort, order, pageNumber, pageSize} = req.query;
+  const {requestId, codeSystemName, requestSubject, sort, order, pageNumber, pageSize} = req.query;
   const $match = {};
   if (requestId !== "null") {
     $match.requestId = Number.parseInt(requestId)
   }
   if (!!codeSystemName && codeSystemName !== "null") {
     $match.codeSystemName = codeSystemName;
+  }
+  if (!!requestSubject && requestSubject !== "null") {
+    $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
