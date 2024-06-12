@@ -1,10 +1,10 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  NO_ERRORS_SCHEMA, signal,
-  ViewChild, WritableSignal
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    CUSTOM_ELEMENTS_SCHEMA,
+    NO_ERRORS_SCHEMA, signal,
+    ViewChild, WritableSignal
 } from '@angular/core';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -32,31 +32,33 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { LoadingService } from "../loading-service";
 import { triggerExpandTableAnimation } from "../animations";
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
-  selector: 'app-load-request',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    NgIf,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatDialogModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatCheckboxModule,
-    MatOptionModule,
-    MatSelectModule,
-    LoadRequestActivityComponent,
-    AsyncPipe
-  ],
-  templateUrl: './load-request.component.html',
-  animations: [triggerExpandTableAnimation],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+    selector: 'app-load-request',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatTableModule,
+        MatButtonModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        MatDialogModule,
+        MatSortModule,
+        MatPaginatorModule,
+        MatCheckboxModule,
+        MatOptionModule,
+        MatSelectModule,
+        LoadRequestActivityComponent,
+        AsyncPipe
+    ],
+    templateUrl: './load-request.component.html',
+    animations: [triggerExpandTableAnimation],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class LoadRequestComponent implements AfterViewInit {
   reloadAllRequests$ = new Subject();
@@ -70,9 +72,10 @@ export class LoadRequestComponent implements AfterViewInit {
     'version',
     'availableDate',
     'requester',
-    'requestTime'
   ];
-  columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
+  displayedColumnsForLargeScreen: string[] = ['requestTime']
+
+  columnsToDisplayWithExpand: WritableSignal<string[]> = signal([...this.displayedColumns, 'expand']);
 
   loadRequestDatabase: LoadRequestDataSource | null = null;
   data: WritableSignal<LoadRequest[]> = signal([]);
@@ -97,8 +100,22 @@ export class LoadRequestComponent implements AfterViewInit {
 
   constructor(private _httpClient: HttpClient,
               public dialog: MatDialog,
+              private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
               public alertService: AlertService) {
+    breakpointObserver
+      .observe([
+        Breakpoints.Large,
+        Breakpoints.XLarge,
+      ])
+      .pipe(takeUntilDestroyed())
+      .subscribe(result => {
+        if (result.matches) {
+          this.columnsToDisplayWithExpand.set([...this.displayedColumns, ...this.displayedColumnsForLargeScreen, 'expand']);
+        } else {
+          this.columnsToDisplayWithExpand.set([...this.displayedColumns, 'expand']);
+        }
+      });
   }
 
   ngAfterViewInit() {

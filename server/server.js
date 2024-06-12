@@ -25,11 +25,6 @@ app.get('/api/loadRequests', async (req, res) => {
   const {requestId, codeSystemName, sort, order, pageNumber, pageSize} = req.query;
   const $match = {};
   if (requestId !== "null") {
-    // $or/$and will be used for multiple fields search, the logic will be decided later
-    const $or = [];
-    const $and = [];
-    $or.push();
-    $and.push();
     $match.requestId = Number.parseInt(requestId)
   }
   if (!!codeSystemName && codeSystemName !== "null") {
@@ -70,7 +65,7 @@ app.post('/api/loadRequest', async (req, res) => {
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
   const loadRequestActivity = await loadRequestActivitiesCollection.findOne({requestId})
-  res.send(loadRequestActivity);
+  res.send([loadRequestActivity]);
 })
 
 app.get("/api/versionQAs", async (req, res) => {
