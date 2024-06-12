@@ -1,6 +1,10 @@
 <mat-toolbar>
   <button mat-raised-button routerLink="/">Home</button>
-  <span class="flex-1"></span>
+  <span class="flex-1">
+    <ng-container *ngIf="serverInfo$ | async as serverInfo">
+     <ng-container *ngIf="serverInfo.pr">You're viewing PR: {{serverInfo.pr}} With Db: {{serverInfo.db}}</ng-container>
+    </ng-container>
+  </span>
   <ng-container *ngIf="(userService.user$ | async) as user;  else logInTemplate">
     <button mat-button [matMenuTriggerFor]="userMenu">{{user.utsUser.username}}</button>
   </ng-container>
