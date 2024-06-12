@@ -92,6 +92,7 @@ export class LoadRequestComponent implements AfterViewInit {
         requestId: new FormControl(),
         codeSystemName: new FormControl('', {updateOn: "change"}),
         requestSubject: new FormControl(),
+        type: new FormControl('', {updateOn: 'change'}),
       }),
       requestDateType: new FormControl(0),
       requestType: new FormControl(0),

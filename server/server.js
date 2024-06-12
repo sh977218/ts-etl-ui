@@ -26,13 +26,16 @@ function escapeRegex(input) {
 }
 
 app.get('/api/loadRequests', async (req, res) => {
-  const {requestId, codeSystemName, requestSubject, sort, order, pageNumber, pageSize} = req.query;
+  const {requestId, codeSystemName, requestSubject, type, sort, order, pageNumber, pageSize} = req.query;
   const $match = {};
   if (requestId !== "null") {
     $match.requestId = Number.parseInt(requestId)
   }
   if (!!codeSystemName && codeSystemName !== "null") {
     $match.codeSystemName = codeSystemName;
+  }
+  if (!!type && type !== "null") {
+    $match.type = type;
   }
   if (!!requestSubject && requestSubject !== "null") {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
