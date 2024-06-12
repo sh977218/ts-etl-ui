@@ -78,7 +78,7 @@ export class LoadRequestComponent implements AfterViewInit {
 
   displayedColumnsForLargeScreen: string[] = ['requestTime']
 
-  columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
+  columnsToDisplayWithExpand:WritableSignal<string[]> = signal([...this.displayedColumns, 'expand']);
 
   loadRequestDatabase: LoadRequestDataSource | null = null;
   data: WritableSignal<LoadRequest[]> = signal([]);
@@ -111,9 +111,9 @@ export class LoadRequestComponent implements AfterViewInit {
       .pipe(takeUntil(this.destroyed))
       .subscribe(result => {
         if (result.matches) {
-          this.columnsToDisplayWithExpand = [...this.displayedColumns, ...this.displayedColumnsForLargeScreen, 'expand'];
+          this.columnsToDisplayWithExpand.set([...this.displayedColumns, ...this.displayedColumnsForLargeScreen, 'expand']);
         } else {
-          this.columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
+          this.columnsToDisplayWithExpand.set([...this.displayedColumns, 'expand']);
         }
       });
 
