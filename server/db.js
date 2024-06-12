@@ -29,26 +29,21 @@ async function mongoDb() {
   return client.db(MONGO_DBNAME);
 }
 
-export async function mongoInit() {
+export async function mongoCollectionByPrNumber(PR_NUMBER) {
   const db = await mongoDb();
   return {
     db,
-    usersCollection: db.collection(`users${pr}`),
-    loadRequestsCollection: db.collection(`loadRequests${pr}`),
-    loadRequestActivitiesCollection: db.collection(`loadRequestActivities${pr}`),
-    versionQAsCollection: db.collection(`versionQAs${pr}`),
-    codeSystemsCollection: db.collection(`codeSystems${pr}`),
+    usersCollection: db.collection(`users${PR_NUMBER}`),
+    loadRequestsCollection: db.collection(`loadRequests${PR_NUMBER}`),
+    loadRequestActivitiesCollection: db.collection(`loadRequestActivities${PR_NUMBER}`),
+    versionQAsCollection: db.collection(`versionQAs${PR_NUMBER}`),
+    codeSystemsCollection: db.collection(`codeSystems${PR_NUMBER}`),
   };
 }
 
 export async function createMongoCollections(db) {
-  if (!db) {
-    db = await mongoDb();
-  }
-  if (pr) {
-    for (const collection of COLLECTIONS) {
-      await db.createCollection(collection);
-    }
+  for (const collection of COLLECTIONS) {
+    await db.createCollection(collection);
   }
 }
 
@@ -56,17 +51,12 @@ export async function dropMongoCollection(db) {
   if (!db) {
     db = await mongoDb();
   }
-  if (pr) {
-    for (const collection of COLLECTIONS) {
-      await db.dropCollection(collection);
-    }
+  for (const collection of COLLECTIONS) {
+    await db.dropCollection(collection);
   }
 }
 
 async function restoreMongoCollections(db) {
-  if (!db) {
-    db = await mongoDb();
-  }
   await db.collection(`users${pr}`).insertMany(DEFAULT_USER_DATA.data);
   await db.collection(`loadRequests${pr}`).insertMany(DEFAULT_LOAD_REQUEST_DATA.data);
   await db.collection(`loadRequestActivities${pr}`).insertMany(DEFAULT_LOAD_REQUEST_ACTIVITY_DATA.data);
