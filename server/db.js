@@ -6,7 +6,6 @@ import DEFAULT_LOAD_REQUEST_ACTIVITY_DATA from './data/loadRequestActivities.jso
 import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'json' };
 import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'json' };
 
-const prFromEnv = process.env.PR || '';
 const MONGO_USERNAME = process.env.MONGO_USERNAME || '';
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
 const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || '';
@@ -20,10 +19,6 @@ export async function mongoInitPerPr(prFromRequest) {
   if (prFromRequest) {
     return await mongoInit(prFromRequest).catch(err => {
       console.log(`Mongo connect failed connect to prFromRequest: ${prFromRequest} ${err.toString()}`);
-    });
-  } else if (prFromEnv) {
-    return await mongoInit(prFromEnv).catch(err => {
-      console.log(`Mongo connect failed connect to prFromEnv: ${prFromEnv} ${err.toString()}`);
     });
   } else {
     return await mongoInit('').catch(err => {

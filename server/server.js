@@ -4,7 +4,6 @@ import fs from 'fs';
 import { mongoInitPerPr, resetMongoCollection } from './db.js';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
-const prFromEnv = process.env.PR || '';
 
 const DEFAULT_FILE_FOLDER = 'server/data/';
 
@@ -140,7 +139,7 @@ app.use((req, res, next) => {
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
 
-  if (RESET_DB || prFromEnv) {
+  if (RESET_DB) {
     resetMongoCollection(undefined, prFromEnv);
   }
 });

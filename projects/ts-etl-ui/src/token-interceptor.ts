@@ -24,7 +24,10 @@ export class TokenInterceptor implements HttpInterceptor {
     }
 
     if (hostname.includes('ts-etl-ui-pr-')) {
-      const pr = hostname.replace('ts-etl-ui-pr-', '').trim();
+      const pr = hostname
+        .replace('ts-etl-ui-pr-', '')
+        .replace('.onrender.com', '')
+        .trim();
       request = request.clone({
         setHeaders: { pr },
       });
