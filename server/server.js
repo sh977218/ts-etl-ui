@@ -69,7 +69,7 @@ app.post('/api/loadRequest', async (req, res) => {
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
   const loadRequestActivity = await loadRequestActivitiesCollection.findOne({requestId})
-  res.send(loadRequestActivity);
+  res.send([loadRequestActivity]);
 })
 
 app.get("/api/versionQAs", async (req, res) => {

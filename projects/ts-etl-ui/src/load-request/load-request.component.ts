@@ -1,10 +1,10 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  NO_ERRORS_SCHEMA, signal,
-  ViewChild, WritableSignal
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    CUSTOM_ELEMENTS_SCHEMA,
+    NO_ERRORS_SCHEMA, signal,
+    ViewChild, WritableSignal
 } from '@angular/core';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -32,137 +32,156 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { LoadingService } from "../loading-service";
 import { triggerExpandTableAnimation } from "../animations";
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
-  selector: 'app-load-request',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    NgIf,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatDialogModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatCheckboxModule,
-    MatOptionModule,
-    MatSelectModule,
-    LoadRequestActivityComponent,
-    AsyncPipe
-  ],
-  templateUrl: './load-request.component.html',
-  animations: [triggerExpandTableAnimation],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+    selector: 'app-load-request',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatTableModule,
+        MatButtonModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        MatDialogModule,
+        MatSortModule,
+        MatPaginatorModule,
+        MatCheckboxModule,
+        MatOptionModule,
+        MatSelectModule,
+        LoadRequestActivityComponent,
+        AsyncPipe
+    ],
+    templateUrl: './load-request.component.html',
+    animations: [triggerExpandTableAnimation],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class LoadRequestComponent implements AfterViewInit {
-  reloadAllRequests$ = new Subject();
-  displayedColumns: string[] = [
-    'requestId',
-    'type',
-    'codeSystemName',
-    'sourceFilePath',
-    'requestSubject',
-    'requestStatus',
-    'version',
-    'availableDate',
-    'requester',
-    'requestTime'
-  ];
-  columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
+    reloadAllRequests$ = new Subject();
+    displayedColumns: string[] = [
+        'requestId',
+        'type',
+        'codeSystemName',
+        'sourceFilePath',
+        'requestSubject',
+        'requestStatus',
+        'version',
+        'availableDate',
+        'requester',
+    ];
 
-  loadRequestDatabase: LoadRequestDataSource | null = null;
-  data: WritableSignal<LoadRequest[]> = signal([]);
+    displayedColumnsForLargeScreen: string[] = ['requestTime']
 
-  expandedElement: LoadRequest | null = null;
+    columnsToDisplayWithExpand: WritableSignal<string[]> = signal([...this.displayedColumns, 'expand']);
 
-  resultsLength = 0;
+    loadRequestDatabase: LoadRequestDataSource | null = null;
+    data: WritableSignal<LoadRequest[]> = signal([]);
 
-  @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
-  @ViewChild(MatSort, {static: false}) sort!: MatSort;
+    expandedElement: LoadRequest | null = null;
 
-  searchCriteria = new FormGroup(
-    {
-      filters: new FormGroup({requestId: new FormControl()}),
-      requestDateType: new FormControl(0),
-      requestType: new FormControl(0),
-    }, {updateOn: 'submit',}
-  );
+    resultsLength = 0;
 
-  constructor(private _httpClient: HttpClient,
-              public dialog: MatDialog,
-              private loadingService: LoadingService,
-              public alertService: AlertService) {
-  }
+    @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
+    @ViewChild(MatSort, {static: false}) sort!: MatSort;
 
-  ngAfterViewInit() {
-    this.loadRequestDatabase = new LoadRequestDataSource(this._httpClient);
+    searchCriteria = new FormGroup(
+        {
+            filters: new FormGroup({requestId: new FormControl()}),
+            requestDateType: new FormControl(0),
+            requestType: new FormControl(0),
+        }, {updateOn: 'submit',}
+    );
 
-    // If the user changes the sort order, reset back to the first page.
-    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-    this.searchCriteria.valueChanges.subscribe(() => this.paginator.pageIndex = 0);
+    constructor(private _httpClient: HttpClient,
+                public dialog: MatDialog,
+                private breakpointObserver: BreakpointObserver,
+                private loadingService: LoadingService,
+                public alertService: AlertService) {
+        breakpointObserver
+            .observe([
+                Breakpoints.Large,
+                Breakpoints.XLarge,
+            ])
+            .pipe(takeUntilDestroyed())
+            .subscribe(result => {
+                if (result.matches) {
+                    this.columnsToDisplayWithExpand.set([...this.displayedColumns, ...this.displayedColumnsForLargeScreen, 'expand']);
+                } else {
+                    this.columnsToDisplayWithExpand.set([...this.displayedColumns, 'expand']);
+                }
+            });
 
-    merge(this.reloadAllRequests$.pipe(filter(reload => !!reload)),
-      this.searchCriteria.valueChanges,
-      this.sort.sortChange,
-      this.paginator.page)
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.loadingService.showLoading();
-          const filters = this.searchCriteria.get('filters')?.getRawValue() || '';
-          const sort = this.sort.active;
-          const order = this.sort.direction;
-          const pageNumber = this.paginator.pageIndex;
-          const pageSize = this.paginator.pageSize
-          return this.loadRequestDatabase!.getLoadRequests(
-            filters, sort, order, pageNumber, pageSize
-          ).pipe(catchError(() => of(null)));
-        }),
-        map((data: LoadRequestsApiResponse | null) => {
-          if (data === null) {
-            return [];
-          }
+    }
 
-          this.resultsLength = data.total_count;
-          return data.items;
-        }),
-      )
-      .subscribe(data => {
-        this.data.set(data);
-        this.loadingService.hideLoading()
-      });
-  }
+    ngAfterViewInit() {
+        this.loadRequestDatabase = new LoadRequestDataSource(this._httpClient);
 
-  openCreateLoadRequestModal() {
-    this.dialog.open(CreateLoadRequestModalComponent, {
-      width: '700px'
-    })
-      .afterClosed()
-      .subscribe({
-        next: res => {
-          if (res === 'success') {
-            this.alertService.addAlert('info', 'Successfully created load request.')
-            this.reloadAllRequests$.next(true);
-          } else if (res === 'error') {
-            this.alertService.addAlert('danger', 'Error create load request.')
-          }
-        }
-      });
-  }
+        // If the user changes the sort order, reset back to the first page.
+        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.searchCriteria.valueChanges.subscribe(() => this.paginator.pageIndex = 0);
 
-  fetchLoadRequestActivity(event: MouseEvent, loadRequest: LoadRequest) {
-    this.expandedElement = this.expandedElement === loadRequest ? null : loadRequest
-    event.stopPropagation();
-  }
+        merge(this.reloadAllRequests$.pipe(filter(reload => !!reload)),
+            this.searchCriteria.valueChanges,
+            this.sort.sortChange,
+            this.paginator.page)
+            .pipe(
+                startWith({}),
+                switchMap(() => {
+                    this.loadingService.showLoading();
+                    const filters = this.searchCriteria.get('filters')?.getRawValue() || '';
+                    const sort = this.sort.active;
+                    const order = this.sort.direction;
+                    const pageNumber = this.paginator.pageIndex;
+                    const pageSize = this.paginator.pageSize
+                    return this.loadRequestDatabase!.getLoadRequests(
+                        filters, sort, order, pageNumber, pageSize
+                    ).pipe(catchError(() => of(null)));
+                }),
+                map((data: LoadRequestsApiResponse | null) => {
+                    if (data === null) {
+                        return [];
+                    }
 
-  // @TODO get all pages
-  download() {
-    const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
-    saveAs(blob, 'loadRequests-export.json');
-    this.alertService.addAlert('', 'Export downloaded.');
-  }
+                    this.resultsLength = data.total_count;
+                    return data.items;
+                }),
+            )
+            .subscribe(data => {
+                this.data.set(data);
+                this.loadingService.hideLoading()
+            });
+    }
+
+    openCreateLoadRequestModal() {
+        this.dialog.open(CreateLoadRequestModalComponent, {
+            width: '700px'
+        })
+            .afterClosed()
+            .subscribe({
+                next: res => {
+                    if (res === 'success') {
+                        this.alertService.addAlert('info', 'Successfully created load request.')
+                        this.reloadAllRequests$.next(true);
+                    } else if (res === 'error') {
+                        this.alertService.addAlert('danger', 'Error create load request.')
+                    }
+                }
+            });
+    }
+
+    fetchLoadRequestActivity(event: MouseEvent, loadRequest: LoadRequest) {
+        this.expandedElement = this.expandedElement === loadRequest ? null : loadRequest
+        event.stopPropagation();
+    }
+
+    // @TODO get all pages
+    download() {
+        const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
+        saveAs(blob, 'loadRequests-export.json');
+        this.alertService.addAlert('', 'Export downloaded.');
+    }
 }
