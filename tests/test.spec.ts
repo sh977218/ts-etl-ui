@@ -83,7 +83,7 @@ test.describe('e2e test', async () => {
       await page.getByRole('button', {name: 'Search'}).click();
       await expect(page.getByText('Regular')).toBeVisible()
       await expect(page.getByText('glass.jpg')).toBeVisible()
-      await expect(page.getByText('HPO')).toBeVisible()
+      await expect(page.locator('td:has-text("HPO")')).toBeVisible()
       await expect(page.getByText('newly created load request')).toBeVisible()
     })
   })

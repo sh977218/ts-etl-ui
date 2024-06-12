@@ -9,11 +9,9 @@ const app = express()
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-
 app.use(express.static('dist/ts-etl-ui/browser'))
 
 const {
-  db,
   usersCollection,
   loadRequestsCollection,
   loadRequestActivitiesCollection,
@@ -24,7 +22,7 @@ const {
 });
 
 app.get('/api/loadRequests', async (req, res) => {
-  const {requestId, sort, order, pageNumber, pageSize} = req.query;
+  const {requestId, codeSystemName, sort, order, pageNumber, pageSize} = req.query;
   const $match = {};
   if (requestId !== "null") {
     // $or/$and will be used for multiple fields search, the logic will be decided later
@@ -33,6 +31,9 @@ app.get('/api/loadRequests', async (req, res) => {
     $or.push();
     $and.push();
     $match.requestId = Number.parseInt(requestId)
+  }
+  if (!!codeSystemName && codeSystemName !== "null") {
+    $match.codeSystemName = codeSystemName;
   }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;

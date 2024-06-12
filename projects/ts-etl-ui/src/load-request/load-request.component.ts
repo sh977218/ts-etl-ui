@@ -86,7 +86,10 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      filters: new FormGroup({requestId: new FormControl()}),
+      filters: new FormGroup({
+        requestId: new FormControl(),
+        codeSystemName: new FormControl('', {updateOn: "change"})
+      }),
       requestDateType: new FormControl(0),
       requestType: new FormControl(0),
     }, {updateOn: 'submit',}
@@ -126,7 +129,6 @@ export class LoadRequestComponent implements AfterViewInit {
           if (data === null) {
             return [];
           }
-
           this.resultsLength = data.total_count;
           return data.items;
         }),
