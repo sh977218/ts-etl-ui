@@ -29,15 +29,15 @@ async function mongoDb() {
   return client.db(MONGO_DBNAME);
 }
 
-export async function mongoInit() {
+export async function mongoCollectionByPrNumber(PR_NUMBER) {
   const db = await mongoDb();
   return {
     db,
-    usersCollection: db.collection(`users${pr}`),
-    loadRequestsCollection: db.collection(`loadRequests${pr}`),
-    loadRequestActivitiesCollection: db.collection(`loadRequestActivities${pr}`),
-    versionQAsCollection: db.collection(`versionQAs${pr}`),
-    codeSystemsCollection: db.collection(`codeSystems${pr}`),
+    usersCollection: db.collection(`users${PR_NUMBER}`),
+    loadRequestsCollection: db.collection(`loadRequests${PR_NUMBER}`),
+    loadRequestActivitiesCollection: db.collection(`loadRequestActivities${PR_NUMBER}`),
+    versionQAsCollection: db.collection(`versionQAs${PR_NUMBER}`),
+    codeSystemsCollection: db.collection(`codeSystems${PR_NUMBER}`),
   };
 }
 

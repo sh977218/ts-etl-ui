@@ -1,9 +1,10 @@
 import express from 'express';
 import fs from 'fs';
 
-import { mongoInit, resetMongoCollection } from './db.js';
+import { mongoCollectionByPrNumber, resetMongoCollection } from './db.js';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
+const PR_NUMBER = process.env.PR || '';
 
 const DEFAULT_FILE_FOLDER = 'server/data/';
 
@@ -43,7 +44,7 @@ app.get('/api/loadRequests', async (req, res) => {
     { $limit: pageSizeInt },
   ];
 
-  const { loadRequestsCollection } = await mongoInit();
+  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: await loadRequestsCollection.countDocuments(),
@@ -53,14 +54,14 @@ app.get('/api/loadRequests', async (req, res) => {
 ;
 
 async function getNextLoadRequestSequenceId() {
-  const { loadRequestsCollection } = await mongoInit();
+  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   return loadRequestsCollection.countDocuments({});
 }
 
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
-  const { loadRequestsCollection } = await mongoInit();
+  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId()) + 1,
     requestStatus: 'In Progress',
@@ -72,13 +73,13 @@ app.post('/api/loadRequest', async (req, res) => {
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
 
-  const { loadRequestActivitiesCollection } = await mongoInit();
+  const { loadRequestActivitiesCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const loadRequestActivity = await loadRequestActivitiesCollection.findOne({ requestId });
   res.send([loadRequestActivity]);
 });
 
 app.get('/api/versionQAs', async (req, res) => {
-  const { versionQAsCollection } = await mongoInit();
+  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
     total_count: versionQAs.length,
@@ -93,7 +94,7 @@ app.get('/api/file/:id', (req, res) => {
 });
 
 app.post('/api/qaActivity', async (req, res) => {
-  const { versionQAsCollection } = await mongoInit();
+  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       activityHistory: req.body.qaActivity,
@@ -103,7 +104,7 @@ app.post('/api/qaActivity', async (req, res) => {
 });
 
 app.get('/api/codeSystems', async (req, res) => {
-  const { codeSystemsCollection } = await mongoInit();
+  const { codeSystemsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
 });
@@ -111,7 +112,7 @@ app.get('/api/codeSystems', async (req, res) => {
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
-  const { usersCollection } = await mongoInit();
+  const { usersCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   if (req.query.ticket.includes('anything')) {
     const user = await usersCollection.findOne({});
     res.send(user);
