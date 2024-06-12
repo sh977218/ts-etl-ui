@@ -34,6 +34,8 @@ import { LoadingService } from "../loading-service"
 import { triggerExpandTableAnimation } from "../animations"
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout"
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop"
+import { LoadRequestDetailComponent } from "../load-request-detail/load-request-detail.component"
+import { LoadRequestMessageComponent } from "../load-request-message/load-request-message.component"
 
 @Component({
   selector: "app-load-request",
@@ -55,6 +57,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop"
     MatSelectModule,
     LoadRequestActivityComponent,
     AsyncPipe,
+    LoadRequestDetailComponent,
+    LoadRequestMessageComponent,
   ],
   templateUrl: "./load-request.component.html",
   animations: [triggerExpandTableAnimation],
@@ -66,12 +70,11 @@ export class LoadRequestComponent implements AfterViewInit {
     "requestId",
     "codeSystemName",
     "requestSubject",
-    "sourceFilePath",
     "requestStatus",
     "type",
-    "availableDate",
-    "requester",
     "requestTime",
+    "requester",
+    "creationTime",
   ]
   displayedColumnsForLargeScreen: string[] = []
 
