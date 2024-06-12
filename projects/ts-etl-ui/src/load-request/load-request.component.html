@@ -49,8 +49,10 @@
         <ng-container matColumnDef="requestId">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <label for="requestIdFilterInput" class="m-2" mat-sort-header disableClear>Request ID</label>
-              <input id="requestIdFilterInput" class="w-3/4" matInput formControlName="requestId" placeholder="Ex. 148" type="number">
+              <label for="requestIdFilterInput" class="m-2" mat-sort-header disableClear>Request
+                ID</label>
+              <input id="requestIdFilterInput" class="w-3/4" matInput formControlName="requestId"
+                     placeholder="Ex. 148" type="number">
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestId}}</td>
@@ -59,7 +61,7 @@
         <ng-container matColumnDef="codeSystemName">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
-              <label for="codeSystemSearch" class="m-2" mat-sort-header disableClear>Code System</label>
+              <label for="codeSystemSearch" class="m-2" mat-sort-header disableClear>Code System Name</label>
               <select id="codeSystemSearch" class="w-20" formControlName="codeSystemName">
                 <option value="">ALL</option>
                 <option>RXNORM</option>
@@ -70,22 +72,16 @@
                 <option>HPO</option>
               </select>
             </div>
-            </th>
-          <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="sourceFilePath">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-            Source File Path
           </th>
-          <td mat-cell *matCellDef="let row">{{row.sourceFilePath}}</td>
+          <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
         </ng-container>
 
         <ng-container matColumnDef="requestSubject">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
               <label for="subjectInput" class="m-2" mat-sort-header disableClear>Subject</label>
-              <input id="subjectInput" matInput class="w-40" formControlName="requestSubject" placeholder="subject...">
+              <input id="subjectInput" matInput class="w-40" formControlName="requestSubject"
+                     placeholder="subject...">
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestSubject}}</td>
@@ -93,7 +89,7 @@
 
         <ng-container matColumnDef="requestStatus">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-            Request Status
+            Status
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestStatus}}</td>
         </ng-container>
@@ -103,11 +99,11 @@
           <td mat-cell *matCellDef="let row">{{row.type}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="availableDate">
+        <ng-container matColumnDef="requestTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-            Available Date
+            Request Time
           </th>
-          <td mat-cell *matCellDef="let row">{{row.availableDate}}</td>
+          <td mat-cell *matCellDef="let row">{{row.requestTime}}</td>
         </ng-container>
 
         <ng-container matColumnDef="requester">
@@ -117,20 +113,22 @@
           <td mat-cell *matCellDef="let row">{{row.requester}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="requestTime">
+        <ng-container matColumnDef="creationTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-            Request Time
+            Creation Time
           </th>
-          <td mat-cell *matCellDef="let row">{{row.requestTime}}</td>
+          <td mat-cell *matCellDef="let row">{{row.creationTime}}</td>
         </ng-container>
 
         <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
         <ng-container matColumnDef="expandedDetail">
-          <td mat-cell *matCellDef="let row" [attr.colspan]="columnsToDisplayWithExpand().length">
+          <td class="bg-gray-100" mat-cell *matCellDef="let row" [attr.colspan]="columnsToDisplayWithExpand().length">
             <div class="example-element-detail"
                  [@detailExpand]="row === expandedElement ? 'expanded' : 'collapsed'">
               <div class="example-element-description" *ngIf="expandedElement === row">
+                <app-load-request-detail [loadRequest]="row"></app-load-request-detail>
                 <app-load-request-activity [requestId]="row.requestId"></app-load-request-activity>
+                <app-load-request-message [requestId]="row.requestId"></app-load-request-message>
               </div>
             </div>
           </td>
