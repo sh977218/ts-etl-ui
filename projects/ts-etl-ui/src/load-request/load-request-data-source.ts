@@ -4,6 +4,7 @@ import { SortDirection } from '@angular/material/sort';
 
 export type LoadRequestFilter = {
   requestId: number;
+  codeSystemName: string;
 }
 
 export class LoadRequestDataSource {
@@ -15,9 +16,10 @@ export class LoadRequestDataSource {
                   order: SortDirection = 'asc',
                   pageNumber: number = 0,
                   pageSize: number = 10) {
-    const {requestId} = loadRequestFilter;
+    const {requestId, codeSystemName} = loadRequestFilter;
     const params = {
       requestId,
+      codeSystemName,
       sort,
       order,
       pageNumber,
