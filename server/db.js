@@ -6,8 +6,7 @@ import DEFAULT_LOAD_REQUEST_ACTIVITY_DATA from './data/loadRequestActivities.jso
 import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'json' };
 import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'json' };
 
-const pr = process.env.PR || '';
-const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
+const prFromEnv = process.env.PR || '';
 const MONGO_USERNAME = process.env.MONGO_USERNAME || '';
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
 const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || '';
@@ -15,6 +14,22 @@ const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
 function getCollections(pr) {
   return [`users${pr}`, `loadRequests${pr}`, `loadRequestActivities${pr}`, `versionQAs${pr}`, `codeSystems${pr}`];
+}
+
+export async function mongoInitPerPr(prFromRequest) {
+  if (prFromRequest) {
+    return await mongoInit(prFromRequest).catch(err => {
+      console.log(`Mongo connect failed connect to prFromRequest: ${prFromRequest} ${err.toString()}`);
+    });
+  } else if (prFromEnv) {
+    return await mongoInit(prFromEnv).catch(err => {
+      console.log(`Mongo connect failed connect to prFromEnv: ${prFromEnv} ${err.toString()}`);
+    });
+  } else {
+    return await mongoInit('').catch(err => {
+      console.log(`Mongo connect failed ${err.toString()}`);
+    });
+  }
 }
 
 async function connectToMongo() {
@@ -30,14 +45,8 @@ async function connectToMongo() {
   return client.db(MONGO_DBNAME);
 }
 
-export async function mongoInit() {
+export async function mongoInit(pr) {
   const db = await connectToMongo();
-  if (pr || RESET_DB) {
-    console.log('resetting DB');
-    await dropMongoCollection(db);
-    await createMongoCollections(db);
-    await restoreMongoCollections(db);
-  }
   return {
     db,
     usersCollection: db.collection(`users${pr}`),
@@ -48,7 +57,7 @@ export async function mongoInit() {
   };
 }
 
-export async function createMongoCollections(db, pr) {
+async function createMongoCollections(db, pr) {
   if (!db) {
     db = await connectToMongo();
   }
@@ -66,7 +75,7 @@ export async function dropMongoCollection(db, pr) {
   }
 }
 
-async function restoreMongoCollections(db) {
+async function restoreMongoCollections(db, pr) {
   if (!db) {
     db = await connectToMongo();
   }
@@ -75,4 +84,11 @@ async function restoreMongoCollections(db) {
   await db.collection(`loadRequestActivities${pr}`).insertMany(DEFAULT_LOAD_REQUEST_ACTIVITY_DATA.data);
   await db.collection(`versionQAs${pr}`).insertMany(DEFAULT_VERSION_QA_DATA.data);
   await db.collection(`codeSystems${pr}`).insertMany(DEFAULT_CODE_SYSTEM_DATA.data);
+}
+
+export async function resetMongoCollection(db, pr) {
+  console.log('resetting DB');
+  await dropMongoCollection(db, pr);
+  await createMongoCollections(db, pr);
+  await restoreMongoCollections(db, pr);
 }
