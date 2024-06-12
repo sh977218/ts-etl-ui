@@ -1,21 +1,21 @@
-import {ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA} from '@angular/core';
-import {AsyncPipe, NgIf} from '@angular/common';
-import {RouterModule} from '@angular/router';
-import {HttpClient} from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatListModule} from '@angular/material/list';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
-import {LogInModalComponent} from '../log-in-modal/log-in-modal.component';
-import {UserService} from '../user-service';
-import {LoadingService} from "../loading-service";
+import { LogInModalComponent } from '../log-in-modal/log-in-modal.component';
+import { UserService } from '../user-service';
+import { LoadingService } from '../loading-service';
 
 @Component({
   selector: 'app-root',
@@ -33,10 +33,10 @@ import {LoadingService} from "../loading-service";
     MatToolbarModule,
     MatMenuModule,
     MatTabsModule,
-    MatProgressSpinner
+    MatProgressSpinner,
   ],
   templateUrl: './app.component.html',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class AppComponent {
 
@@ -51,7 +51,7 @@ export class AppComponent {
       .open(LogInModalComponent)
       .afterClosed()
       .subscribe((res) => {
-        console.log(res)
+        console.log(res);
       });
   }
 }
