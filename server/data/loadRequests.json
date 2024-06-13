@@ -16,7 +16,49 @@
       "loadNumber": 456160313,
       "loadStatus": "Pending QA",
       "loadTime": "2017-03-05T08:44:28 +05:00",
-      "duration": "00:03:54"
+      "duration": "00:03:54",
+      "loadRequestMessages": [
+        {
+          "componentName": "Extract",
+          "messageGroup": "INFO",
+          "messageType": "SOURCE",
+          "tag": "TAG_NAME_1",
+          "message": "Message details ...",
+          "creationTime": "2023/10/02"
+        },
+        {
+          "componentName": "Inject",
+          "messageGroup": "WARNING",
+          "messageType": "SOURCE",
+          "tag": "TAG_NAME_13",
+          "message": "Message details ...",
+          "creationTime": "2023/10/02 01:01:24 AM"
+        },
+        {
+          "componentName": "Inject",
+          "messageGroup": "WARNING",
+          "messageType": "SOURCE",
+          "tag": "TAG_NAME_13",
+          "message": "Message details ...",
+          "creationTime": "2023/10/02 01:01:25 AM"
+        },
+        {
+          "componentName": "Inject",
+          "messageGroup": "ERROR",
+          "messageType": "ALERT",
+          "tag": "TAG_NAME_14",
+          "message": "Unable to run job",
+          "creationTime": "2023/10/02 01:01:27 AM"
+        },
+        {
+          "componentName": "Assert",
+          "messageGroup": "INFO",
+          "messageType": "DEV",
+          "tag": "TAG_NAME_28",
+          "message": "Message details ...",
+          "creationTime": "2023/10/02 01:02:27 AM"
+        }
+      ]
     },
     {
       "requestId": 1,
@@ -29,7 +71,309 @@
       "requester": "dorothyknapp@zilphur.com",
       "requestTime": "2017-03-05T08:44:28+05:00",
       "type": "scheduled",
-      "creationTime": "2017-03-08"
+      "creationTime": "2017-03-08",
+      "loadRequestMessages": [
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Extract",
+          "startTime": "05/27/2021 03:38:17",
+          "endTime": "05/27/2021 03:38:19",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Inject",
+          "startTime": "05/27/2021 03:38:19",
+          "endTime": "05/27/2021 03:38:21",
+          "duration": "00.00.02",
+          "status": "Complete",
+          "messageType": "",
+          "message": "",
+          "creationTime": ""
+        },
+        {
+          "componentName": "Assert",
+          "startTime": "05/27/2021 03:38:21",
+          "endTime": "05/27/2021 03:38:22",
+          "duration": "00.00.01",
+          "status": "Failed",
+          "messageType": "FATAL",
+          "message": "Unable to run job",
+          "creationTime": ""
+        }
+      ]
     },
     {
       "requestId": 2,

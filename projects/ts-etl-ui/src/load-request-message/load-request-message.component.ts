@@ -1,17 +1,14 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from "@angular/core"
-import { MatTableDataSource, MatTableModule } from "@angular/material/table"
-import { MatFormField, MatLabel } from "@angular/material/form-field"
-import { MatInputModule } from "@angular/material/input"
-import { MatSort, MatSortModule } from "@angular/material/sort"
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator"
-import { HttpClient, HttpErrorResponse } from "@angular/common/http"
-import { LoadingService } from "../loading-service"
-import { AlertService } from "../alert-service"
-import { catchError, throwError } from "rxjs"
-import { LoadRequestMessage } from "../model/load-request-message"
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { HttpClient } from '@angular/common/http';
+import { LoadRequestMessage } from '../model/load-request';
 
 @Component({
-  selector: "app-load-request-message",
+  selector: 'app-load-request-message',
   standalone: true,
   imports: [
     MatTableModule,
@@ -21,61 +18,46 @@ import { LoadRequestMessage } from "../model/load-request-message"
     MatInputModule,
     MatLabel,
   ],
-  templateUrl: "./load-request-message.component.html",
-  styleUrl: "./load-request-message.component.scss",
+  templateUrl: './load-request-message.component.html',
+  styleUrl: './load-request-message.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoadRequestMessageComponent implements OnInit {
+export class LoadRequestMessageComponent implements OnInit, AfterViewInit {
 
-  @Input() requestId: string | null = null
+  @Input() loadRequestMessages: LoadRequestMessage[] = [];
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator
-  @ViewChild(MatSort) sort!: MatSort
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   displayedColumns: string[] = [
-    "componentName",
-    "messageGroup",
-    "messageType",
-    "tag",
-    "message",
-    "creationTime",
-  ]
+    'componentName',
+    'messageGroup',
+    'messageType',
+    'tag',
+    'message',
+    'creationTime',
+  ];
 
-  dataSource: MatTableDataSource<LoadRequestMessage> = new MatTableDataSource<LoadRequestMessage>([])
+  dataSource: MatTableDataSource<LoadRequestMessage> = new MatTableDataSource<LoadRequestMessage>([]);
 
-  constructor(public http: HttpClient,
-              private loadingService: LoadingService,
-              private alertService: AlertService) {
+  constructor(public http: HttpClient) {
   }
 
   ngOnInit(): void {
-    this.loadingService.showLoading()
-    this.http.get<LoadRequestMessage[]>(`/api/loadRequestMessages/${this.requestId}`)
-      .pipe(catchError((err: HttpErrorResponse) => {
-        if (err.status === 404) {
-          return []
-        } else {
-          return throwError(() => err)
-        }
-      }))
-      .subscribe({
-        next: data => {
-          this.dataSource = new MatTableDataSource(data)
-          this.dataSource.paginator = this.paginator
-          this.dataSource.sort = this.sort
-        },
-        error: () => this.alertService.addAlert("success", "Error loading."),
-      })
-      .add(() => this.loadingService.hideLoading())
+    this.dataSource = new MatTableDataSource(this.loadRequestMessages);
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value
-    this.dataSource.filter = filterValue.trim().toLowerCase()
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage()
+      this.dataSource.paginator.firstPage();
     }
   }
 

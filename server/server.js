@@ -89,14 +89,6 @@ app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   res.send(loadRequestActivities);
 });
 
-app.get('/api/loadRequestMessages/:requestId', async (req, res) => {
-  const requestId = Number.parseInt(req.params.requestId);
-
-  const { loadRequestMessagesCollection } = await mongoCollection();
-  const loadRequestMessages = await loadRequestMessagesCollection.find({ requestId }).toArray();
-  res.send(loadRequestMessages);
-});
-
 app.get('/api/versionQAs', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   const versionQAs = await versionQAsCollection.find({}).toArray();

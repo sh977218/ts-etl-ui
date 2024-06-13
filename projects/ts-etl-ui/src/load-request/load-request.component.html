@@ -156,7 +156,7 @@
               <div class="example-element-description" *ngIf="expandedElement === row">
                 <app-load-request-detail [loadRequest]="row"></app-load-request-detail>
                 <app-load-request-activity [requestId]="row.requestId"></app-load-request-activity>
-                <app-load-request-message [requestId]="row.requestId"></app-load-request-message>
+                <app-load-request-message [loadRequestMessages]="row.loadRequestMessages"></app-load-request-message>
               </div>
             </div>
           </td>

@@ -3,7 +3,6 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 import DEFAULT_USER_DATA from './data/user.json' assert { type: 'json' };
 import DEFAULT_LOAD_REQUEST_DATA from './data/loadRequests.json' assert { type: 'json' };
 import DEFAULT_LOAD_REQUEST_ACTIVITY_DATA from './data/loadRequestActivities.json' assert { type: 'json' };
-import DEFAULT_LOAD_REQUEST_MESSAGE_DATA from './data/loadRequestMessages.json' assert { type: 'json' };
 import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'json' };
 import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'json' };
 
@@ -61,7 +60,6 @@ export async function mongoCollection() {
     usersCollection: db.collection(`users${PR_NUMBER}`),
     loadRequestsCollection: db.collection(`loadRequests${PR_NUMBER}`),
     loadRequestActivitiesCollection: db.collection(`loadRequestActivities${PR_NUMBER}`),
-    loadRequestMessagesCollection: db.collection(`loadRequestMessages${PR_NUMBER}`),
     versionQAsCollection: db.collection(`versionQAs${PR_NUMBER}`),
     codeSystemsCollection: db.collection(`codeSystems${PR_NUMBER}`),
   };
@@ -88,7 +86,6 @@ async function restoreMongoCollections(db) {
   DEFAULT_LOAD_REQUEST_DATA.data.forEach(r => r.requestTime = new Date(r.requestTime));
   await db.collection(`loadRequests${PR_NUMBER}`).insertMany(DEFAULT_LOAD_REQUEST_DATA.data);
   await db.collection(`loadRequestActivities${PR_NUMBER}`).insertMany(DEFAULT_LOAD_REQUEST_ACTIVITY_DATA.data);
-  await db.collection(`loadRequestMessages${PR_NUMBER}`).insertMany(DEFAULT_LOAD_REQUEST_MESSAGE_DATA.data);
   await db.collection(`versionQAs${PR_NUMBER}`).insertMany(DEFAULT_VERSION_QA_DATA.data);
   await db.collection(`codeSystems${PR_NUMBER}`).insertMany(DEFAULT_CODE_SYSTEM_DATA.data);
 }
