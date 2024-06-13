@@ -19,7 +19,16 @@ function escapeRegex(input) {
 
 app.get('/api/loadRequests', async (req, res) => {
   const {
-    requestId, codeSystemName, requestSubject, type, requestStatus, sort, order, pageNumber, pageSize,
+    requestId,
+    codeSystemName,
+    requestSubject,
+    type,
+    requestStatus,
+    requestTime,
+    sort,
+    order,
+    pageNumber,
+    pageSize,
   } = req.query;
   const $match = {};
   if (requestId !== 'null') {
@@ -36,6 +45,13 @@ app.get('/api/loadRequests', async (req, res) => {
   }
   if (!!requestSubject && requestSubject !== 'null') {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
+  }
+  if (!!requestTime && requestTime !== 'null') {
+    const dateObj = new Date(requestTime);
+    $match.requestTime = {
+      $gte: dateObj,
+      $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
+    };
   }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
@@ -58,7 +74,7 @@ async function getNextLoadRequestSequenceId(req) {
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
-  const { loadRequestsCollection } = await mongoCollection(;
+  const { loadRequestsCollection } = await mongoCollection();
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
   });
