@@ -4,7 +4,6 @@ import fs from 'fs';
 import { mongoCollectionByPrNumber, resetMongoCollection } from './db.js';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
-const PR_NUMBER = process.env.PR || '';
 
 const DEFAULT_FILE_FOLDER = 'server/data/';
 
@@ -42,8 +41,8 @@ app.get('/api/loadRequests', async (req, res) => {
   const pageSizeInt = Number.parseInt(pageSize);
   const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
 
-  const DB_NAME = req.headers.db;
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const PR_NUMBER = req.headers.pr;
+  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: await loadRequestsCollection.countDocuments(), items: loadRequests,
@@ -51,16 +50,16 @@ app.get('/api/loadRequests', async (req, res) => {
 });
 
 async function getNextLoadRequestSequenceId(req) {
-  const DB_NAME = req.headers.db;
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const PR_NUMBER = req.headers.pr;
+  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   return loadRequestsCollection.countDocuments({});
 }
 
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
-  const DB_NAME = req.headers.db;
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const PR_NUMBER = req.headers.pr;
+  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
   });
@@ -70,15 +69,15 @@ app.post('/api/loadRequest', async (req, res) => {
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
 
-  const DB_NAME = req.headers.db;
-  const { loadRequestActivitiesCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const PR_NUMBER = req.headers.pr;
+  const { loadRequestActivitiesCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const loadRequestActivity = await loadRequestActivitiesCollection.findOne({ requestId });
   res.send([loadRequestActivity]);
 });
 
 app.get('/api/versionQAs', async (req, res) => {
-  const DB_NAME = req.headers.db;
-  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const PR_NUMBER = req.headers.pr;
+  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
     total_count: versionQAs.length, items: versionQAs,
@@ -92,8 +91,8 @@ app.get('/api/file/:id', (req, res) => {
 });
 
 app.post('/api/qaActivity', async (req, res) => {
-  const DB_NAME = req.headers.db;
-  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const PR_NUMBER = req.headers.pr;
+  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       activityHistory: req.body.qaActivity,
@@ -103,8 +102,8 @@ app.post('/api/qaActivity', async (req, res) => {
 });
 
 app.get('/api/codeSystems', async (req, res) => {
-  const DB_NAME = req.headers.db;
-  const { codeSystemsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const PR_NUMBER = req.headers.pr;
+  const { codeSystemsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
 });
@@ -112,8 +111,8 @@ app.get('/api/codeSystems', async (req, res) => {
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
-  const DB_NAME = req.headers.db;
-  const { usersCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const PR_NUMBER = req.headers.pr;
+  const { usersCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   if (req.query.ticket.includes('anything')) {
     const user = await usersCollection.findOne({});
     res.send(user);
@@ -121,6 +120,12 @@ app.get('/api/serviceValidate', async (req, res) => {
   }
   const user = await usersCollection.findOne({ 'utsUser.username': req.query.ticket });
   res.send(user);
+});
+
+app.get('/api/serverInfo', async (req, res) => {
+  const PR_NUMBER = req.headers.pr;
+  const { db } = await mongoCollectionByPrNumber(PR_NUMBER);
+  res.send({ pr: PR_NUMBER, db: db.s.namespace.db });
 });
 
 app.use((req, res, next) => {

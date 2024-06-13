@@ -54,4 +54,6 @@ export class AppComponent {
         console.log(res);
       });
   }
+
+  serverInfo$ = this.http.get<{ pr: string, db: string }>('/api/serverInfo');
 }
