@@ -19,7 +19,7 @@ function escapeRegex(input) {
 }
 
 app.get('/api/loadRequests', async (req, res) => {
-  const { requestId, codeSystemName, requestSubject, type, sort, order, pageNumber, pageSize } = req.query;
+  const { requestId, codeSystemName, requestSubject, type, requestStatus, sort, order, pageNumber, pageSize } = req.query;
   const $match = {};
   if (requestId !== 'null') {
     $match.requestId = Number.parseInt(requestId);
@@ -29,6 +29,9 @@ app.get('/api/loadRequests', async (req, res) => {
   }
   if (!!type && type !== 'null') {
     $match.type = type;
+  }
+  if (!!requestStatus && requestStatus !== 'null') {
+    $match.requestStatus = requestStatus;
   }
   if (!!requestSubject && requestSubject !== 'null') {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
