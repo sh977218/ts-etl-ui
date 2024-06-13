@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 
-import { getPrNumber, mongoCollectionByPrNumber, resetMongoCollection } from './db.js';
+import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
 
@@ -50,8 +50,8 @@ app.get('/api/loadRequests', async (req, res) => {
     const dateObj = new Date(requestTime);
     $match.requestTime = {
       $gte: dateObj,
-      $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000)
-    }
+      $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
+    };
   }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
@@ -59,8 +59,7 @@ app.get('/api/loadRequests', async (req, res) => {
   const pageSizeInt = Number.parseInt(pageSize);
   const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
 
-  const PR_NUMBER = req.headers.pr;
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { loadRequestsCollection } = await mongoCollection();
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: await loadRequestsCollection.countDocuments(), items: loadRequests,
@@ -68,16 +67,14 @@ app.get('/api/loadRequests', async (req, res) => {
 });
 
 async function getNextLoadRequestSequenceId(req) {
-  const PR_NUMBER = req.headers.pr;
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { loadRequestsCollection } = await mongoCollection();
   return loadRequestsCollection.countDocuments({});
 }
 
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
-  const PR_NUMBER = req.headers.pr;
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { loadRequestsCollection } = await mongoCollection();
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
   });
@@ -87,15 +84,13 @@ app.post('/api/loadRequest', async (req, res) => {
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
 
-  const PR_NUMBER = req.headers.pr;
-  const { loadRequestActivitiesCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { loadRequestActivitiesCollection } = await mongoCollection();
   const loadRequestActivity = await loadRequestActivitiesCollection.findOne({ requestId });
   res.send([loadRequestActivity]);
 });
 
 app.get('/api/versionQAs', async (req, res) => {
-  const PR_NUMBER = req.headers.pr;
-  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { versionQAsCollection } = await mongoCollection();
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
     total_count: versionQAs.length, items: versionQAs,
@@ -109,8 +104,7 @@ app.get('/api/file/:id', (req, res) => {
 });
 
 app.post('/api/qaActivity', async (req, res) => {
-  const PR_NUMBER = req.headers.pr;
-  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { versionQAsCollection } = await mongoCollection();
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       activityHistory: req.body.qaActivity,
@@ -120,8 +114,7 @@ app.post('/api/qaActivity', async (req, res) => {
 });
 
 app.get('/api/codeSystems', async (req, res) => {
-  const PR_NUMBER = req.headers.pr;
-  const { codeSystemsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { codeSystemsCollection } = await mongoCollection();
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
 });
@@ -129,8 +122,9 @@ app.get('/api/codeSystems', async (req, res) => {
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
-  const PR_NUMBER = req.headers.pr;
-  const { usersCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  req.hostname;
+
+  const { usersCollection } = await mongoCollection();
   if (req.query.ticket.includes('anything')) {
     const user = await usersCollection.findOne({});
     res.send(user);
@@ -142,9 +136,8 @@ app.get('/api/serviceValidate', async (req, res) => {
 });
 
 app.get('/api/serverInfo', async (req, res) => {
-  const pr_from_request = req.headers.pr;
-  const pr = getPrNumber(pr_from_request);
-  const { db } = await mongoCollectionByPrNumber(pr);
+  const pr = getPrNumber();
+  const { db } = await mongoCollection();
   res.send({ pr, db: db.s.namespace.db });
 });
 
