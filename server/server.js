@@ -85,8 +85,8 @@ app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
 
   const { loadRequestActivitiesCollection } = await mongoCollection();
-  const loadRequestActivity = await loadRequestActivitiesCollection.findOne({ requestId });
-  res.send([loadRequestActivity]);
+  const loadRequestActivities = await loadRequestActivitiesCollection.find({ requestId }).toArray();
+  res.send(loadRequestActivities);
 });
 
 app.get('/api/versionQAs', async (req, res) => {
