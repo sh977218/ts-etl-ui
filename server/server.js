@@ -17,17 +17,21 @@ function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function getPrFromRequest(req) {
+  const hostname = req.hostname;
+  if (hostname.includes('ts-etl-ui-pr-')) {
+    const pr = hostname
+      .replace('ts-etl-ui-pr-', '')
+      .replace('.onrender.com', '')
+      .trim();
+    return pr;
+  }
+  return '';
+}
+
 app.get('/api/loadRequests', async (req, res) => {
   const {
-    requestId,
-    codeSystemName,
-    requestSubject,
-    type,
-    requestStatus,
-    sort,
-    order,
-    pageNumber,
-    pageSize,
+    requestId, codeSystemName, requestSubject, type, requestStatus, sort, order, pageNumber, pageSize,
   } = req.query;
   const $match = {};
   if (requestId !== 'null') {
@@ -51,7 +55,7 @@ app.get('/api/loadRequests', async (req, res) => {
   const pageSizeInt = Number.parseInt(pageSize);
   const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
 
-  const PR_NUMBER = req.headers.pr;
+  const PR_NUMBER = getPrFromRequest(req);
   const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
@@ -60,7 +64,7 @@ app.get('/api/loadRequests', async (req, res) => {
 });
 
 async function getNextLoadRequestSequenceId(req) {
-  const PR_NUMBER = req.headers.pr;
+  const PR_NUMBER = getPrFromRequest(req);
   const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   return loadRequestsCollection.countDocuments({});
 }
@@ -68,7 +72,7 @@ async function getNextLoadRequestSequenceId(req) {
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
-  const PR_NUMBER = req.headers.pr;
+  const PR_NUMBER = getPrFromRequest(req);
   const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
@@ -79,14 +83,14 @@ app.post('/api/loadRequest', async (req, res) => {
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
 
-  const PR_NUMBER = req.headers.pr;
+  const PR_NUMBER = getPrFromRequest(req);
   const { loadRequestActivitiesCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const loadRequestActivity = await loadRequestActivitiesCollection.findOne({ requestId });
   res.send([loadRequestActivity]);
 });
 
 app.get('/api/versionQAs', async (req, res) => {
-  const PR_NUMBER = req.headers.pr;
+  const PR_NUMBER = getPrFromRequest(req);
   const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
@@ -101,7 +105,7 @@ app.get('/api/file/:id', (req, res) => {
 });
 
 app.post('/api/qaActivity', async (req, res) => {
-  const PR_NUMBER = req.headers.pr;
+  const PR_NUMBER = getPrFromRequest(req);
   const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
@@ -112,7 +116,7 @@ app.post('/api/qaActivity', async (req, res) => {
 });
 
 app.get('/api/codeSystems', async (req, res) => {
-  const PR_NUMBER = req.headers.pr;
+  const PR_NUMBER = getPrFromRequest(req);
   const { codeSystemsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
@@ -121,7 +125,9 @@ app.get('/api/codeSystems', async (req, res) => {
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
-  const PR_NUMBER = req.headers.pr;
+  req.hostname;
+
+  const PR_NUMBER = getPrFromRequest(req);
   const { usersCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
   if (req.query.ticket.includes('anything')) {
     const user = await usersCollection.findOne({});
@@ -134,7 +140,7 @@ app.get('/api/serviceValidate', async (req, res) => {
 });
 
 app.get('/api/serverInfo', async (req, res) => {
-  const pr_from_request = req.headers.pr;
+  const pr_from_request = getPrFromRequest(req);
   const pr = getPrNumber(pr_from_request);
   const { db } = await mongoCollectionByPrNumber(pr);
   res.send({ pr, db: db.s.namespace.db });
