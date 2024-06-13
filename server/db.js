@@ -7,7 +7,7 @@ import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'jso
 import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'json' };
 
 const IS_PULL_REQUEST = !!process.env.IS_PULL_REQUEST;
-const pr_from_env = process.env.pr || '';
+const PR_FROM_ENV = process.env.PR || '';
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME || '';
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
@@ -15,8 +15,8 @@ const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || '';
 const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
 function getPrNumber(pr_from_request) {
-  if (pr_from_env) {
-    return pr_from_env;
+  if (PR_FROM_ENV) {
+    return PR_FROM_ENV;
   }
   if (pr_from_request) {
     return pr_from_request;
