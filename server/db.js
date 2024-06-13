@@ -7,7 +7,7 @@ import DEFAULT_LOAD_REQUEST_MESSAGE_DATA from './data/loadRequestMessages.json' 
 import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'json' };
 import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'json' };
 
-const IS_PULL_REQUEST = !!process.env.IS_PULL_REQUEST;
+const IS_PULL_REQUEST = ['true', true, 1].includes(process.env.IS_PULL_REQUEST);
 const PR_FROM_ENV = process.env.PR || '';
 const RENDER_EXTERNAL_URL = process.env.RENDER_EXTERNAL_URL;
 
@@ -20,7 +20,7 @@ export function getPrNumber() {
   if (PR_FROM_ENV) {
     return PR_FROM_ENV;
   }
-  if (RENDER_EXTERNAL_URL) {
+  if (IS_PULL_REQUEST && RENDER_EXTERNAL_URL) {
     const pr_in_url = RENDER_EXTERNAL_URL
       .replace('ts-etl-ui-pr-', '')
       .replace('.onrender.com', '')
