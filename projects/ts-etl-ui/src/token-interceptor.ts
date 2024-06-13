@@ -24,13 +24,13 @@ export class TokenInterceptor implements HttpInterceptor {
     }
 
     if (hostname.includes('ts-etl-ui-pr-')) {
-      const pr = hostname
+      const PR_NUMBER = hostname
         .replace('ts-etl-ui-pr-', '')
         .replace('.onrender.com', '')
         .trim();
-      const ci = 'ci';
+      const DB_NAME = 'ci';
       request = request.clone({
-        setHeaders: { pr, ci },
+        setHeaders: { pr: PR_NUMBER, DB_NAME },
       });
     }
     return next.handle(request);
