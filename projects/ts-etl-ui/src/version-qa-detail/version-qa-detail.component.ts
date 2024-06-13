@@ -76,16 +76,6 @@ export class VersionQaDetailComponent implements OnInit {
     this.initDataSource();
   }
 
-  openSourceDataFileModal() {
-    this.dialog.open(VersionQaSourceDataFileModalComponent, {
-      width: '600px',
-      data: this.data.version,
-    })
-      .afterClosed()
-      .subscribe();
-  }
-
-
   action(action: 'Accept' | 'Reject') {
     this.dialog
       .open(VersionQaReviewModalComponent, {
@@ -144,4 +134,14 @@ export class VersionQaDetailComponent implements OnInit {
       // intentionally make `.subscribe() to be an empty, so using AsyncPipe (`| async`) in the HTML becomes very easy in future
       .subscribe();
   }
+
+  openSourceDataFileModal() {
+    this.dialog.open(VersionQaSourceDataFileModalComponent, {
+      width: '600px',
+      data: this.data.version,
+    })
+      .afterClosed()
+      .subscribe();
+  }
+
 }
