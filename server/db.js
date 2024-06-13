@@ -23,18 +23,17 @@ function mongoClient() {
   });
 }
 
-
-async function mongoDb(CI) {
+async function mongoDb(DB_NAME) {
   const client = await mongoClient().connect();
-  if (CI) {
-    return client.db('ci');
+  if (DB_NAME) {
+    return client.db(DB_NAME);
   } else {
     return client.db(MONGO_DBNAME);
   }
 }
 
-export async function mongoCollectionByPrNumber(PR_NUMBER, CI) {
-  const db = await mongoDb(CI);
+export async function mongoCollectionByPrNumber(PR_NUMBER, DB_NAME) {
+  const db = await mongoDb(DB_NAME);
   return {
     db,
     usersCollection: db.collection(`users${PR_NUMBER}`),
