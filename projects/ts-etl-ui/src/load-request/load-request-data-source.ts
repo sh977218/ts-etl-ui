@@ -7,6 +7,7 @@ export type LoadRequestFilter = {
   codeSystemName: string;
   requestSubject: string;
   type: string;
+  requestStatus: string;
 }
 
 export class LoadRequestDataSource {
@@ -18,12 +19,13 @@ export class LoadRequestDataSource {
                   order: SortDirection = 'asc',
                   pageNumber: number = 0,
                   pageSize: number = 10) {
-    const {requestId, codeSystemName, requestSubject, type} = loadRequestFilter;
+    const {requestId, codeSystemName, requestSubject, type, requestStatus} = loadRequestFilter;
     const params = {
       requestId,
       codeSystemName,
       requestSubject,
       type,
+      requestStatus,
       sort,
       order,
       pageNumber,
