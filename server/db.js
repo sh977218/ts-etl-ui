@@ -7,7 +7,7 @@ import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'jso
 import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'json' };
 
 const IS_PULL_REQUEST = !!process.env.IS_PULL_REQUEST;
-const pr_from_env = !!process.env.pr;
+const pr_from_env = process.env.pr || '';
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME || '';
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
