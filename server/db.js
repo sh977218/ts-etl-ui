@@ -19,7 +19,7 @@ export function getPrNumber() {
   if (PR_FROM_ENV) {
     return PR_FROM_ENV;
   }
-  if (RENDER_EXTERNAL_URL) {
+  if (IS_PULL_REQUEST && RENDER_EXTERNAL_URL) {
     const pr_in_url = RENDER_EXTERNAL_URL
       .replace('ts-etl-ui-pr-', '')
       .replace('.onrender.com', '')
