@@ -24,6 +24,7 @@ app.get('/api/loadRequests', async (req, res) => {
     requestSubject,
     type,
     requestStatus,
+    requestTime,
     sort,
     order,
     pageNumber,
@@ -44,6 +45,13 @@ app.get('/api/loadRequests', async (req, res) => {
   }
   if (!!requestSubject && requestSubject !== 'null') {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
+  }
+  if (!!requestTime && requestTime !== 'null') {
+    const dateObj = new Date(requestTime);
+    $match.requestTime = {
+      $gte: dateObj,
+      $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000)
+    }
   }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;

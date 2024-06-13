@@ -6,7 +6,7 @@ import {
     NO_ERRORS_SCHEMA, signal,
     ViewChild, WritableSignal
 } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe, CommonModule, DatePipe, NgIf } from "@angular/common"
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { saveAs } from 'file-saver';
@@ -54,11 +54,13 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
         MatOptionModule,
         MatSelectModule,
         LoadRequestActivityComponent,
-        AsyncPipe
+        AsyncPipe,
+        CommonModule,
     ],
     templateUrl: './load-request.component.html',
     animations: [triggerExpandTableAnimation],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+    schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
+    providers: [DatePipe],
 })
 export class LoadRequestComponent implements AfterViewInit {
   reloadAllRequests$ = new Subject();
@@ -93,6 +95,7 @@ export class LoadRequestComponent implements AfterViewInit {
         requestSubject: new FormControl(),
         type: new FormControl('', {updateOn: 'change'}),
         requestStatus: new FormControl('', {updateOn: 'change'}),
+        requestTime: new FormControl('', {updateOn: 'change'}),
       }),
       requestDateType: new FormControl(0),
       requestType: new FormControl(0),
