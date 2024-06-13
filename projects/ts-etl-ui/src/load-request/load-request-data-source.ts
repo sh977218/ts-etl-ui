@@ -9,6 +9,7 @@ export type LoadRequestFilter = {
   type: string;
   requestStatus: string;
   requestTime: string;
+  requestDateRange: string;
 }
 
 export class LoadRequestDataSource {
@@ -20,7 +21,7 @@ export class LoadRequestDataSource {
                   order: SortDirection = 'asc',
                   pageNumber: number = 0,
                   pageSize: number = 10) {
-    const {requestId, codeSystemName, requestSubject, type, requestStatus, requestTime} = loadRequestFilter;
+    const {requestId, codeSystemName, requestSubject, type, requestStatus, requestTime, requestDateRange} = loadRequestFilter;
     const params = {
       requestId,
       codeSystemName,
@@ -28,6 +29,7 @@ export class LoadRequestDataSource {
       type,
       requestStatus,
       requestTime,
+      requestDateRange,
       sort,
       order,
       pageNumber,

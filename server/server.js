@@ -25,6 +25,7 @@ app.get('/api/loadRequests', async (req, res) => {
     type,
     requestStatus,
     requestTime,
+    requestDateRange,
     sort,
     order,
     pageNumber,
@@ -53,6 +54,45 @@ app.get('/api/loadRequests', async (req, res) => {
       $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
     };
   }
+  if (!!requestDateRange && requestDateRange !== 'null') {
+    const now = new Date();
+    const startOfWeek = new Date();
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of the current week
+    startOfWeek.setHours(0, 0, 0, 0);
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    startOfMonth.setHours(0, 0, 0, 0);
+    if (requestDateRange === 'today') {
+      $match.requestTime = {
+        $lte: now,
+        $gte: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+      };
+    } else if (requestDateRange === 'thisWeek') {
+      $match.requestTime = {
+        $gte: startOfWeek,
+        $lte: now,
+      };
+    } else if (requestDateRange === 'lastWeek') {
+      const startOfLastWeek = new Date();
+      startOfLastWeek.setDate(startOfWeek.getDate() - 7 - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of last current week
+      startOfLastWeek.setHours(0, 0, 0, 0);
+      $match.requestTime = {
+        $gte: startOfLastWeek,
+        $lte: startOfWeek,
+      };
+    } else if (requestDateRange === 'thisMonth') {
+      $match.requestTime = {
+        $gte: startOfMonth,
+        $lte: now,
+      };
+    } else if (requestDateRange === 'lastMonth') {
+      const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      startOfLastMonth.setHours(0, 0, 0, 0);
+      $match.requestTime = {
+        $gte: startOfLastMonth,
+        $lte: startOfMonth,
+      };
+    }
+  }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
   const pageNumberInt = Number.parseInt(pageNumber);
@@ -75,6 +115,7 @@ app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
   const { loadRequestsCollection } = await mongoCollection();
+  loadRequest.requestTime = new Date(loadRequest.requestTime);
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
   });
