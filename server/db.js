@@ -8,31 +8,30 @@ import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'js
 
 const IS_PULL_REQUEST = !!process.env.IS_PULL_REQUEST;
 const PR_FROM_ENV = process.env.PR || '';
+const RENDER_EXTERNAL_URL = process.env.RENDER_EXTERNAL_URL;
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME || '';
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
 const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || '';
 const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
-export function getPrNumber(pr_from_request) {
+export function getPrNumber() {
   if (PR_FROM_ENV) {
     return PR_FROM_ENV;
   }
-  if (pr_from_request) {
-    return pr_from_request;
+  if (RENDER_EXTERNAL_URL) {
+    const pr_in_url = RENDER_EXTERNAL_URL
+      .replace('ts-etl-ui-pr-', '')
+      .replace('.onrender.com', '')
+      .trim();
+    return pr_in_url || '';
   }
   return '';
 }
 
 function getCollections() {
   const PR_NUMBER = getPrNumber();
-  return [
-    `users${PR_NUMBER}`,
-    `loadRequests${PR_NUMBER}`,
-    `loadRequestActivities${PR_NUMBER}`,
-    `versionQAs${PR_NUMBER}`,
-    `codeSystems${PR_NUMBER}`,
-  ];
+  return [`users${PR_NUMBER}`, `loadRequests${PR_NUMBER}`, `loadRequestActivities${PR_NUMBER}`, `versionQAs${PR_NUMBER}`, `codeSystems${PR_NUMBER}`];
 }
 
 function mongoClient() {
@@ -53,9 +52,9 @@ async function mongoDb() {
   }
 }
 
-export async function mongoCollectionByPrNumber(pr_from_request) {
+export async function mongoCollection() {
   const db = await mongoDb();
-  const PR_NUMBER = getPrNumber(pr_from_request);
+  const PR_NUMBER = getPrNumber();
   return {
     db,
     usersCollection: db.collection(`users${PR_NUMBER}`),

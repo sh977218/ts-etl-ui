@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 
-import { getPrNumber, mongoCollectionByPrNumber, resetMongoCollection } from './db.js';
+import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
 
@@ -15,18 +15,6 @@ app.use(express.static('dist/ts-etl-ui/browser'));
 
 function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function getPrFromRequest(req) {
-  const hostname = req.hostname;
-  if (hostname.includes('ts-etl-ui-pr-')) {
-    const pr = hostname
-      .replace('ts-etl-ui-pr-', '')
-      .replace('.onrender.com', '')
-      .trim();
-    return pr;
-  }
-  return '';
 }
 
 app.get('/api/loadRequests', async (req, res) => {
@@ -55,8 +43,7 @@ app.get('/api/loadRequests', async (req, res) => {
   const pageSizeInt = Number.parseInt(pageSize);
   const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
 
-  const PR_NUMBER = getPrFromRequest(req);
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { loadRequestsCollection } = await mongoCollection();
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: await loadRequestsCollection.countDocuments(), items: loadRequests,
@@ -64,16 +51,14 @@ app.get('/api/loadRequests', async (req, res) => {
 });
 
 async function getNextLoadRequestSequenceId(req) {
-  const PR_NUMBER = getPrFromRequest(req);
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { loadRequestsCollection } = await mongoCollection();
   return loadRequestsCollection.countDocuments({});
 }
 
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
-  const PR_NUMBER = getPrFromRequest(req);
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { loadRequestsCollection } = await mongoCollection(;
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
   });
@@ -83,15 +68,13 @@ app.post('/api/loadRequest', async (req, res) => {
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
 
-  const PR_NUMBER = getPrFromRequest(req);
-  const { loadRequestActivitiesCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { loadRequestActivitiesCollection } = await mongoCollection();
   const loadRequestActivity = await loadRequestActivitiesCollection.findOne({ requestId });
   res.send([loadRequestActivity]);
 });
 
 app.get('/api/versionQAs', async (req, res) => {
-  const PR_NUMBER = getPrFromRequest(req);
-  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { versionQAsCollection } = await mongoCollection();
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
     total_count: versionQAs.length, items: versionQAs,
@@ -105,8 +88,7 @@ app.get('/api/file/:id', (req, res) => {
 });
 
 app.post('/api/qaActivity', async (req, res) => {
-  const PR_NUMBER = getPrFromRequest(req);
-  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { versionQAsCollection } = await mongoCollection();
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       activityHistory: req.body.qaActivity,
@@ -116,8 +98,7 @@ app.post('/api/qaActivity', async (req, res) => {
 });
 
 app.get('/api/codeSystems', async (req, res) => {
-  const PR_NUMBER = getPrFromRequest(req);
-  const { codeSystemsCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { codeSystemsCollection } = await mongoCollection();
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
 });
@@ -127,8 +108,7 @@ app.get('/api/codeSystems', async (req, res) => {
 app.get('/api/serviceValidate', async (req, res) => {
   req.hostname;
 
-  const PR_NUMBER = getPrFromRequest(req);
-  const { usersCollection } = await mongoCollectionByPrNumber(PR_NUMBER);
+  const { usersCollection } = await mongoCollection();
   if (req.query.ticket.includes('anything')) {
     const user = await usersCollection.findOne({});
     res.send(user);
@@ -140,9 +120,8 @@ app.get('/api/serviceValidate', async (req, res) => {
 });
 
 app.get('/api/serverInfo', async (req, res) => {
-  const pr_from_request = getPrFromRequest(req);
-  const pr = getPrNumber(pr_from_request);
-  const { db } = await mongoCollectionByPrNumber(pr);
+  const pr = getPrNumber();
+  const { db } = await mongoCollection();
   res.send({ pr, db: db.s.namespace.db });
 });
 
