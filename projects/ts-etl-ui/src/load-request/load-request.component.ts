@@ -158,6 +158,10 @@ export class LoadRequestComponent implements AfterViewInit {
           this.resultsLength = data.total_count;
           return data.items;
         }),
+        map(items => {
+          items.forEach(item => item.numberOfMessages = item.loadRequestMessages ? item.loadRequestMessages.length : 0);
+          return items;
+        }),
       )
       .subscribe(data => {
         this.data.set(data);
