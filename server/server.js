@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 
-import { mongoCollectionByPrNumber, resetMongoCollection } from './db.js';
+import { getPrNumber, mongoCollectionByPrNumber, resetMongoCollection } from './db.js';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
 
@@ -18,7 +18,17 @@ function escapeRegex(input) {
 }
 
 app.get('/api/loadRequests', async (req, res) => {
-  const { requestId, codeSystemName, requestSubject, type, requestStatus, sort, order, pageNumber, pageSize } = req.query;
+  const {
+    requestId,
+    codeSystemName,
+    requestSubject,
+    type,
+    requestStatus,
+    sort,
+    order,
+    pageNumber,
+    pageSize,
+  } = req.query;
   const $match = {};
   if (requestId !== 'null') {
     $match.requestId = Number.parseInt(requestId);
@@ -118,14 +128,16 @@ app.get('/api/serviceValidate', async (req, res) => {
     res.send(user);
     return;
   }
+
   const user = await usersCollection.findOne({ 'utsUser.username': req.query.ticket });
   res.send(user);
 });
 
 app.get('/api/serverInfo', async (req, res) => {
-  const PR_NUMBER = req.headers.pr;
-  const { db } = await mongoCollectionByPrNumber(PR_NUMBER);
-  res.send({ pr: PR_NUMBER, db: db.s.namespace.db });
+  const pr_from_request = req.headers.pr;
+  const pr = getPrNumber(pr_from_request);
+  const { db } = await mongoCollectionByPrNumber(pr);
+  res.send({ pr, db: db.s.namespace.db });
 });
 
 app.use((req, res, next) => {

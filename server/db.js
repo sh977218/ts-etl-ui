@@ -14,7 +14,7 @@ const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
 const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || '';
 const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
-function getPrNumber(pr_from_request) {
+export function getPrNumber(pr_from_request) {
   if (PR_FROM_ENV) {
     return PR_FROM_ENV;
   }
