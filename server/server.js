@@ -1,7 +1,10 @@
 import express from 'express';
 import fs from 'fs';
 
-import { mongoInit } from './db.js';
+import { mongoCollectionByPrNumber, resetMongoCollection } from './db.js';
+
+const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
+const PR_NUMBER = process.env.PR || '';
 
 const DEFAULT_FILE_FOLDER = 'server/data/';
 
@@ -10,17 +13,6 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static('dist/ts-etl-ui/browser'));
-
-const {
-  usersCollection,
-  loadRequestsCollection,
-  loadRequestActivitiesCollection,
-  loadRequestMessagesCollection,
-  versionQAsCollection,
-  codeSystemsCollection,
-} = await mongoInit().catch(err => {
-  console.log(`Mongo connect failed ${err.toString()}`);
-});
 
 function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -46,39 +38,53 @@ app.get('/api/loadRequests', async (req, res) => {
   const pageNumberInt = Number.parseInt(pageNumber);
   const pageSizeInt = Number.parseInt(pageSize);
   const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
+
+  const DB_NAME = req.headers.DB_NAME;
+  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: await loadRequestsCollection.countDocuments(), items: loadRequests,
   });
 });
 
-
-function getNextLoadRequestSequenceId(name) {
+async function getNextLoadRequestSequenceId(req) {
+  const DB_NAME = req.headers.DB_NAME;
+  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
   return loadRequestsCollection.countDocuments({});
 }
 
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
+
+  const DB_NAME = req.headers.DB_NAME;
+  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
   await loadRequestsCollection.insertOne({
-    requestId: (await getNextLoadRequestSequenceId()) + 1, requestStatus: 'In Progress', ...loadRequest,
+    requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
   });
   res.send();
 });
 
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
+
+  const DB_NAME = req.headers.DB_NAME;
+  const { loadRequestActivitiesCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
   const loadRequestActivities = await loadRequestActivitiesCollection.find({ requestId }).toArray();
   res.send(loadRequestActivities);
 });
 
 app.get('/api/loadRequestMessages/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
+
+  const DB_NAME = req.headers.DB_NAME;
+  const { loadRequestMessagesCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
   const loadRequestMessages = await loadRequestMessagesCollection.find({ requestId }).toArray();
   res.send(loadRequestMessages);
 });
 
-
 app.get('/api/versionQAs', async (req, res) => {
+  const DB_NAME = req.headers.DB_NAME;
+  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
     total_count: versionQAs.length, items: versionQAs,
@@ -92,6 +98,8 @@ app.get('/api/file/:id', (req, res) => {
 });
 
 app.post('/api/qaActivity', async (req, res) => {
+  const DB_NAME = req.headers.DB_NAME;
+  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       activityHistory: req.body.qaActivity,
@@ -101,6 +109,8 @@ app.post('/api/qaActivity', async (req, res) => {
 });
 
 app.get('/api/codeSystems', async (req, res) => {
+  const DB_NAME = req.headers.DB_NAME;
+  const { codeSystemsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
 });
@@ -108,6 +118,8 @@ app.get('/api/codeSystems', async (req, res) => {
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
+  const DB_NAME = req.headers.DB_NAME;
+  const { usersCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
   if (req.query.ticket.includes('anything')) {
     const user = await usersCollection.findOne({});
     res.send(user);
@@ -125,4 +137,10 @@ app.use((req, res, next) => {
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
+  if (RESET_DB) {
+    resetMongoCollection()
+      .then(() => console.log('Reset DB successfully from server.js'))
+      .catch(() => console.log('Reset DB failed from server.js'))
+      .finally(() => console.log('Reset DB final callback from server.js'));
+  }
 });
