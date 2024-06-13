@@ -1,0 +1,51 @@
+<table class="mat-elevation-z8" mat-table [dataSource]="qaActivityHistory()" multiTemplateDataRows>
+  <caption>Activity History</caption>
+  <ng-container matColumnDef="sequence">
+    <th mat-header-cell *matHeaderCellDef> Sequence</th>
+    <td mat-cell *matCellDef="let i = dataIndex"> {{i}} </td>
+  </ng-container>
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef> Action</th>
+    <td mat-cell *matCellDef="let element"> {{element.action}} </td>
+  </ng-container>
+  <ng-container matColumnDef="updatedTime">
+    <th mat-header-cell *matHeaderCellDef> Updated Time</th>
+    <td mat-cell *matCellDef="let element"> {{element.updatedTime}} </td>
+  </ng-container>
+  <ng-container matColumnDef="nbNotes">
+    <th mat-header-cell *matHeaderCellDef> # of Notes</th>
+    <td mat-cell *matCellDef="let element"
+        (click)="expandedActivity = expandedActivity === element ? null : element">
+      {{element.notes.length}}
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr>
+    <td>Current</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+      [class.example-expanded-row]="expandedActivity === row"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+  <tr *matNoDataRow>
+    <td class="mat-cell" colspan="9">
+      No results found.
+    </td>
+  </tr>
+
+  <ng-container matColumnDef="expandedDetail">
+    <td mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+      <div class="example-element-detail"
+           [@detailExpand]="row === expandedActivity ? 'expanded' : 'collapsed'">
+        <div class="m-2 w-full">
+          <app-version-qa-note [versionQaNotes]="row.notes"></app-version-qa-note>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+</table>
+<button mat-raised-button color="primary" (click)="action('Accept')">Accept</button>
+<button mat-raised-button color="warn" (click)="action('Reject')">Reject</button>

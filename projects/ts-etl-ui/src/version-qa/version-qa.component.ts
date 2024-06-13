@@ -1,25 +1,26 @@
-import {AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild} from '@angular/core';
-import {NgIf} from '@angular/common';
-import {HttpClient} from '@angular/common/http';
-import {ReactiveFormsModule} from '@angular/forms';
-import {merge, startWith, switchMap, catchError, of, map} from 'rxjs';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import {MatSort, MatSortModule} from '@angular/material/sort';
-import {MatTableModule} from '@angular/material/table';
-import {MatInputModule} from "@angular/material/input";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
-import {MatCheckboxModule} from "@angular/material/checkbox";
-import {MatOptionModule} from "@angular/material/core";
-import {MatSelectModule} from "@angular/material/select";
+import { AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { merge, startWith, switchMap, catchError, of, map } from 'rxjs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
-import {VersionQA, VersionQAsApiResponse} from '../model/version-qa';
-import {VersionQaDataSource} from './version-qa-data-source';
-import {LoadingService} from "../loading-service";
-import {VersionQaDetailComponent} from "../version-qa-detail/version-qa-detail.component";
-import { triggerExpandTableAnimation } from "../animations";
+import { VersionQA, VersionQAsApiResponse } from '../model/version-qa';
+import { VersionQaDataSource } from './version-qa-data-source';
+import { LoadingService } from '../loading-service';
+import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail.component';
+import { triggerExpandTableAnimation } from '../animations';
+import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
 
 @Component({
   selector: 'app-version-qa',
@@ -37,7 +38,7 @@ import { triggerExpandTableAnimation } from "../animations";
     MatCheckboxModule,
     MatOptionModule,
     MatSelectModule,
-    VersionQaDetailComponent,
+    VersionQaDetailComponent, VersionQaActivityComponent,
   ],
   templateUrl: './version-qa.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -63,8 +64,8 @@ export class VersionQaComponent implements AfterViewInit {
   resultsLength = 0;
   expandedElement: VersionQA | null = null;
 
-  @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
-  @ViewChild(MatSort, {static: false}) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
   constructor(private http: HttpClient,
               public dialog: MatDialog,
@@ -98,7 +99,7 @@ export class VersionQaComponent implements AfterViewInit {
         }),
       )
       .subscribe(data => {
-        this.loadingService.hideLoading()
+        this.loadingService.hideLoading();
         this.data = data;
       });
   }
