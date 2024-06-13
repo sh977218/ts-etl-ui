@@ -1,10 +1,9 @@
 import express from 'express';
 import fs from 'fs';
 
-import { mongoCollectionByPrNumber, resetMongoCollection } from './db.js';
+import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
-const PR_NUMBER = process.env.PR || '';
 
 const DEFAULT_FILE_FOLDER = 'server/data/';
 
@@ -19,7 +18,18 @@ function escapeRegex(input) {
 }
 
 app.get('/api/loadRequests', async (req, res) => {
-  const { requestId, codeSystemName, requestSubject, type, sort, order, pageNumber, pageSize } = req.query;
+  const {
+    requestId,
+    codeSystemName,
+    requestSubject,
+    type,
+    requestStatus,
+    requestTime,
+    sort,
+    order,
+    pageNumber,
+    pageSize,
+  } = req.query;
   const $match = {};
   if (requestId !== 'null') {
     $match.requestId = Number.parseInt(requestId);
@@ -30,8 +40,18 @@ app.get('/api/loadRequests', async (req, res) => {
   if (!!type && type !== 'null') {
     $match.type = type;
   }
+  if (!!requestStatus && requestStatus !== 'null') {
+    $match.requestStatus = requestStatus;
+  }
   if (!!requestSubject && requestSubject !== 'null') {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
+  }
+  if (!!requestTime && requestTime !== 'null') {
+    const dateObj = new Date(requestTime);
+    $match.requestTime = {
+      $gte: dateObj,
+      $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
+    };
   }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
@@ -39,8 +59,7 @@ app.get('/api/loadRequests', async (req, res) => {
   const pageSizeInt = Number.parseInt(pageSize);
   const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
 
-  const DB_NAME = req.headers.DB_NAME;
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const { loadRequestsCollection } = await mongoCollection();
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: await loadRequestsCollection.countDocuments(), items: loadRequests,
@@ -48,16 +67,14 @@ app.get('/api/loadRequests', async (req, res) => {
 });
 
 async function getNextLoadRequestSequenceId(req) {
-  const DB_NAME = req.headers.DB_NAME;
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const { loadRequestsCollection } = await mongoCollection();
   return loadRequestsCollection.countDocuments({});
 }
 
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
-  const DB_NAME = req.headers.DB_NAME;
-  const { loadRequestsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const { loadRequestsCollection } = await mongoCollection();
   await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
   });
@@ -67,8 +84,7 @@ app.post('/api/loadRequest', async (req, res) => {
 app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
 
-  const DB_NAME = req.headers.DB_NAME;
-  const { loadRequestActivitiesCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const { loadRequestActivitiesCollection } = await mongoCollection();
   const loadRequestActivities = await loadRequestActivitiesCollection.find({ requestId }).toArray();
   res.send(loadRequestActivities);
 });
@@ -76,15 +92,13 @@ app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
 app.get('/api/loadRequestMessages/:requestId', async (req, res) => {
   const requestId = Number.parseInt(req.params.requestId);
 
-  const DB_NAME = req.headers.DB_NAME;
-  const { loadRequestMessagesCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const { loadRequestMessagesCollection } = await mongoCollection();
   const loadRequestMessages = await loadRequestMessagesCollection.find({ requestId }).toArray();
   res.send(loadRequestMessages);
 });
 
 app.get('/api/versionQAs', async (req, res) => {
-  const DB_NAME = req.headers.DB_NAME;
-  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const { versionQAsCollection } = await mongoCollection();
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
     total_count: versionQAs.length, items: versionQAs,
@@ -98,8 +112,7 @@ app.get('/api/file/:id', (req, res) => {
 });
 
 app.post('/api/qaActivity', async (req, res) => {
-  const DB_NAME = req.headers.DB_NAME;
-  const { versionQAsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const { versionQAsCollection } = await mongoCollection();
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       activityHistory: req.body.qaActivity,
@@ -109,8 +122,7 @@ app.post('/api/qaActivity', async (req, res) => {
 });
 
 app.get('/api/codeSystems', async (req, res) => {
-  const DB_NAME = req.headers.DB_NAME;
-  const { codeSystemsCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  const { codeSystemsCollection } = await mongoCollection();
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
 });
@@ -118,15 +130,23 @@ app.get('/api/codeSystems', async (req, res) => {
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
-  const DB_NAME = req.headers.DB_NAME;
-  const { usersCollection } = await mongoCollectionByPrNumber(PR_NUMBER, DB_NAME);
+  req.hostname;
+
+  const { usersCollection } = await mongoCollection();
   if (req.query.ticket.includes('anything')) {
     const user = await usersCollection.findOne({});
     res.send(user);
     return;
   }
+
   const user = await usersCollection.findOne({ 'utsUser.username': req.query.ticket });
   res.send(user);
+});
+
+app.get('/api/serverInfo', async (req, res) => {
+  const pr = getPrNumber();
+  const { db } = await mongoCollection();
+  res.send({ pr, db: db.s.namespace.db });
 });
 
 app.use((req, res, next) => {
