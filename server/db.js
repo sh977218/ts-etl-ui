@@ -34,6 +34,7 @@ async function mongoDb(DB_NAME) {
 
 export async function mongoCollectionByPrNumber(PR_NUMBER, DB_NAME) {
   const db = await mongoDb(DB_NAME);
+  if (!PR_NUMBER) PR_NUMBER = '';
   return {
     db,
     usersCollection: db.collection(`users${PR_NUMBER}`),
