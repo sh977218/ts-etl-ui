@@ -28,8 +28,9 @@ export class TokenInterceptor implements HttpInterceptor {
         .replace('ts-etl-ui-pr-', '')
         .replace('.onrender.com', '')
         .trim();
+      const ci = 'true';
       request = request.clone({
-        setHeaders: { pr },
+        setHeaders: { pr, ci },
       });
     }
     return next.handle(request);

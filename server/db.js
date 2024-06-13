@@ -24,13 +24,17 @@ function mongoClient() {
 }
 
 
-async function mongoDb() {
+async function mongoDb(CI) {
   const client = await mongoClient().connect();
-  return client.db(MONGO_DBNAME);
+  if (CI) {
+    return client.db('ci');
+  } else {
+    return client.db(MONGO_DBNAME);
+  }
 }
 
-export async function mongoCollectionByPrNumber(PR_NUMBER) {
-  const db = await mongoDb();
+export async function mongoCollectionByPrNumber(PR_NUMBER, CI) {
+  const db = await mongoDb(CI);
   return {
     db,
     usersCollection: db.collection(`users${PR_NUMBER}`),
