@@ -23,6 +23,7 @@ import {
 import { VersionQAActivity } from '../model/version-qa';
 import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.component';
 import { triggerExpandTableAnimation } from '../animations';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-version-qa-activity',
@@ -35,6 +36,7 @@ import { triggerExpandTableAnimation } from '../animations';
     MatSortModule,
     MatPaginatorModule,
     VersionQaNoteComponent,
+    NgIf,
   ],
   templateUrl: './version-qa-activity.component.html',
   styleUrl: './version-qa-activity.component.scss',
@@ -49,11 +51,9 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   displayedColumns: string[] = ['sequence', 'action', 'updatedTime', 'nbNotes'];
-  expandedActivity: VersionQAActivity | null = null;
+  expandedElement: VersionQAActivity | null = null;
 
   dataSource: MatTableDataSource<VersionQAActivity> = new MatTableDataSource<VersionQAActivity>([]);
-
-//  qaActivityHistory: WritableSignal<VersionQAActivityHistory[]> = signal([]);
 
   constructor(
     public dialog: MatDialog,
@@ -62,7 +62,6 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    //  this.qaActivityHistory.set(this.versionQaActivities);
     this.dataSource = new MatTableDataSource(this.versionQaActivities);
   }
 
@@ -102,11 +101,11 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
             return null;
           }
         }),
-        switchMap((versionQAActivities: VersionQAActivity | null) => {
-          if (versionQAActivities) {
+        switchMap((versionQAActivity: VersionQAActivity | null) => {
+          if (versionQAActivity) {
             return this.http.post('/api/qaActivity', {
               requestId: this.requestId,
-              qaActivity: versionQAActivities,
+              qaActivity: versionQAActivity,
             })
               .pipe(
                 /**
@@ -115,7 +114,10 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
                  * so we can update the UI without fetch the entire array again
                  */
 
-                map(() => versionQAActivities),
+                map(() => {
+                  versionQAActivity.sequence = this.versionQaActivities.length + 1;
+                  return versionQAActivity;
+                }),
               );
           } else {
             // if user click close button, we pass empty to next
@@ -125,12 +127,9 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
         tap({
           next: (versionQAActivityHistory) => {
             if (versionQAActivityHistory) {
-              // this.data.activityHistory = [...this.data.activityHistory, versionQAActivityHistory];
-              // this.qaActivityHistory.update(versionQAActivityHistories => {
-              //   versionQAActivityHistories.push(versionQAActivityHistory);
-              //   return versionQAActivityHistories;
-              // });
-              // this.initDataSource();
+              // this line is needed, so the Version QA table's row will reflect after collapse and expand again.
+              this.versionQaActivities.push(versionQAActivityHistory);
+              this.dataSource.data = this.versionQaActivities;
             }
           },
         }),
