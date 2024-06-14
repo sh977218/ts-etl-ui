@@ -1,5 +1,5 @@
 import { AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { merge, startWith, switchMap, catchError, of, map } from 'rxjs';
@@ -38,7 +38,7 @@ import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-ac
     MatCheckboxModule,
     MatOptionModule,
     MatSelectModule,
-    VersionQaDetailComponent, VersionQaActivityComponent,
+    VersionQaDetailComponent, VersionQaActivityComponent, JsonPipe,
   ],
   templateUrl: './version-qa.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -96,6 +96,15 @@ export class VersionQaComponent implements AfterViewInit {
 
           this.resultsLength = data.total_count;
           return data.items;
+        }),
+        map(versionQas => {
+          versionQas.forEach((versionQa) => {
+
+            versionQa.versionQaActivities.forEach((versionQaActivity, i) => {
+              versionQaActivity.sequence = i + 1;
+            });
+          });
+          return versionQas;
         }),
       )
       .subscribe(data => {

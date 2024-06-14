@@ -1,25 +1,21 @@
 import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
-import { Component, Input, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatCardModule } from '@angular/material/card';
-import { MatDivider } from '@angular/material/divider';
 
-import {
-  VersionQaReviewModalComponent,
-} from '../version-qa-review-modal/version-qa-review-modal.component';
+import { triggerExpandTableAnimation } from '../animations';
+import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
 import {
   VersionQaSourceDataFileModalComponent,
 } from '../version-qa-source-data-file-modal/version-qa-source-data-file-modal.component';
-import type { VersionQA, VersionQAActivityHistory } from '../model/version-qa';
-import { triggerExpandTableAnimation } from '../animations';
-import { MatIcon } from '@angular/material/icon';
+import type { VersionQA, VersionQAActivity } from '../model/version-qa';
+import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.component';
 
 export interface RowElement {
   label: string;
   key: string;
-  value: string | number | Date | VersionQAActivityHistory[];
+  value: string | number | Date | VersionQAActivity[];
 }
 
 @Component({
@@ -27,51 +23,41 @@ export interface RowElement {
   standalone: true,
   animations: [triggerExpandTableAnimation],
   imports: [
+    NgIf,
     NgSwitch,
     NgSwitchCase,
     NgSwitchDefault,
     MatDialogModule,
     MatButtonModule,
     MatTableModule,
-    MatCardModule,
-    MatDivider,
     VersionQaReviewModalComponent,
-    MatIcon,
-    NgIf,
+    VersionQaNoteComponent,
   ],
   templateUrl: './version-qa-detail.component.html',
 })
 export class VersionQaDetailComponent implements OnInit {
-  @Input() data!: VersionQA;
+  @Input() versionQA!: VersionQA;
 
   displayedColumns: string[] = ['key', 'value'];
   dataSource: RowElement[] = [];
-  qaActivityHistory: WritableSignal<VersionQAActivityHistory[]> = signal([]);
 
-  constructor(
-    public dialog: MatDialog,
-  ) {
-  }
-
-  initDataSource() {
-    this.dataSource = Object.keys(this.data)
-      .filter(k => !['activityHistory'].includes(k)) // do not show 'activityHistory'//
-      .map(key => ({
-        label: key.toUpperCase(),
-        key: key,
-        value: this.data[key as keyof VersionQA],
-      }));
-    this.qaActivityHistory.set(this.data.activityHistory);
+  constructor(public dialog: MatDialog) {
   }
 
   ngOnInit() {
-    this.initDataSource();
+    this.dataSource = Object.keys(this.versionQA)
+      .filter(k => !['_id', 'activityHistory'].includes(k)) // do not show 'activityHistory'//
+      .map(key => ({
+        label: key.toUpperCase(),
+        key: key,
+        value: this.versionQA[key as keyof VersionQA],
+      }));
   }
 
   openSourceDataFileModal() {
     this.dialog.open(VersionQaSourceDataFileModalComponent, {
       width: '600px',
-      data: this.data.version,
+      data: this.versionQA.version,
     })
       .afterClosed()
       .subscribe();

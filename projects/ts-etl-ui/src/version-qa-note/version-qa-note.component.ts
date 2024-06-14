@@ -4,6 +4,7 @@ import {
 } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { QAActivityNote } from '../model/version-qa';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-version-qa-note',
@@ -11,6 +12,7 @@ import { QAActivityNote } from '../model/version-qa';
   imports: [
     MatSortModule,
     MatTableModule,
+    MatButton,
   ],
   templateUrl: './version-qa-note.component.html',
   styleUrl: './version-qa-note.component.scss',
@@ -19,5 +21,4 @@ import { QAActivityNote } from '../model/version-qa';
 export class VersionQaNoteComponent {
   @Input() versionQaNotes: QAActivityNote[] = [];
   notesColumns: string[] = ['tags', 'notes', 'createdBy', 'createdTime', 'action'];
-
 }
