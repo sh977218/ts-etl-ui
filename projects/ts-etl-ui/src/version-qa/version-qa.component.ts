@@ -97,9 +97,6 @@ export class VersionQaComponent implements AfterViewInit {
           this.resultsLength = data.total_count;
           return data.items;
         }),
-        map(versionQas => {
-          return versionQas;
-        }),
       )
       .subscribe(data => {
         this.loadingService.hideLoading();

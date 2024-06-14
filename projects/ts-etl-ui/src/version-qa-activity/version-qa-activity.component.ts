@@ -113,10 +113,7 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
                  * but we need to pass the input from switchMap to next pipe,
                  * so we can update the UI without fetch the entire array again
                  */
-
-                map(() => {
-                  return versionQAActivity;
-                }),
+                map(() => versionQAActivity),
               );
           } else {
             // if user click close button, we pass empty to next
