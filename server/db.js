@@ -16,15 +16,19 @@ const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || '';
 const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
 export function getPrNumber() {
+
   if (PR_FROM_ENV) {
     return PR_FROM_ENV;
   }
   if (IS_PULL_REQUEST && RENDER_EXTERNAL_URL) {
-    const pr_in_url = RENDER_EXTERNAL_URL
-      .replace('ts-etl-ui-pr-', '')
-      .replace('.onrender.com', '')
-      .trim();
-    return pr_in_url || '';
+    const pr_in_url_regex = /https:\/\/ts-etl-ui-pr-(\d+)\.onrender\.com/;
+    const matchedArray = pr_in_url_regex.exec(RENDER_EXTERNAL_URL);
+    if (matchedArray && matchedArray.length === 2) {
+      const pr_in_url = matchedArray[1].trim();
+      return pr_in_url;
+    } else {
+      return '';
+    }
   }
   return '';
 }
