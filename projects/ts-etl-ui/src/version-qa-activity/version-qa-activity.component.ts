@@ -115,7 +115,6 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
                  */
 
                 map(() => {
-                  versionQAActivity.sequence = this.versionQaActivities.length + 1;
                   return versionQAActivity;
                 }),
               );

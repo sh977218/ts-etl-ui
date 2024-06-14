@@ -9,7 +9,7 @@
 
     <ng-container matColumnDef="sequence">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Sequence</th>
-      <td mat-cell *matCellDef="let element"> {{element.sequence}}</td>
+      <td mat-cell *matCellDef="let i = dataIndex"> {{i}}</td>
     </ng-container>
 
     <ng-container matColumnDef="action">

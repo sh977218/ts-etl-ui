@@ -98,12 +98,6 @@ export class VersionQaComponent implements AfterViewInit {
           return data.items;
         }),
         map(versionQas => {
-          versionQas.forEach((versionQa) => {
-
-            versionQa.versionQaActivities.forEach((versionQaActivity, i) => {
-              versionQaActivity.sequence = i + 1;
-            });
-          });
           return versionQas;
         }),
       )
