@@ -113,7 +113,7 @@ test.describe('e2e test', async () => {
       await matDialog.getByRole('button', { name: 'Save' }).click();
       await matDialog.waitFor({ state: 'hidden' });
 
-      const activityHistoryFirstRow = page.locator('mat-card-content > table')
+      const activityHistoryFirstRow = expandedRow.locator('table')
         .nth(1)
         .locator('tbody tr')
         .first();
