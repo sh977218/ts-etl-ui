@@ -3,6 +3,18 @@ export type LoadRequestsApiResponse = {
   items: LoadRequest[]
 }
 
+export type LoadRequestActivity = {
+  'requestId': number;
+  'componentName': string;
+  'startTime': string;
+  'endTime': string;
+  'duration': string;
+  'status': string;
+  'messageType': string;
+  'message': string;
+  'creationTime': string;
+}
+
 export type LoadRequestMessage = {
   'componentName': string;
   'messageGroup': string;
@@ -27,5 +39,6 @@ export type LoadRequest = {
   loadStatus: string;
   loadTime: Date;
   duration: Date;
+  loadRequestActivities: LoadRequestActivity[]
   loadRequestMessages: LoadRequestMessage[]
 }
