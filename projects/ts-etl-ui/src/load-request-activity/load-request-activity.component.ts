@@ -3,7 +3,6 @@ import {
   Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit, ViewChild,
 } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {
   MatTableDataSource, MatTableModule,
@@ -49,9 +48,6 @@ export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
   ];
 
   dataSource: MatTableDataSource<LoadRequestActivity> = new MatTableDataSource<LoadRequestActivity>([]);
-
-  constructor(public http: HttpClient) {
-  }
 
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource(this.loadRequestActivities);
