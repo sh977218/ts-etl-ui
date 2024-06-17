@@ -1,4 +1,6 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page, ConsoleMessage } from '@playwright/test';
+
+const UNEXPECTED_CONSOLE_LOG: string[] = [];
 
 class MaterialPO {
   private readonly page: Page;
@@ -27,6 +29,11 @@ class MaterialPO {
 
 test.describe('e2e test', async () => {
   test.beforeEach(async ({ page, baseURL }) => {
+    page.on('console', (consoleMessage: ConsoleMessage) => {
+      if (consoleMessage) {
+        UNEXPECTED_CONSOLE_LOG.push(consoleMessage.text());
+      }
+    });
     await page.goto('/');
     // Expect a title "to contain" a substring.
     await test.step('has title', async () => {
@@ -106,10 +113,7 @@ test.describe('e2e test', async () => {
       await matDialog.getByRole('button', { name: 'Save' }).click();
       await matDialog.waitFor({ state: 'hidden' });
 
-      const activityHistoryFirstRow = page.locator('mat-card-content > table')
-        .nth(1)
-        .locator('tbody tr')
-        .first();
+      const activityHistoryFirstRow = page.locator('table tbody tr table tbody tr').first();
       await activityHistoryFirstRow.click();
       await expect(page.getByText('Accepted by me')).toBeVisible();
     });
@@ -118,5 +122,11 @@ test.describe('e2e test', async () => {
   test('Code System Tab', async ({ page }) => {
     await page.getByRole('tab', { name: 'Code System' }).click();
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
+  });
+
+  test.afterAll(async () => {
+    for (const message of UNEXPECTED_CONSOLE_LOG) {
+      throw new Error(`Unexpected console message: ${message}`);
+    }
   });
 });

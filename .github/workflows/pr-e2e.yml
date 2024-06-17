@@ -39,7 +39,7 @@ jobs:
         run: git config --global --add safe.directory /__w/ts-etl-ui/ts-etl-ui
 
       - name: Build Angular
-        run: npm run build
+        run: npm run build:ci
 
       - name: Reset MongoDb
         run: PR=${{ github.event.number }} node --env-file .ci.env reset-mongo-db.js

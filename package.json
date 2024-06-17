@@ -10,6 +10,7 @@
     "start:ci": "node --env-file .ci.env server/server.js",
     "prebuild": "npm --no-git-tag-version version patch",
     "build": "ng build -c development && node insert-commit-hash.js",
+    "build:ci": "ng build -c ci && node insert-commit-hash.js",
     "watch": "ng build --watch --configuration development",
     "test": "playwright test --project=chromium",
     "test:debug": "playwright test --project=debug --debug",
