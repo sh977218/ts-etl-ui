@@ -4,7 +4,6 @@ export type LoadRequestsApiResponse = {
 }
 
 export type LoadRequestActivity = {
-  'requestId': number;
   'componentName': string;
   'startTime': string;
   'endTime': string;
