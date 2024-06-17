@@ -1,0 +1,31 @@
+name: Playwright Tests
+on:
+  pull_request:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  e2e-test:
+    name: e2e-test
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Output Node Version
+        run: node -v
+
+      - name: Output NPM Version
+        run: npm -v
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Grant git permission
+        run: git config --global --add safe.directory /__w/ts-etl-ui/ts-etl-ui
+
+      - name: Build Angular
+        run: npm run build:ci
