@@ -17,7 +17,7 @@ export interface RowElement {
 
 const LABEL_MAPPING: Record<string, string> = {
   requestId: 'Request ID',
-  codeSystemName: 'Code System Number',
+  codeSystemName: 'Code System Name',
   requestSubject: 'Subject',
   sourceFilePath: 'Source File Path',
   type: 'Request Type',

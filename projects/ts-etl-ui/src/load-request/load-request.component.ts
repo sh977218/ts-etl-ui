@@ -36,6 +36,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
+import { UserService } from '../user-service';
+import { User } from '../model/user';
 
 @Component({
   selector: 'app-load-request',
@@ -86,6 +88,7 @@ export class LoadRequestComponent implements AfterViewInit {
   data: WritableSignal<LoadRequest[]> = signal([]);
 
   expandedElement: LoadRequest | null = null;
+  user: User | null = null;
 
   resultsLength = 0;
 
@@ -103,7 +106,7 @@ export class LoadRequestComponent implements AfterViewInit {
         requestTime: new FormControl('', { updateOn: 'change' }),
       }),
       requestDateRange: new FormControl('', { updateOn: 'change' }),
-      requestType: new FormControl(0),
+      requestType: new FormControl('', { updateOn: 'change' }),
     }, { updateOn: 'submit' },
   );
 
@@ -111,7 +114,10 @@ export class LoadRequestComponent implements AfterViewInit {
               public dialog: MatDialog,
               private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
+              private userService: UserService,
               public alertService: AlertService) {
+    userService.user$.subscribe(user => this.user = user);
+
     breakpointObserver
       .observe([
         Breakpoints.Large,
@@ -144,6 +150,7 @@ export class LoadRequestComponent implements AfterViewInit {
           this.loadingService.showLoading();
           const filters = this.searchCriteria.get('filters')?.getRawValue() || '';
           filters.requestDateRange = this.searchCriteria.get('requestDateRange')?.getRawValue();
+          filters.requester = this.searchCriteria.get('requestType')?.getRawValue();
           const sort = this.sort.active;
           const order = this.sort.direction;
           const pageNumber = this.paginator.pageIndex;
