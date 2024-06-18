@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>Request Creation</h2>
-<form [formGroup]="loadRequestCreationForm" (ngSubmit)="submitCreateReloadRequest();">
+<form [formGroup]="loadRequestCreationForm">
   <mat-dialog-content class="mat-typography">
     <div class="flex flex-col">
       <mat-form-field appearance="outline">
@@ -61,7 +61,9 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-raised-button color="primary" mat-dialog-close>Cancel</button>
-    <button mat-raised-button color="warn" type="submit" [disabled]="loadRequestCreationForm.invalid">Submit</button>
+    <button mat-raised-button color="warn" type="submit" [disabled]="loadRequestCreationForm.invalid"
+            [mat-dialog-close]="loadRequestCreationForm.getRawValue()">Submit
+    </button>
   </mat-dialog-actions>
 </form>
 

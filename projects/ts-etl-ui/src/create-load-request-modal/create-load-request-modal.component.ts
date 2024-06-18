@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,10 +8,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
-import { tap } from 'rxjs';
 
 import { UserService } from '../user-service';
-import { MatListModule } from "@angular/material/list";
+import { MatListModule } from '@angular/material/list';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NgIf } from '@angular/common';
@@ -40,7 +38,7 @@ import { NgIf } from '@angular/common';
     NgIf,
   ],
   templateUrl: './create-load-request-modal.component.html',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class CreateLoadRequestModalComponent implements AfterViewInit {
   loadRequestCreationForm = new FormGroup(
@@ -49,9 +47,9 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
       codeSystemName: new FormControl<string>('', [Validators.required]),
       sourceFilePath: new FormControl<string>('', [Validators.required]),
       requestSubject: new FormControl<string>('', [Validators.required]),
-      requester: new FormControl({value: '', disabled: true}),
-      requestTime: new FormControl({value: new Date(), disabled: true}),
-      scheduleDate: new FormControl({value: '', disabled: false}),
+      requester: new FormControl({ value: '', disabled: true }),
+      requestTime: new FormControl({ value: new Date(), disabled: true }),
+      scheduleDate: new FormControl({ value: '', disabled: false }),
     },
   );
 
@@ -61,10 +59,10 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
     return (d || new Date()) >= today;
   };
 
-  constructor(public http: HttpClient,
-              public dialogRef: MatDialogRef<CreateLoadRequestModalComponent>,
-              public userService: UserService) {
-    userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''))
+  constructor(
+    public dialogRef: MatDialogRef<CreateLoadRequestModalComponent>,
+    public userService: UserService) {
+    userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''));
   }
 
   ngAfterViewInit() {
@@ -87,17 +85,4 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
       }
     }
   }
-
-  submitCreateReloadRequest() {
-    const newLoadRequest = this.loadRequestCreationForm.getRawValue();
-    this.http.post('/api/loadRequest', newLoadRequest)
-      .pipe(
-        tap({
-          next:()=>this.dialogRef.close('success'),
-          error:()=>this.dialogRef.close('error')
-        })
-      )
-      .subscribe()
-  }
-
 }

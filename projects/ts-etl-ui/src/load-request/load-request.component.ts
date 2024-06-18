@@ -36,8 +36,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
-import { UserService } from "../user-service"
-import { User } from "../model/user"
+import { UserService } from '../user-service';
+import { User } from '../model/user';
 
 @Component({
   selector: 'app-load-request',
@@ -105,12 +105,12 @@ export class LoadRequestComponent implements AfterViewInit {
         requestStatus: new FormControl('', { updateOn: 'change' }),
         requestTime: new FormControl('', { updateOn: 'change' }),
       }),
-      requestDateRange: new FormControl('', {updateOn: 'change'}),
-      requestType: new FormControl('', {updateOn: 'change'}),
+      requestDateRange: new FormControl('', { updateOn: 'change' }),
+      requestType: new FormControl('', { updateOn: 'change' }),
     }, { updateOn: 'submit' },
   );
 
-  constructor(private _httpClient: HttpClient,
+  constructor(public http: HttpClient,
               public dialog: MatDialog,
               private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
@@ -134,7 +134,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.loadRequestDatabase = new LoadRequestDataSource(this._httpClient);
+    this.loadRequestDatabase = new LoadRequestDataSource(this.http);
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
@@ -182,15 +182,16 @@ export class LoadRequestComponent implements AfterViewInit {
       width: '700px',
     })
       .afterClosed()
+      .pipe(
+        filter((newLoadRequest) => !!newLoadRequest),
+        switchMap((newLoadRequest) => this.http.post<{ requestId: string }>('/api/loadRequest', newLoadRequest)),
+      )
       .subscribe({
-        next: res => {
-          if (res === 'success') {
-            this.alertService.addAlert('info', 'Successfully created load request.');
-            this.reloadAllRequests$.next(true);
-          } else if (res === 'error') {
-            this.alertService.addAlert('danger', 'Error create load request.');
-          }
+        next: ({ requestId }) => {
+          this.alertService.addAlert('info', `Request (ID: ${requestId}) created successfully`);
+          this.reloadAllRequests$.next(true);
         },
+        error: () => this.alertService.addAlert('danger', 'Error create load request.'),
       });
   }
 

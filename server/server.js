@@ -120,10 +120,12 @@ app.post('/api/loadRequest', async (req, res) => {
 
   const { loadRequestsCollection } = await mongoCollection();
   loadRequest.requestTime = new Date(loadRequest.requestTime);
-  await loadRequestsCollection.insertOne({
+  const result = await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
   });
-  res.send();
+
+  const newLoadRequest = await loadRequestsCollection.findOne({ _id: result.insertedId });
+  res.send({ requestId: newLoadRequest.requestId });
 });
 
 app.get('/api/versionQAs', async (req, res) => {
