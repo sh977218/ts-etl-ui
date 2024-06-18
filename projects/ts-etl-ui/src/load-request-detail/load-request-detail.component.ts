@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { LoadRequest, LoadRequestMessage } from '../model/load-request';
+import { LoadRequest, LoadRequestActivity, LoadRequestMessage } from '../model/load-request';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
@@ -12,7 +12,7 @@ import { MatIcon } from '@angular/material/icon';
 export interface RowElement {
   label: string;
   key: string;
-  value: string | number | Date | LoadRequestMessage[];
+  value: string | number | Date | LoadRequestActivity[] | LoadRequestMessage[];
 }
 
 const LABEL_MAPPING: Record<string, string> = {
@@ -81,7 +81,7 @@ export class LoadRequestDetailComponent implements OnInit {
 
   ngOnInit() {
     this.dataSource = Object.keys(this.loadRequest)
-      .filter(k => !['_id', 'version', 'loadRequestMessages', 'availableDate'].includes(k))
+      .filter(k => !['_id', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate'].includes(k))
       .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
       .map(key => {
         return {
