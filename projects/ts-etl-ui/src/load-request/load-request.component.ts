@@ -102,7 +102,7 @@ export class LoadRequestComponent implements AfterViewInit {
         requestStatus: new FormControl('', { updateOn: 'change' }),
         requestTime: new FormControl('', { updateOn: 'change' }),
       }),
-      requestDateType: new FormControl(0),
+      requestDateRange: new FormControl('', {updateOn: 'change'}),
       requestType: new FormControl(0),
     }, { updateOn: 'submit' },
   );
@@ -143,6 +143,7 @@ export class LoadRequestComponent implements AfterViewInit {
         switchMap(() => {
           this.loadingService.showLoading();
           const filters = this.searchCriteria.get('filters')?.getRawValue() || '';
+          filters.requestDateRange = this.searchCriteria.get('requestDateRange')?.getRawValue();
           const sort = this.sort.active;
           const order = this.sort.direction;
           const pageNumber = this.paginator.pageIndex;
