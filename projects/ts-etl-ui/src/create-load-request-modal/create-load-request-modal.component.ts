@@ -1,5 +1,9 @@
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { NgForOf, NgIf } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatListModule } from '@angular/material/list';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,10 +14,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 
 import { UserService } from '../user-service';
-import { MatListModule } from '@angular/material/list';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { provideNativeDateAdapter } from '@angular/material/core';
-import { NgIf } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -36,11 +36,25 @@ import { NgIf } from '@angular/common';
     MatDatepickerInput,
     MatDatepickerToggle,
     NgIf,
+    NgForOf,
   ],
   templateUrl: './create-load-request-modal.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class CreateLoadRequestModalComponent implements AfterViewInit {
+  CODE_SYSTEM_REQUIRED_SOURCE_FILE: Record<string, string[]> = {
+    RXNORM: [],
+    LOINC: [],
+    SNOMEDCT: [
+      `/Snapshot/Terminologylsct2_Relationship_Snapshot/w*.txt`,
+      `/Snapshot/Refset/Languagelder2_cRefset_LanguageSnapshot`,
+      `/Snapshot/Terminologylsct2_Description_Snapshot-en/w*.txt`,
+    ],
+    CDCREC: [],
+    CPT: [],
+    HPO: [],
+  };
+
   loadRequestCreationForm = new FormGroup(
     {
       type: new FormControl<string>('', [Validators.required]),
