@@ -17,7 +17,7 @@ class MaterialPO {
     return this.page.locator('mat-dialog-container');
   }
 
-  async checkAndCloseAlert(text: string) {
+  async checkAndCloseAlert(text: string | RegExp) {
     const snackBarContainer = this.page.locator('mat-snack-bar-container');
     const snackBarLabel = this.page.locator('.mat-mdc-snack-bar-label.mdc-snackbar__label');
     await snackBarContainer.waitFor();
@@ -82,7 +82,7 @@ test.describe('e2e test', async () => {
 
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
-      await materialPo.checkAndCloseAlert('Successfully created load request.');
+      await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
     });
 
     await test.step('search for newly added load request', async () => {

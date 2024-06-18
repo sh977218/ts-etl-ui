@@ -102,12 +102,12 @@ export class LoadRequestComponent implements AfterViewInit {
         requestStatus: new FormControl('', { updateOn: 'change' }),
         requestTime: new FormControl('', { updateOn: 'change' }),
       }),
-      requestDateRange: new FormControl('', {updateOn: 'change'}),
+      requestDateRange: new FormControl('', { updateOn: 'change' }),
       requestType: new FormControl(0),
     }, { updateOn: 'submit' },
   );
 
-  constructor(private _httpClient: HttpClient,
+  constructor(public http: HttpClient,
               public dialog: MatDialog,
               private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
@@ -128,7 +128,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.loadRequestDatabase = new LoadRequestDataSource(this._httpClient);
+    this.loadRequestDatabase = new LoadRequestDataSource(this.http);
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
@@ -175,16 +175,16 @@ export class LoadRequestComponent implements AfterViewInit {
       width: '700px',
     })
       .afterClosed()
+      .pipe(
+        filter((newLoadRequest) => !!newLoadRequest),
+        switchMap((newLoadRequest) => this.http.post<{ requestId: string }>('/api/loadRequest', newLoadRequest)),
+      )
       .subscribe({
-        next: res => {
-          if (res === 'success') {
-            this.alertService.addAlert('info', 'Successfully created load request.');
-            this.reloadAllRequests$.next(true);
-          } else if (res === 'error') {
-            this.alertService.addAlert('danger', 'Error create load request.');
-          }
+        next: ({ requestId }) => {
+          this.alertService.addAlert('info', `Request (ID: ${requestId}) created successfully`);
         },
-      });
+        error: () => this.alertService.addAlert('danger', 'Error create load request.'),
+      }).add(() => this.reloadAllRequests$.next(true));
   }
 
   // @TODO get all pages
