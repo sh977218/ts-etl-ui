@@ -2,7 +2,6 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 
 import DEFAULT_USER_DATA from './data/user.json' assert { type: 'json' };
 import DEFAULT_LOAD_REQUEST_DATA from './data/loadRequests.json' assert { type: 'json' };
-import DEFAULT_LOAD_REQUEST_ACTIVITY_DATA from './data/loadRequestActivities.json' assert { type: 'json' };
 import DEFAULT_VERSION_QA_DATA from './data/versionQAs.json' assert { type: 'json' };
 import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'json' };
 
@@ -37,7 +36,7 @@ export function getPrNumber() {
 
 function getCollections() {
   const PR_NUMBER = getPrNumber();
-  return [`users${PR_NUMBER}`, `loadRequests${PR_NUMBER}`, `loadRequestActivities${PR_NUMBER}`, `versionQAs${PR_NUMBER}`, `codeSystems${PR_NUMBER}`];
+  return [`users${PR_NUMBER}`, `loadRequests${PR_NUMBER}`, `versionQAs${PR_NUMBER}`, `codeSystems${PR_NUMBER}`];
 }
 
 function mongoClient() {
@@ -68,7 +67,6 @@ export async function mongoCollection() {
     db,
     usersCollection: db.collection(`users${PR_NUMBER}`),
     loadRequestsCollection: db.collection(`loadRequests${PR_NUMBER}`),
-    loadRequestActivitiesCollection: db.collection(`loadRequestActivities${PR_NUMBER}`),
     versionQAsCollection: db.collection(`versionQAs${PR_NUMBER}`),
     codeSystemsCollection: db.collection(`codeSystems${PR_NUMBER}`),
   };
@@ -94,7 +92,6 @@ async function restoreMongoCollections(db) {
   await db.collection(`users${PR_NUMBER}`).insertMany(DEFAULT_USER_DATA.data);
   DEFAULT_LOAD_REQUEST_DATA.data.forEach(r => r.requestTime = new Date(r.requestTime));
   await db.collection(`loadRequests${PR_NUMBER}`).insertMany(DEFAULT_LOAD_REQUEST_DATA.data);
-  await db.collection(`loadRequestActivities${PR_NUMBER}`).insertMany(DEFAULT_LOAD_REQUEST_ACTIVITY_DATA.data);
   await db.collection(`versionQAs${PR_NUMBER}`).insertMany(DEFAULT_VERSION_QA_DATA.data);
   await db.collection(`codeSystems${PR_NUMBER}`).insertMany(DEFAULT_CODE_SYSTEM_DATA.data);
 }

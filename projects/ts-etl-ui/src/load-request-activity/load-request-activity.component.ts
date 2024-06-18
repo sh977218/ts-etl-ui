@@ -1,8 +1,8 @@
 import {
+  AfterViewInit,
   Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit, ViewChild,
 } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {
   MatTableDataSource, MatTableModule,
@@ -12,10 +12,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 
-import { LoadRequestActivity } from '../model/load-request-activity';
-import { catchError, throwError } from 'rxjs';
-import { LoadingService } from '../loading-service';
-import { AlertService } from '../alert-service';
+import { LoadRequestActivity } from '../model/load-request';
 
 @Component({
   selector: 'app-load-request-activity',
@@ -32,7 +29,8 @@ import { AlertService } from '../alert-service';
   templateUrl: './load-request-activity.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
-export class LoadRequestActivityComponent implements OnInit {
+export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
+  @Input() loadRequestActivities: LoadRequestActivity[] = [];
   @Input() requestId: number | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -51,32 +49,14 @@ export class LoadRequestActivityComponent implements OnInit {
 
   dataSource: MatTableDataSource<LoadRequestActivity> = new MatTableDataSource<LoadRequestActivity>([]);
 
-  constructor(public http: HttpClient,
-              private loadingService: LoadingService,
-              private alertService: AlertService) {
-  }
-
   ngOnInit(): void {
-    this.loadingService.showLoading();
-    this.http.get<LoadRequestActivity[]>(`/api/loadRequestActivities/${this.requestId}`)
-      .pipe(catchError((err: HttpErrorResponse) => {
-        if (err.status === 404) {
-          return [];
-        } else {
-          return throwError(() => err);
-        }
-      }))
-      .subscribe({
-        next: data => {
-          this.dataSource = new MatTableDataSource(data);
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        },
-        error: () => this.alertService.addAlert('success', 'Error loading.'),
-      })
-      .add(() => this.loadingService.hideLoading());
+    this.dataSource = new MatTableDataSource(this.loadRequestActivities);
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -86,6 +66,5 @@ export class LoadRequestActivityComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-
 
 }

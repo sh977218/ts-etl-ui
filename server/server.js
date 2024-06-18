@@ -122,14 +122,6 @@ app.post('/api/loadRequest', async (req, res) => {
   res.send();
 });
 
-app.get('/api/loadRequestActivities/:requestId', async (req, res) => {
-  const requestId = Number.parseInt(req.params.requestId);
-
-  const { loadRequestActivitiesCollection } = await mongoCollection();
-  const loadRequestActivities = await loadRequestActivitiesCollection.find({ requestId }).toArray();
-  res.send(loadRequestActivities);
-});
-
 app.get('/api/versionQAs', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   const versionQAs = await versionQAsCollection.find({}).toArray();
