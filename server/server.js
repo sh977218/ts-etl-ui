@@ -26,6 +26,7 @@ app.get('/api/loadRequests', async (req, res) => {
     requestStatus,
     requestTime,
     requestDateRange,
+    requester,
     sort,
     order,
     pageNumber,
@@ -40,6 +41,9 @@ app.get('/api/loadRequests', async (req, res) => {
   }
   if (!!type && type !== 'null') {
     $match.type = type;
+  }
+  if (!!requester && requester !== 'null') {
+    $match.requester = requester;
   }
   if (!!requestStatus && requestStatus !== 'null') {
     $match.requestStatus = requestStatus;

@@ -15,8 +15,8 @@
       <mat-form-field>
         <mat-label>All Requests</mat-label>
         <mat-select placeholder="All Requests" formControlName="requestType">
-          <mat-option value="0">All Requests</mat-option>
-          <mat-option value="1">My Requests</mat-option>
+          <mat-option value="null">All Requests</mat-option>
+          <mat-option [value]="user?.utsUser!.username">My Requests</mat-option>
         </mat-select>
       </mat-form-field>
       <button mat-fab extended color="primary" type="submit">
