@@ -15,6 +15,8 @@ const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
 const MONGO_HOSTNAME = process.env.MONGO_HOSTNAME || '';
 const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
+let MONGO_CLIENT;
+
 export function getPrNumber() {
 
   if (PR_FROM_ENV) {
@@ -40,11 +42,14 @@ function getCollections() {
 
 function mongoClient() {
   const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}?retryWrites=true&w=majority&appName=ts-etl-ui`;
-  return new MongoClient(uri, {
-    serverApi: {
-      version: ServerApiVersion.v1, strict: true, deprecationErrors: true,
-    },
-  });
+  if (!MONGO_CLIENT) {
+    MONGO_CLIENT = new MongoClient(uri, {
+      serverApi: {
+        version: ServerApiVersion.v1, strict: true, deprecationErrors: true,
+      },
+    });
+  }
+  return MONGO_CLIENT;
 }
 
 async function mongoDb() {

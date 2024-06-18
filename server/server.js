@@ -148,7 +148,7 @@ app.post('/api/qaActivity', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
-      activityHistory: req.body.qaActivity,
+      versionQaActivities: req.body.qaActivity,
     },
   });
   res.send();

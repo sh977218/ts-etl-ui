@@ -11,7 +11,8 @@
       "availableDate": "2018-10-28",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17 +05:00",
-      "activityHistory": []
+      "versionQaActivities": [
+      ]
     },
     {
       "requestId": 1,
@@ -24,7 +25,7 @@
       "availableDate": "2018-10-28",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17 +05:00",
-      "activityHistory": [
+      "versionQaActivities": [
         {
           "action": "Accept",
           "updatedTime": "2023-12-12T07:53:17 +05:00",

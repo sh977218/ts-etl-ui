@@ -1,21 +1,21 @@
 import {
-  Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit, ViewChild
+  Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit, ViewChild,
 } from '@angular/core';
-import {NgIf} from '@angular/common';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { NgIf } from '@angular/common';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import {
-  MatTableDataSource, MatTableModule
+  MatTableDataSource, MatTableModule,
 } from '@angular/material/table';
-import {MatInputModule} from '@angular/material/input';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import {MatSort, MatSortModule} from '@angular/material/sort';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 
-import {LoadRequestActivity} from '../model/load-request-activity';
-import {catchError, throwError} from 'rxjs';
-import {LoadingService} from "../loading-service";
-import {AlertService} from "../alert-service";
+import { LoadRequestActivity } from '../model/load-request-activity';
+import { catchError, throwError } from 'rxjs';
+import { LoadingService } from '../loading-service';
+import { AlertService } from '../alert-service';
 
 @Component({
   selector: 'app-load-request-activity',
@@ -27,13 +27,13 @@ import {AlertService} from "../alert-service";
     MatSortModule,
     MatPaginatorModule,
     NgIf,
-    MatProgressSpinner
+    MatProgressSpinner,
   ],
   templateUrl: './load-request-activity.component.html',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class LoadRequestActivityComponent implements OnInit {
-  @Input() requestId: string | null = null;
+  @Input() requestId: number | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -46,7 +46,7 @@ export class LoadRequestActivityComponent implements OnInit {
     'status',
     'messageType',
     'message',
-    'creationTime'
+    'creationTime',
   ];
 
   dataSource: MatTableDataSource<LoadRequestActivity> = new MatTableDataSource<LoadRequestActivity>([]);
@@ -63,7 +63,7 @@ export class LoadRequestActivityComponent implements OnInit {
         if (err.status === 404) {
           return [];
         } else {
-          return throwError(() => err)
+          return throwError(() => err);
         }
       }))
       .subscribe({
@@ -72,9 +72,9 @@ export class LoadRequestActivityComponent implements OnInit {
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
         },
-        error: () => this.alertService.addAlert('success', 'Error loading.')
+        error: () => this.alertService.addAlert('success', 'Error loading.'),
       })
-      .add(() => this.loadingService.hideLoading())
+      .add(() => this.loadingService.hideLoading());
   }
 
 

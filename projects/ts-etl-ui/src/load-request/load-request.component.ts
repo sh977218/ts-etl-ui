@@ -187,15 +187,12 @@ export class LoadRequestComponent implements AfterViewInit {
       });
   }
 
-  fetchLoadRequestActivity(event: MouseEvent, loadRequest: LoadRequest) {
-    this.expandedElement = this.expandedElement === loadRequest ? null : loadRequest;
-    event.stopPropagation();
-  }
-
   // @TODO get all pages
   download() {
     const blob = new Blob([JSON.stringify(this.data)], { type: 'application/json' });
     saveAs(blob, 'loadRequests-export.json');
     this.alertService.addAlert('', 'Export downloaded.');
   }
+
+  protected readonly event = event;
 }
