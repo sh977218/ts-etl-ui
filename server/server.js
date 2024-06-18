@@ -55,7 +55,7 @@ app.get('/api/loadRequests', async (req, res) => {
     };
   }
   if (!!requestDateRange && requestDateRange !== 'null') {
-    const now = new Date();
+    const today = new Date();
     const startOfWeek = new Date();
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of the current week
     startOfWeek.setHours(0, 0, 0, 0);
@@ -63,13 +63,13 @@ app.get('/api/loadRequests', async (req, res) => {
     startOfMonth.setHours(0, 0, 0, 0);
     if (requestDateRange === 'today') {
       $match.requestTime = {
-        $lte: now,
-        $gte: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+        $lte: today,
+        $gte: new Date(today.getTime() - 24 * 60 * 60 * 1000),
       };
     } else if (requestDateRange === 'thisWeek') {
       $match.requestTime = {
         $gte: startOfWeek,
-        $lte: now,
+        $lte: today,
       };
     } else if (requestDateRange === 'lastWeek') {
       const startOfLastWeek = new Date();
@@ -82,7 +82,7 @@ app.get('/api/loadRequests', async (req, res) => {
     } else if (requestDateRange === 'thisMonth') {
       $match.requestTime = {
         $gte: startOfMonth,
-        $lte: now,
+        $lte: today,
       };
     } else if (requestDateRange === 'lastMonth') {
       const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
