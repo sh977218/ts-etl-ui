@@ -182,9 +182,10 @@ export class LoadRequestComponent implements AfterViewInit {
       .subscribe({
         next: ({ requestId }) => {
           this.alertService.addAlert('info', `Request (ID: ${requestId}) created successfully`);
+          this.reloadAllRequests$.next(true);
         },
         error: () => this.alertService.addAlert('danger', 'Error create load request.'),
-      }).add(() => this.reloadAllRequests$.next(true));
+      });
   }
 
   // @TODO get all pages
