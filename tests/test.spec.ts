@@ -35,7 +35,6 @@ test.describe('e2e test', async () => {
       }
     });
     await page.goto('/');
-    // Expect a title "to contain" a substring.
     await test.step('has title', async () => {
       await expect(page).toHaveTitle('Please Log In');
     });
