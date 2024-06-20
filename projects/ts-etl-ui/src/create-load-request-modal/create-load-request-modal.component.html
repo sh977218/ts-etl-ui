@@ -14,6 +14,16 @@
           <mat-option value="HPO">HPO</mat-option>
         </mat-select>
       </mat-form-field>
+      <ng-container *ngIf="loadRequestCreationForm.get('codeSystemName')?.getRawValue() as codeSystemName">
+        <ng-container *ngIf="CODE_SYSTEM_REQUIRED_SOURCE_FILE[codeSystemName] as requiredFiles">
+          <mat-list role="list" class="border-gray-50 border-2 border-solid mb-3" *ngIf="requiredFiles.length">
+            <strong mat-subheader>Required Source files of {{codeSystemName}}</strong>
+            <mat-list-item role="listitem" *ngFor="let requiredFile of requiredFiles">
+              <div matListItemTitle>{{requiredFile}}</div>
+            </mat-list-item>
+          </mat-list>
+        </ng-container>
+      </ng-container>
       <mat-form-field appearance="fill">
         <mat-label>Request Subject</mat-label>
         <input matInput placeholder="Request Subject" formControlName="requestSubject">
