@@ -98,7 +98,7 @@ test.describe('e2e test', async () => {
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
-    await page.getByRole('tab', { name: 'Version QA' }).click();
+    await page.getByRole('tab', { name: 'Load Version' }).click();
 
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
 
