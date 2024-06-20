@@ -29,5 +29,14 @@ export type VersionQA = {
   effectiveDate: Date
   availableDate: Date
   requester: string;
-  versionQaActivities: VersionQAActivity[]
+  loadTime: Date;
+  duration: string;
+  versionQaActivities: VersionQAActivity[];
+  obsoleteId: string;
+  versionNumber: string;
+  language: string;
+  country: string;
+  notes: string[];
+  publishedDate: Date;
+  requestTime: Date;
 }

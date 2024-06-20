@@ -56,19 +56,20 @@
       <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
       <ng-container matColumnDef="expandedDetail">
         <td class="bg-gray-100" mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
-          <div class="example-element-detail flex-col" [@detailExpand]="row === expandedElement ? 'expanded' : 'collapsed'"  *ngIf="expandedElement === row">
-            <!-- <div class="flex" style="flex-grow: 1">
-              <app-version-qa-detail [versionQA]="row" class="flex flex-grow"></app-version-qa-detail>
-            </div>
-            <div class="flex" style="flex-grow: 2">
-              <app-version-qa-activity [versionQaActivities]="row.versionQaActivities" [requestId]="row.requestId"  class="flex flex-grow"></app-version-qa-activity>
-            </div> -->
+          <div class="" [@detailExpand]="row === expandedElement ? 'expanded' : 'collapsed'"  *ngIf="expandedElement === row">
             <div class="flex">
-              <div class="flex"style="flex-grow:1;background-color:#0a3069">Hello</div>
-              <div class="flex"style="flex-grow:2;background-color:#0dbc79">World</div>  
+              <div class="m-2" style="flex-grow:0.35">
+                <app-version-qa-detail [versionQA]="row" class="flex flex-grow"></app-version-qa-detail>
+              </div>
+              <div class="m-2" style="flex-grow:0.65;background-color:#0dbc79">Load Summary and QA Actions go here!</div>
             </div>
-            <div class="flex"style="flex-direction:column;flex-grow:1;background-color:#9e3670">QA Activites</div>
-          </div>        
+            <div class="flex" style="flex-grow:1">
+              <fieldset style="border-width: 4px; border-radius: 16px;">
+                <legend>QA Acceptance</legend>
+                <app-version-qa-activity [versionQaActivities]="row.versionQaActivities" [requestId]="row.requestId"  class="flex flex-grow"></app-version-qa-activity>
+              </fieldset>
+            </div>
+          </div>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
