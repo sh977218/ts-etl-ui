@@ -99,6 +99,7 @@ test.describe('e2e test', async () => {
     const matDialog = materialPo.matDialog();
 
     await page.getByRole('tab', { name: 'Load Version' }).click();
+    await page.waitForLoadState('networkidle');
 
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
 
@@ -120,6 +121,7 @@ test.describe('e2e test', async () => {
 
   test('Code System Tab', async ({ page }) => {
     await page.getByRole('tab', { name: 'Code System' }).click();
+    await page.waitForLoadState('networkidle');
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
   });
 
