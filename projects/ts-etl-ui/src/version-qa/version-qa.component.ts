@@ -1,5 +1,5 @@
 import { AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild } from '@angular/core';
-import { JsonPipe, NgIf } from '@angular/common';
+import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { merge, startWith, switchMap, catchError, of, map } from 'rxjs';
@@ -26,6 +26,7 @@ import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-ac
   selector: 'app-version-qa',
   standalone: true,
   imports: [NgIf,
+    CommonModule,
     ReactiveFormsModule,
     MatInputModule,
     MatTableModule,
@@ -46,16 +47,14 @@ import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-ac
 })
 export class VersionQaComponent implements AfterViewInit {
   displayedColumns: string[] = [
-    'requestId',
-    'loadNumber',
     'codeSystemName',
-    'sourceFilePath',
-    'requestSubject',
-    'versionStatus',
     'version',
-    'effectiveDate',
-    'availableDate',
+    'loadNumber',
+    'versionStatus',
+    'loadTime',
+    'requestId',
     'requester',
+    'requestTime',
   ];
 
   versionQaDatabase: VersionQaDataSource | null = null;

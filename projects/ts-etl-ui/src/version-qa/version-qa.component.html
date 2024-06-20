@@ -10,26 +10,12 @@
 
       <ng-container matColumnDef="loadNumber">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Load Number</th>
-        <td mat-cell *matCellDef="let row">{{row.loadNumber}}</td>
+        <td mat-cell *matCellDef="let row" (click)="expandedElement = expandedElement === row ? null : row"><a href="#">{{row.loadNumber}}</a></td>
       </ng-container>
 
       <ng-container matColumnDef="codeSystemName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Code System Name</th>
         <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="sourceFilePath">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Source File Path
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.sourceFilePath}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="requestSubject">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Request Subject
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.requestSubject}}</td>
       </ng-container>
 
       <ng-container matColumnDef="versionStatus">
@@ -46,18 +32,18 @@
         <td mat-cell *matCellDef="let row">{{row.version}}</td>
       </ng-container>
 
-      <ng-container matColumnDef="effectiveDate">
+      <ng-container matColumnDef="requestTime">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Effective Date
+          Request Time
         </th>
-        <td mat-cell *matCellDef="let row">{{row.effectiveDate}}</td>
+        <td mat-cell *matCellDef="let row">{{row.requestTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
       </ng-container>
 
-      <ng-container matColumnDef="availableDate">
+      <ng-container matColumnDef="loadTime">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Available Date
+          Load Time
         </th>
-        <td mat-cell *matCellDef="let row">{{row.availableDate}}</td>
+        <td mat-cell *matCellDef="let row">{{row.loadTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
       </ng-container>
 
       <ng-container matColumnDef="requester">
@@ -84,7 +70,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"
           class="example-element-row"
           [class.example-expanded-row]="expandedElement === row"
-          (click)="expandedElement = expandedElement === row ? null : row">
+          >
       </tr>
       <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 
