@@ -93,7 +93,7 @@ test.describe('e2e test', async () => {
     });
   });
 
-  test('Version QA Tab @debug', async ({ page }) => {
+  test('Version QA Tab', async ({ page }) => {
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
