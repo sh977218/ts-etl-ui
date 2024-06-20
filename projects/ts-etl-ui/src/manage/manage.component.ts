@@ -1,4 +1,4 @@
-import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatDrawer, MatDrawerContainer, MatSidenav, MatSidenavContainer } from '@angular/material/sidenav';
@@ -39,7 +39,6 @@ import { NavigationService } from '../navigation-service';
     VersionQaComponent,
     CodeSystemComponent,
     NgForOf,
-    JsonPipe,
   ],
   templateUrl: './manage.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
