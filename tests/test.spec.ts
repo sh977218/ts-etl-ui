@@ -106,7 +106,7 @@ test.describe('e2e test', async () => {
       const versionQRows = page.getByRole('table').locator('tbody tr');
       const collapsedRow = versionQRows.first();
       const expandedRow = versionQRows.nth(1);
-      await collapsedRow.click();
+      await page.locator('tbody tr td a').first().click();
       await expandedRow.getByRole('button', { name: 'Accept' }).click();
       await matDialog.waitFor();
       await matDialog.getByPlaceholder('Notes').fill('Accepted by me');
