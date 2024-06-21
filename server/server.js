@@ -17,7 +17,7 @@ function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-app.post('/list', async (req, res) => {
+app.get('/loadRequests', async (req, res) => {
   const {
     requestId,
     codeSystemName,
@@ -31,34 +31,34 @@ app.post('/list', async (req, res) => {
     order,
     pageNumber,
     pageSize,
-  } = req.body;
+  } = req.query;
   const $match = {};
-  if (requestId) {
+  if (requestId !== 'null') {
     $match.requestId = Number.parseInt(requestId);
   }
-  if (codeSystemName) {
+  if (!!codeSystemName && codeSystemName !== 'null') {
     $match.codeSystemName = codeSystemName;
   }
-  if (type) {
+  if (!!type && type !== 'null') {
     $match.type = type;
   }
-  if (requester) {
+  if (!!requester && requester !== 'null') {
     $match.requester = requester;
   }
-  if (requestStatus) {
+  if (!!requestStatus && requestStatus !== 'null') {
     $match.requestStatus = requestStatus;
   }
-  if (requestSubject) {
+  if (!!requestSubject && requestSubject !== 'null') {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
-  if (requestTime) {
+  if (!!requestTime && requestTime !== 'null') {
     const dateObj = new Date(requestTime);
     $match.requestTime = {
       $gte: dateObj,
       $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
     };
   }
-  if (requestDateRange) {
+  if (!!requestDateRange && requestDateRange !== 'null') {
     const today = new Date();
     const startOfWeek = new Date();
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of the current week

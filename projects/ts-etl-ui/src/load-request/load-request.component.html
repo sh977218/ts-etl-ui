@@ -43,7 +43,8 @@
   <div class="mat-elevation-z8 m-5">
     <div class="example-table-container">
       <table mat-table [dataSource]="data()" class="example-table" multiTemplateDataRows
-             matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc">
+             matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc"
+             formGroupName="filters">
 
         <ng-container matColumnDef="requestId">
           <th mat-header-cell *matHeaderCellDef>
