@@ -2,7 +2,7 @@ import { AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, Vie
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { merge, startWith, switchMap, catchError, of, map } from 'rxjs';
+import { merge, startWith, switchMap, catchError, of, map, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -22,6 +22,8 @@ import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail
 import { triggerExpandTableAnimation } from '../animations';
 import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
+import { ActivatedRoute } from '@angular/router';
+import { NavigationService } from '../navigation-service';
 
 @Component({
   selector: 'app-version-qa',
@@ -68,8 +70,17 @@ export class VersionQaComponent implements AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
   constructor(private http: HttpClient,
+              private activatedRoute: ActivatedRoute,
               public dialog: MatDialog,
-              private loadingService: LoadingService) {
+              private loadingService: LoadingService,
+              private navigationService: NavigationService) {
+    activatedRoute.title
+      .pipe(
+        tap({
+          next: title => navigationService.tabs.forEach(tab => tab.isActive = tab.label === title),
+        }),
+      )
+      .subscribe();
   }
 
   ngAfterViewInit() {

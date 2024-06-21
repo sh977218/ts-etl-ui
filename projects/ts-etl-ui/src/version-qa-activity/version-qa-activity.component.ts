@@ -50,7 +50,7 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['sequence', 'action', 'updatedTime', 'nbNotes'];
+  displayedColumns: string[] = ['id', 'activity', 'availableDate', 'reason', 'nbNotes'];
   expandedElement: VersionQAActivity | null = null;
 
   dataSource: MatTableDataSource<VersionQAActivity> = new MatTableDataSource<VersionQAActivity>([]);
@@ -90,9 +90,11 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
         // transform the data return from modal to `VersionQAActivityHistory`
         map((versionQaReviewDataReturn: VersionQaReviewDataReturn | null) => {
           if (versionQaReviewDataReturn) {
-            const { action, ...note } = versionQaReviewDataReturn;
+            const { activity, id, availableDate, ...note } = versionQaReviewDataReturn;
             return {
-              action,
+              id,
+              availableDate,
+              activity,
               updatedTime: new Date(),
               notes: [note],
             } as VersionQAActivity;

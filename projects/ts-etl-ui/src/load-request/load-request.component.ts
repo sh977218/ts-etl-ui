@@ -24,7 +24,7 @@ import { LoadRequestDataSource } from './load-request-data-source';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { catchError, filter, map, merge, of, startWith, Subject, switchMap } from 'rxjs';
+import { catchError, filter, map, merge, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
 import { AlertService } from '../alert-service';
@@ -38,6 +38,8 @@ import { LoadRequestDetailComponent } from '../load-request-detail/load-request-
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { UserService } from '../user-service';
 import { User } from '../model/user';
+import { ActivatedRoute } from '@angular/router';
+import { NavigationService } from '../navigation-service';
 
 @Component({
   selector: 'app-load-request',
@@ -115,7 +117,16 @@ export class LoadRequestComponent implements AfterViewInit {
               private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
               private userService: UserService,
-              public alertService: AlertService) {
+              public alertService: AlertService,
+              private activatedRoute: ActivatedRoute,
+              private navigationService: NavigationService) {
+    activatedRoute.title
+      .pipe(
+        tap({
+          next: title => navigationService.tabs.forEach(tab => tab.isActive = tab.label === title),
+        }),
+      )
+      .subscribe();
     userService.user$.subscribe(user => this.user = user);
 
     breakpointObserver
