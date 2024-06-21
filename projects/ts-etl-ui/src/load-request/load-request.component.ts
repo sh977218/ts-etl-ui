@@ -99,16 +99,14 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      filters: new FormGroup({
-        requestId: new FormControl(),
-        codeSystemName: new FormControl('', { updateOn: 'change' }),
-        requestSubject: new FormControl(),
-        type: new FormControl('', { updateOn: 'change' }),
-        requestStatus: new FormControl('', { updateOn: 'change' }),
-        requestTime: new FormControl('', { updateOn: 'change' }),
-      }),
-      requestDateRange: new FormControl('', { updateOn: 'change' }),
-      requestType: new FormControl('', { updateOn: 'change' }),
+      requestId: new FormControl<number | null>(null),
+      codeSystemName: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestSubject: new FormControl<string | null>(null),
+      type: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestDateRange: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestType: new FormControl<string | null>(null, { updateOn: 'change' }),
     }, { updateOn: 'submit' },
   );
 
@@ -151,17 +149,16 @@ export class LoadRequestComponent implements AfterViewInit {
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
     this.searchCriteria.valueChanges.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.reloadAllRequests$.pipe(filter(reload => !!reload)),
+    merge(
+      this.reloadAllRequests$.pipe(filter(reload => !!reload)),
       this.searchCriteria.valueChanges,
       this.sort.sortChange,
-      this.paginator.page)
+      this.paginator.page,
+    )
       .pipe(
         startWith({}),
-        switchMap(() => {
+        switchMap((filters) => {
           this.loadingService.showLoading();
-          const filters = this.searchCriteria.get('filters')?.getRawValue() || '';
-          filters.requestDateRange = this.searchCriteria.get('requestDateRange')?.getRawValue();
-          filters.requester = this.searchCriteria.get('requestType')?.getRawValue();
           const sort = this.sort.active;
           const order = this.sort.direction;
           const pageNumber = this.paginator.pageIndex;
@@ -181,11 +178,15 @@ export class LoadRequestComponent implements AfterViewInit {
           items.forEach(item => item.numberOfMessages = item.loadRequestMessages ? item.loadRequestMessages.length : 0);
           return items;
         }),
+        tap({
+          next: (data) => {
+            this.data.set(data);
+            this.loadingService.hideLoading();
+          },
+          error: () => this.loadingService.hideLoading(),
+        }),
       )
-      .subscribe(data => {
-        this.data.set(data);
-        this.loadingService.hideLoading();
-      });
+      .subscribe();
   }
 
   openCreateLoadRequestModal() {
@@ -195,7 +196,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .afterClosed()
       .pipe(
         filter((newLoadRequest) => !!newLoadRequest),
-        switchMap((newLoadRequest) => this.http.post<{ requestId: string }>('/api/loadRequest', newLoadRequest)),
+        switchMap((newLoadRequest) => this.http.post<{ requestId: string }>('/loadRequest', newLoadRequest)),
       )
       .subscribe({
         next: ({ requestId }) => {

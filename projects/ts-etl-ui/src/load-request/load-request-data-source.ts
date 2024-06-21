@@ -3,42 +3,35 @@ import { HttpClient } from '@angular/common/http';
 import { SortDirection } from '@angular/material/sort';
 
 export type LoadRequestFilter = {
-  requestId: number;
-  codeSystemName: string;
-  requestSubject: string;
-  type: string;
-  requestStatus: string;
-  requestTime: string;
-  requestDateRange: string;
-  requester: string
+  requestId: number | null;
+  codeSystemName: string | null;
+  requestSubject: string | null;
+  type: string | null;
+  requestStatus: string | null;
+  requestTime: string | null;
+  requestDateRange: string | null;
+  requester: string | null
 }
 
 export class LoadRequestDataSource {
   constructor(private _httpClient: HttpClient) {
   }
 
-  getLoadRequests(loadRequestFilter: LoadRequestFilter,
+  getLoadRequests(loadRequestFilter: LoadRequestFilter | unknown,
                   sort: string = 'requestId',
                   order: SortDirection = 'asc',
                   pageNumber: number = 0,
                   pageSize: number = 10) {
-    const {requestId, codeSystemName, requestSubject, type, requestStatus, requestTime, requestDateRange, requester} = loadRequestFilter;
-    const params = {
-      requestId,
-      codeSystemName,
-      requestSubject,
-      type,
-      requestStatus,
-      requestTime,
-      requestDateRange,
-      requester,
-      sort,
-      order,
-      pageNumber,
-      pageSize
+    let body = {};
+    if (loadRequestFilter) {
+      body = {
+        sort,
+        order,
+        pageNumber,
+        pageSize,
+        ...loadRequestFilter,
+      };
     }
-    return this._httpClient.get<LoadRequestsApiResponse>('/api/loadRequests', {
-      params
-    });
+    return this._httpClient.post<LoadRequestsApiResponse>('/loadRequests', body);
   }
 }
