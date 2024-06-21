@@ -1,5 +1,5 @@
 <div class="example-sidenav-content mx-5">
-  <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+  <nav mat-tab-nav-bar [tabPanel]="tabPanel" mat-stretch-tabs="false">
     <ng-container *ngFor="let tab of navigationService.tabs">
       <a mat-tab-link [routerLink]="tab.route"
          [active]="tab.isActive">{{tab.label}} </a>
