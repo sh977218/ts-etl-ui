@@ -48,7 +48,7 @@ export class CodeSystemComponent {
       )
       .subscribe();
 
-    this.http.get<CodeSystem[]>('/api/codeSystems').pipe(
+    this.http.get<CodeSystem[]>('/codeSystems').pipe(
       tap({
         next: (codeSystems) => {
           this.dataSource = new MatTableDataSource(codeSystems);

@@ -105,7 +105,7 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
         }),
         switchMap((versionQAActivity: VersionQAActivity | null) => {
           if (versionQAActivity) {
-            return this.http.post('/api/qaActivity', {
+            return this.http.post('/qaActivity', {
               requestId: this.requestId,
               qaActivity: versionQAActivity,
             })

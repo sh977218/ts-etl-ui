@@ -17,7 +17,7 @@ function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-app.get('/api/loadRequests', async (req, res) => {
+app.post('/list', async (req, res) => {
   const {
     requestId,
     codeSystemName,
@@ -31,34 +31,34 @@ app.get('/api/loadRequests', async (req, res) => {
     order,
     pageNumber,
     pageSize,
-  } = req.query;
+  } = req.body;
   const $match = {};
-  if (requestId !== 'null') {
+  if (requestId) {
     $match.requestId = Number.parseInt(requestId);
   }
-  if (!!codeSystemName && codeSystemName !== 'null') {
+  if (codeSystemName) {
     $match.codeSystemName = codeSystemName;
   }
-  if (!!type && type !== 'null') {
+  if (type) {
     $match.type = type;
   }
-  if (!!requester && requester !== 'null') {
+  if (requester) {
     $match.requester = requester;
   }
-  if (!!requestStatus && requestStatus !== 'null') {
+  if (requestStatus) {
     $match.requestStatus = requestStatus;
   }
-  if (!!requestSubject && requestSubject !== 'null') {
+  if (requestSubject) {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
-  if (!!requestTime && requestTime !== 'null') {
+  if (requestTime) {
     const dateObj = new Date(requestTime);
     $match.requestTime = {
       $gte: dateObj,
       $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
     };
   }
-  if (!!requestDateRange && requestDateRange !== 'null') {
+  if (requestDateRange) {
     const today = new Date();
     const startOfWeek = new Date();
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of the current week
@@ -115,7 +115,7 @@ async function getNextLoadRequestSequenceId(req) {
   return loadRequestsCollection.countDocuments({});
 }
 
-app.post('/api/loadRequest', async (req, res) => {
+app.post('/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
   const { loadRequestsCollection } = await mongoCollection();
@@ -128,7 +128,7 @@ app.post('/api/loadRequest', async (req, res) => {
   res.send({ requestId: newLoadRequest.requestId });
 });
 
-app.get('/api/versionQAs', async (req, res) => {
+app.get('/versionQAs', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   const versionQAs = await versionQAsCollection.find({}).toArray();
   res.send({
@@ -136,13 +136,13 @@ app.get('/api/versionQAs', async (req, res) => {
   });
 });
 
-app.get('/api/file/:id', (req, res) => {
+app.get('/file/:id', (req, res) => {
   const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
   const fileContent = fs.readFileSync(fileLocation);
   res.send(fileContent);
 });
 
-app.post('/api/qaActivity', async (req, res) => {
+app.post('/qaActivity', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
@@ -152,7 +152,7 @@ app.post('/api/qaActivity', async (req, res) => {
   res.send();
 });
 
-app.get('/api/codeSystems', async (req, res) => {
+app.get('/codeSystems', async (req, res) => {
   const { codeSystemsCollection } = await mongoCollection();
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
@@ -160,7 +160,7 @@ app.get('/api/codeSystems', async (req, res) => {
 
 
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
-app.get('/api/serviceValidate', async (req, res) => {
+app.get('/serviceValidate', async (req, res) => {
   req.hostname;
 
   const { usersCollection } = await mongoCollection();
@@ -174,7 +174,7 @@ app.get('/api/serviceValidate', async (req, res) => {
   res.send(user);
 });
 
-app.get('/api/serverInfo', async (req, res) => {
+app.get('/serverInfo', async (req, res) => {
   const pr = getPrNumber();
   const { db } = await mongoCollection();
   res.send({ pr, db: db.s.namespace.db });
