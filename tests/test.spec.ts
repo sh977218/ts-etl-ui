@@ -111,7 +111,7 @@ test.describe('e2e test', async () => {
       await matDialog.getByRole('button', { name: 'Save' }).click();
       await matDialog.waitFor({ state: 'hidden' });
 
-      const activityHistoryFirstRow = page.locator('fieldset table tbody tr').first();
+      const activityHistoryFirstRow = page.locator('#qaActivitiesTable tbody tr').first();
       await activityHistoryFirstRow.click();
       await expect(page.getByText('Accepted by me')).toBeVisible();
     });
