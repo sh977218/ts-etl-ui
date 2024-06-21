@@ -4,7 +4,7 @@ import {
 } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { LoadSummary } from '../model/version-qa';
-import { DurationPipe } from '../service/duration.pipe';
+import { DurationPipe } from '../service/app.pipe';
 
 @Component({
   selector: 'app-load-summary',
