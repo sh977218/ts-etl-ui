@@ -13,7 +13,38 @@
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
       "versionQaActivities": [
-      ]
+      ],
+      "loadSummary": {
+        "components": [
+          {
+            "componentName": "extract",
+            "status": "Complete",
+            "startTime": "2023-12-17T07:53:17+05:00",
+            "duration": 402000,
+            "errors": [],
+            "warnings": [],
+            "infos": [{}]
+          },
+          {
+            "componentName": "inject",
+            "status": "Complete",
+            "startTime": "2023-12-17T07:58:17+05:00",
+            "duration": 802000,
+            "errors": [],
+            "warnings": [],
+            "infos": [{}]
+          },
+          {
+            "componentName": "assert",
+            "status": "Complete",
+            "startTime": "2023-12-17T08:12:17+05:00",
+            "duration": 202000,
+            "errors": [],
+            "warnings": [],
+            "infos": [{}]
+          }
+        ]
+      }
     },
     {
       "requestId": 1,
@@ -28,22 +59,8 @@
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
       "versionQaActivities": [
-        {
-          "id": "2023-09-15",
-          "activity": "Accept",
-          "updatedTime": "2023-12-12T07:53:17+05:00",
-          "availableDate": "2024-10-28",
-          "reason": "The load summary shows no errors and no warnings. There are no errors or warnings reported for verification",
-          "notes": [
-            {
-              "tag": "Accept",
-              "createdBy": "ludetc",
-              "notes": "Great Submission. Approved"
-            }
-          ]
-        }
-
-      ]
+      ],
+      "loadSummary": {}
     },
     {
       "requestId": 2,
@@ -58,8 +75,10 @@
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
       "versionQaActivities": [
-      ]
-    },    {
+      ],
+      "loadSummary": {}
+    },
+    {
       "requestId": 3,
       "loadNumber": 20240501081501,
       "loadTime": "2024-05-01T08:15:01+05:00",
@@ -74,5 +93,6 @@
       "versionQaActivities": [
       ]
     }
-  ]
+  ],
+  "loadSummary": {}
 }

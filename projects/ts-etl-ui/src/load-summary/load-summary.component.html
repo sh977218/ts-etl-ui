@@ -1,0 +1,36 @@
+<h1>Load Summary</h1>
+<fieldset>
+  <legend>Load Components</legend>
+  <table id="loadComponentsTable" class="mat-elevation-z8 my-3" mat-table [dataSource]="loadSummary.components" matSort>
+    <ng-container matColumnDef="componentName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Component Name</th>
+      <td mat-cell *matCellDef="let element">{{element.componentName}}</td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Status</th>
+      <td mat-cell *matCellDef="let element">{{element.status}}</td>
+    </ng-container>
+    <ng-container matColumnDef="startTime">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Start Time</th>
+      <td mat-cell *matCellDef="let element">{{element.startTime}}</td>
+    </ng-container>
+    <ng-container matColumnDef="duration">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Duration</th>
+      <td mat-cell *matCellDef="let element">{{element.duration | durationFormat }}</td>
+    </ng-container>
+    <ng-container matColumnDef="error">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>error</th>
+      <td mat-cell *matCellDef="let element">{{element.errors.length}}</td>
+    </ng-container>
+    <ng-container matColumnDef="warning">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>warning</th>
+      <td mat-cell *matCellDef="let element">{{element.warnings.length}}</td>
+    </ng-container>
+    <ng-container matColumnDef="info">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>info</th>
+      <td mat-cell *matCellDef="let element">{{element.infos.length}}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="summaryColumns"></tr>
+    <tr mat-row *matRowDef="let element; columns: summaryColumns"></tr>
+  </table>
+</fieldset>

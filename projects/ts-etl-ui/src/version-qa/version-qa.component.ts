@@ -21,6 +21,7 @@ import { LoadingService } from '../loading-service';
 import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail.component';
 import { triggerExpandTableAnimation } from '../animations';
 import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
+import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import { ActivatedRoute } from '@angular/router';
 import { NavigationService } from '../navigation-service';
 
@@ -41,7 +42,7 @@ import { NavigationService } from '../navigation-service';
     MatCheckboxModule,
     MatOptionModule,
     MatSelectModule,
-    VersionQaDetailComponent, VersionQaActivityComponent, JsonPipe,
+    VersionQaDetailComponent, VersionQaActivityComponent, JsonPipe, LoadSummaryComponent,
   ],
   templateUrl: './version-qa.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],

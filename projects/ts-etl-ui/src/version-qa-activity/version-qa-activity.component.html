@@ -2,7 +2,7 @@
 
   <fieldset>
     <legend>QA Activites</legend>
-    <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+    <table data-testid="qaActivitiesTable" mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
       <caption>Activity History</caption>
 
       <ng-container matColumnDef="id">
