@@ -12,7 +12,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core'
 
 export type VersionQaReviewDataReturn = {
-    action: string;
+    id: string;
+    activity: string;
     availableDate: Date;
     createdTime: Date;
     createdBy: string;
@@ -63,7 +64,7 @@ export class VersionQaReviewModalComponent {
 
     save() {
         this.dialogRef.close({
-            action: this.dataSource.tag,
+            activity: this.dataSource.tag,
             createdTime: new Date(),
             ...this.reviewForm.getRawValue()
         } as VersionQaReviewDataReturn);

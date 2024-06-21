@@ -4,9 +4,10 @@ export type VersionQAsApiResponse = {
 }
 
 export type VersionQAActivity = {
-  sequence: number;
-  action: string
+  id: string;
+  activity: string
   updatedTime: Date
+  availableDate: Date,
   notes: QAActivityNote[]
 }
 
@@ -14,7 +15,6 @@ export type QAActivityNote = {
   tag: string,
   createdBy: string,
   createdTime: Date,
-  availableDate: Date,
   notes: string
 }
 
