@@ -6,7 +6,7 @@ import { BehaviorSubject, tap } from 'rxjs';
 import { AlertService } from './alert-service';
 import { Router } from '@angular/router';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class UserService {
   private _user$ = new BehaviorSubject<User | null>(null);
 
@@ -27,27 +27,28 @@ export class UserService {
   logInWithTicket(ticket: string) {
     const params = {
       service: window.location.origin,
-      ticket
-    }
-    return this.http.get<User>(`${environment.ticketUrl}`, {params})
+      ticket,
+    };
+    return this.http.get<User>(`${environment.ticketUrl}`, { params })
       .pipe(
         tap({
           next: (res) => {
             this._user$.next(res);
             localStorage.setItem('user', JSON.stringify(res));
-            this.router.navigate(['/'])
+            this.router.navigate(['/manage']);
           },
           error: () => {
             this.alertService.addAlert('danger', 'error log in');
             this._user$.next(null);
-            this.router.navigate(['/'])
-          }
-        })
-      )
+            this.router.navigate(['/']);
+          },
+        }),
+      );
   }
 
   logOut() {
     this._user$.next(null);
     localStorage.removeItem('user');
+    this.router.navigate(['/please-log-in']);
   }
 }

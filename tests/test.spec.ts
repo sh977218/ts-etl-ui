@@ -35,9 +35,8 @@ test.describe('e2e test', async () => {
       }
     });
     await page.goto('/');
-    // Expect a title "to contain" a substring.
     await test.step('has title', async () => {
-      await expect(page).toHaveTitle('TS ETL UI');
+      await expect(page).toHaveTitle('Please Log In');
     });
     await test.step('has login required message', async () => {
       await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
@@ -46,7 +45,7 @@ test.describe('e2e test', async () => {
     await test.step('login', async () => {
       await page.getByRole('button', { name: 'Log In' }).click();
       await page.getByRole('button', { name: 'UTS' }).click();
-      await page.waitForURL(baseURL || '');
+      await page.waitForURL(`${baseURL}/manage/load-request` || '');
     });
   });
 
@@ -98,15 +97,14 @@ test.describe('e2e test', async () => {
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
-    await page.getByRole('tab', { name: 'Version QA' }).click();
+    await page.getByRole('tab', { name: 'Load Version' }).click();
 
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
 
     await test.step(`Accept version QA`, async () => {
       const versionQRows = page.getByRole('table').locator('tbody tr');
-      const collapsedRow = versionQRows.first();
       const expandedRow = versionQRows.nth(1);
-      await page.locator('tbody tr td a').first().click();
+      await page.locator('tbody tr td .fake-link').first().click();
       await expandedRow.getByRole('button', { name: 'Accept' }).click();
       await matDialog.waitFor();
       await matDialog.getByPlaceholder('Notes').fill('Accepted by me');
