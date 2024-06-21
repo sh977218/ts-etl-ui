@@ -21,6 +21,7 @@ import { LoadingService } from '../loading-service';
 import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail.component';
 import { triggerExpandTableAnimation } from '../animations';
 import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
+import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 
 @Component({
   selector: 'app-version-qa',
@@ -39,7 +40,7 @@ import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-ac
     MatCheckboxModule,
     MatOptionModule,
     MatSelectModule,
-    VersionQaDetailComponent, VersionQaActivityComponent, JsonPipe,
+    VersionQaDetailComponent, VersionQaActivityComponent, JsonPipe, LoadSummaryComponent,
   ],
   templateUrl: './version-qa.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],

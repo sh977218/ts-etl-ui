@@ -61,7 +61,7 @@
               <div class="m-2" style="flex-grow:0.35">
                 <app-version-qa-detail [versionQA]="row" class="flex flex-grow"></app-version-qa-detail>
               </div>
-              <div class="m-2" style="flex-grow:0.65;background-color:#0dbc79">Load Summary and QA Actions go here!</div>
+              <app-load-summary [loadSummary]="row.loadSummary" style="flex-grow:0.65"></app-load-summary>
             </div>
             <div class="flex" style="flex-grow:1">
               <fieldset style="border-width: 4px; border-radius: 16px;">
