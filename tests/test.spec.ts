@@ -77,7 +77,7 @@ test.describe('e2e test', async () => {
       await page.getByRole('option', { name: 'HPO' }).click();
       await matDialog.getByLabel('Request Subject').fill('newly created load request');
       await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/glass.jpg');
-      await expect(matDialog.locator('.file-upload')).toContainText('glass.jpg');
+      await expect(matDialog.locator('.file-upload')).toContainText(`file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/glass.jpg`);
 
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
