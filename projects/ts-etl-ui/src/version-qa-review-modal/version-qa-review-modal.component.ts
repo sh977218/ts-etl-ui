@@ -10,16 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core'
-
-export type VersionQaReviewDataReturn = {
-    id: string;
-    activity: string;
-    availableDate: Date;
-    createdTime: Date;
-    createdBy: string;
-    notes: string;
-    tag: string;
-}
+import { VersionQAActivity } from '../model/version-qa';
 
 @Component({
     selector: 'app-version-qa-review-modal',
@@ -63,11 +54,19 @@ export class VersionQaReviewModalComponent {
     }
 
     save() {
-        this.dialogRef.close({
-            activity: this.dataSource.tag,
+      const newVersionQAActivity: VersionQAActivity = {
+        activity: this.dataSource.tag,
+        updatedTime: new Date(),
+        availableDate: this.reviewForm.get('availableDate')!.value!,
+        notes: [
+          {
+            createdBy: this.reviewForm.get('createdBy')!.value!,
             createdTime: new Date(),
-            ...this.reviewForm.getRawValue()
-        } as VersionQaReviewDataReturn);
+            notes: this.reviewForm.get('note')!.value!
+          }
+        ]
+      }
+      this.dialogRef.close(newVersionQAActivity);
     }
 
 }

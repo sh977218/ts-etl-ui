@@ -1,8 +1,10 @@
-import { AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild
+} from '@angular/core';
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { merge, startWith, switchMap, catchError, of, map, tap } from 'rxjs';
+import { catchError, firstValueFrom, map, merge, of, startWith, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -78,6 +80,7 @@ export class VersionQaComponent implements AfterViewInit {
               private activatedRoute: ActivatedRoute,
               public dialog: MatDialog,
               private loadingService: LoadingService,
+              private cdr: ChangeDetectorRef,
               private navigationService: NavigationService) {
     activatedRoute.title
       .pipe(
@@ -109,7 +112,6 @@ export class VersionQaComponent implements AfterViewInit {
           if (data === null) {
             return [];
           }
-
           this.resultsLength = data.total_count;
           return data.items;
         }),
@@ -118,6 +120,22 @@ export class VersionQaComponent implements AfterViewInit {
         this.loadingService.hideLoading();
         this.data = data;
       });
+  }
+
+  action(requestId: string) {
+    const versionQAIndex = this.data.findIndex(d =>  d.requestId === requestId);
+    const versionQA = this.data[versionQAIndex];
+    const newQAActivity = versionQA!.versionQaActivities[versionQA!.versionQaActivities.length - 1];
+    if (newQAActivity) {
+      this.http.post('/api/qaActivity', {
+        requestId: versionQA!.requestId,
+        qaActivity: newQAActivity,
+      }).subscribe(async () => {
+        this.data[versionQAIndex] = await firstValueFrom(this.http.get<VersionQA>(`/api/versionQA/${versionQA.requestId}`));
+        this.data = [...this.data];
+        this.cdr.detectChanges();
+      })
+    }
   }
 
 }

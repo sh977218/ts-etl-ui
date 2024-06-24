@@ -31,7 +31,7 @@ export type LoadSummary = {
 }
 
 export type VersionQAActivity = {
-  id: string;
+  id?: string;
   activity: string
   updatedTime: Date
   availableDate: Date,
@@ -39,7 +39,6 @@ export type VersionQAActivity = {
 }
 
 export type QAActivityNote = {
-  tag: string,
   createdBy: string,
   createdTime: Date,
   notes: string
