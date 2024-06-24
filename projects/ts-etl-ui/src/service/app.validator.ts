@@ -13,6 +13,6 @@ export function sourceFilePathValidator(): ValidatorFn {
 
     const isNlmServer = regex.test(value);
 
-    return isNlmServer ? null : { notNlmServer: true };
+    return isNlmServer ? null : { sourceFilePathError: true };
   };
 }

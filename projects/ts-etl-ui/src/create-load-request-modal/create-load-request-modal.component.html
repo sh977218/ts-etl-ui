@@ -28,24 +28,14 @@
         <mat-label>Request Subject</mat-label>
         <input matInput placeholder="Request Subject" formControlName="requestSubject">
       </mat-form-field>
-      <div>
-        {{loadRequestCreationForm.get('sourceFilePath')?.errors | json}}
-        {{loadRequestCreationForm.get('sourceFilePath')?.hasError('notNlmServer') | json}}
-      </div>
       <mat-form-field appearance="outline">
         <mat-label for="sourcePathFile">Source File Path</mat-label>
         <input matInput formControlName="sourceFilePath">
+        <mat-icon matSuffix (click)="fileUpload.click()" color="primary">attach_file</mat-icon>
         <input type="file" #fileUpload class="hidden" (change)="onFileSelected($event)" id="sourcePathFile">
-        <mat-error *ngIf="loadRequestCreationForm.get('sourceFilePath')?.hasError('notNlmServer')">Please select source
-          file from NLM server
+        <mat-error *ngIf="loadRequestCreationForm.get('sourceFilePath')?.hasError('sourceFilePathError')">
+          Please select source file from NLM server
         </mat-error>
-        <div class="file-upload">
-          {{loadRequestCreationForm.get('sourceFilePath')?.value || "No file selected yet."}}
-          <button mat-mini-fab color="primary" class="upload-btn float-right" type="button"
-                  (click)="fileUpload.click()">
-            <mat-icon>attach_file</mat-icon>
-          </button>
-        </div>
       </mat-form-field>
       <div class="mb-5">
         <label id="load-request-type-label" for="load-request-type-radio">Request Type</label>
