@@ -3,7 +3,8 @@
     <div class="flex justify-between">
       <mat-form-field>
         <mat-label>Any Request date</mat-label>
-        <mat-select placeholder="Any Request date" formControlName="requestDateRange">
+        <mat-select placeholder="Any Request date" formControlName="requestDateRange" bindQueryParam="requestDateRange"
+                    defaultValue="emptyString">
           <mat-option value="">Any Request date</mat-option>
           <mat-option value="today">Today's</mat-option>
           <mat-option value="thisWeek">This week's</mat-option>
@@ -14,8 +15,9 @@
       </mat-form-field>
       <mat-form-field>
         <mat-label>All Requests</mat-label>
-        <mat-select placeholder="All Requests" formControlName="requestType">
-          <mat-option value="null">All Requests</mat-option>
+        <mat-select placeholder="All Requests" formControlName="requestType" bindQueryParam="requestType"
+                    defaultValue="emptyString">
+          <mat-option value="">All Requests</mat-option>
           <mat-option [value]="user?.utsUser!.username">My Requests</mat-option>
         </mat-select>
       </mat-form-field>
@@ -23,7 +25,7 @@
         <mat-icon fontIcon="search"></mat-icon>
         Search
       </button>
-      <button mat-fab extended type="reset">
+      <button mat-fab extended routerLink="/manage/load-request" type="reset">
         <mat-icon fontIcon="clear"></mat-icon>
         Reset
       </button>
@@ -44,14 +46,14 @@
     <div class="example-table-container">
       <table mat-table [dataSource]="data()" class="example-table" multiTemplateDataRows
              matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc"
-             formGroupName="filters">
+             (matSortChange)="handleSortEvent($event)">
 
         <ng-container matColumnDef="requestId">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
               <label for="requestIdFilterInput" class="m-2" mat-sort-header disableClear>Request ID</label>
               <input id="requestIdFilterInput" class="w-3/4" matInput formControlName="requestId" placeholder="Ex. 148"
-                     type="number">
+                     type="number" bindQueryParam="requestId">
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestId}}</td>
@@ -61,7 +63,8 @@
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
               <label for="codeSystemSearch" class="m-2" mat-sort-header disableClear>Code System Name</label>
-              <select id="codeSystemSearch" class="w-20" formControlName="codeSystemName">
+              <select id="codeSystemSearch" class="w-20" formControlName="codeSystemName"
+                      bindQueryParam="codeSystemName" defaultValue="emptyString">
                 <option value="">ALL</option>
                 <option>RXNORM</option>
                 <option>LOINC</option>
@@ -79,7 +82,8 @@
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
               <label for="subjectInput" class="m-2" mat-sort-header disableClear>Subject</label>
-              <input id="subjectInput" matInput class="w-40" formControlName="requestSubject" placeholder="subject...">
+              <input id="subjectInput" matInput class="w-40" formControlName="requestSubject" placeholder="subject..."
+                     bindQueryParam="requestSubject">
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestSubject}}</td>
@@ -89,7 +93,8 @@
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
               <label for="requestStatusInput" class="m-2" mat-sort-header disableClear>Status</label>
-              <select id="requestStatusInput" class="w-20" formControlName="requestStatus">
+              <select id="requestStatusInput" class="w-20" formControlName="requestStatus"
+                      bindQueryParam="requestStatus" defaultValue="emptyString">
                 <option value="">ALL</option>
                 <option>In Progress</option>
                 <option>Complete</option>
@@ -104,7 +109,8 @@
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
               <label for="requestTypeInput" class="m-2" mat-sort-header disableClear>Request Type</label>
-              <select id="requestTypeInput" class="w-20" formControlName="type">
+              <select id="requestTypeInput" class="w-20" formControlName="type" bindQueryParam="type"
+                      defaultValue="emptyString">
                 <option value="">ALL</option>
                 <option>regular</option>
                 <option>scheduled</option>
@@ -120,7 +126,8 @@
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
               <label for="requestTimeInput" class="m-2" mat-sort-header disableClear>Request Time</label>
-              <input id="requestTimeInput" matInput class="w-30" formControlName="requestTime" type="date">
+              <input id="requestTimeInput" matInput class="w-30" formControlName="requestTime" type="date"
+                     bindQueryParam="requestTime">
             </div>
           </th>
           <td mat-cell
@@ -179,6 +186,7 @@
       </table>
     </div>
     <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50, 100]" [pageSize]="10"
+                   (page)="handlePageEvent($event)"
                    aria-label="Select page of load requests"></mat-paginator>
   </div>
 </form>
