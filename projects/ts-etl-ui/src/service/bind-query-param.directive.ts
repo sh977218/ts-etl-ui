@@ -1,4 +1,4 @@
-import { Directive, Input } from '@angular/core';
+import { Directive, Input, OnInit } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
 const DEFAULT_VALUE_MAP: Record<string, string | null | number> = {
@@ -11,7 +11,7 @@ const DEFAULT_VALUE_MAP: Record<string, string | null | number> = {
   selector: '[bindQueryParam]',
   standalone: true,
 })
-export class BindQueryParamDirective {
+export class BindQueryParamDirective implements OnInit {
   @Input('bindQueryParam') paramKey!: string;
   @Input() defaultToEmptyString: string = 'null';
 
