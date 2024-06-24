@@ -124,8 +124,8 @@ test.describe('e2e test', async () => {
   });
 
   test.afterAll(async () => {
-    for (const message of UNEXPECTED_CONSOLE_LOG) {
-      throw new Error(`Unexpected console message: ${message}`);
+    if (UNEXPECTED_CONSOLE_LOG.length) {
+      throw new Error(`Unexpected console message: ${UNEXPECTED_CONSOLE_LOG.join('\n*****************\n')}`);
     }
   });
 });

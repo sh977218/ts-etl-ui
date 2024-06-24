@@ -1,5 +1,5 @@
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { JsonPipe, NgForOf, NgIf } from '@angular/common';
+import { NgForOf, NgIf } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
@@ -20,6 +20,8 @@ import { sourceFilePathValidator } from '../service/app.validator';
   standalone: true,
   providers: [provideNativeDateAdapter()],
   imports: [
+    NgIf,
+    NgForOf,
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -36,9 +38,6 @@ import { sourceFilePathValidator } from '../service/app.validator';
     MatDatepicker,
     MatDatepickerInput,
     MatDatepickerToggle,
-    NgIf,
-    NgForOf,
-    JsonPipe,
   ],
   templateUrl: './create-load-request-modal.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
