@@ -33,32 +33,33 @@ app.post('/api/loadRequests', async (req, res) => {
     pageSize,
   } = req.body;
   const $match = {};
-  if (requestId !== 'null') {
+  // requestId can be 0
+  if (requestId !== null) {
     $match.requestId = Number.parseInt(requestId);
   }
-  if (!!codeSystemName && codeSystemName !== 'null') {
+  if (codeSystemName) {
     $match.codeSystemName = codeSystemName;
   }
-  if (!!type && type !== 'null') {
+  if (type) {
     $match.type = type;
   }
-  if (!!requester && requester !== 'null') {
+  if (requester) {
     $match.requester = requester;
   }
-  if (!!requestStatus && requestStatus !== 'null') {
+  if (requestStatus) {
     $match.requestStatus = requestStatus;
   }
-  if (!!requestSubject && requestSubject !== 'null') {
+  if (requestSubject) {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
-  if (!!requestTime && requestTime !== 'null') {
+  if (requestTime) {
     const dateObj = new Date(requestTime);
     $match.requestTime = {
       $gte: dateObj,
       $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
     };
   }
-  if (!!requestDateRange && requestDateRange !== 'null') {
+  if (requestDateRange) {
     const today = new Date();
     const startOfWeek = new Date();
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of the current week

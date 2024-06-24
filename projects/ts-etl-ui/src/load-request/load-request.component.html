@@ -15,7 +15,7 @@
       <mat-form-field>
         <mat-label>All Requests</mat-label>
         <mat-select placeholder="All Requests" formControlName="requestType">
-          <mat-option value="null">All Requests</mat-option>
+          <mat-option value="">All Requests</mat-option>
           <mat-option [value]="user?.utsUser!.username">My Requests</mat-option>
         </mat-select>
       </mat-form-field>
@@ -44,7 +44,7 @@
     <div class="example-table-container">
       <table mat-table [dataSource]="data()" class="example-table" multiTemplateDataRows
              matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc"
-             formGroupName="filters">
+             (matSortChange)="handleSortEvent($event)">
 
         <ng-container matColumnDef="requestId">
           <th mat-header-cell *matHeaderCellDef>
@@ -179,6 +179,7 @@
       </table>
     </div>
     <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50, 100]" [pageSize]="10"
+                   (page)="handlePageEvent($event)"
                    aria-label="Select page of load requests"></mat-paginator>
   </div>
 </form>

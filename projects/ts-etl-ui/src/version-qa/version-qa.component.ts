@@ -22,13 +22,16 @@ import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail
 import { triggerExpandTableAnimation } from '../animations';
 import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NavigationService } from '../navigation-service';
 
 @Component({
   selector: 'app-version-qa',
   standalone: true,
-  imports: [NgIf,
+  imports: [
+    NgIf,
+    JsonPipe,
+    RouterLink,
     CommonModule,
     ReactiveFormsModule,
     MatInputModule,
@@ -42,7 +45,9 @@ import { NavigationService } from '../navigation-service';
     MatCheckboxModule,
     MatOptionModule,
     MatSelectModule,
-    VersionQaDetailComponent, VersionQaActivityComponent, JsonPipe, LoadSummaryComponent,
+    VersionQaDetailComponent,
+    VersionQaActivityComponent,
+    LoadSummaryComponent,
   ],
   templateUrl: './version-qa.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],

@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Params, RouterModule } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 
 import { MatTableModule } from '@angular/material/table';
@@ -19,8 +19,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatOptionModule } from '@angular/material/core';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -46,6 +46,9 @@ import { NavigationService } from '../navigation-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgIf,
+    AsyncPipe,
+    RouterModule,
+    CommonModule,
     ReactiveFormsModule,
     MatInputModule,
     MatTableModule,
@@ -59,11 +62,8 @@ import { NavigationService } from '../navigation-service';
     MatOptionModule,
     MatSelectModule,
     LoadRequestActivityComponent,
-    AsyncPipe,
-    CommonModule,
     LoadRequestDetailComponent,
     LoadRequestMessageComponent,
-    RouterModule,
   ],
   templateUrl: './load-request.component.html',
   animations: [triggerExpandTableAnimation],
@@ -99,26 +99,25 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      filters: new FormGroup({
-        requestId: new FormControl<number | null>(null),
-        codeSystemName: new FormControl<string | null>(null, { updateOn: 'change' }),
-        requestSubject: new FormControl<string | null>(null),
-        type: new FormControl<string | null>(null, { updateOn: 'change' }),
-        requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
-        requestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
-      }),
+      requestId: new FormControl<number | null>(null),
+      codeSystemName: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestSubject: new FormControl<string | null>(null),
+      type: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
       requestDateRange: new FormControl<string | null>(null, { updateOn: 'change' }),
       requestType: new FormControl<string | null>(null, { updateOn: 'change' }),
     }, { updateOn: 'submit' },
   );
 
   constructor(public http: HttpClient,
+              private activatedRoute: ActivatedRoute,
+              private router: Router,
               public dialog: MatDialog,
               private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
               private userService: UserService,
               public alertService: AlertService,
-              private activatedRoute: ActivatedRoute,
               private navigationService: NavigationService) {
     activatedRoute.title
       .pipe(
@@ -142,6 +141,13 @@ export class LoadRequestComponent implements AfterViewInit {
           this.columnsToDisplayWithExpand.set([...this.displayedColumns]);
         }
       });
+
+    this.searchCriteria.valueChanges.subscribe(val => {
+      this.router.navigate(['manage/load-request'], {
+        queryParamsHandling: 'merge',
+        queryParams: val,
+      });
+    });
   }
 
   ngAfterViewInit() {
@@ -152,7 +158,21 @@ export class LoadRequestComponent implements AfterViewInit {
       filter(reload => !!reload),
       switchMap(() => {
         return this.activatedRoute.queryParamMap.pipe(
-          map((queryParams: Params): LoadRequestSearchCriteria => {
+          // query parameters are always string, convert to number if needed
+          map((queryParams: Params) => {
+            const qp = { ...queryParams['params'] };
+            if (qp.requestId) {
+              qp.requestId = parseInt(qp.requestId);
+            }
+            if (qp.pageNumber) {
+              qp.pageNumber = parseInt(qp.pageNumber);
+            }
+            if (qp.pageSize) {
+              qp.pageSize = parseInt(qp.pageSize);
+            }
+            return qp;
+          }),
+          map((qp): LoadRequestSearchCriteria => {
             const DEFAULT_SEARCH_CRITERIA: LoadRequestSearchCriteria = {
               requestId: null,
               codeSystemName: null,
@@ -167,7 +187,7 @@ export class LoadRequestComponent implements AfterViewInit {
               pageNumber: 0,
               pageSize: 10,
             };
-            const loadRequestSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, queryParams['params']);
+            const loadRequestSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
             return loadRequestSearchCriteria;
           }),
           switchMap((loadRequestSearchCriteria) => {
@@ -223,5 +243,28 @@ export class LoadRequestComponent implements AfterViewInit {
     this.alertService.addAlert('', 'Export downloaded.');
   }
 
-  protected readonly event = event;
+  handlePageEvent(e: PageEvent) {
+    const { pageIndex, pageSize } = e;
+    this.router.navigate(['manage/load-request'], {
+      queryParamsHandling: 'merge',
+      queryParams: {
+        pageNumber: pageIndex,
+        pageSize,
+      },
+    });
+  }
+
+  handleSortEvent(e: Sort) {
+    const { active, direction } = e;
+
+    this.router.navigate(['manage/load-request'], {
+      queryParamsHandling: 'merge',
+      queryParams: {
+        pageNumber: 0,
+        sort: active,
+        order: direction,
+      },
+    });
+  }
+
 }
