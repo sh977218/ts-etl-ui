@@ -39,6 +39,7 @@ import { LoadRequestMessageComponent } from '../load-request-message/load-reques
 import { UserService } from '../user-service';
 import { User } from '../model/user';
 import { NavigationService } from '../navigation-service';
+import { BindQueryParamDirective } from '../service/bind-query-param.directive';
 
 @Component({
   selector: 'app-load-request',
@@ -64,6 +65,7 @@ import { NavigationService } from '../navigation-service';
     LoadRequestActivityComponent,
     LoadRequestDetailComponent,
     LoadRequestMessageComponent,
+    BindQueryParamDirective,
   ],
   templateUrl: './load-request.component.html',
   animations: [triggerExpandTableAnimation],
