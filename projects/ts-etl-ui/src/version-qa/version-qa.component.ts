@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild
+  AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild,
 } from '@angular/core';
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -26,6 +26,9 @@ import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-ac
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NavigationService } from '../navigation-service';
+import {
+  VersionQaAcceptanceActionsComponent,
+} from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
 
 @Component({
   selector: 'app-version-qa',
@@ -50,6 +53,7 @@ import { NavigationService } from '../navigation-service';
     VersionQaDetailComponent,
     VersionQaActivityComponent,
     LoadSummaryComponent,
+    VersionQaAcceptanceActionsComponent,
   ],
   templateUrl: './version-qa.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -123,7 +127,7 @@ export class VersionQaComponent implements AfterViewInit {
   }
 
   action(requestId: string) {
-    const versionQAIndex = this.data.findIndex(d =>  d.requestId === requestId);
+    const versionQAIndex = this.data.findIndex(d => d.requestId === requestId);
     const versionQA = this.data[versionQAIndex];
     const newQAActivity = versionQA!.versionQaActivities[versionQA!.versionQaActivities.length - 1];
     if (newQAActivity) {
@@ -134,7 +138,7 @@ export class VersionQaComponent implements AfterViewInit {
         this.data[versionQAIndex] = await firstValueFrom(this.http.get<VersionQA>(`/api/versionQA/${versionQA.requestId}`));
         this.data = [...this.data];
         this.cdr.detectChanges();
-      })
+      });
     }
   }
 
