@@ -17,7 +17,7 @@ function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-app.get('/api/loadRequests', async (req, res) => {
+app.post('/api/loadRequests', async (req, res) => {
   const {
     requestId,
     codeSystemName,
@@ -31,7 +31,7 @@ app.get('/api/loadRequests', async (req, res) => {
     order,
     pageNumber,
     pageSize,
-  } = req.query;
+  } = req.body;
   const $match = {};
   if (requestId !== 'null') {
     $match.requestId = Number.parseInt(requestId);

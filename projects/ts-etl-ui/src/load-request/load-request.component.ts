@@ -9,6 +9,9 @@ import {
 import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Params, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 
 import { MatTableModule } from '@angular/material/table';
@@ -19,26 +22,22 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-import { LoadRequestDataSource } from './load-request-data-source';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { catchError, filter, map, merge, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { catchError, filter, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
+import { LoadRequestDataSource, LoadRequestSearchCriteria } from './load-request-data-source';
 import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
 import { AlertService } from '../alert-service';
 import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { LoadingService } from '../loading-service';
 import { triggerExpandTableAnimation } from '../animations';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { UserService } from '../user-service';
 import { User } from '../model/user';
-import { ActivatedRoute } from '@angular/router';
 import { NavigationService } from '../navigation-service';
 
 @Component({
@@ -64,6 +63,7 @@ import { NavigationService } from '../navigation-service';
     CommonModule,
     LoadRequestDetailComponent,
     LoadRequestMessageComponent,
+    RouterModule,
   ],
   templateUrl: './load-request.component.html',
   animations: [triggerExpandTableAnimation],
@@ -100,15 +100,15 @@ export class LoadRequestComponent implements AfterViewInit {
   searchCriteria = new FormGroup(
     {
       filters: new FormGroup({
-        requestId: new FormControl(),
-        codeSystemName: new FormControl('', { updateOn: 'change' }),
-        requestSubject: new FormControl(),
-        type: new FormControl('', { updateOn: 'change' }),
-        requestStatus: new FormControl('', { updateOn: 'change' }),
-        requestTime: new FormControl('', { updateOn: 'change' }),
+        requestId: new FormControl<number | null>(null),
+        codeSystemName: new FormControl<string | null>(null, { updateOn: 'change' }),
+        requestSubject: new FormControl<string | null>(null),
+        type: new FormControl<string | null>(null, { updateOn: 'change' }),
+        requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
+        requestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
       }),
-      requestDateRange: new FormControl('', { updateOn: 'change' }),
-      requestType: new FormControl('', { updateOn: 'change' }),
+      requestDateRange: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestType: new FormControl<string | null>(null, { updateOn: 'change' }),
     }, { updateOn: 'submit' },
   );
 
@@ -147,45 +147,55 @@ export class LoadRequestComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.loadRequestDatabase = new LoadRequestDataSource(this.http);
 
-    // If the user changes the sort order, reset back to the first page.
-    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-    this.searchCriteria.valueChanges.subscribe(() => this.paginator.pageIndex = 0);
-
-    merge(this.reloadAllRequests$.pipe(filter(reload => !!reload)),
-      this.searchCriteria.valueChanges,
-      this.sort.sortChange,
-      this.paginator.page)
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.loadingService.showLoading();
-          const filters = this.searchCriteria.get('filters')?.getRawValue() || '';
-          filters.requestDateRange = this.searchCriteria.get('requestDateRange')?.getRawValue();
-          filters.requester = this.searchCriteria.get('requestType')?.getRawValue();
-          const sort = this.sort.active;
-          const order = this.sort.direction;
-          const pageNumber = this.paginator.pageIndex;
-          const pageSize = this.paginator.pageSize;
-          return this.loadRequestDatabase!.getLoadRequests(
-            filters, sort, order, pageNumber, pageSize,
-          ).pipe(catchError(() => of(null)));
-        }),
-        map((data: LoadRequestsApiResponse | null) => {
-          if (data === null) {
-            return [];
-          }
-          this.resultsLength = data.total_count;
-          return data.items;
-        }),
-        map(items => {
-          items.forEach(item => item.numberOfMessages = item.loadRequestMessages ? item.loadRequestMessages.length : 0);
-          return items;
-        }),
-      )
-      .subscribe(data => {
-        this.data.set(data);
-        this.loadingService.hideLoading();
-      });
+    this.reloadAllRequests$.pipe(
+      startWith(true),
+      filter(reload => !!reload),
+      switchMap(() => {
+        return this.activatedRoute.queryParamMap.pipe(
+          map((queryParams: Params): LoadRequestSearchCriteria => {
+            const DEFAULT_SEARCH_CRITERIA: LoadRequestSearchCriteria = {
+              requestId: null,
+              codeSystemName: null,
+              requestSubject: null,
+              type: null,
+              requestStatus: null,
+              requestTime: null,
+              requestDateRange: null,
+              requester: null,
+              sort: 'requestId',
+              order: 'asc',
+              pageNumber: 0,
+              pageSize: 10,
+            };
+            const loadRequestSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, queryParams['params']);
+            return loadRequestSearchCriteria;
+          }),
+          switchMap((loadRequestSearchCriteria) => {
+            this.loadingService.showLoading();
+            return this.loadRequestDatabase!.getLoadRequests(loadRequestSearchCriteria)
+              .pipe(catchError(() => of(null)));
+          }),
+          map((data: LoadRequestsApiResponse | null) => {
+            if (data === null) {
+              return [];
+            }
+            this.resultsLength = data.total_count;
+            return data.items;
+          }),
+          map(items => {
+            items.forEach(item => item.numberOfMessages = item.loadRequestMessages ? item.loadRequestMessages.length : 0);
+            return items;
+          }),
+          tap({
+            next: data => {
+              this.data.set(data);
+              this.loadingService.hideLoading();
+            },
+            error: () => this.loadingService.hideLoading(),
+          }),
+        );
+      }))
+      .subscribe();
   }
 
   openCreateLoadRequestModal() {
@@ -195,7 +205,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .afterClosed()
       .pipe(
         filter((newLoadRequest) => !!newLoadRequest),
-        switchMap((newLoadRequest) => this.http.post<{ requestId: string }>('/api/loadRequest', newLoadRequest)),
+        switchMap((newLoadRequest) => this.http.post<{ requestId: string }>('/loadRequest', newLoadRequest)),
       )
       .subscribe({
         next: ({ requestId }) => {
