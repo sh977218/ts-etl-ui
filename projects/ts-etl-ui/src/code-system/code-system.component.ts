@@ -14,7 +14,6 @@ import { NgForOf, NgIf } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { CodeSystemVersionComponent } from '../code-system-version/code-system-version.component';
 import { triggerExpandTableAnimation } from '../animations';
-import { NavigationService } from '../navigation-service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -38,15 +37,7 @@ export class CodeSystemComponent {
   dataSource: MatTableDataSource<CodeSystem> = new MatTableDataSource<CodeSystem>([]);
 
   constructor(private http: HttpClient,
-              private activatedRoute: ActivatedRoute,
-              private navigationService: NavigationService) {
-    activatedRoute.title
-      .pipe(
-        tap({
-          next: title => navigationService.tabs.forEach(tab => tab.isActive = tab.label === title),
-        }),
-      )
-      .subscribe();
+              private activatedRoute: ActivatedRoute) {
 
     this.http.get<CodeSystem[]>('/api/codeSystems').pipe(
       tap({

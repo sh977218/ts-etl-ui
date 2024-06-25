@@ -4,7 +4,7 @@ import {
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { catchError, map, merge, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, map, merge, of, startWith, switchMap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -25,7 +25,6 @@ import { triggerExpandTableAnimation } from '../animations';
 import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { NavigationService } from '../navigation-service';
 import {
   VersionQaAcceptanceActionsComponent,
 } from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
@@ -86,15 +85,7 @@ export class VersionQaComponent implements AfterViewInit {
               private dialog: MatDialog,
               private cd: ChangeDetectorRef,
               private loadingService: LoadingService,
-              private alertService: AlertService,
-              private navigationService: NavigationService) {
-    activatedRoute.title
-      .pipe(
-        tap({
-          next: title => navigationService.tabs.forEach(tab => tab.isActive = tab.label === title),
-        }),
-      )
-      .subscribe();
+              private alertService: AlertService) {
   }
 
   ngAfterViewInit() {

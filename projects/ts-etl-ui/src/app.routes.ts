@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { ManageComponent } from './manage/manage.component';
+
 import { PleaseLogInComponent } from './please-log-in/please-log-in.component';
 import { LoginCbComponent } from './login-cb/login-cb.component';
 import { LoadRequestComponent } from './load-request/load-request.component';
@@ -8,16 +8,18 @@ import { CodeSystemComponent } from './code-system/code-system.component';
 import { logInGuard } from './app.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/manage', pathMatch: 'full' },
+  { path: '', redirectTo: '/load-requests', pathMatch: 'full' },
   {
-    path: 'manage', component: ManageComponent,
+    path: 'load-requests', component: LoadRequestComponent, title: 'Load Requests',
     canActivate: [logInGuard],
-    children: [
-      { path: '', redirectTo: 'load-request', pathMatch: 'full' },
-      { path: 'load-request', component: LoadRequestComponent, title: 'Load Request' },
-      { path: 'load-version', component: VersionQaComponent, title: 'Load Version' },
-      { path: 'code-system', component: CodeSystemComponent, title: 'Code System' },
-    ],
+  },
+  {
+    path: 'load-versions', component: VersionQaComponent, title: 'Load Versions',
+    canActivate: [logInGuard],
+  },
+  {
+    path: 'code-systems', component: CodeSystemComponent, title: 'Code Systems',
+    canActivate: [logInGuard],
   },
   {
     path: 'please-log-in', component: PleaseLogInComponent, title: 'Please Log In',
