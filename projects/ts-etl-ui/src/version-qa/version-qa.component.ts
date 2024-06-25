@@ -25,7 +25,6 @@ import { triggerExpandTableAnimation } from '../animations';
 import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { NavigationService } from '../navigation-service';
 import {
   VersionQaAcceptanceActionsComponent,
 } from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
@@ -86,8 +85,7 @@ export class VersionQaComponent implements AfterViewInit {
               private dialog: MatDialog,
               private cd: ChangeDetectorRef,
               private loadingService: LoadingService,
-              private alertService: AlertService,
-              private navigationService: NavigationService) {
+              private alertService: AlertService) {
   }
 
   ngAfterViewInit() {
