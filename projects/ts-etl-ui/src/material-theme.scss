@@ -17,7 +17,8 @@ $my-theme: mat.define-light-theme((
 ));
 
 .my-expanded-table {
-  @include mat.table-density(-10);
+  // it seems -4 is the lowest value
+  @include mat.table-density(-4);
 }
 
 @include mat.all-component-themes($my-theme);
