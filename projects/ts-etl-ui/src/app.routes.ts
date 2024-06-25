@@ -8,17 +8,17 @@ import { CodeSystemComponent } from './code-system/code-system.component';
 import { logInGuard } from './app.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/load-request', pathMatch: 'full' },
+  { path: '', redirectTo: '/load-requests', pathMatch: 'full' },
   {
-    path: 'load-request', component: LoadRequestComponent, title: 'Load Request',
+    path: 'load-requests', component: LoadRequestComponent, title: 'Load Requests',
     canActivate: [logInGuard],
   },
   {
-    path: 'load-version', component: VersionQaComponent, title: 'Load Version',
+    path: 'load-versions', component: VersionQaComponent, title: 'Load Versions',
     canActivate: [logInGuard],
   },
   {
-    path: 'code-system', component: CodeSystemComponent, title: 'Code System',
+    path: 'code-systems', component: CodeSystemComponent, title: 'Code Systems',
     canActivate: [logInGuard],
   },
   {

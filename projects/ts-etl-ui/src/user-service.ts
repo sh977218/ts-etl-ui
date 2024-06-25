@@ -35,7 +35,7 @@ export class UserService {
           next: (res) => {
             this._user$.next(res);
             localStorage.setItem('user', JSON.stringify(res));
-            this.router.navigate(['/load-request']);
+            this.router.navigate(['/load-requests']);
           },
           error: () => {
             this.alertService.addAlert('danger', 'error log in');

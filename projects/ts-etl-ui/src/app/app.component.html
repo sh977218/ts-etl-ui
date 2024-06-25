@@ -1,8 +1,9 @@
 <mat-toolbar>
   <ng-container *ngIf="(userService.user$ | async)">
-    <div class="mx-2" *ngFor="let tab of navigationService.tabs">
-      <a mat-button class="font-bold" [routerLink]="tab.route" routerLinkActive="isActive">{{tab.label}} </a>
-    </div>
+    <span class="mx-2" *ngFor="let tab of navigationService.tabs">
+      <a mat-button class="font-bold rounded-3xl" [routerLink]="tab.route"
+         routerLinkActive="isActive">{{tab.label}} </a>
+    </span>
   </ng-container>
   <span class="flex-1 flex justify-center">
     <ng-container *ngIf="serverInfo$ | async as serverInfo">
