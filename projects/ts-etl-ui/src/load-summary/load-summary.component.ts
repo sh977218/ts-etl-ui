@@ -5,6 +5,7 @@ import {
 import { MatSortModule } from '@angular/material/sort';
 import { LoadSummary } from '../model/version-qa';
 import { DurationPipe } from '../service/app.pipe';
+import { VersionQaRulesComponent } from '../versionQaRules/version-qa-rules.component';
 
 @Component({
   selector: 'app-load-summary',
@@ -13,6 +14,7 @@ import { DurationPipe } from '../service/app.pipe';
     MatSortModule,
     MatTableModule,
     DurationPipe,
+    VersionQaRulesComponent
   ],
   templateUrl: './load-summary.component.html',
   providers: [DurationPipe]
@@ -20,6 +22,4 @@ import { DurationPipe } from '../service/app.pipe';
 export class LoadSummaryComponent  {
   @Input() loadSummary!: LoadSummary;
   summaryColumns: string[] = ['componentName', 'status', 'startTime', 'duration', 'error', 'warning', 'info'];
-  rulesColumns = ['type', 'total', 'withDate', 'error', 'warning', 'info'];
-
 }
