@@ -5,8 +5,8 @@ import { Tab } from './model/tab';
 export class NavigationService {
 
   tabs: Tab[] = [
-    { route: 'load-request', label: 'Load Request' },
-    { route: 'load-version', label: 'Load Version' },
-    { route: 'code-system', label: 'Code System' },
+    { route: 'load-request', label: 'Load Requests' },
+    { route: 'load-version', label: 'QA Versions' },
+    { route: 'code-system', label: 'Code Systems' },
   ];
 }
