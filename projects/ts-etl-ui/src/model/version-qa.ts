@@ -3,31 +3,27 @@ export type VersionQAsApiResponse = {
   items: VersionQA[]
 }
 
-export type LoadSummaryMessage = {
-  message: string;
-}
-
 export type LoadComponent = {
   componentName: string;
   status: string;
   startTime: Date;
   duration: number;
-  errors: LoadSummaryMessage[];
-  warnings: LoadSummaryMessage[];
-  infos: LoadSummaryMessage[];
+  errors: string[];
+  warnings: string[];
+  infos: string[];
 }
 
 export type LoadRule = {
   type: string;
   rule: string;
-  errors: LoadSummaryMessage[];
-  warnings: LoadSummaryMessage[];
-  infos: LoadSummaryMessage[];
+  error: string;
+  warning: string;
+  info: string;
 }
 
 export type LoadSummary = {
   components: LoadComponent[];
-  rules: LoadRule[];
+  qaRules: LoadRule[];
 }
 
 export type VersionQAActivity = {
