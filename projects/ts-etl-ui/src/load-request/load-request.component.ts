@@ -38,7 +38,6 @@ import { LoadRequestDetailComponent } from '../load-request-detail/load-request-
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { UserService } from '../user-service';
 import { User } from '../model/user';
-import { NavigationService } from '../navigation-service';
 import { BindQueryParamDirective } from '../service/bind-query-param.directive';
 
 @Component({
@@ -119,15 +118,7 @@ export class LoadRequestComponent implements AfterViewInit {
               private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
               private userService: UserService,
-              public alertService: AlertService,
-              private navigationService: NavigationService) {
-    activatedRoute.title
-      .pipe(
-        tap({
-          next: title => navigationService.tabs.forEach(tab => tab.isActive = tab.label === title),
-        }),
-      )
-      .subscribe();
+              public alertService: AlertService) {
     userService.user$.subscribe(user => this.user = user);
 
     breakpointObserver
@@ -145,7 +136,7 @@ export class LoadRequestComponent implements AfterViewInit {
       });
 
     this.searchCriteria.valueChanges.subscribe(val => {
-      this.router.navigate(['manage/load-request'], {
+      this.router.navigate(['load-requests'], {
         queryParamsHandling: 'merge',
         queryParams: val,
       });
@@ -247,7 +238,7 @@ export class LoadRequestComponent implements AfterViewInit {
 
   handlePageEvent(e: PageEvent) {
     const { pageIndex, pageSize } = e;
-    this.router.navigate(['manage/load-request'], {
+    this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
         pageNumber: pageIndex,
@@ -259,7 +250,7 @@ export class LoadRequestComponent implements AfterViewInit {
   handleSortEvent(e: Sort) {
     const { active, direction } = e;
 
-    this.router.navigate(['manage/load-request'], {
+    this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
         pageNumber: 0,
