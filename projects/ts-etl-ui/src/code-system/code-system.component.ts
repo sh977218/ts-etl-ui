@@ -40,13 +40,6 @@ export class CodeSystemComponent {
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private navigationService: NavigationService) {
-    activatedRoute.title
-      .pipe(
-        tap({
-          next: title => navigationService.tabs.forEach(tab => tab.isActive = tab.label === title),
-        }),
-      )
-      .subscribe();
 
     this.http.get<CodeSystem[]>('/api/codeSystems').pipe(
       tap({

@@ -4,7 +4,7 @@ import {
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { catchError, map, merge, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, map, merge, of, startWith, switchMap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -88,13 +88,6 @@ export class VersionQaComponent implements AfterViewInit {
               private loadingService: LoadingService,
               private alertService: AlertService,
               private navigationService: NavigationService) {
-    activatedRoute.title
-      .pipe(
-        tap({
-          next: title => navigationService.tabs.forEach(tab => tab.isActive = tab.label === title),
-        }),
-      )
-      .subscribe();
   }
 
   ngAfterViewInit() {

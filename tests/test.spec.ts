@@ -45,7 +45,7 @@ test.describe('e2e test', async () => {
     await test.step('login', async () => {
       await page.getByRole('button', { name: 'Log In' }).click();
       await page.getByRole('button', { name: 'UTS' }).click();
-      await page.waitForURL(`${baseURL}/manage/load-request` || '');
+      await page.waitForURL(`${baseURL}/load-request` || '');
     });
   });
 

@@ -121,13 +121,6 @@ export class LoadRequestComponent implements AfterViewInit {
               private userService: UserService,
               public alertService: AlertService,
               private navigationService: NavigationService) {
-    activatedRoute.title
-      .pipe(
-        tap({
-          next: title => navigationService.tabs.forEach(tab => tab.isActive = tab.label === title),
-        }),
-      )
-      .subscribe();
     userService.user$.subscribe(user => this.user = user);
 
     breakpointObserver
@@ -145,7 +138,7 @@ export class LoadRequestComponent implements AfterViewInit {
       });
 
     this.searchCriteria.valueChanges.subscribe(val => {
-      this.router.navigate(['manage/load-request'], {
+      this.router.navigate(['load-request'], {
         queryParamsHandling: 'merge',
         queryParams: val,
       });
@@ -247,7 +240,7 @@ export class LoadRequestComponent implements AfterViewInit {
 
   handlePageEvent(e: PageEvent) {
     const { pageIndex, pageSize } = e;
-    this.router.navigate(['manage/load-request'], {
+    this.router.navigate(['load-request'], {
       queryParamsHandling: 'merge',
       queryParams: {
         pageNumber: pageIndex,
@@ -259,7 +252,7 @@ export class LoadRequestComponent implements AfterViewInit {
   handleSortEvent(e: Sort) {
     const { active, direction } = e;
 
-    this.router.navigate(['manage/load-request'], {
+    this.router.navigate(['load-request'], {
       queryParamsHandling: 'merge',
       queryParams: {
         pageNumber: 0,

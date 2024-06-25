@@ -1,5 +1,9 @@
 <mat-toolbar>
-  <button mat-raised-button routerLink="/">Home</button>
+  <ng-container *ngIf="(userService.user$ | async)">
+    <div class="mx-2" *ngFor="let tab of navigationService.tabs">
+      <a mat-raised-button [routerLink]="tab.route" routerLinkActive="isActive">{{tab.label}} </a>
+    </div>
+  </ng-container>
   <span class="flex-1 flex justify-center">
     <ng-container *ngIf="serverInfo$ | async as serverInfo">
      <ng-container *ngIf="serverInfo.pr">You're viewing PR: {{serverInfo.pr}} With Db: {{serverInfo.db}}</ng-container>
@@ -24,7 +28,7 @@
   <div class="example-loading-shade" *ngIf="loadingService.loading$ | async">
     <mat-spinner></mat-spinner>
   </div>
-  <main>
+  <main class="m-5">
     <router-outlet></router-outlet>
   </main>
 </mat-drawer-container>
