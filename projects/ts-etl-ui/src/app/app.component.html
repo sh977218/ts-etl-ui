@@ -6,7 +6,7 @@
   </ng-container>
   <span class="flex-1 flex justify-center">
     <ng-container *ngIf="serverInfo$ | async as serverInfo">
-     <ng-container *ngIf="serverInfo.pr">You're viewing PR: {{serverInfo.pr}} With Db: {{serverInfo.db}}</ng-container>
+     <ng-container *ngIf="serverInfo.pr">You're viewing PR: {{serverInfo.pr}}, with DB: {{serverInfo.db}}</ng-container>
     </ng-container>
   </span>
   <ng-container *ngIf="(userService.user$ | async) as user;  else logInTemplate">
