@@ -53,7 +53,7 @@ test.describe('e2e test', async () => {
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
-    await expect(page.getByRole('button', { name: 'Load Request' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Load Request' })).toBeVisible();
 
     await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Reset' })).toBeVisible();
