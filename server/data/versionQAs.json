@@ -23,7 +23,7 @@
             "duration": 402000,
             "errors": [],
             "warnings": [],
-            "infos": [{}]
+            "infos": ["info on comp 1"]
           },
           {
             "componentName": "inject",
@@ -32,7 +32,7 @@
             "duration": 802000,
             "errors": [],
             "warnings": [],
-            "infos": [{}]
+            "infos": ["info on comp 2", "second info on comp 2"]
           },
           {
             "componentName": "assert",
@@ -41,7 +41,24 @@
             "duration": 202000,
             "errors": [],
             "warnings": [],
-            "infos": [{}]
+            "infos": []
+          }
+        ],
+        "qaRules":  [
+          {
+            "type": "Verification",
+            "info": "Verified Rule 1"
+          },
+          {
+            "type": "Verification",
+            "info": "Verified Rule 2"
+          },
+          {
+            "type": "Verification",
+            "info": "Verified Rule 3"
+          },
+          {
+            "type": "Verification"
           }
         ]
       }
