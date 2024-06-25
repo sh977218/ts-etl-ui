@@ -14,11 +14,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 
 import { UserService } from '../user-service';
+import { sourceFilePathValidator } from '../service/app.validator';
 
 @Component({
   standalone: true,
   providers: [provideNativeDateAdapter()],
   imports: [
+    NgIf,
+    NgForOf,
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -35,8 +38,6 @@ import { UserService } from '../user-service';
     MatDatepicker,
     MatDatepickerInput,
     MatDatepickerToggle,
-    NgIf,
-    NgForOf,
   ],
   templateUrl: './create-load-request-modal.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -59,7 +60,7 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
     {
       type: new FormControl<string>('', [Validators.required]),
       codeSystemName: new FormControl<string>('', [Validators.required]),
-      sourceFilePath: new FormControl<string>('', [Validators.required]),
+      sourceFilePath: new FormControl<string>('', [Validators.required, sourceFilePathValidator()]),
       requestSubject: new FormControl<string>('', [Validators.required]),
       requester: new FormControl({ value: '', disabled: true }),
       requestTime: new FormControl({ value: new Date(), disabled: true }),

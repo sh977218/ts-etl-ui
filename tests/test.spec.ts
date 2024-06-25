@@ -77,8 +77,9 @@ test.describe('e2e test', async () => {
       await page.getByRole('option', { name: 'HPO' }).click();
       await matDialog.getByLabel('Request Subject').fill('newly created load request');
       await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/glass.jpg');
-      await expect(matDialog.locator('.file-upload')).toContainText('glass.jpg');
-
+      await expect(matDialog.getByLabel('Source File Path')).toHaveValue(`glass.jpg`);
+      await expect(matDialog.getByRole('button', { name: 'Submit' })).toBeDisabled();
+      await matDialog.getByLabel('Source File Path').fill(`file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/glass.jpg`);
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
       await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
@@ -123,8 +124,8 @@ test.describe('e2e test', async () => {
   });
 
   test.afterAll(async () => {
-    for (const message of UNEXPECTED_CONSOLE_LOG) {
-      throw new Error(`Unexpected console message: ${message}`);
+    if (UNEXPECTED_CONSOLE_LOG.length) {
+      throw new Error(`Unexpected console message: ${UNEXPECTED_CONSOLE_LOG.join('\n*****************\n')}`);
     }
   });
 });
