@@ -1,7 +1,7 @@
 <mat-toolbar>
   <ng-container *ngIf="(userService.user$ | async)">
     <div class="mx-2" *ngFor="let tab of navigationService.tabs">
-      <a mat-raised-button [routerLink]="tab.route" routerLinkActive="isActive">{{tab.label}} </a>
+      <a mat-button [routerLink]="tab.route" routerLinkActive="isActive">{{tab.label}} </a>
     </div>
   </ng-container>
   <span class="flex-1 flex justify-center">
