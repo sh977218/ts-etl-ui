@@ -98,7 +98,7 @@ test.describe('e2e test', async () => {
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
-    await page.getByRole('tab', { name: 'Load Version' }).click();
+    await page.getByRole('link', { name: 'Load Version' }).click();
 
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
 
@@ -119,7 +119,7 @@ test.describe('e2e test', async () => {
   });
 
   test('Code System Tab', async ({ page }) => {
-    await page.getByRole('tab', { name: 'Code System' }).click();
+    await page.getByRole('link', { name: 'Code System' }).click();
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
   });
 
