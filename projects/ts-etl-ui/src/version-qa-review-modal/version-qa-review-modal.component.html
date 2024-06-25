@@ -1,10 +1,10 @@
 <h2 mat-dialog-title>{{dataSource.tag}} Version Notes</h2>
-<form [formGroup]="reviewForm" (ngSubmit)="save()">
+<form [formGroup]="reviewForm">
   <mat-dialog-content class="mat-typography">
     <div class="flex flex-col">
       <mat-form-field appearance="outline">
         <mat-label>Tag</mat-label>
-        <input matInput placeholder="Tag" formControlName="tag">
+        <input matInput placeholder="Tag" formControlName="activity">
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Created By</mat-label>
@@ -14,16 +14,22 @@
         <mat-label>Available Date</mat-label>
         <input matInput formControlName="availableDate" [matDatepicker]="picker">
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>      
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" formArrayName="notes">
         <mat-label>Notes</mat-label>
-        <textarea matInput placeholder="Notes" formControlName="notes"></textarea>
+        <ng-container *ngFor="let notesForm of notes.controls; let i = index">
+          <ng-container [formGroupName]="i">
+            <textarea matInput placeholder="Notes" formControlName="notes"></textarea>
+          </ng-container>
+        </ng-container>
       </mat-form-field>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <button mat-raised-button color="primary" type="submit" [disabled]="reviewForm.invalid">Save</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="reviewForm.invalid"
+            [mat-dialog-close]="reviewForm.getRawValue()">Save
+    </button>
     <button mat-raised-button mat-dialog-close cdkFocusInitial>Cancel</button>
   </mat-dialog-actions>
 </form>

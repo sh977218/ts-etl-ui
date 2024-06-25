@@ -1,8 +1,10 @@
-import { AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, Component, ViewChild } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild,
+} from '@angular/core';
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { merge, startWith, switchMap, catchError, of, map, tap } from 'rxjs';
+import { catchError, map, merge, of, startWith, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -15,7 +17,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { VersionQA, VersionQAsApiResponse } from '../model/version-qa';
+import { VersionQA, VersionQAActivity, VersionQAsApiResponse } from '../model/version-qa';
 import { VersionQaDataSource } from './version-qa-data-source';
 import { LoadingService } from '../loading-service';
 import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail.component';
@@ -24,6 +26,10 @@ import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-ac
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NavigationService } from '../navigation-service';
+import {
+  VersionQaAcceptanceActionsComponent,
+} from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
+import { AlertService } from '../alert-service';
 
 @Component({
   selector: 'app-version-qa',
@@ -48,6 +54,7 @@ import { NavigationService } from '../navigation-service';
     VersionQaDetailComponent,
     VersionQaActivityComponent,
     LoadSummaryComponent,
+    VersionQaAcceptanceActionsComponent,
   ],
   templateUrl: './version-qa.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -76,8 +83,10 @@ export class VersionQaComponent implements AfterViewInit {
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
-              public dialog: MatDialog,
+              private dialog: MatDialog,
+              private cd: ChangeDetectorRef,
               private loadingService: LoadingService,
+              private alertService: AlertService,
               private navigationService: NavigationService) {
     activatedRoute.title
       .pipe(
@@ -109,7 +118,6 @@ export class VersionQaComponent implements AfterViewInit {
           if (data === null) {
             return [];
           }
-
           this.resultsLength = data.total_count;
           return data.items;
         }),
@@ -117,6 +125,24 @@ export class VersionQaComponent implements AfterViewInit {
       .subscribe(data => {
         this.loadingService.hideLoading();
         this.data = data;
+      });
+  }
+
+  action(newQAActivity: VersionQAActivity, versionQA: VersionQA) {
+    this.http.post('/api/qaActivity', {
+      requestId: versionQA!.requestId,
+      qaActivity: newQAActivity,
+    })
+      .pipe(
+        switchMap(() => this.http.get<VersionQA>(`/api/versionQA/${versionQA.requestId}`)),
+      )
+      .subscribe({
+        next: (updatedVersionQa) => {
+          versionQA.versionQaActivities = updatedVersionQa.versionQaActivities;
+          versionQA.versionStatus = updatedVersionQa.versionStatus;
+          this.cd.detectChanges();
+          this.alertService.addAlert('', 'Activity added successfully.');
+        }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
       });
   }
 

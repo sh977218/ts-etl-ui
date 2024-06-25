@@ -137,6 +137,13 @@ app.get('/api/versionQAs', async (req, res) => {
   });
 });
 
+app.get('/api/versionQA/:requestId', async (req, res) => {
+  const { versionQAsCollection } = await mongoCollection();
+  // I'm not sure requestID will end up being unique here... we can change later if needed
+  const versionQA = await versionQAsCollection.findOne({requestId: +req.params.requestId});
+  res.send(versionQA);
+});
+
 app.get('/api/file/:id', (req, res) => {
   const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
   const fileContent = fs.readFileSync(fileLocation);
