@@ -1,10 +1,10 @@
-<div class="mat-elevation-z8">
+<fieldset>
+  <legend>Load Activities</legend>
   <mat-form-field>
     <mat-label>Filter Activity</mat-label>
     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Complete" #input>
   </mat-form-field>
-  <table mat-table [dataSource]="dataSource" matSort>
-    <caption>Load Request Activities</caption>
+  <table mat-table [dataSource]="dataSource" matSort class="my-expanded-table">
     <ng-container matColumnDef="componentName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Component name</th>
       <td mat-cell *matCellDef="let element"> {{element.componentName}} </td>
@@ -54,4 +54,4 @@
     </tr>
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of activities"></mat-paginator>
-</div>
+</fieldset>
