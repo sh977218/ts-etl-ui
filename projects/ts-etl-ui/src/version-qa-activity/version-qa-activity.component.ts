@@ -2,8 +2,8 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnInit,
+  computed,
+  input,
   ViewChild,
 } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -36,9 +36,9 @@ import { NgIf } from '@angular/common';
   animations: [triggerExpandTableAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VersionQaActivityComponent implements OnInit, AfterViewInit {
-  @Input() requestId: number | null = null;
-  @Input() versionQaActivities: VersionQAActivity[] = [];
+export class VersionQaActivityComponent implements AfterViewInit {
+  requestId = input.required<number>();
+  versionQaActivities = input.required<VersionQAActivity[]>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -46,23 +46,21 @@ export class VersionQaActivityComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['id', 'activity', 'availableDate', 'reason', 'nbNotes'];
   expandedElement: VersionQAActivity | null = null;
 
-  dataSource: MatTableDataSource<VersionQAActivity> = new MatTableDataSource<VersionQAActivity>([]);
-
-  ngOnInit() {
-    this.dataSource = new MatTableDataSource(this.versionQaActivities.reverse());
-  }
+  dataSource = computed(() => {
+    return new MatTableDataSource<VersionQAActivity>(this.versionQaActivities().reverse());
+  });
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource().paginator = this.paginator;
+    this.dataSource().sort = this.sort;
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource().filter = filterValue.trim().toLowerCase();
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+    if (this.dataSource().paginator) {
+      this.dataSource().paginator?.firstPage();
     }
   }
 

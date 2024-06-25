@@ -4,7 +4,7 @@ import {
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { catchError, firstValueFrom, map, merge, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, map, merge, of, startWith, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -17,7 +17,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { VersionQA, VersionQAsApiResponse } from '../model/version-qa';
+import { VersionQA, VersionQAActivity, VersionQAsApiResponse } from '../model/version-qa';
 import { VersionQaDataSource } from './version-qa-data-source';
 import { LoadingService } from '../loading-service';
 import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail.component';
@@ -29,6 +29,7 @@ import { NavigationService } from '../navigation-service';
 import {
   VersionQaAcceptanceActionsComponent,
 } from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
+import { AlertService } from '../alert-service';
 
 @Component({
   selector: 'app-version-qa',
@@ -82,9 +83,10 @@ export class VersionQaComponent implements AfterViewInit {
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
-              public dialog: MatDialog,
+              private dialog: MatDialog,
+              private cd: ChangeDetectorRef,
               private loadingService: LoadingService,
-              private cdr: ChangeDetectorRef,
+              private alertService: AlertService,
               private navigationService: NavigationService) {
     activatedRoute.title
       .pipe(
@@ -126,20 +128,22 @@ export class VersionQaComponent implements AfterViewInit {
       });
   }
 
-  action(requestId: string) {
-    const versionQAIndex = this.data.findIndex(d => d.requestId === requestId);
-    const versionQA = this.data[versionQAIndex];
-    const newQAActivity = versionQA!.versionQaActivities[versionQA!.versionQaActivities.length - 1];
-    if (newQAActivity) {
-      this.http.post('/api/qaActivity', {
-        requestId: versionQA!.requestId,
-        qaActivity: newQAActivity,
-      }).subscribe(async () => {
-        this.data[versionQAIndex] = await firstValueFrom(this.http.get<VersionQA>(`/api/versionQA/${versionQA.requestId}`));
-        this.data = [...this.data];
-        this.cdr.detectChanges();
+  action(newQAActivity: VersionQAActivity, versionQA: VersionQA) {
+    this.http.post('/api/qaActivity', {
+      requestId: versionQA!.requestId,
+      qaActivity: newQAActivity,
+    })
+      .pipe(
+        switchMap(() => this.http.get<VersionQA>(`/api/versionQA/${versionQA.requestId}`)),
+      )
+      .subscribe({
+        next: (updatedVersionQa) => {
+          versionQA.versionQaActivities = updatedVersionQa.versionQaActivities;
+          versionQA.versionStatus = updatedVersionQa.versionStatus;
+          this.cd.detectChanges();
+          this.alertService.addAlert('', 'Activity added successfully.');
+        }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
       });
-    }
   }
 
 }

@@ -70,7 +70,8 @@
             <div class="flex" style="flex-grow:1">
               <fieldset>
                 <legend>QA Acceptance</legend>
-                <app-version-qa-acceptance-actions [versionQA]="row" (actionOutput)="action($event)"></app-version-qa-acceptance-actions>
+                <app-version-qa-acceptance-actions [versionQA]="row" (actionOutput)="action($event,row)">
+                </app-version-qa-acceptance-actions>
                 <app-version-qa-activity [versionQaActivities]="row.versionQaActivities" [requestId]="row.requestId"
                                          class="flex flex-grow"></app-version-qa-activity>
               </fieldset>

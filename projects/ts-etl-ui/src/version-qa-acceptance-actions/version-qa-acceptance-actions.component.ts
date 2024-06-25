@@ -1,34 +1,31 @@
-import { Component, input, output } from '@angular/core';
-import {
-  MatTableModule,
-} from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
-import { VersionQA } from '../model/version-qa';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgIf } from '@angular/common';
-import {
-  VersionQaReviewModalComponent
-} from '../version-qa-review-modal/version-qa-review-modal.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { filter } from 'rxjs';
+
+import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
+import { VersionQA, VersionQAActivity } from '../model/version-qa';
 
 @Component({
   selector: 'app-version-qa-acceptance-actions',
   standalone: true,
   imports: [
+    NgIf,
     MatSortModule,
     MatTableModule,
     MatButtonModule,
-    NgIf,
   ],
   templateUrl: './version-qa-acceptance-actions.component.html',
 })
-export class VersionQaAcceptanceActionsComponent  {
-  versionQA = input.required<VersionQA>();
-  actionOutput = output<string>();
+export class VersionQaAcceptanceActionsComponent {
+  @Input() versionQA!: VersionQA;
+  @Output() actionOutput = new EventEmitter<VersionQAActivity>();
 
-  constructor(
-    public dialog: MatDialog,
-  ) {}
+  constructor(private dialog: MatDialog) {
+  }
 
   action(action: 'Accept' | 'Reject') {
     this.dialog
@@ -37,9 +34,11 @@ export class VersionQaAcceptanceActionsComponent  {
         data: { tag: action },
       })
       .afterClosed()
-      .subscribe(res => {
-        this.versionQA().versionQaActivities.push(res);
-        this.actionOutput.emit(this.versionQA().requestId);
+      .pipe(
+        filter(reason => !!reason),
+      )
+      .subscribe((versionQAActivity: VersionQAActivity) => {
+        this.actionOutput.emit(versionQAActivity);
       });
   }
 
