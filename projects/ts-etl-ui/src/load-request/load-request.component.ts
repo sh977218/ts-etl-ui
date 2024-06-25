@@ -138,7 +138,7 @@ export class LoadRequestComponent implements AfterViewInit {
       });
 
     this.searchCriteria.valueChanges.subscribe(val => {
-      this.router.navigate(['load-request'], {
+      this.router.navigate(['load-requests'], {
         queryParamsHandling: 'merge',
         queryParams: val,
       });
@@ -240,7 +240,7 @@ export class LoadRequestComponent implements AfterViewInit {
 
   handlePageEvent(e: PageEvent) {
     const { pageIndex, pageSize } = e;
-    this.router.navigate(['load-request'], {
+    this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
         pageNumber: pageIndex,
@@ -252,7 +252,7 @@ export class LoadRequestComponent implements AfterViewInit {
   handleSortEvent(e: Sort) {
     const { active, direction } = e;
 
-    this.router.navigate(['load-request'], {
+    this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
         pageNumber: 0,
