@@ -38,6 +38,7 @@ import { NavigationService } from '../navigation-service';
     NgForOf,
   ],
   templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class AppComponent {
