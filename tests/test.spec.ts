@@ -76,8 +76,11 @@ test.describe('e2e test', async () => {
        */
       await page.getByRole('option', { name: 'HPO' }).click();
       await matDialog.getByLabel('Request Subject').fill('newly created load request');
-      await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/nlmsombaserver.nlm.nih.gov/dev-ts-data-import');
-      await expect(matDialog.getByLabel('Source File Path')).toContainText(`file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/`);
+      await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/glass.jpg');
+      await expect(matDialog.getByLabel('Source File Path')).toHaveValue(`glass.jpg`);
+      await expect(matDialog.getByRole('button', { name: 'Submit' })).toBeDisabled();
+      await matDialog.getByLabel('Source File Path').fill(`file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/glass.jpg`);
+      await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
       await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
