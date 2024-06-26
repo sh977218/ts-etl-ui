@@ -25,7 +25,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { catchError, filter, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { catchError, distinctUntilChanged, filter, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { LoadRequestDataSource, LoadRequestSearchCriteria } from './load-request-data-source';
 import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
@@ -39,6 +39,7 @@ import { LoadRequestMessageComponent } from '../load-request-message/load-reques
 import { UserService } from '../user-service';
 import { User } from '../model/user';
 import { BindQueryParamDirective } from '../service/bind-query-param.directive';
+import { isEqual } from 'lodash';
 
 @Component({
   selector: 'app-load-request',
@@ -135,12 +136,14 @@ export class LoadRequestComponent implements AfterViewInit {
         }
       });
 
-    this.searchCriteria.valueChanges.subscribe(val => {
-      this.router.navigate(['load-requests'], {
-        queryParamsHandling: 'merge',
-        queryParams: val,
+    this.searchCriteria.valueChanges
+      .pipe(distinctUntilChanged(isEqual))
+      .subscribe(val => {
+        this.router.navigate(['load-requests'], {
+          queryParamsHandling: 'merge',
+          queryParams: val,
+        });
       });
-    });
   }
 
   ngAfterViewInit() {

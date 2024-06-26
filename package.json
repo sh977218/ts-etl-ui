@@ -1,6 +1,6 @@
 {
   "name": "ts-etl-ui",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "main": "server/server.js",
   "scripts": {
@@ -51,12 +51,14 @@
     "@angular/material": "^17.0.1",
     "@playwright/test": "^1.44.0",
     "@types/file-saver": "^2.0.7",
+    "@types/lodash": "^4.17.5",
     "@types/node": "^20.12.12",
     "@typescript-eslint/eslint-plugin": "^7.9.0",
     "@typescript-eslint/parser": "^7.9.0",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.54.0",
     "husky": "^9.0.11",
+    "lodash": "^4.17.21",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
     "typescript": "~5.4.2"
