@@ -126,7 +126,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .subscribe(val => {
         this.router.navigate(['load-requests'], {
           queryParamsHandling: 'merge',
-          queryParams: val,
+          queryParams: { expand: undefined, ...val },
         });
       });
   }
