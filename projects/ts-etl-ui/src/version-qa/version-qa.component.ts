@@ -4,7 +4,7 @@ import {
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { catchError, map, merge, of, startWith, switchMap } from 'rxjs';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -18,13 +18,13 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
 import { VersionQA, VersionQAActivity, VersionQAsApiResponse } from '../model/version-qa';
-import { VersionQaDataSource } from './version-qa-data-source';
+import { VersionQaDataSource, VersionQaSearchCriteria } from './version-qa-data-source';
 import { LoadingService } from '../loading-service';
 import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail.component';
 import { triggerExpandTableAnimation } from '../animations';
 import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Params, RouterLink } from '@angular/router';
 import {
   VersionQaAcceptanceActionsComponent,
 } from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
@@ -94,16 +94,30 @@ export class VersionQaComponent implements AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
-    merge(this.sort.sortChange, this.paginator.page)
+    this.activatedRoute.queryParamMap
       .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.loadingService.showLoading();
-          return this.versionQaDatabase!.getVersionQAs(
-            this.sort.active,
-            this.sort.direction,
-            this.paginator.pageIndex,
-          ).pipe(catchError(() => of(null)));
+        tap({ next: () => this.loadingService.showLoading() }),
+        map((queryParams: Params) => {
+          const qp = { ...queryParams['params'] };
+          if (qp.loadNumber) {
+            qp.loadNumber = parseInt(qp.loadNumber);
+          }
+          return qp;
+        }),
+        map((qp): VersionQaSearchCriteria => {
+          const DEFAULT_SEARCH_CRITERIA: VersionQaSearchCriteria = {
+            loadNumber: null,
+            sort: 'requestId',
+            order: 'asc',
+            pageNumber: 0,
+            pageSize: 10,
+          };
+          const versionQaSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
+          return versionQaSearchCriteria;
+        }),
+        switchMap((versionQaSearchCriteria) => {
+          return this.versionQaDatabase!.getVersionQAs(versionQaSearchCriteria)
+            .pipe(catchError(() => of(null)));
         }),
         map((data: VersionQAsApiResponse | null) => {
           if (data === null) {
@@ -113,9 +127,15 @@ export class VersionQaComponent implements AfterViewInit {
           return data.items;
         }),
       )
-      .subscribe(data => {
-        this.loadingService.hideLoading();
-        this.data = data;
+      .subscribe({
+        next: data => {
+          this.loadingService.hideLoading();
+          this.data = data;
+          if (this.activatedRoute.snapshot.queryParams['expand'] === 'true') {
+            this.expandedElement = this.data[0];
+          }
+        },
+        error: () => this.loadingService.hideLoading(),
       });
   }
 

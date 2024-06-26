@@ -55,8 +55,7 @@ app.post('/api/loadRequests', async (req, res) => {
   if (requestTime) {
     const dateObj = new Date(requestTime);
     $match.requestTime = {
-      $gte: dateObj,
-      $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
+      $gte: dateObj, $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
     };
   }
   if (requestDateRange) {
@@ -68,33 +67,28 @@ app.post('/api/loadRequests', async (req, res) => {
     startOfMonth.setHours(0, 0, 0, 0);
     if (requestDateRange === 'today') {
       $match.requestTime = {
-        $lte: today,
-        $gte: new Date(today.getTime() - 24 * 60 * 60 * 1000),
+        $lte: today, $gte: new Date(today.getTime() - 24 * 60 * 60 * 1000),
       };
     } else if (requestDateRange === 'thisWeek') {
       $match.requestTime = {
-        $gte: startOfWeek,
-        $lte: today,
+        $gte: startOfWeek, $lte: today,
       };
     } else if (requestDateRange === 'lastWeek') {
       const startOfLastWeek = new Date();
       startOfLastWeek.setDate(startOfWeek.getDate() - 7 - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of last current week
       startOfLastWeek.setHours(0, 0, 0, 0);
       $match.requestTime = {
-        $gte: startOfLastWeek,
-        $lte: startOfWeek,
+        $gte: startOfLastWeek, $lte: startOfWeek,
       };
     } else if (requestDateRange === 'thisMonth') {
       $match.requestTime = {
-        $gte: startOfMonth,
-        $lte: today,
+        $gte: startOfMonth, $lte: today,
       };
     } else if (requestDateRange === 'lastMonth') {
       const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       startOfLastMonth.setHours(0, 0, 0, 0);
       $match.requestTime = {
-        $gte: startOfLastMonth,
-        $lte: startOfMonth,
+        $gte: startOfLastMonth, $lte: startOfMonth,
       };
     }
   }
@@ -129,9 +123,14 @@ app.post('/api/loadRequest', async (req, res) => {
   res.send({ requestId: newLoadRequest.requestId });
 });
 
-app.get('/api/versionQAs', async (req, res) => {
+app.post('/api/versionQAs', async (req, res) => {
+  const { loadNumber } = req.body;
   const { versionQAsCollection } = await mongoCollection();
-  const versionQAs = await versionQAsCollection.find({}).toArray();
+  const condition = {};
+  if (loadNumber !== null) {
+    condition.loadNumber = loadNumber;
+  }
+  const versionQAs = await versionQAsCollection.find(condition).toArray();
   res.send({
     total_count: versionQAs.length, items: versionQAs,
   });
@@ -140,7 +139,7 @@ app.get('/api/versionQAs', async (req, res) => {
 app.get('/api/versionQA/:requestId', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   // I'm not sure requestID will end up being unique here... we can change later if needed
-  const versionQA = await versionQAsCollection.findOne({requestId: +req.params.requestId});
+  const versionQA = await versionQAsCollection.findOne({ requestId: +req.params.requestId });
   res.send(versionQA);
 });
 
