@@ -92,11 +92,14 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
   }
 
   onFileSelected(event: Event) {
+    const DEFAULT_FOLDER = `file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/`;
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       if (file) {
-        this.loadRequestCreationForm.get('sourceFilePath')?.setValue(file.name);
+        const webkitRelativePathArray = file.webkitRelativePath.split('/');
+        const folder = webkitRelativePathArray[0];
+        this.loadRequestCreationForm.get('sourceFilePath')?.setValue(`${DEFAULT_FOLDER}${folder}`);
       }
     }
   }
