@@ -1,3 +1,5 @@
+import { SortDirection } from '@angular/material/sort';
+
 export type LoadRequestsApiResponse = {
   total_count: number,
   items: LoadRequest[]
@@ -40,4 +42,20 @@ export type LoadRequest = {
   duration: Date;
   loadRequestActivities: LoadRequestActivity[]
   loadRequestMessages: LoadRequestMessage[]
+}
+
+// requestId: number | undefined; is equivalent to requestId?: number;
+export type LoadRequestPayload = {
+  requestId: number | undefined;
+  codeSystemName: string | undefined;
+  requestSubject: string | undefined;
+  type: string | undefined;
+  requestStatus: string | undefined;
+  requestTime: string | undefined;
+  requestDateRange: string | undefined;
+  requester: string | undefined,
+  sort: string,
+  order: SortDirection,
+  pageNumber: number,
+  pageSize: number
 }

@@ -34,7 +34,7 @@ app.post('/api/loadRequests', async (req, res) => {
   } = req.body;
   const $match = {};
   // requestId can be 0
-  if (requestId !== null) {
+  if (requestId) {
     $match.requestId = Number.parseInt(requestId);
   }
   if (codeSystemName) {
