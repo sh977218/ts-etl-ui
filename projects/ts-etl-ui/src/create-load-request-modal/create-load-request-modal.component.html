@@ -57,8 +57,12 @@
         </mat-radio-group>
       </div>
       <mat-form-field appearance="fill">
+        <mat-label>Notification Email</mat-label>
+        <input matInput placeholder="contact@nlm.nih.gov" formControlName="notificationEmail">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
         <mat-label>Requester</mat-label>
-        <input matInput placeholder="Requester" formControlName="requester">
+        <input matInput placeholder="Requester" type="email" formControlName="requester">
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Request Date</mat-label>

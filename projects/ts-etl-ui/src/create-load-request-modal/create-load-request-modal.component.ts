@@ -4,7 +4,7 @@ import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } fr
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -62,6 +62,7 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
       codeSystemName: new FormControl<string>('', [Validators.required]),
       sourceFilePath: new FormControl<string>('', [Validators.required, sourceFilePathValidator()]),
       requestSubject: new FormControl<string>('', [Validators.required]),
+      notificationEmail: new FormControl('', [Validators.required, Validators.email]),
       requester: new FormControl({ value: '', disabled: true }),
       requestTime: new FormControl({ value: new Date(), disabled: true }),
       scheduleDate: new FormControl({ value: '', disabled: false }),
@@ -75,7 +76,6 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
   };
 
   constructor(
-    public dialogRef: MatDialogRef<CreateLoadRequestModalComponent>,
     public userService: UserService) {
     userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''));
   }

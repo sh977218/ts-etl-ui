@@ -217,8 +217,8 @@ export class LoadRequestComponent implements AfterViewInit {
     })
       .afterClosed()
       .pipe(
-        filter((newLoadRequest) => !!newLoadRequest),
-        switchMap((newLoadRequest) => this.http.post<{ requestId: string }>('/api/loadRequest', newLoadRequest)),
+        filter(newLoadRequest => !!newLoadRequest),
+        switchMap(newLoadRequest => this.http.post<{ requestId: string }>('/api/loadRequest', newLoadRequest)),
       )
       .subscribe({
         next: ({ requestId }) => {
