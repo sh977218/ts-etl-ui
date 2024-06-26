@@ -90,7 +90,7 @@ export class LoadRequestComponent implements AfterViewInit {
   loadRequestDatabase: LoadRequestDataSource | null = null;
   data: WritableSignal<LoadRequest[]> = signal([]);
 
-  expandedElement: LoadRequest | null = null;
+  expandedElement: LoadRequest | null | undefined = null;
   user: User | null = null;
 
   resultsLength = 0;
@@ -202,6 +202,9 @@ export class LoadRequestComponent implements AfterViewInit {
           tap({
             next: data => {
               this.data.set(data);
+              if (this.activatedRoute.snapshot.queryParams['expand'] === 'true') {
+                this.expandedElement = this.data().at(0);
+              }
               this.loadingService.hideLoading();
             },
             error: () => this.loadingService.hideLoading(),
