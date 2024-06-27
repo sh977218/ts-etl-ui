@@ -13,13 +13,9 @@ $my-theme: mat.define-light-theme((
                 accent: $my-accent,
         ),
         typography: mat.define-typography-config(),
-        density: 0,
+  // this value is set to -10 just to get the minimal value.
+        density: -10,
 ));
-
-.my-expanded-table {
-  // it seems -4 is the lowest value
-  @include mat.table-density(-4);
-}
 
 @include mat.all-component-themes($my-theme);
 @include mat.strong-focus-indicators-theme(blue);

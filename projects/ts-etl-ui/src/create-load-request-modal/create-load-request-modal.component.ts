@@ -66,6 +66,7 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
       requester: new FormControl({ value: '', disabled: true }),
       requestTime: new FormControl({ value: new Date(), disabled: true }),
       scheduleDate: new FormControl({ value: '', disabled: false }),
+      scheduleTime: new FormControl({ value: '', disabled: false }),
     },
   );
 
@@ -84,10 +85,13 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
     this.loadRequestCreationForm.get('type')!.valueChanges.subscribe(value => {
       if (value === 'scheduled') {
         this.loadRequestCreationForm.get('scheduleDate')?.setValidators([Validators.required]);
+        this.loadRequestCreationForm.get('scheduleTime')?.setValidators([Validators.required]);
       } else {
         this.loadRequestCreationForm.get('scheduleDate')?.clearValidators();
+        this.loadRequestCreationForm.get('scheduleTime')?.clearValidators();
       }
       this.loadRequestCreationForm.get('scheduleDate')?.updateValueAndValidity();
+      this.loadRequestCreationForm.get('scheduleTime')?.updateValueAndValidity();
     });
   }
 

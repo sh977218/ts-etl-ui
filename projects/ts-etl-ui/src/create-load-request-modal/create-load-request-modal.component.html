@@ -46,14 +46,27 @@
             <mat-radio-button value="regular" class="block">Regular (Unscheduled)</mat-radio-button>
             <mat-radio-button value="emergency" class="block">Emergency (Unscheduled)</mat-radio-button>
             <mat-radio-button value="scheduled">Scheduled</mat-radio-button>
-            <mat-form-field appearance="outline" class="ml-20"
-                            *ngIf="loadRequestCreationForm.get('type')?.value === 'scheduled'">
-              <mat-label>Date</mat-label>
-              <input matInput formControlName="scheduleDate" [matDatepicker]="picker"
-                     [matDatepickerFilter]="futureDateFilter">
-              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
+            <ng-container>
+              <mat-form-field appearance="outline" class="ml-3 dense-form-field">
+                <mat-label>Scheduled Date</mat-label>
+                <input matInput formControlName="scheduleDate" [matDatepicker]="picker"
+                       [matDatepickerFilter]="futureDateFilter">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="dense-form-field">
+                <mat-label>Scheduled time</mat-label>
+                <mat-select formControlName="scheduleTime">
+                  <mat-option value=""></mat-option>
+                  <mat-option value="12:00 AM">12:00 AM</mat-option>
+                  <mat-option value="12:30 AM">12:30 AM</mat-option>
+                  <mat-option value="01:00 AM">1:00 AM</mat-option>
+                  <mat-option value="01:30 AM">1:30 AM</mat-option>
+                  <mat-option value="02:00 AM">2:00 AM</mat-option>
+                  <mat-option value="02:30 AM">2:30 AM</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ng-container>
           </div>
         </mat-radio-group>
       </div>
