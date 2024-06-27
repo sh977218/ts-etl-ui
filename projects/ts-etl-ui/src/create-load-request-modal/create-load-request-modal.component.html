@@ -46,7 +46,7 @@
             <mat-radio-button value="regular" class="block">Regular (Unscheduled)</mat-radio-button>
             <mat-radio-button value="emergency" class="block">Emergency (Unscheduled)</mat-radio-button>
             <mat-radio-button value="scheduled">Scheduled</mat-radio-button>
-            <ng-container>
+            <ng-container *ngIf="loadRequestCreationForm.get('type')?.value === 'scheduled'">
               <mat-form-field appearance="outline" class="ml-3 dense-form-field">
                 <mat-label>Scheduled Date</mat-label>
                 <input matInput formControlName="scheduleDate" [matDatepicker]="picker"
