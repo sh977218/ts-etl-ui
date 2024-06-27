@@ -1,6 +1,6 @@
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NgForOf, NgIf } from '@angular/common';
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
@@ -42,7 +42,7 @@ import { sourceFilePathValidator } from '../service/app.validator';
   templateUrl: './create-load-request-modal.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
-export class CreateLoadRequestModalComponent implements AfterViewInit {
+export class CreateLoadRequestModalComponent {
   CODE_SYSTEM_REQUIRED_SOURCE_FILE: Record<string, string[]> = {
     RXNORM: [],
     LOINC: [],
@@ -63,9 +63,8 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
       sourceFilePath: new FormControl<string>('', [Validators.required, sourceFilePathValidator()]),
       requestSubject: new FormControl<string>('', [Validators.required]),
       notificationEmail: new FormControl('', [Validators.required, Validators.email]),
-      requester: new FormControl({ value: '', disabled: true }),
-      requestTime: new FormControl({ value: new Date(), disabled: true }),
-      scheduleDate: new FormControl({ value: '', disabled: false }),
+      requester: new FormControl<string>({ value: '', disabled: true }),
+      requestTime: new FormControl<Date>({ value: new Date(), disabled: true }),
     },
   );
 
@@ -78,17 +77,19 @@ export class CreateLoadRequestModalComponent implements AfterViewInit {
   constructor(
     public userService: UserService) {
     userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''));
+    this.loadRequestCreationForm.get('type')?.valueChanges.subscribe(value => {
+      if (value === 'scheduled') {
+        this.form.addControl('scheduleDate', new FormControl<Date | undefined>(undefined, [Validators.required]));
+        this.form.addControl('scheduleTime', new FormControl<Date | undefined>(undefined, [Validators.required]));
+      } else {
+        this.form.removeControl('scheduleDate');
+        this.form.removeControl('scheduleTime');
+      }
+    });
   }
 
-  ngAfterViewInit() {
-    this.loadRequestCreationForm.get('type')!.valueChanges.subscribe(value => {
-      if (value === 'scheduled') {
-        this.loadRequestCreationForm.get('scheduleDate')?.setValidators([Validators.required]);
-      } else {
-        this.loadRequestCreationForm.get('scheduleDate')?.clearValidators();
-      }
-      this.loadRequestCreationForm.get('scheduleDate')?.updateValueAndValidity();
-    });
+  get form() {
+    return this.loadRequestCreationForm as FormGroup;
   }
 
   onFileSelected(event: Event) {

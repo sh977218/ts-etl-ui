@@ -4,7 +4,7 @@
     <mat-label>Filter Messages</mat-label>
     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. INFO" #input>
   </mat-form-field>
-  <table mat-table [dataSource]="dataSource" matSort class="my-expanded-table">
+  <table mat-table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="componentName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Component name</th>
       <td mat-cell *matCellDef="let element"> {{element.componentName}} </td>
