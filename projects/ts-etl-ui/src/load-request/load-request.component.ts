@@ -108,7 +108,8 @@ export class LoadRequestComponent implements AfterViewInit {
       requestSubject: new FormControl<string | undefined>(''),
       type: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      requestTime: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestTimeStart: new FormControl<Date | undefined>(undefined, { updateOn: 'submit' }),
+      requestTimeEnd: new FormControl<Date | undefined>(undefined, { updateOn: 'submit' }),
       requestDateRange: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestType: new FormControl<string | undefined>('', { updateOn: 'change' }),
     }, { updateOn: 'submit' },
@@ -149,7 +150,7 @@ export class LoadRequestComponent implements AfterViewInit {
             if (qp.pageSize) {
               qp.pageSize = parseInt(qp.pageSize);
             }
-            this.searchCriteria.patchValue(qp);
+            this.searchCriteria.patchValue(qp, { emitEvent: false });
             return qp;
           }),
           map((qp): LoadRequestPayload => {

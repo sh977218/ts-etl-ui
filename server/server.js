@@ -24,7 +24,8 @@ app.post('/api/loadRequests', async (req, res) => {
     requestSubject,
     type,
     requestStatus,
-    requestTime,
+    requestTimeStart,
+    requestTimeEnd,
     requestDateRange,
     requestType,
     sort,
@@ -52,12 +53,20 @@ app.post('/api/loadRequests', async (req, res) => {
   if (requestSubject) {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
-  if (requestTime) {
-    const dateObj = new Date(requestTime);
+  if (requestTimeStart) {
+    const dateObj = new Date(requestTimeStart);
     $match.requestTime = {
-      $gte: dateObj, $lt: new Date(dateObj.getTime() + 24 * 60 * 60 * 1000),
+      $gte: dateObj
     };
   }
+  if (requestTimeEnd) {
+    const dateObj = new Date(requestTimeEnd);
+    if (!$match.requestTime) {
+      $match.requestTime = {}
+    }
+    $match.requestTime['$lte'] = dateObj;
+  }
+
   if (requestDateRange) {
     const today = new Date();
     const startOfWeek = new Date();
@@ -105,7 +114,7 @@ app.post('/api/loadRequests', async (req, res) => {
   });
 });
 
-async function getNextLoadRequestSequenceId(req) {
+async function getNextLoadRequestSequenceId() {
   const { loadRequestsCollection } = await mongoCollection();
   return loadRequestsCollection.countDocuments({});
 }
