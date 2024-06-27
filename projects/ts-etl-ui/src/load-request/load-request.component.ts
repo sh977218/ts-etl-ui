@@ -1,11 +1,5 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  NO_ERRORS_SCHEMA,
-  signal,
-  ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, signal, ViewChild,
   WritableSignal,
 } from '@angular/core';
 import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
@@ -168,8 +162,7 @@ export class LoadRequestComponent implements AfterViewInit {
               pageNumber: 0,
               pageSize: 10,
             };
-            const loadRequestSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
-            return loadRequestSearchCriteria;
+            return Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
           }),
           switchMap((loadRequestSearchCriteria) => {
             this.loadingService.showLoading();
@@ -220,10 +213,38 @@ export class LoadRequestComponent implements AfterViewInit {
       });
   }
 
-  // @TODO get all pages
   download() {
-    const blob = new Blob([JSON.stringify(this.data)], { type: 'application/json' });
-    saveAs(blob, 'loadRequests-export.json');
+    const headerList = [...this.columnsToDisplayWithExpand()];
+    const array = JSON.parse(JSON.stringify(this.data()));
+    let str = '';
+    let row = '';
+    for (const index in headerList) {
+      row += headerList[index] + ', ';
+    }
+    row = row.slice(0, -1);
+    str += row + '\r\n';
+    for (let i = 0; i < array.length; i++) {
+      let line = '';
+      headerList.forEach((head, index) => {
+        if (index > 0) {
+          line += ',';
+        }
+        let v = array[i][head];
+        if (!v) {
+          v = '';
+        }
+        if (typeof v === 'string') {
+          v = v.replaceAll('"', '""');
+        } else {
+          v += '';
+        }
+        line += `"${v}"`;
+      })
+      str += line + "\r\n";
+    }
+
+    const blob = new Blob([str], { type: 'text/csv' });
+    saveAs(blob, 'loadRequests-export.csv');
     this.alertService.addAlert('', 'Export downloaded.');
   }
 
