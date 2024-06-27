@@ -3,17 +3,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  NO_ERRORS_SCHEMA, signal,
-  ViewChild, WritableSignal,
+  NO_ERRORS_SCHEMA,
+  signal,
+  ViewChild,
+  WritableSignal,
 } from '@angular/core';
 import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { saveAs } from 'file-saver';
-
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,10 +23,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { catchError, filter, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
+import { saveAs } from 'file-saver';
 
-import { LoadRequestDataSource, LoadRequestSearchCriteria } from './load-request-data-source';
-import { LoadRequest, LoadRequestsApiResponse } from '../model/load-request';
+import { LoadRequest, LoadRequestPayload, LoadRequestsApiResponse } from '../model/load-request';
 import { AlertService } from '../alert-service';
 import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
@@ -38,7 +45,6 @@ import { LoadRequestDetailComponent } from '../load-request-detail/load-request-
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { UserService } from '../user-service';
 import { User } from '../model/user';
-import { BindQueryParamDirective } from '../service/bind-query-param.directive';
 
 @Component({
   selector: 'app-load-request',
@@ -64,7 +70,6 @@ import { BindQueryParamDirective } from '../service/bind-query-param.directive';
     LoadRequestActivityComponent,
     LoadRequestDetailComponent,
     LoadRequestMessageComponent,
-    BindQueryParamDirective,
   ],
   templateUrl: './load-request.component.html',
   animations: [triggerExpandTableAnimation],
@@ -83,11 +88,9 @@ export class LoadRequestComponent implements AfterViewInit {
     'requester',
     'creationTime',
   ];
-  displayedColumnsForLargeScreen: string[] = [];
 
   columnsToDisplayWithExpand: WritableSignal<string[]> = signal([...this.displayedColumns]);
 
-  loadRequestDatabase: LoadRequestDataSource | null = null;
   data: WritableSignal<LoadRequest[]> = signal([]);
 
   expandedElement: LoadRequest | null | undefined = null;
@@ -100,14 +103,14 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      requestId: new FormControl<number | null>(null),
-      codeSystemName: new FormControl<string | null>(null, { updateOn: 'change' }),
-      requestSubject: new FormControl<string | null>(null),
-      type: new FormControl<string | null>(null, { updateOn: 'change' }),
-      requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
-      requestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
-      requestDateRange: new FormControl<string | null>(null, { updateOn: 'change' }),
-      requestType: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestId: new FormControl<number | undefined>(undefined),
+      codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestSubject: new FormControl<string | undefined>(''),
+      type: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestTime: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestDateRange: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestType: new FormControl<string | undefined>('', { updateOn: 'change' }),
     }, { updateOn: 'submit' },
   );
 
@@ -115,37 +118,20 @@ export class LoadRequestComponent implements AfterViewInit {
               private activatedRoute: ActivatedRoute,
               private router: Router,
               public dialog: MatDialog,
-              private breakpointObserver: BreakpointObserver,
               private loadingService: LoadingService,
               private userService: UserService,
               public alertService: AlertService) {
     userService.user$.subscribe(user => this.user = user);
-
-    breakpointObserver
-      .observe([
-        Breakpoints.Large,
-        Breakpoints.XLarge,
-      ])
-      .pipe(takeUntilDestroyed())
-      .subscribe(result => {
-        if (result.matches) {
-          this.columnsToDisplayWithExpand.set([...this.displayedColumns, ...this.displayedColumnsForLargeScreen]);
-        } else {
-          this.columnsToDisplayWithExpand.set([...this.displayedColumns]);
-        }
+    this.searchCriteria.valueChanges
+      .subscribe(val => {
+        this.router.navigate(['load-requests'], {
+          queryParamsHandling: 'merge',
+          queryParams: { expand: undefined, ...val },
+        });
       });
-
-    this.searchCriteria.valueChanges.subscribe(val => {
-      this.router.navigate(['load-requests'], {
-        queryParamsHandling: 'merge',
-        queryParams: val,
-      });
-    });
   }
 
   ngAfterViewInit() {
-    this.loadRequestDatabase = new LoadRequestDataSource(this.http);
-
     this.reloadAllRequests$.pipe(
       startWith(true),
       filter(reload => !!reload),
@@ -163,18 +149,19 @@ export class LoadRequestComponent implements AfterViewInit {
             if (qp.pageSize) {
               qp.pageSize = parseInt(qp.pageSize);
             }
+            this.searchCriteria.patchValue(qp);
             return qp;
           }),
-          map((qp): LoadRequestSearchCriteria => {
-            const DEFAULT_SEARCH_CRITERIA: LoadRequestSearchCriteria = {
-              requestId: null,
-              codeSystemName: null,
-              requestSubject: null,
-              type: null,
-              requestStatus: null,
-              requestTime: null,
-              requestDateRange: null,
-              requester: null,
+          map((qp): LoadRequestPayload => {
+            const DEFAULT_SEARCH_CRITERIA: LoadRequestPayload = {
+              requestId: undefined,
+              codeSystemName: undefined,
+              requestSubject: undefined,
+              type: undefined,
+              requestStatus: undefined,
+              requestTime: undefined,
+              requestDateRange: undefined,
+              requester: undefined,
               sort: 'requestId',
               order: 'asc',
               pageNumber: 0,
@@ -185,7 +172,7 @@ export class LoadRequestComponent implements AfterViewInit {
           }),
           switchMap((loadRequestSearchCriteria) => {
             this.loadingService.showLoading();
-            return this.loadRequestDatabase!.getLoadRequests(loadRequestSearchCriteria)
+            return this.http.post<LoadRequestsApiResponse>('/api/loadRequests', loadRequestSearchCriteria)
               .pipe(catchError(() => of(null)));
           }),
           map((data: LoadRequestsApiResponse | null) => {

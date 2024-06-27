@@ -26,7 +26,7 @@ app.post('/api/loadRequests', async (req, res) => {
     requestStatus,
     requestTime,
     requestDateRange,
-    requester,
+    requestType,
     sort,
     order,
     pageNumber,
@@ -34,7 +34,7 @@ app.post('/api/loadRequests', async (req, res) => {
   } = req.body;
   const $match = {};
   // requestId can be 0
-  if (requestId !== null) {
+  if (requestId) {
     $match.requestId = Number.parseInt(requestId);
   }
   if (codeSystemName) {
@@ -43,8 +43,8 @@ app.post('/api/loadRequests', async (req, res) => {
   if (type) {
     $match.type = type;
   }
-  if (requester) {
-    $match.requester = requester;
+  if (requestType) {
+    $match.requester = requestType;
   }
   if (requestStatus) {
     $match.requestStatus = requestStatus;
