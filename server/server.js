@@ -34,7 +34,7 @@ app.post('/api/loadRequests', async (req, res) => {
   } = req.body;
   const $match = {};
   // requestId can be 0
-  if (requestId) {
+  if (requestId !== undefined) {
     $match.requestId = Number.parseInt(requestId);
   }
   if (codeSystemName) {
@@ -101,7 +101,7 @@ app.post('/api/loadRequests', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
-    total_count: await loadRequestsCollection.countDocuments(), items: loadRequests,
+    total_count: await loadRequestsCollection.countDocuments($match), items: loadRequests,
   });
 });
 
