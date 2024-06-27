@@ -27,7 +27,7 @@ app.post('/api/loadRequests', async (req, res) => {
     requestTimeStart,
     requestTimeEnd,
     requestDateRange,
-    requester,
+    requestType,
     sort,
     order,
     pageNumber,
@@ -35,7 +35,7 @@ app.post('/api/loadRequests', async (req, res) => {
   } = req.body;
   const $match = {};
   // requestId can be 0
-  if (requestId !== null) {
+  if (requestId) {
     $match.requestId = Number.parseInt(requestId);
   }
   if (codeSystemName) {
@@ -44,8 +44,8 @@ app.post('/api/loadRequests', async (req, res) => {
   if (type) {
     $match.type = type;
   }
-  if (requester) {
-    $match.requester = requester;
+  if (requestType) {
+    $match.requester = requestType;
   }
   if (requestStatus) {
     $match.requestStatus = requestStatus;
@@ -76,33 +76,28 @@ app.post('/api/loadRequests', async (req, res) => {
     startOfMonth.setHours(0, 0, 0, 0);
     if (requestDateRange === 'today') {
       $match.requestTime = {
-        $lte: today,
-        $gte: new Date(today.getTime() - 24 * 60 * 60 * 1000),
+        $lte: today, $gte: new Date(today.getTime() - 24 * 60 * 60 * 1000),
       };
     } else if (requestDateRange === 'thisWeek') {
       $match.requestTime = {
-        $gte: startOfWeek,
-        $lte: today,
+        $gte: startOfWeek, $lte: today,
       };
     } else if (requestDateRange === 'lastWeek') {
       const startOfLastWeek = new Date();
       startOfLastWeek.setDate(startOfWeek.getDate() - 7 - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of last current week
       startOfLastWeek.setHours(0, 0, 0, 0);
       $match.requestTime = {
-        $gte: startOfLastWeek,
-        $lte: startOfWeek,
+        $gte: startOfLastWeek, $lte: startOfWeek,
       };
     } else if (requestDateRange === 'thisMonth') {
       $match.requestTime = {
-        $gte: startOfMonth,
-        $lte: today,
+        $gte: startOfMonth, $lte: today,
       };
     } else if (requestDateRange === 'lastMonth') {
       const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       startOfLastMonth.setHours(0, 0, 0, 0);
       $match.requestTime = {
-        $gte: startOfLastMonth,
-        $lte: startOfMonth,
+        $gte: startOfLastMonth, $lte: startOfMonth,
       };
     }
   }
@@ -111,7 +106,7 @@ app.post('/api/loadRequests', async (req, res) => {
   const pageNumberInt = Number.parseInt(pageNumber);
   const pageSizeInt = Number.parseInt(pageSize);
   const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
-  
+
   const { loadRequestsCollection } = await mongoCollection();
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   res.send({
@@ -119,7 +114,7 @@ app.post('/api/loadRequests', async (req, res) => {
   });
 });
 
-async function getNextLoadRequestSequenceId(req) {
+async function getNextLoadRequestSequenceId() {
   const { loadRequestsCollection } = await mongoCollection();
   return loadRequestsCollection.countDocuments({});
 }
@@ -137,9 +132,14 @@ app.post('/api/loadRequest', async (req, res) => {
   res.send({ requestId: newLoadRequest.requestId });
 });
 
-app.get('/api/versionQAs', async (req, res) => {
+app.post('/api/versionQAs', async (req, res) => {
+  const { loadNumber } = req.body;
   const { versionQAsCollection } = await mongoCollection();
-  const versionQAs = await versionQAsCollection.find({}).toArray();
+  const condition = {};
+  if (loadNumber !== null) {
+    condition.loadNumber = loadNumber;
+  }
+  const versionQAs = await versionQAsCollection.find(condition).toArray();
   res.send({
     total_count: versionQAs.length, items: versionQAs,
   });
@@ -148,7 +148,7 @@ app.get('/api/versionQAs', async (req, res) => {
 app.get('/api/versionQA/:requestId', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   // I'm not sure requestID will end up being unique here... we can change later if needed
-  const versionQA = await versionQAsCollection.findOne({requestId: +req.params.requestId});
+  const versionQA = await versionQAsCollection.findOne({ requestId: +req.params.requestId });
   res.send(versionQA);
 });
 

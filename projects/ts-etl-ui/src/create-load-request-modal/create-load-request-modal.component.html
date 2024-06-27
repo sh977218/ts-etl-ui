@@ -32,7 +32,8 @@
         <mat-label for="sourcePathFile">Source File Path</mat-label>
         <input matInput formControlName="sourceFilePath">
         <mat-icon matSuffix (click)="fileUpload.click()" color="primary">attach_file</mat-icon>
-        <input type="file" #fileUpload class="hidden" (change)="onFileSelected($event)" id="sourcePathFile">
+        <input type="file" #fileUpload class="hidden" (change)="onFileSelected($event)" id="sourcePathFile"
+               webkitdirectory directory>
         <mat-error *ngIf="loadRequestCreationForm.get('sourceFilePath')?.hasError('sourceFilePathError')">
           Please select source file from NLM server
         </mat-error>

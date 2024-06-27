@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
 import { MatIcon } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
 export interface RowElement {
   label: string;
@@ -64,6 +65,7 @@ const LABEL_SORT_ARRAY = [
     VersionQaReviewModalComponent,
     MatIcon,
     NgIf,
+    RouterLink,
   ],
   templateUrl: './load-request-detail.component.html',
   styleUrl: './load-request-detail.component.scss',
