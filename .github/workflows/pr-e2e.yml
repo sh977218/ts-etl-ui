@@ -68,6 +68,9 @@ jobs:
 
       - name: Setup JDK
         uses: actions/setup-java@v4.2.1
+        with:
+          distribution: 'microsoft'
+          java-version: '21'
 
       - name: Download allure report from previous run
         run: echo 'Download allure report from previous run'
