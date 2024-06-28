@@ -11,10 +11,10 @@
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
       "type": "regular",
-      "creationTime": "2018-10-28",
+      "creationTime": "2017-03-04T08:44:28+05:00",
       "loadNumber": 20231012080001,
       "loadStatus": "Pending QA",
-      "loadTime": "2017-03-05T08:44:28 +05:00",
+      "loadTime": "2017-03-05T08:44:28+05:00",
       "duration": "00:03:54",
       "loadRequestActivities": [
         {
@@ -100,9 +100,9 @@
       "version": 54593,
       "availableDate": "2017-03-08",
       "requester": "dorothyknapp@zilphur.com",
-      "requestTime": "2017-03-05T08:44:28+05:00",
+      "requestTime": "2018-03-05T08:44:28+05:00",
       "type": "scheduled",
-      "creationTime": "2017-03-08",
+      "creationTime":  "2018-03-04T08:44:28+05:00",
       "loadNumber": 20240501081501,
       "loadRequestActivities": [
         {

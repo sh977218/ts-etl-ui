@@ -104,8 +104,11 @@ export class LoadRequestComponent implements AfterViewInit {
       requestStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestTimeStart: new FormControl<Date | undefined>(undefined, { updateOn: 'submit' }),
       requestTimeEnd: new FormControl<Date | undefined>(undefined, { updateOn: 'submit' }),
+      creationTimeStart: new FormControl<Date | undefined>(undefined, { updateOn: 'submit' }),
+      creationTimeEnd: new FormControl<Date | undefined>(undefined, { updateOn: 'submit' }),
       requestDateRange: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestType: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requester: new FormControl<string | undefined>(''),
     }, { updateOn: 'submit' },
   );
 
