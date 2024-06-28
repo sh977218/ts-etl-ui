@@ -65,3 +65,23 @@ jobs:
       - name: update job summary
         if: always()
         run: echo "# Deployed playwright result to ${{ steps.deploy-playwright-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Setup JDK
+        uses: actions/setup-java@3
+
+      - name: Download allure report from previous run
+        run: echo 'Download allure report from previous run'
+
+      - name: Copy historical data into current run
+        run: echo 'copy {previous run history folder} .allure-results
+
+      - name: Generate allure report
+        run: npx allure generate allure-results
+
+      - name: Upload allure report to Artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: allure-report
+          path: allure-report
+          retention-days: 30
