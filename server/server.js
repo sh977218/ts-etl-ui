@@ -103,8 +103,8 @@ app.post('/api/loadRequests', async (req, res) => {
   }
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
-  const pageNumberInt = Number.parseInt(pageNumber);
-  const pageSizeInt = Number.parseInt(pageSize);
+  const pageNumberInt = +pageNumber;
+  const pageSizeInt = +pageSize;
   const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
 
   const { loadRequestsCollection } = await mongoCollection();
