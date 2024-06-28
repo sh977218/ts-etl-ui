@@ -109,6 +109,21 @@ export class LoadRequestComponent implements AfterViewInit {
     }, { updateOn: 'submit' },
   );
 
+  currentLoadRequestSearchCriteria: LoadRequestPayload = {
+    requestId: undefined,
+    codeSystemName: undefined,
+    requestSubject: undefined,
+    type: undefined,
+    requestStatus: undefined,
+    requestTime: undefined,
+    requestDateRange: undefined,
+    requester: undefined,
+    sort: 'requestId',
+    order: 'asc',
+    pageNumber: 0,
+    pageSize: 10,
+  };
+
   constructor(public http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private router: Router,
@@ -162,7 +177,8 @@ export class LoadRequestComponent implements AfterViewInit {
               pageNumber: 0,
               pageSize: 10,
             };
-            return Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
+            this.currentLoadRequestSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
+            return this.currentLoadRequestSearchCriteria;
           }),
           switchMap((loadRequestSearchCriteria) => {
             this.loadingService.showLoading();
@@ -214,38 +230,48 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   download() {
-    const headerList = [...this.columnsToDisplayWithExpand()];
-    const array = JSON.parse(JSON.stringify(this.data()));
-    let str = '';
-    let row = '';
-    for (const index in headerList) {
-      row += headerList[index] + ', ';
-    }
-    row = row.slice(0, -1);
-    str += row + '\r\n';
-    for (let i = 0; i < array.length; i++) {
-      let line = '';
-      headerList.forEach((head, index) => {
-        if (index > 0) {
-          line += ',';
-        }
-        let v = array[i][head];
-        if (!v) {
-          v = '';
-        }
-        if (typeof v === 'string') {
-          v = v.replaceAll('"', '""');
-        } else {
-          v += '';
-        }
-        line += `"${v}"`;
-      })
-      str += line + "\r\n";
-    }
+    const payload = { ...this.currentLoadRequestSearchCriteria };
+    payload.pageNumber = 0;
+    payload.pageSize = 1000;
+    this.http.post<LoadRequestsApiResponse>('/api/loadRequests', payload)
+      .pipe(
+        tap({
+          next: (data) => {
+            const headerList = [...this.columnsToDisplayWithExpand()];
+            const array = JSON.parse(JSON.stringify(data.items));
+            let str = '';
+            let row = '';
+            for (const index in headerList) {
+              row += headerList[index] + ', ';
+            }
+            row = row.slice(0, -1);
+            str += row + '\r\n';
+            for (let i = 0; i < array.length; i++) {
+              let line = '';
+              headerList.forEach((head, index) => {
+                if (index > 0) {
+                  line += ',';
+                }
+                let v = array[i][head];
+                if (!v) {
+                  v = '';
+                }
+                if (typeof v === 'string') {
+                  v = v.replaceAll('"', '""');
+                } else {
+                  v += '';
+                }
+                line += `"${v}"`;
+              });
+              str += line + '\r\n';
+            }
 
-    const blob = new Blob([str], { type: 'text/csv' });
-    saveAs(blob, 'loadRequests-export.csv');
-    this.alertService.addAlert('', 'Export downloaded.');
+            const blob = new Blob([str], { type: 'text/csv' });
+            saveAs(blob, 'loadRequests-export.csv');
+            this.alertService.addAlert('', 'Export downloaded.');
+          },
+        }))
+      .subscribe();
   }
 
   handlePageEvent(e: PageEvent) {
