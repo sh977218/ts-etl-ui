@@ -100,10 +100,8 @@ test.describe('e2e test', async () => {
       );
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
-      expect(fileContent).toContain('playwright@example.com');
-      expect(fileContent).toContain('newly created load request');
-      expect(fileContent).toContain('file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/');
-      expect(fileContent).toContain('HPO');
+      expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, type, requestTime, requester, creationTime');
+      expect(fileContent).toContain('"149","HPO","newly created load request","In Progress","regular",');
     });
   });
 
