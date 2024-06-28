@@ -233,7 +233,7 @@ export class LoadRequestComponent implements AfterViewInit {
     this.http.post<LoadRequestsApiResponse>('/api/loadRequests',
       Object.assign(this.currentLoadRequestSearchCriteria, {
         pageNumber: 0,
-        pageSize: 1000,
+        pageSize: this.resultsLength,
       }))
       .pipe(
         tap({
