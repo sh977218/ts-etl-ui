@@ -76,7 +76,7 @@ jobs:
         run: echo 'Download allure report from previous run'
 
       - name: Copy historical data into current run
-        run: echo 'copy {previous run history folder} .allure-results
+        run: echo 'copy {previous run history folder} .allure-results'
 
       - name: Generate allure report
         run: npx allure generate allure-results
