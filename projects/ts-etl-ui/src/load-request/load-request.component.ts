@@ -230,10 +230,11 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   download() {
-    const payload = { ...this.currentLoadRequestSearchCriteria };
-    payload.pageNumber = 0;
-    payload.pageSize = 1000;
-    this.http.post<LoadRequestsApiResponse>('/api/loadRequests', payload)
+    this.http.post<LoadRequestsApiResponse>('/api/loadRequests',
+      Object.assign(this.currentLoadRequestSearchCriteria, {
+        pageNumber: 0,
+        pageSize: 1000,
+      }))
       .pipe(
         tap({
           next: (data) => {
