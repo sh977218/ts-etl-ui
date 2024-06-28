@@ -26,8 +26,11 @@ app.post('/api/loadRequests', async (req, res) => {
     requestStatus,
     requestTimeStart,
     requestTimeEnd,
+    creationTimeStart,
+    creationTimeEnd,
     requestDateRange,
     requestType,
+    requester,
     sort,
     order,
     pageNumber,
@@ -53,6 +56,9 @@ app.post('/api/loadRequests', async (req, res) => {
   if (requestSubject) {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
+  if (requester) {
+    $match.requester = new RegExp(escapeRegex(requester), 'i');
+  }
   if (requestTimeStart) {
     const dateObj = new Date(requestTimeStart);
     $match.requestTime = {
@@ -65,6 +71,19 @@ app.post('/api/loadRequests', async (req, res) => {
       $match.requestTime = {}
     }
     $match.requestTime['$lte'] = dateObj;
+  }
+  if (creationTimeStart) {
+    const dateObj = new Date(creationTimeStart);
+    $match.creationTime = {
+      $gte: dateObj
+    };
+  }
+  if (creationTimeEnd) {
+    const dateObj = new Date(creationTimeEnd);
+    if (!$match.creationTime) {
+      $match.creationTime = {}
+    }
+    $match.creationTime['$lte'] = dateObj;
   }
 
   if (requestDateRange) {
