@@ -3,21 +3,21 @@
     <div class="flex justify-between">
       <mat-form-field>
         <mat-label>Any Request date</mat-label>
-        <mat-select placeholder="Any Request date" formControlName="requestDateRange">
-          <mat-option value="">Any Request date</mat-option>
-          <mat-option value="today">Today's</mat-option>
-          <mat-option value="thisWeek">This week's</mat-option>
-          <mat-option value="lastWeek">Last week's</mat-option>
-          <mat-option value="thisMonth">This month's</mat-option>
-          <mat-option value="lastMonth">Last month's</mat-option>
-        </mat-select>
+        <select matNativeControl placeholder="Any Request date" formControlName="requestDateRange">
+          <option value="">Any Request date</option>
+          <option value="today">Today's</option>
+          <option value="thisWeek">This week's</option>
+          <option value="lastWeek">Last week's</option>
+          <option value="thisMonth">This month's</option>
+          <option value="lastMonth">Last month's</option>
+        </select>
       </mat-form-field>
       <mat-form-field>
         <mat-label>All Requests</mat-label>
-        <mat-select placeholder="All Requests" formControlName="requestType">
-          <mat-option value="">All Requests</mat-option>
-          <mat-option [value]="user?.utsUser!.username">My Requests</mat-option>
-        </mat-select>
+        <select matNativeControl placeholder="All Requests" formControlName="requestType">
+          <option value="">All Requests</option>
+          <option [value]="user?.utsUser!.username">My Requests</option>
+        </select>
       </mat-form-field>
       <button mat-fab extended color="primary" type="submit">
         <mat-icon fontIcon="search"></mat-icon>
@@ -120,7 +120,8 @@
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
               <label for="requestTimeStart" class="m-2" mat-sort-header disableClear>Request Time</label>
-              <input id="requestTimeStart" matInput class="w-30" formControlName="requestTimeStart" type="date"
+              <input id="requestTimeStart" matInput class="w-30" formControlName="requestTimeStart"
+                     type="date"
                      [max]="searchCriteria.get('requestTimeEnd')?.getRawValue()">
               <input id="requestTimeEnd" matInput class="w-30" formControlName="requestTimeEnd" type="date"
                      [min]="searchCriteria.get('requestTimeStart')?.getRawValue()">
