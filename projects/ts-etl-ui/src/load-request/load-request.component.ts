@@ -236,7 +236,7 @@ export class LoadRequestComponent implements AfterViewInit {
         pageSize: this.resultsLength,
       }))
       .pipe(
-        // convert to csv and pass blob
+        // convert to csv format string and pass blob
         map(data => {
           const headerList = [...this.columnsToDisplayWithExpand()];
           const array = JSON.parse(JSON.stringify(data.items));
@@ -273,6 +273,7 @@ export class LoadRequestComponent implements AfterViewInit {
             saveAs(blob, 'loadRequests-export.csv');
             this.alertService.addAlert('', 'Export downloaded.');
           },
+          error: () => this.alertService.addAlert('', 'Export download failed.'),
         }))
       .subscribe();
   }

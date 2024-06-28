@@ -1,4 +1,5 @@
 import { test, expect, Page, ConsoleMessage } from '@playwright/test';
+import { readFile, readFileSync } from 'fs';
 
 const UNEXPECTED_CONSOLE_LOG: string[] = [];
 
@@ -90,6 +91,19 @@ test.describe('e2e test', async () => {
       await expect(page.locator('td:has-text("regular")')).toBeVisible();
       await expect(page.locator('td:has-text("HPO")')).toBeVisible();
       await expect(page.getByText('newly created load request')).toBeVisible();
+    });
+
+    await test.step(`download`, async () => {
+      const [, downloadFile] = await Promise.all([
+        page.getByRole('button', { name: 'Download' }).click(),
+        page.waitForEvent('download')],
+      );
+
+      const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
+      expect(fileContent).toContain('playwright@example.com');
+      expect(fileContent).toContain('newly created load request');
+      expect(fileContent).toContain('file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/');
+      expect(fileContent).toContain('HPO');
     });
   });
 
