@@ -46,3 +46,5 @@ Thumbs.db
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/allure-report
+/allure-results
