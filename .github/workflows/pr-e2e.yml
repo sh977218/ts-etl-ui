@@ -7,6 +7,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  GH_TOKEN: ${{ secrets.GithubCliToken }}
+
 jobs:
   e2e-test:
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
@@ -25,12 +28,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Output Node Version
-        run: node -v
-
-      - name: Output NPM Version
-        run: npm -v
 
       - name: Install dependencies
         run: npm ci
@@ -66,17 +63,56 @@ jobs:
         if: always()
         run: echo "# Deployed playwright result to ${{ steps.deploy-playwright-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
 
+      - name: Upload current run allure result to Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: current-allure-result
+          path: allure-results
+          retention-days: 30
+
+  allure-report:
+    name: allure-report
+    needs: [ e2e-test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Setup JDK
         uses: actions/setup-java@v4.2.1
         with:
           distribution: 'microsoft'
           java-version: '21'
 
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download current run allure report from e2e test job
+        uses: actions/download-artifact@v4
+        with:
+          name: current-allure-result  # the artifact name uploaded
+          path: allure-results         # the folder name where artifact will be downloaded to
+
+      - name: Fetch previous Playwright run
+        id: previous_playwright_run_id
+        run: echo "run_id=$(gh run list -w 'Playwright Tests' -s success -L 1 --json databaseId --jq '.[].databaseId')" >> $GITHUB_OUTPUT
+
       - name: Download allure report from previous run
-        run: echo 'Download allure report from previous run'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GithubCliToken }}
+          run-id: ${{ steps.previous_playwright_run_id.outputs.run_id }}
+          name: allure-report          # the artifact name uploaded
+          path: previous-allure-report # the folder name where artifact will be downloaded to
 
       - name: Copy historical data into current run
-        run: echo 'copy {previous run history folder} .allure-results'
+        run: cp previous-allure-report/history allure-results/history -r
 
       - name: Generate allure report
         run: npx allure generate allure-results
