@@ -56,6 +56,7 @@ jobs:
     # GitHub CLI is not available in playwright image container, so this needs a seperated job
     name: playwright-allure-report
     needs: [ e2e-test ]
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -110,6 +111,7 @@ jobs:
   upload-allure-and-playwright-report:
     name: upload-allure-and-playwright-report
     needs: [ playwright-allure-report ]
+    if: always()
     runs-on: ubuntu-latest
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
