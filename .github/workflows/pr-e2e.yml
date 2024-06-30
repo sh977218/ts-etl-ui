@@ -12,16 +12,8 @@ env:
 
 jobs:
   e2e-test:
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
     name: e2e-test
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     container:
       image: mcr.microsoft.com/playwright:v1.44.0-jammy
 
@@ -44,24 +36,13 @@ jobs:
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npm run test
 
-      - name: Setup Pages
+      - name: Upload current run playwright html result to Artifacts
+        uses: actions/upload-artifact@v4
         if: always()
-        uses: actions/configure-pages@v4
-
-      - name: Upload playwright report to github-pages
-        if: always()
-        uses: actions/upload-pages-artifact@v3
         with:
-          path: playwright-report/
-
-      - name: Deploy Playwright result to Github Pages
-        if: always()
-        id: deploy-playwright-to-github
-        uses: actions/deploy-pages@v4
-
-      - name: update job summary
-        if: always()
-        run: echo "# Deployed playwright result to ${{ steps.deploy-playwright-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          name: playwright-report
+          path: playwright-report
+          retention-days: 30
 
       - name: Upload current run allure result to Artifacts
         uses: actions/upload-artifact@v4
@@ -71,9 +52,11 @@ jobs:
           path: allure-results
           retention-days: 30
 
-  allure-report:
-    name: allure-report
+  playwright-allure-report:
+    # GitHub CLI is not available in playwright image container, so this needs a seperated job
+    name: playwright-allure-report
     needs: [ e2e-test ]
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -101,7 +84,7 @@ jobs:
 
       - name: Fetch previous Playwright run
         id: previous_playwright_run_id
-        run: echo "run_id=$(gh run list -w 'Playwright Tests' -s success -L 1 --json databaseId --jq '.[].databaseId')" >> $GITHUB_OUTPUT
+        run: echo "run_id=$(gh run list -w 'Playwright Tests' -s completed -L 1 --json databaseId --jq '.[].databaseId')" >> $GITHUB_OUTPUT
 
       - name: Download allure report from previous run
         uses: actions/download-artifact@v4
@@ -124,3 +107,55 @@ jobs:
           name: allure-report
           path: allure-report
           retention-days: 30
+
+  upload-allure-and-playwright-report:
+    name: upload-allure-and-playwright-report
+    needs: [ playwright-allure-report ]
+    if: always()
+    runs-on: ubuntu-latest
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        if: always()
+        uses: actions/configure-pages@v4
+
+      - name: Download playwright html from current run
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: all-report/playwright-report
+
+      - name: Download allure report from current run
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-report
+          path: all-report/allure-report
+
+      - name: Upload all report to github-pages
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: all-report
+
+      - name: Deploy all report to Github Pages
+        if: always()
+        id: deploy-all-report-to-github
+        uses: actions/deploy-pages@v4
+        with:
+          preview: true
+
+      - name: update job summary
+        if: always()
+        run: echo "# Deployed all report to ${{ steps.deploy-all-report-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
