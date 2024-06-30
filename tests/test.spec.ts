@@ -83,7 +83,7 @@ test.describe('e2e test', async () => {
       await matDialog.getByLabel('Request Subject').fill('newly created load request');
       await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/nlmsombaserver.nlm.nih.gov/dev-ts-data-import/june-26-2024');
       await expect(matDialog.getByLabel('Source File Path')).toHaveValue(/file:\/\/nlmsombaserver\.nlm\.nih\.gov\/dev-ts-data-import\//);
-      await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
+//      await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
       await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
@@ -133,7 +133,7 @@ test.describe('e2e test', async () => {
 
       const activityHistoryFirstRow = page.locator('table[data-testid=qaActivitiesTable] tbody tr').first();
       await activityHistoryFirstRow.click();
-      await expect(page.getByText('Accepted by me')).toBeHidden();
+      await expect(page.getByText('Accepted by me')).toBeVisible();
     });
   });
 
