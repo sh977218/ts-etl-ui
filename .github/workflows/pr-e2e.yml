@@ -130,12 +130,14 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Download playwright html from current run
+        if: always()
         uses: actions/download-artifact@v4
         with:
           name: playwright-report
           path: all-report/playwright-report
 
       - name: Download allure report from current run
+        if: always()
         uses: actions/download-artifact@v4
         with:
           name: allure-report
