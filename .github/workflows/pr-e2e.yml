@@ -84,7 +84,7 @@ jobs:
 
       - name: Fetch previous Playwright run
         id: previous_playwright_run_id
-        run: echo "run_id=$(gh run list -w 'Playwright Tests' -s success -L 1 --json databaseId --jq '.[].databaseId')" >> $GITHUB_OUTPUT
+        run: echo "run_id=$(gh run list -w 'Playwright Tests' -L 1 --json databaseId --jq '.[].databaseId')" >> $GITHUB_OUTPUT
 
       - name: Download allure report from previous run
         uses: actions/download-artifact@v4
