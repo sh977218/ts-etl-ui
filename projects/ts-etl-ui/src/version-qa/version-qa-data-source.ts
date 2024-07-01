@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { VersionQAsApiResponse } from '../model/version-qa';
+import { VersionQA, VersionQAsApiResponse } from '../model/version-qa';
 import { SortDirection } from '@angular/material/sort';
 
 /*
@@ -20,5 +20,9 @@ export class VersionQaDataSource {
 
   getVersionQAs(versionQaSearchCriteria: VersionQaSearchCriteria) {
     return this.http.post<VersionQAsApiResponse>('/api/versionQAs', versionQaSearchCriteria);
+  }
+
+  getVersionQA(requestId: string) {
+    return this.http.get<VersionQA>(`/api/versionQA/${requestId}`);
   }
 }
