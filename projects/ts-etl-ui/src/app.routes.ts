@@ -5,6 +5,7 @@ import { LoginCbComponent } from './login-cb/login-cb.component';
 import { LoadRequestComponent } from './load-request/load-request.component';
 import { VersionQaComponent } from './version-qa/version-qa.component';
 import { CodeSystemComponent } from './code-system/code-system.component';
+import { VersionQaReportComponent } from './version-qa-report/version-qa-report.component';
 import { logInGuard } from './app.guard';
 
 export const routes: Routes = [
@@ -19,6 +20,10 @@ export const routes: Routes = [
   },
   {
     path: 'code-systems', component: CodeSystemComponent, title: 'Code Systems',
+    canActivate: [logInGuard],
+  },
+  {
+    path: 'version-qa-report/:requestId', component: VersionQaReportComponent, title: 'Version QA Report',
     canActivate: [logInGuard],
   },
   {
