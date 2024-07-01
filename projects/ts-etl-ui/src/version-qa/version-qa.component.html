@@ -66,7 +66,20 @@
               <div class="m-2" style="flex-grow:0.35">
                 <app-version-qa-detail [versionQA]="row" class="flex flex-grow"></app-version-qa-detail>
               </div>
-              <app-load-summary [loadSummary]="row.loadSummary" style="flex-grow:0.65"></app-load-summary>
+              <div style="flex-grow:0.65">
+                <app-load-summary [loadSummary]="row.loadSummary"></app-load-summary>
+                <h1>QA Actions</h1>
+                <fieldset>
+                  <a [routerLink]="['/version-qa-report', row.requestId]">Go to QA Report</a>
+                  <span class="block">
+                    <a [routerLink]="['/code-system-data', row.codeSystemName]">Analyze Code System Data</a>
+                  </span>
+                  <span class="block">
+                    <!-- this won't actually work - Security -->
+                    View Source Data Files <a  href="{{row.sourceFilePath}}" target="_blank">{{row.sourceFilePath}}</a>
+                  </span>
+                </fieldset>
+              </div>
             </div>
             <div class="flex" style="flex-grow:1">
               <fieldset>
