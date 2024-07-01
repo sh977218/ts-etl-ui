@@ -18,8 +18,10 @@ import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.compo
 import { triggerExpandTableAnimation } from '../animations';
 import { NgIf } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { of, tap } from 'rxjs';
-import { AlertService } from '../alert-service';
+import { map, of, tap } from 'rxjs';
+import { AlertService } from '../service/alert-service';
+import { saveAs } from 'file-saver';
+import { DownloadService } from '../service/download-service';
 
 @Component({
   selector: 'app-version-qa-activity',
@@ -54,7 +56,8 @@ export class VersionQaActivityComponent implements AfterViewInit {
     return new MatTableDataSource<VersionQAActivity>(this.versionQaActivities().reverse());
   });
 
-  constructor(private alertService: AlertService) {
+  constructor(private alertService: AlertService,
+              private downloadService: DownloadService) {
   }
 
   ngAfterViewInit(): void {
@@ -74,9 +77,16 @@ export class VersionQaActivityComponent implements AfterViewInit {
   downloadQaActivities() {
     of(this.versionQaActivities())
       .pipe(
+        map(data => {
+          const headerList = [...this.displayedColumns];
+          return this.downloadService.generateBlob(headerList, data);
+        }),
         tap({
-          next: () => this.alertService.addAlert('', 'QA Activities downloaded.'),
-          error: () => this.alertService.addAlert('', 'QA Activities downloaded failed.'),
+          next: (blob) => {
+            saveAs(blob, 'versionQaActivity-export.csv');
+            this.alertService.addAlert('', 'QA Activities downloaded.');
+          },
+          error: () => this.alertService.addAlert('', 'QA Activities download failed.'),
         }),
       )
       .subscribe();
