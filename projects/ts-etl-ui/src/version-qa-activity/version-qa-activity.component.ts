@@ -17,6 +17,9 @@ import { VersionQAActivity } from '../model/version-qa';
 import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.component';
 import { triggerExpandTableAnimation } from '../animations';
 import { NgIf } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { of, tap } from 'rxjs';
+import { AlertService } from '../alert-service';
 
 @Component({
   selector: 'app-version-qa-activity',
@@ -30,6 +33,7 @@ import { NgIf } from '@angular/common';
     MatPaginatorModule,
     VersionQaNoteComponent,
     NgIf,
+    MatIcon,
   ],
   templateUrl: './version-qa-activity.component.html',
   styleUrl: './version-qa-activity.component.scss',
@@ -50,6 +54,9 @@ export class VersionQaActivityComponent implements AfterViewInit {
     return new MatTableDataSource<VersionQAActivity>(this.versionQaActivities().reverse());
   });
 
+  constructor(private alertService: AlertService) {
+  }
+
   ngAfterViewInit(): void {
     this.dataSource().paginator = this.paginator;
     this.dataSource().sort = this.sort;
@@ -62,6 +69,17 @@ export class VersionQaActivityComponent implements AfterViewInit {
     if (this.dataSource().paginator) {
       this.dataSource().paginator?.firstPage();
     }
+  }
+
+  downloadQaActivities() {
+    of(this.versionQaActivities())
+      .pipe(
+        tap({
+          next: () => this.alertService.addAlert('', 'QA Activities downloaded.'),
+          error: () => this.alertService.addAlert('', 'QA Activities downloaded failed.'),
+        }),
+      )
+      .subscribe();
   }
 
 }
