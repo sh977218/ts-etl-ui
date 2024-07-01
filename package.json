@@ -6,6 +6,7 @@
   "scripts": {
     "ng": "ng",
     "serve": "ng serve",
+    "serve:integration": "ng serve -c integration",
     "start": "node --env-file .prod.env server/server.js",
     "start:ci": "node --env-file .ci.env server/server.js",
     "build": "ng build -c development && node insert-commit-hash.js",

@@ -94,6 +94,10 @@
             },
             "development": {
               "buildTarget": "ts-etl-ui:build:development"
+            },
+            "integration": {
+              "buildTarget": "ts-etl-ui:build:development",
+              "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
             }
           },
           "defaultConfiguration": "development"
