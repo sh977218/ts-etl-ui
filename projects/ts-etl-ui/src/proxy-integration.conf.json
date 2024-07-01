@@ -1,5 +1,10 @@
 {
   "/api": {
-    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend/api"
+    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend/api",
+    "secure": false,
+    "pathRewrite": {
+      "^/api": ""
+    },
+    "changeOrigin": true
   }
 }
