@@ -28,18 +28,27 @@ import {
   tap,
 } from 'rxjs';
 import { saveAs } from 'file-saver';
+import { assign } from 'lodash';
 
-import { LoadRequest, LoadRequestPayload, LoadRequestsApiResponse } from '../model/load-request';
+import { triggerExpandTableAnimation } from '../animations';
+import { LoadingService } from '../service/loading-service';
+import { UserService } from '../service/user-service';
+import { DownloadService } from '../service/download-service';
 import { AlertService } from '../service/alert-service';
+import {
+  generateLoadRequestPayload,
+  LoadRequest,
+  LoadRequestPayload,
+  LoadRequestsResponse,
+} from '../model/load-request';
+import { User } from '../model/user';
+
 import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
-import { LoadingService } from '../service/loading-service';
-import { triggerExpandTableAnimation } from '../animations';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
-import { UserService } from '../service/user-service';
-import { User } from '../model/user';
-import { DownloadService } from '../service/download-service';
+import { CODE_SYSTEM_NAMES, LOAD_REQUEST_STATUSES, LOAD_REQUEST_TYPES } from '../service/constant';
+
 
 @Component({
   selector: 'app-load-request',
@@ -78,7 +87,7 @@ export class LoadRequestComponent implements AfterViewInit {
     'codeSystemName',
     'requestSubject',
     'requestStatus',
-    'type',
+    'requestType',
     'requestTime',
     'requester',
     'creationTime',
@@ -101,31 +110,39 @@ export class LoadRequestComponent implements AfterViewInit {
       requestId: new FormControl<number | undefined>(undefined),
       codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestSubject: new FormControl<string | undefined>(''),
-      type: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestType: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestTimeStart: new FormControl<Date | undefined>(undefined),
       requestTimeEnd: new FormControl<Date | undefined>(undefined),
       creationTimeStart: new FormControl<Date | undefined>(undefined),
       creationTimeEnd: new FormControl<Date | undefined>(undefined),
-      requestDateRange: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      requestType: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestTime: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requester: new FormControl<string | undefined>(''),
     }, { updateOn: 'submit' },
   );
 
   currentLoadRequestSearchCriteria: LoadRequestPayload = {
-    requestId: undefined,
-    codeSystemName: undefined,
-    requestSubject: undefined,
-    type: undefined,
-    requestStatus: undefined,
-    requestTime: undefined,
-    requestDateRange: undefined,
-    requester: undefined,
-    sort: 'requestId',
-    order: 'asc',
-    pageNumber: 0,
-    pageSize: 10,
+    pagination: {
+      pageNum: 0,
+      pageSize: 10,
+    },
+    searchFilters: {
+      requestTime: '',
+      requester: '',
+    },
+    searchColumns: {
+      requestId: '',
+      codeSystemName: '',
+      requestSubject: '',
+      requestStatus: '',
+      requestStartTime: '',
+      requestEndTime: '',
+      requestType: '',
+    },
+    sortCriteria: {
+      sortDirection: 'asc',
+      sortBy: 'requestSubject',
+    },
   };
 
   constructor(public http: HttpClient,
@@ -155,47 +172,25 @@ export class LoadRequestComponent implements AfterViewInit {
           // query parameters are always string, convert to number if needed
           map((queryParams: Params) => {
             const qp = { ...queryParams['params'] };
-            if (qp.requestId) {
-              qp.requestId = parseInt(qp.requestId);
-            }
-            if (qp.pageNumber) {
-              qp.pageNumber = parseInt(qp.pageNumber);
-            }
-            if (qp.pageSize) {
-              qp.pageSize = parseInt(qp.pageSize);
-            }
             this.searchCriteria.patchValue(qp, { emitEvent: false });
             return qp;
           }),
           map((qp): LoadRequestPayload => {
-            const DEFAULT_SEARCH_CRITERIA: LoadRequestPayload = {
-              requestId: undefined,
-              codeSystemName: undefined,
-              requestSubject: undefined,
-              type: undefined,
-              requestStatus: undefined,
-              requestTime: undefined,
-              requestDateRange: undefined,
-              requester: undefined,
-              sort: 'requestId',
-              order: 'asc',
-              pageNumber: 0,
-              pageSize: 10,
-            };
-            this.currentLoadRequestSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
+            const loadRequestPayload: LoadRequestPayload = generateLoadRequestPayload(qp);
+            assign(this.currentLoadRequestSearchCriteria, loadRequestPayload);
             return this.currentLoadRequestSearchCriteria;
           }),
-          switchMap((loadRequestSearchCriteria) => {
+          switchMap((loadRequestPayload) => {
             this.loadingService.showLoading();
-            return this.http.post<LoadRequestsApiResponse>('/api/loadRequests', loadRequestSearchCriteria)
+            return this.http.post<LoadRequestsResponse>('/api/loadRequests', loadRequestPayload)
               .pipe(catchError(() => of(null)));
           }),
-          map((data: LoadRequestsApiResponse | null) => {
-            if (data === null) {
+          map((res: LoadRequestsResponse | null) => {
+            if (res?.result === null) {
               return [];
             }
-            this.resultsLength = data.total_count;
-            return data.items;
+            this.resultsLength = res?.result.pagination.totalCount || 0;
+            return res?.result.data || [];
           }),
           map(items => {
             items.forEach(item => item.numberOfMessages = item.loadRequestMessages ? item.loadRequestMessages.length : 0);
@@ -223,7 +218,9 @@ export class LoadRequestComponent implements AfterViewInit {
       .afterClosed()
       .pipe(
         filter(newLoadRequest => !!newLoadRequest),
-        switchMap(newLoadRequest => this.http.post<{ requestId: string }>('/api/loadRequest', newLoadRequest)),
+        switchMap(newLoadRequest => this.http.post<{
+          requestId: string
+        }>('/api/loadRequest', newLoadRequest as LoadRequest)),
       )
       .subscribe({
         next: ({ requestId }) => {
@@ -235,15 +232,18 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   download() {
-    this.http.post<LoadRequestsApiResponse>('/api/loadRequests',
+    this.http.post<LoadRequestsResponse>('/api/loadRequests',
       Object.assign(this.currentLoadRequestSearchCriteria, {
-        pageNumber: 0,
-        pageSize: this.resultsLength,
-      }))
+          pagination: {
+            pageNum: 1,
+            pageSize: this.resultsLength,
+          },
+        },
+      ))
       .pipe(
         map(data => {
           const headerList = [...this.columnsToDisplayWithExpand()];
-          return this.downloadService.generateBlob(headerList, data.items);
+          return this.downloadService.generateBlob(headerList, data.result.data);
         }),
         tap({
           next: (blob) => {
@@ -279,4 +279,7 @@ export class LoadRequestComponent implements AfterViewInit {
     });
   }
 
+  protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
+  protected readonly LOAD_REQUEST_STATUSES = LOAD_REQUEST_STATUSES;
+  protected readonly LOAD_REQUEST_TYPES = LOAD_REQUEST_TYPES;
 }
