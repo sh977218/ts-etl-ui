@@ -31,6 +31,7 @@ export type VersionQAActivity = {
   activity: string
   updatedTime: Date
   availableDate: Date,
+  nbNotes?: number;
   notes: QAActivityNote[]
 }
 
