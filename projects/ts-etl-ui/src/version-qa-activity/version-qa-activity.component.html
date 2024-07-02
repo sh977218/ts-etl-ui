@@ -1,5 +1,4 @@
 <div class="mat-elevation-z8 my-5">
-
   <fieldset>
     <legend>QA Activities</legend>
     <div class="flex">
@@ -21,7 +20,28 @@
 
       <ng-container matColumnDef="availableDate">
         <th mat-header-cell *matHeaderCellDef>TS Available Date</th>
-        <td mat-cell *matCellDef="let element"> {{element.availableDate}} </td>
+        <td mat-cell *matCellDef="let element; let index = index">
+          <ng-container *ngIf="editDateMode === index; else noEdit">
+            <form [formGroup]="editAvailableDateForm">
+              <mat-form-field appearance="outline">
+                <mat-label>Available Date</mat-label>
+                <input matInput formControlName="availableDate" [matDatepicker]="picker" [min]="tomorrow">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <button mat-icon-button color="primary" type="submit"
+                      (click)="$event.stopPropagation(); editDateMode = -1;" class="transform scale-25">
+                <mat-icon fontIcon="check"></mat-icon>
+              </button>
+            </form>
+          </ng-container>
+          <ng-template #noEdit>
+            {{element.availableDate | date:'yyyy/MM/dd'}}
+            <button mat-icon-button color="primary" (click)="$event.stopPropagation(); editDateMode = index" class="transform scale-25">
+              <mat-icon fontIcon="edit"></mat-icon>
+            </button>
+          </ng-template>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="reason">

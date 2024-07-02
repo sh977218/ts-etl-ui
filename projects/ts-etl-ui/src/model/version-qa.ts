@@ -50,7 +50,6 @@ export type VersionQA = {
   versionStatus: string
   version: string
   effectiveDate: Date
-  availableDate: Date
   requester: string;
   loadTime: Date;
   duration: string;

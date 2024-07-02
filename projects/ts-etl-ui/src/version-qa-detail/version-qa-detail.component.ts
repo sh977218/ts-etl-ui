@@ -1,4 +1,4 @@
-import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { CommonModule, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
@@ -11,10 +11,12 @@ import {
 } from '../version-qa-source-data-file-modal/version-qa-source-data-file-modal.component';
 import type { VersionQA, VersionQAActivity } from '../model/version-qa';
 import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.component';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 export interface RowElement {
   key: string;
   value: string | number | Date | VersionQAActivity[];
+  type?: string;
 }
 
 @Component({
@@ -22,6 +24,7 @@ export interface RowElement {
   standalone: true,
   animations: [triggerExpandTableAnimation],
   imports: [
+    CommonModule,
     NgIf,
     NgSwitch,
     NgSwitchCase,
@@ -32,6 +35,7 @@ export interface RowElement {
     VersionQaReviewModalComponent,
     VersionQaNoteComponent,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './version-qa-detail.component.html',
 })
 export class VersionQaDetailComponent implements OnInit {
@@ -49,9 +53,9 @@ export class VersionQaDetailComponent implements OnInit {
     this.dataSource.push({key: 'Load Number:', value: this.versionQA.loadNumber})
     this.dataSource.push({key: '', value: ''})
     this.dataSource.push({key: 'Status:', value: this.versionQA.versionStatus})
-    this.dataSource.push({key: 'TS Available Date:', value: this.versionQA.availableDate})
+    this.dataSource.push({key: 'TS Available Date:', value: this.versionQA.versionQaActivities[0]?.availableDate, type: 'date'})
     this.dataSource.push({key: '', value: ''})
-    this.dataSource.push({key: 'Load Time:', value: this.versionQA.loadTime})
+    this.dataSource.push({key: 'Load Time:', value: this.versionQA.loadTime, type: 'date'})
     this.dataSource.push({key: 'Duration:', value: this.versionQA.duration})
     this.dataSource.push({key: '# of Messaged:', value: (this.versionQA.notes || []).length})
     this.dataSource.push({key: '', value: ''})
@@ -64,7 +68,7 @@ export class VersionQaDetailComponent implements OnInit {
     this.dataSource.push({key: '', value: ''})
     this.dataSource.push({key: 'Request Id:', value: this.versionQA.requestId})
     this.dataSource.push({key: 'Requester:', value: this.versionQA.requester})
-    this.dataSource.push({key: 'Request Time:', value: this.versionQA.requestTime})
+    this.dataSource.push({key: 'Request Time:', value: this.versionQA.requestTime, type: 'date'})
   }
 
   openSourceDataFileModal() {

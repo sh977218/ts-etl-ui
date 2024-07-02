@@ -191,6 +191,10 @@ app.post('/api/qaActivity', async (req, res) => {
   res.send();
 });
 
+app.post('/api/editAvailableDate', (req, res) =>  {
+  res.send();
+})
+
 app.get('/api/codeSystems', async (req, res) => {
   const { codeSystemsCollection } = await mongoCollection();
   const codeSystems = await codeSystemsCollection.find({}).toArray();

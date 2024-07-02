@@ -16,18 +16,23 @@ import { MatButtonModule } from '@angular/material/button';
 import { VersionQAActivity } from '../model/version-qa';
 import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.component';
 import { triggerExpandTableAnimation } from '../animations';
-import { NgIf } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { map, of, tap } from 'rxjs';
 import { AlertService } from '../service/alert-service';
 import { saveAs } from 'file-saver';
 import { DownloadService } from '../service/download-service';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-version-qa-activity',
   standalone: true,
   imports: [
     MatButtonModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
@@ -36,15 +41,20 @@ import { DownloadService } from '../service/download-service';
     VersionQaNoteComponent,
     NgIf,
     MatIcon,
+    DatePipe,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './version-qa-activity.component.html',
   styleUrl: './version-qa-activity.component.scss',
   animations: [triggerExpandTableAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideNativeDateAdapter()],
 })
 export class VersionQaActivityComponent implements AfterViewInit {
   requestId = input.required<number>();
   versionQaActivities = input.required<VersionQAActivity[]>();
+  editDateMode = -1;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -56,13 +66,38 @@ export class VersionQaActivityComponent implements AfterViewInit {
     return new MatTableDataSource<VersionQAActivity>(this.versionQaActivities().reverse());
   });
 
+  editAvailableDateForm = new FormGroup(
+    {
+      availableDate: new FormControl<Date>(new Date(), [Validators.required])
+    }, {updateOn: 'submit'}
+  );
+
+  tomorrow: Date;
+
   constructor(private alertService: AlertService,
-              private downloadService: DownloadService) {
+              private downloadService: DownloadService,
+              private http: HttpClient) {
+      const today = new Date();
+      this.tomorrow = new Date(today);
+      this.tomorrow.setDate(today.getDate() + 1);
   }
 
   ngAfterViewInit(): void {
     this.dataSource().paginator = this.paginator;
     this.dataSource().sort = this.sort;
+    this.editAvailableDateForm.valueChanges
+      .subscribe(() => {
+        this.http.post<string>('/api/editAvailableDate', {
+          requestId: this.requestId,
+          newDate: this.editAvailableDateForm.get('availableDate')?.value
+        }).subscribe({
+          next: () => {
+            this.alertService.addAlert('info', `Available Date Updated`);
+            // this.versionQaActivities()[0]?.availableDate = this.editAvailableDateForm.get('availableDate')?.value;
+          },
+          error: () => this.alertService.addAlert('danger', 'Unexpected Error'),
+        })
+      });
   }
 
   applyFilter(event: Event) {

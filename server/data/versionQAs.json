@@ -6,13 +6,23 @@
       "loadTime": "2023-10-12T08:00:01+05:00",
       "codeSystemName": "CDT",
       "sourceFilePath": "file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/HPO100923",
-      "versionStatus": "Pending QA",
+      "versionStatus": "Accepted",
       "version": "2023",
       "effectiveDate": "2020-1-1",
-      "availableDate": "2018-10-28",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
       "versionQaActivities": [
+        {
+          "createdBy": "peterhuangnih",
+          "activity": "Accept",
+          "availableDate": "2024-07-03T04:00:00.000Z",
+          "notes": [
+            {
+            "notes": "Testing the Notes feature",
+            "createdTime": "2024-07-02T11:07:23.546Z",
+            "createdBy": "peterhuangnih"
+            }]
+        }
       ],
       "loadSummary": {
         "components": [
@@ -69,10 +79,9 @@
       "loadTime": "2023-09-12T08:00:01+05:00",
       "codeSystemName": "LOINC  ",
       "sourceFilePath": "C:\\Talley\\LOINC\\Hoffman",
-      "versionStatus": "Accepted",
+      "versionStatus": "Pending QA",
       "version": "2.74",
       "effectiveDate": "2020-1-1",
-      "availableDate": "2018-10-28",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
       "versionQaActivities": [
@@ -88,7 +97,6 @@
       "versionStatus": "Failed",
       "version": "2023-09",
       "effectiveDate": "2020-1-1",
-      "availableDate": "2018-10-28",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
       "versionQaActivities": [
@@ -104,7 +112,6 @@
       "versionStatus": "Available",
       "version": "2024-09",
       "effectiveDate": "2020-1-1",
-      "availableDate": "2018-10-28",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2024-12-11T07:53:17+05:00",
       "versionQaActivities": [
