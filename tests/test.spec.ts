@@ -92,7 +92,7 @@ test.describe('e2e test', async () => {
     await test.step('search for newly added load request', async () => {
       await page.locator('[id="requestIdFilterInput"]').fill('149');
       await page.getByRole('button', { name: 'Search' }).click();
-      await expect(page.locator('td:has-text("regular")')).toBeVisible();
+      await expect(page.locator('td:has-text("Regular")')).toBeVisible();
       await expect(page.locator('td:has-text("HPO")')).toBeVisible();
       await expect(page.getByText('newly created load request')).toBeVisible();
     });
@@ -107,7 +107,7 @@ test.describe('e2e test', async () => {
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","HPO","newly created load request","In Progress","regular",');
+      expect(fileContent).toContain('"149","HPO","newly created load request","In Progress","Regular",');
     });
   });
 
