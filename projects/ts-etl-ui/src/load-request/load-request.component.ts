@@ -28,6 +28,7 @@ import {
   tap,
 } from 'rxjs';
 import { saveAs } from 'file-saver';
+import { assign } from 'lodash';
 
 import { triggerExpandTableAnimation } from '../animations';
 import { LoadingService } from '../service/loading-service';
@@ -115,7 +116,7 @@ export class LoadRequestComponent implements AfterViewInit {
       requestTimeEnd: new FormControl<Date | undefined>(undefined),
       creationTimeStart: new FormControl<Date | undefined>(undefined),
       creationTimeEnd: new FormControl<Date | undefined>(undefined),
-      requestDateRange: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestTime: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requester: new FormControl<string | undefined>(''),
     }, { updateOn: 'submit' },
   );
@@ -175,7 +176,7 @@ export class LoadRequestComponent implements AfterViewInit {
           }),
           map((qp): LoadRequestPayload => {
             const loadRequestPayload: LoadRequestPayload = generateLoadRequestPayload(qp);
-            this.currentLoadRequestSearchCriteria = loadRequestPayload;
+            assign(this.currentLoadRequestSearchCriteria, loadRequestPayload);
             return this.currentLoadRequestSearchCriteria;
           }),
           switchMap((loadRequestPayload) => {
@@ -187,7 +188,7 @@ export class LoadRequestComponent implements AfterViewInit {
             if (res?.result === null) {
               return [];
             }
-            this.resultsLength = res?.result.data.length || 0;
+            this.resultsLength = res?.result.pagination.totalCount || 0;
             return res?.result.data || [];
           }),
           map(items => {

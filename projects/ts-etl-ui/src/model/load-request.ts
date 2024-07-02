@@ -138,24 +138,24 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
 
   return {
     pagination: {
-      pageNum,
-      pageSize,
+      pageNum: pageNum || 1,
+      pageSize: pageSize || 10,
     },
     searchFilters: {
-      requestTime,
-      requester,
+      requestTime: requestTime || '',
+      requester: requester || '',
     },
     searchColumns: {
-      codeSystemName,
-      requestEndTime,
-      requestId,
-      requestStartTime,
-      requestStatus,
-      requestSubject,
+      codeSystemName: codeSystemName || '',
+      requestEndTime: requestEndTime || '',
+      requestId: requestId || '',
+      requestStartTime: requestStartTime || '',
+      requestStatus: requestStatus || '',
+      requestSubject: requestSubject || '',
     },
     sortCriteria: {
-      sortBy,
-      sortDirection,
+      sortBy: sortBy || 'requestSubject',
+      sortDirection: sortDirection || 'asc',
     },
 
   } as LoadRequestPayload;
@@ -163,8 +163,16 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
 
 
 // API response
+type LoadRequestsResponseResultPagination = {
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 type LoadRequestsResponseResult = {
-  data: LoadRequest[]
+  data: LoadRequest[],
+  hasPagination: boolean
+  pagination: LoadRequestsResponseResultPagination
 }
 
 type LoadRequestsResponseService = {
