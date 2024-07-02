@@ -36,7 +36,6 @@ import { UserService } from '../service/user-service';
 import { DownloadService } from '../service/download-service';
 import { AlertService } from '../service/alert-service';
 import {
-  FlatLoadRequestPayload,
   generateLoadRequestPayload,
   LoadRequest,
   LoadRequestPayload,
@@ -137,6 +136,7 @@ export class LoadRequestComponent implements AfterViewInit {
       requestStatus: '',
       requestStartTime: '',
       requestEndTime: '',
+      requestType: '',
     },
     sortCriteria: {
       sortDirection: 'asc',
@@ -170,8 +170,8 @@ export class LoadRequestComponent implements AfterViewInit {
         return this.activatedRoute.queryParamMap.pipe(
           // query parameters are always string, convert to number if needed
           map((queryParams: Params) => {
-            const qp = { ...queryParams['params'] } as FlatLoadRequestPayload;
-//            this.searchCriteria.patchValue(qp, { emitEvent: false });
+            const qp = { ...queryParams['params'] };
+            this.searchCriteria.patchValue(qp, { emitEvent: false });
             return qp;
           }),
           map((qp): LoadRequestPayload => {

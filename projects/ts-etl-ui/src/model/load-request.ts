@@ -55,6 +55,7 @@ type LoadRequestPayloadSearchColumns = {
   requestStatus: string;
   requestStartTime: string;
   requestEndTime: string;
+  requestType: string;
 }
 
 type LoadRequestPayloadSortCriteria = {
@@ -81,6 +82,7 @@ export type FlatLoadRequestPayload = {
   requestStartTime: string,
   requestStatus: string,
   requestSubject: string,
+  requestType: string,
 
   // searchFilters
   requestTime: string,
@@ -130,6 +132,7 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
     requestStartTime,
     requestStatus,
     requestSubject,
+    requestType,
     requestTime,
     requester,
     sortBy,
@@ -152,6 +155,8 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
       requestStartTime: requestStartTime || '',
       requestStatus: requestStatus || '',
       requestSubject: requestSubject || '',
+      // this is not implemented in NLM api
+      requestType: requestType || '',
     },
     sortCriteria: {
       sortBy: sortBy || 'requestSubject',
