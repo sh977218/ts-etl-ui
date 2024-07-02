@@ -106,7 +106,7 @@ test.describe('e2e test', async () => {
       await materialPo.checkAndCloseAlert('Export downloaded.');
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
-      expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, type, requestTime, requester, creationTime');
+      expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
       expect(fileContent).toContain('"149","HPO","newly created load request","In Progress","regular",');
     });
   });
