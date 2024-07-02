@@ -6,8 +6,7 @@
         <mat-label>Code System Name</mat-label>
         <mat-select placeholder="Code System Name" formControlName="codeSystemName">
           <mat-option value="">Select Code System</mat-option>
-          <mat-option *ngFor="let CODE_SYSTEM_NAME of CODE_SYSTEM_NAMES"
-                      [value]="CODE_SYSTEM_NAME">{{CODE_SYSTEM_NAME}}</mat-option>
+          <mat-option *ngFor="let CODE_SYSTEM_NAME of CODE_SYSTEM_NAMES">{{CODE_SYSTEM_NAME}}</mat-option>
         </mat-select>
       </mat-form-field>
       <ng-container *ngIf="loadRequestCreationForm.get('codeSystemName')?.getRawValue() as codeSystemName">
@@ -40,7 +39,6 @@
                          formControlName="requestType">
           <div class="ml-20">
             <mat-radio-button *ngFor="let LOAD_REQUEST_TYPE of LOAD_REQUEST_TYPES"
-                              [value]="LOAD_REQUEST_TYPE"
                               class="block">{{LOAD_REQUEST_TYPE}}</mat-radio-button>
             <ng-container *ngIf="loadRequestCreationForm.get('type')?.value === 'Scheduler'">
               <mat-form-field appearance="outline" class="ml-3 dense-form-field">
