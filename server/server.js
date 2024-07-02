@@ -62,26 +62,26 @@ app.post('/api/loadRequests', async (req, res) => {
   if (requestTimeStart) {
     const dateObj = new Date(requestTimeStart);
     $match.requestTime = {
-      $gte: dateObj
+      $gte: dateObj,
     };
   }
   if (requestTimeEnd) {
     const dateObj = new Date(requestTimeEnd);
     if (!$match.requestTime) {
-      $match.requestTime = {}
+      $match.requestTime = {};
     }
     $match.requestTime['$lte'] = dateObj;
   }
   if (creationTimeStart) {
     const dateObj = new Date(creationTimeStart);
     $match.creationTime = {
-      $gte: dateObj
+      $gte: dateObj,
     };
   }
   if (creationTimeEnd) {
     const dateObj = new Date(creationTimeEnd);
     if (!$match.creationTime) {
-      $match.creationTime = {}
+      $match.creationTime = {};
     }
     $match.creationTime['$lte'] = dateObj;
   }
@@ -152,13 +152,17 @@ app.post('/api/loadRequest', async (req, res) => {
 });
 
 app.post('/api/versionQAs', async (req, res) => {
-  const { loadNumber } = req.body;
+  const { loadNumber, sort, order } = req.body;
   const { versionQAsCollection } = await mongoCollection();
-  const condition = {};
+  const $match = {};
   if (loadNumber !== null) {
-    condition.loadNumber = loadNumber;
+    $match.loadNumber = loadNumber;
   }
-  const versionQAs = await versionQAsCollection.find(condition).toArray();
+
+  const $sort = {};
+  $sort[sort] = order === 'asc' ? 1 : -1;
+  const aggregation = [{ $match }, { $sort }];
+  const versionQAs = await versionQAsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: versionQAs.length, items: versionQAs,
   });
