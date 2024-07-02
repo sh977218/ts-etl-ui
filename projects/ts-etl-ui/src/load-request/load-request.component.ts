@@ -47,6 +47,7 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
+import { CODE_SYSTEM_NAMES, LOAD_REQUEST_STATUSES, LOAD_REQUEST_TYPES } from '../service/constant';
 
 
 @Component({
@@ -276,4 +277,7 @@ export class LoadRequestComponent implements AfterViewInit {
     });
   }
 
+  protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
+  protected readonly LOAD_REQUEST_STATUSES = LOAD_REQUEST_STATUSES;
+  protected readonly LOAD_REQUEST_TYPES = LOAD_REQUEST_TYPES;
 }
