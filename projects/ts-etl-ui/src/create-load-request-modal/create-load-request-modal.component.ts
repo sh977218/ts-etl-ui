@@ -59,7 +59,7 @@ export class CreateLoadRequestModalComponent {
 
   loadRequestCreationForm = new FormGroup(
     {
-      type: new FormControl<string>('', [Validators.required]),
+      requestType: new FormControl<string>('', [Validators.required]),
       codeSystemName: new FormControl<string>('', [Validators.required]),
       sourceFilePath: new FormControl<string>('', [Validators.required, sourceFilePathValidator()]),
       requestSubject: new FormControl<string>('', [Validators.required]),

@@ -139,7 +139,6 @@ app.post('/api/loadRequests', async (req, res) => {
     },
     service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
     status: { success: true },
-    total_count: await loadRequestsCollection.countDocuments($match), items: loadRequests,
   });
 });
 
