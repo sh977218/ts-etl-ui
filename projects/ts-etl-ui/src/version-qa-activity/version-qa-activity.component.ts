@@ -79,7 +79,7 @@ export class VersionQaActivityComponent implements AfterViewInit {
       .pipe(
         map(data => {
           const headerList = [...this.displayedColumns];
-          data.forEach(item=>item.nbNotes = item.notes.length)
+          data.forEach(item => item.nbNotes = item.notes.length)
           return this.downloadService.generateBlob(headerList, data);
         }),
         tap({
