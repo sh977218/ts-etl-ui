@@ -17,9 +17,9 @@ export const LOAD_REQUEST_STATUSES = [
 ];
 
 export const LOAD_REQUEST_TYPES = [
-  'Regular',
-  'Scheduler',
   'Emergency',
+  'Regular',
   'Master Job',
   'Test',
+  'Scheduler',
 ];
