@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Tab } from './model/tab';
+
+import { Tab } from '../model/tab';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {

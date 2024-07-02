@@ -13,7 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 
-import { UserService } from '../user-service';
+import { UserService } from '../service/user-service';
 import { sourceFilePathValidator } from '../service/app.validator';
 
 @Component({

@@ -2,13 +2,13 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/co
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import { UserService } from '../user-service';
+import { UserService } from '../service/user-service';
 
 @Component({
   standalone: true,
-  imports: [    RouterModule  ],
+  imports: [RouterModule],
   templateUrl: './login-cb.component.html',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class LoginCbComponent {
 
@@ -16,9 +16,9 @@ export class LoginCbComponent {
               public http: HttpClient,
               public dialog: MatDialog,
               public userService: UserService,
-            ) {
+  ) {
     activatedRoute.queryParamMap.subscribe(qp => {
-      const ticket = qp.get('ticket')
+      const ticket = qp.get('ticket');
       if (ticket) {
         userService.logInWithTicket(ticket).subscribe();
       }
