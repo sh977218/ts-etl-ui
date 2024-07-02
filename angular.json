@@ -59,6 +59,12 @@
                   "maximumError": "4kB"
                 }
               ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
+                  "with": "projects/ts-etl-ui/src/environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all"
             },
             "development": {
