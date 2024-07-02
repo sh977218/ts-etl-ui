@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { UserService } from './user-service';
+import { UserService } from './service/user-service';
 import { map } from 'rxjs';
 
 export const logInGuard = () => {

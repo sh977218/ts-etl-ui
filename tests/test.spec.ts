@@ -1,5 +1,6 @@
 import { test, expect, Page, ConsoleMessage } from '@playwright/test';
-import { readFile, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
+import { epic, suite } from 'allure-js-commons';
 
 const UNEXPECTED_CONSOLE_LOG: string[] = [];
 
@@ -30,6 +31,7 @@ class MaterialPO {
 
 test.describe('e2e test', async () => {
   test.beforeEach(async ({ page, baseURL }) => {
+    await epic('TS ETL UI');
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
         UNEXPECTED_CONSOLE_LOG.push(consoleMessage.text());
@@ -51,6 +53,8 @@ test.describe('e2e test', async () => {
   });
 
   test('Load Request Tab', async ({ page }) => {
+    await suite('Load Request');
+
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
@@ -88,7 +92,7 @@ test.describe('e2e test', async () => {
     await test.step('search for newly added load request', async () => {
       await page.locator('[id="requestIdFilterInput"]').fill('149');
       await page.getByRole('button', { name: 'Search' }).click();
-      await expect(page.locator('td:has-text("regular")')).toBeVisible();
+      await expect(page.locator('td:has-text("Regular")')).toBeVisible();
       await expect(page.locator('td:has-text("HPO")')).toBeVisible();
       await expect(page.getByText('newly created load request')).toBeVisible();
     });
@@ -102,12 +106,14 @@ test.describe('e2e test', async () => {
       await materialPo.checkAndCloseAlert('Export downloaded.');
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
-      expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, type, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","HPO","newly created load request","In Progress","regular",');
+      expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
+      expect(fileContent).toContain('"149","HPO","newly created load request","In Progress","Regular"');
     });
   });
 
   test('Version QA Tab', async ({ page }) => {
+    await suite('Version QA');
+
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
@@ -132,6 +138,8 @@ test.describe('e2e test', async () => {
   });
 
   test('Code System Tab', async ({ page }) => {
+    await suite('Code System');
+
     await page.getByRole('link', { name: 'Code Systems' }).click();
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
   });

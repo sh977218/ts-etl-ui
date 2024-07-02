@@ -14,9 +14,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 import { LogInModalComponent } from '../log-in-modal/log-in-modal.component';
-import { UserService } from '../user-service';
-import { LoadingService } from '../loading-service';
-import { NavigationService } from '../navigation-service';
+import { UserService } from '../service/user-service';
+import { LoadingService } from '../service/loading-service';
+import { NavigationService } from '../service/navigation-service';
 
 @Component({
   selector: 'app-root',

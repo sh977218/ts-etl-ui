@@ -3,7 +3,7 @@
     <div class="flex justify-between">
       <mat-form-field>
         <mat-label>Any Request date</mat-label>
-        <mat-select placeholder="Any Request date" formControlName="requestDateRange">
+        <mat-select placeholder="Any Request date" formControlName="requestTime">
           <mat-option value="">Any Request date</mat-option>
           <mat-option value="today">Today's</mat-option>
           <mat-option value="thisWeek">This week's</mat-option>
@@ -63,12 +63,7 @@
               <label for="codeSystemSearch" class="m-2" mat-sort-header disableClear>Code System Name</label>
               <select id="codeSystemSearch" class="w-20" formControlName="codeSystemName">
                 <option value="">ALL</option>
-                <option>RXNORM</option>
-                <option>LOINC</option>
-                <option>SNOMEDCT</option>
-                <option>CDCREC</option>
-                <option>CPT</option>
-                <option>HPO</option>
+                <option *ngFor="let CODE_SYSTEM_NAME of CODE_SYSTEM_NAMES">{{CODE_SYSTEM_NAME}}</option>
               </select>
             </div>
           </th>
@@ -91,29 +86,24 @@
               <label for="requestStatusInput" class="m-2" mat-sort-header disableClear>Status</label>
               <select id="requestStatusInput" class="w-20" formControlName="requestStatus">
                 <option value="">ALL</option>
-                <option>In Progress</option>
-                <option>Complete</option>
-                <option>Failed</option>
+                <option *ngFor="let LOAD_REQUEST_STATUS of LOAD_REQUEST_STATUSES">{{LOAD_REQUEST_STATUS}}</option>
               </select>
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestStatus}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="type">
+        <ng-container matColumnDef="requestType">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
               <label for="requestTypeInput" class="m-2" mat-sort-header disableClear>Request Type</label>
-              <select id="requestTypeInput" class="w-20" formControlName="type">
+              <select id="requestTypeInput" class="w-20" formControlName="requestType">
                 <option value="">ALL</option>
-                <option>regular</option>
-                <option>scheduled</option>
-                <option>emergency</option>
-                <option>masterJob</option>
+                <option *ngFor="let LOAD_REQUEST_TYPE of LOAD_REQUEST_TYPES">{{LOAD_REQUEST_TYPE}}</option>
               </select>
             </div>
           </th>
-          <td mat-cell *matCellDef="let row">{{row.type}}</td>
+          <td mat-cell *matCellDef="let row">{{row.requestType}}</td>
         </ng-container>
 
         <ng-container matColumnDef="requestTime">
@@ -148,7 +138,7 @@
         </ng-container>
 
         <ng-container matColumnDef="creationTime">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+          <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
               <label for="creationTimeStart" class="m-2" mat-sort-header disableClear>Creation Time</label>
               <input id="creationTimeStart" matInput class="w-30" formControlName="creationTimeStart" type="date"

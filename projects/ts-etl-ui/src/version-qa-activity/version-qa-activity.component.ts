@@ -17,6 +17,11 @@ import { VersionQAActivity } from '../model/version-qa';
 import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.component';
 import { triggerExpandTableAnimation } from '../animations';
 import { NgIf } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { map, of, tap } from 'rxjs';
+import { AlertService } from '../service/alert-service';
+import { saveAs } from 'file-saver';
+import { DownloadService } from '../service/download-service';
 
 @Component({
   selector: 'app-version-qa-activity',
@@ -30,6 +35,7 @@ import { NgIf } from '@angular/common';
     MatPaginatorModule,
     VersionQaNoteComponent,
     NgIf,
+    MatIcon,
   ],
   templateUrl: './version-qa-activity.component.html',
   styleUrl: './version-qa-activity.component.scss',
@@ -50,6 +56,10 @@ export class VersionQaActivityComponent implements AfterViewInit {
     return new MatTableDataSource<VersionQAActivity>(this.versionQaActivities().reverse());
   });
 
+  constructor(private alertService: AlertService,
+              private downloadService: DownloadService) {
+  }
+
   ngAfterViewInit(): void {
     this.dataSource().paginator = this.paginator;
     this.dataSource().sort = this.sort;
@@ -62,6 +72,25 @@ export class VersionQaActivityComponent implements AfterViewInit {
     if (this.dataSource().paginator) {
       this.dataSource().paginator?.firstPage();
     }
+  }
+
+  downloadQaActivities() {
+    of(this.versionQaActivities())
+      .pipe(
+        map(data => {
+          const headerList = [...this.displayedColumns];
+          data.forEach(item => item.nbNotes = item.notes.length)
+          return this.downloadService.generateBlob(headerList, data);
+        }),
+        tap({
+          next: (blob) => {
+            saveAs(blob, 'versionQaActivity-export.csv');
+            this.alertService.addAlert('', 'QA Activities downloaded.');
+          },
+          error: () => this.alertService.addAlert('', 'QA Activities download failed.'),
+        }),
+      )
+      .subscribe();
   }
 
 }

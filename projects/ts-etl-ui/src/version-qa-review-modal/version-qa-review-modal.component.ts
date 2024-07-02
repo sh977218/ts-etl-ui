@@ -9,7 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { UserService } from '../user-service';
+import { UserService } from '../service/user-service';
 
 @Component({
   selector: 'app-version-qa-review-modal',

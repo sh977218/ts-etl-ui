@@ -5,7 +5,7 @@
       "loadNumber": 20231012080001,
       "loadTime": "2023-10-12T08:00:01+05:00",
       "codeSystemName": "CDT",
-      "sourceFilePath": "C:\\Talley\\LOINC\\Hoffman",
+      "sourceFilePath": "file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/HPO100923",
       "versionStatus": "Pending QA",
       "version": "2023",
       "effectiveDate": "2020-1-1",
@@ -108,8 +108,8 @@
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2024-12-11T07:53:17+05:00",
       "versionQaActivities": [
-      ]
+      ],
+      "loadSummary": {}
     }
-  ],
-  "loadSummary": {}
+  ]
 }
