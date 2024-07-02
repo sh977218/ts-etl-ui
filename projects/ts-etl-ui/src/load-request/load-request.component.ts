@@ -29,16 +29,23 @@ import {
 } from 'rxjs';
 import { saveAs } from 'file-saver';
 
-import { LoadRequest, LoadRequestPayload, LoadRequestsApiResponse } from '../model/load-request';
-import { AlertService } from '../alert-service';
-import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
-import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
+import {
+  generateLoadRequestPayload,
+  LoadRequest,
+  LoadRequestPayload,
+  LoadRequestsResponse,
+} from '../model/load-request';
+import { User } from '../model/user';
+
+import { UserService } from '../user-service';
 import { LoadingService } from '../loading-service';
 import { triggerExpandTableAnimation } from '../animations';
+import { AlertService } from '../alert-service';
+
+import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
+import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
-import { UserService } from '../user-service';
-import { User } from '../model/user';
 
 @Component({
   selector: 'app-load-request',
@@ -77,7 +84,7 @@ export class LoadRequestComponent implements AfterViewInit {
     'codeSystemName',
     'requestSubject',
     'requestStatus',
-    'type',
+    'requestType',
     'requestTime',
     'requester',
     'creationTime',
@@ -92,39 +99,46 @@ export class LoadRequestComponent implements AfterViewInit {
 
   resultsLength = 0;
 
-  @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
-  @ViewChild(MatSort, {static: false}) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
   searchCriteria = new FormGroup(
     {
       requestId: new FormControl<number | undefined>(undefined),
-      codeSystemName: new FormControl<string | undefined>('', {updateOn: 'change'}),
+      codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestSubject: new FormControl<string | undefined>(''),
-      type: new FormControl<string | undefined>('', {updateOn: 'change'}),
-      requestStatus: new FormControl<string | undefined>('', {updateOn: 'change'}),
+      requestType: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestTimeStart: new FormControl<Date | undefined>(undefined),
       requestTimeEnd: new FormControl<Date | undefined>(undefined),
       creationTimeStart: new FormControl<Date | undefined>(undefined),
       creationTimeEnd: new FormControl<Date | undefined>(undefined),
-      requestDateRange: new FormControl<string | undefined>('', {updateOn: 'change'}),
-      requestType: new FormControl<string | undefined>('', {updateOn: 'change'}),
+      requestDateRange: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requester: new FormControl<string | undefined>(''),
-    }, {updateOn: 'submit'},
+    }, { updateOn: 'submit' },
   );
 
   currentLoadRequestSearchCriteria: LoadRequestPayload = {
-    requestId: undefined,
-    codeSystemName: undefined,
-    requestSubject: undefined,
-    type: undefined,
-    requestStatus: undefined,
-    requestTime: undefined,
-    requestDateRange: undefined,
-    requester: undefined,
-    sort: 'requestId',
-    order: 'asc',
-    pageNumber: 0,
-    pageSize: 10,
+    pagination: {
+      pageNum: 0,
+      pageSize: 10,
+    },
+    searchFilters: {
+      requestTime: '',
+      requester: '',
+    },
+    searchColumns: {
+      requestId: '',
+      codeSystemName: '',
+      requestSubject: '',
+      requestStatus: '',
+      requestStartTime: '',
+      requestEndTime: '',
+    },
+    sortCriteria: {
+      sortDirection: 'asc',
+      sortBy: 'requestSubject',
+    },
   };
 
   constructor(public http: HttpClient,
@@ -139,7 +153,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .subscribe(val => {
         this.router.navigate(['load-requests'], {
           queryParamsHandling: 'merge',
-          queryParams: {expand: undefined, ...val},
+          queryParams: { expand: undefined, ...val },
         });
       });
   }
@@ -152,83 +166,26 @@ export class LoadRequestComponent implements AfterViewInit {
         return this.activatedRoute.queryParamMap.pipe(
           // query parameters are always string, convert to number if needed
           map((queryParams: Params) => {
-            const qp = {...queryParams['params']};
-            if (qp.requestId) {
-              qp.requestId = parseInt(qp.requestId);
-            }
-            if (qp.pageNumber) {
-              qp.pageNumber = parseInt(qp.pageNumber);
-            }
-            if (qp.pageSize) {
-              qp.pageSize = parseInt(qp.pageSize);
-            }
-            this.searchCriteria.patchValue(qp, {emitEvent: false});
+            const qp = { ...queryParams['params'] } as LoadRequestPayloadFlatten;
+//            this.searchCriteria.patchValue(qp, { emitEvent: false });
             return qp;
           }),
           map((qp): LoadRequestPayload => {
-            const DEFAULT_SEARCH_CRITERIA: LoadRequestPayload = {
-              requestId: undefined,
-              codeSystemName: undefined,
-              requestSubject: undefined,
-              type: undefined,
-              requestStatus: undefined,
-              requestTime: undefined,
-              requestDateRange: undefined,
-              requester: undefined,
-              sort: 'requestId',
-              order: 'asc',
-              pageNumber: 0,
-              pageSize: 10,
-            };
-            this.currentLoadRequestSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
+            const loadRequestPayload: LoadRequestPayload = generateLoadRequestPayload(qp);
+            this.currentLoadRequestSearchCriteria = loadRequestPayload;
             return this.currentLoadRequestSearchCriteria;
           }),
-          switchMap(() => {
-            const loadRequestSearchCriteria = {
-              "pagination": {
-                "pageNum": 1,
-                "pageSize": 10
-              },
-              "searchFilters": {
-                "requestTime": "this_year",
-                "requester": "user"
-              },
-              "searchColumns": {
-                "requestId": "",
-                "codeSystemName": "CDT",
-                "requestSubject": "",
-                "requestStatus": "",
-                "requestStartTime": "",
-                "requestEndTime": ""
-              },
-              "sortCriteria": {
-                "sortBy": "requestSubject",
-                "sortDirection": "asc"
-              }
-            }
+          switchMap((loadRequestPayload) => {
             this.loadingService.showLoading();
-            return this.http.post<{
-              result: {
-                data: (LoadRequest & { requestType: string })[],
-                pagination: { totalCount: number }
-              }
-            }>('/api/loadRequests', loadRequestSearchCriteria)
+            return this.http.post<LoadRequestsResponse>('/api/loadRequests', loadRequestPayload)
               .pipe(catchError(() => of(null)));
           }),
-          map((data): LoadRequestsApiResponse => {
-            data?.result.data.forEach(item => item.type = item.requestType);
-            const loadRequestsApiResponse: LoadRequestsApiResponse = {
-              total_count: data?.result.pagination.totalCount || 0,
-              items: data?.result.data || []
-            }
-            return loadRequestsApiResponse
-          }),
-          map((data: LoadRequestsApiResponse | null) => {
-            if (data === null) {
+          map((res: LoadRequestsResponse | null) => {
+            if (res?.result === null) {
               return [];
             }
-            this.resultsLength = data.total_count;
-            return data.items;
+            this.resultsLength = res?.result.data.length || 0;
+            return res?.result.data || [];
           }),
           map(items => {
             items.forEach(item => item.numberOfMessages = item.loadRequestMessages ? item.loadRequestMessages.length : 0);
@@ -259,7 +216,7 @@ export class LoadRequestComponent implements AfterViewInit {
         switchMap(newLoadRequest => this.http.post<{ requestId: string }>('/api/loadRequest', newLoadRequest)),
       )
       .subscribe({
-        next: ({requestId}) => {
+        next: ({ requestId }) => {
           this.alertService.addAlert('info', `Request (ID: ${requestId}) created successfully`);
           this.reloadAllRequests$.next(true);
         },
@@ -268,11 +225,14 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   download() {
-    this.http.post<LoadRequestsApiResponse>('/api/loadRequests',
+    this.http.post<LoadRequestsResponse>('/api/loadRequests',
       Object.assign(this.currentLoadRequestSearchCriteria, {
-        pageNumber: 0,
-        pageSize: this.resultsLength,
-      }))
+          pagination: {
+            pageNum: 1,
+            pageSize: this.resultsLength,
+          },
+        },
+      ))
       .pipe(
         // convert to csv format string and pass blob
         map(data => {
@@ -304,7 +264,7 @@ export class LoadRequestComponent implements AfterViewInit {
             });
             str += line + '\r\n';
           }
-          return new Blob([str], {type: 'text/csv'});
+          return new Blob([str], { type: 'text/csv' });
         }),
         tap({
           next: (blob) => {
@@ -317,7 +277,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    const {pageIndex, pageSize} = e;
+    const { pageIndex, pageSize } = e;
     this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
@@ -328,7 +288,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   handleSortEvent(e: Sort) {
-    const {active, direction} = e;
+    const { active, direction } = e;
 
     this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
