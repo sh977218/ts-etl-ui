@@ -30,15 +30,16 @@ import {
 import { saveAs } from 'file-saver';
 
 import { LoadRequest, LoadRequestPayload, LoadRequestsApiResponse } from '../model/load-request';
-import { AlertService } from '../alert-service';
+import { AlertService } from '../service/alert-service';
 import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
-import { LoadingService } from '../loading-service';
+import { LoadingService } from '../service/loading-service';
 import { triggerExpandTableAnimation } from '../animations';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
-import { UserService } from '../user-service';
+import { UserService } from '../service/user-service';
 import { User } from '../model/user';
+import { DownloadService } from '../service/download-service';
 
 @Component({
   selector: 'app-load-request',
@@ -133,7 +134,8 @@ export class LoadRequestComponent implements AfterViewInit {
               public dialog: MatDialog,
               private loadingService: LoadingService,
               private userService: UserService,
-              public alertService: AlertService) {
+              public alertService: AlertService,
+              private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
       .subscribe(val => {
@@ -239,37 +241,9 @@ export class LoadRequestComponent implements AfterViewInit {
         pageSize: this.resultsLength,
       }))
       .pipe(
-        // convert to csv format string and pass blob
         map(data => {
           const headerList = [...this.columnsToDisplayWithExpand()];
-          const array = JSON.parse(JSON.stringify(data.items));
-          let str = '';
-          let row = '';
-          for (const index in headerList) {
-            row += headerList[index] + ', ';
-          }
-          row = row.slice(0, -1);
-          str += row + '\r\n';
-          for (let i = 0; i < array.length; i++) {
-            let line = '';
-            headerList.forEach((head, index) => {
-              if (index > 0) {
-                line += ',';
-              }
-              let v = array[i][head];
-              if (!v) {
-                v = '';
-              }
-              if (typeof v === 'string') {
-                v = v.replaceAll('"', '""');
-              } else {
-                v += '';
-              }
-              line += `"${v}"`;
-            });
-            str += line + '\r\n';
-          }
-          return new Blob([str], { type: 'text/csv' });
+          return this.downloadService.generateBlob(headerList, data.items);
         }),
         tap({
           next: (blob) => {

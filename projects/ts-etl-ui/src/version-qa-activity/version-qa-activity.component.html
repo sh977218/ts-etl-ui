@@ -2,9 +2,13 @@
 
   <fieldset>
     <legend>QA Activities</legend>
+    <div class="flex">
+      <button mat-icon-button color="primary" (click)="downloadQaActivities()" class="transform scale-25"
+              *ngIf="dataSource().data.length">
+        <mat-icon fontIcon="file_download"></mat-icon>
+      </button>
+    </div>
     <table data-testid="qaActivitiesTable" mat-table [dataSource]="dataSource()" matSort multiTemplateDataRows>
-      <caption>Activity History</caption>
-
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>Activity ID</th>
         <td mat-cell *matCellDef="let element"> {{element.id}}</td>

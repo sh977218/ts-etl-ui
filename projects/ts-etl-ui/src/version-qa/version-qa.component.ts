@@ -19,7 +19,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { VersionQA, VersionQAActivity, VersionQAsApiResponse } from '../model/version-qa';
 import { VersionQaDataSource, VersionQaSearchCriteria } from './version-qa-data-source';
-import { LoadingService } from '../loading-service';
+import { LoadingService } from '../service/loading-service';
 import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail.component';
 import { triggerExpandTableAnimation } from '../animations';
 import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
@@ -28,7 +28,7 @@ import { ActivatedRoute, Params, RouterLink } from '@angular/router';
 import {
   VersionQaAcceptanceActionsComponent,
 } from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
-import { AlertService } from '../alert-service';
+import { AlertService } from '../service/alert-service';
 
 @Component({
   selector: 'app-version-qa',

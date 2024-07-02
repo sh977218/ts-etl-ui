@@ -5,7 +5,7 @@ import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
 import { VersionQA } from '../model/version-qa';
 import { HttpClient } from '@angular/common/http';
-import { LoadingService } from '../loading-service';
+import { LoadingService } from '../service/loading-service';
 
 @Component({
   selector: 'app-version-qa-report',
@@ -23,8 +23,8 @@ export class VersionQaReportComponent implements AfterViewInit {
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private loadingService: LoadingService,
-  )
-  {}
+  ) {
+  }
 
   ngAfterViewInit(): void {
     this.versionQaDatabase = new VersionQaDataSource(this.http);
