@@ -79,16 +79,16 @@ export type FlatLoadRequestPayload = {
   pageSize: number,
 
   // searchColumns
-  'requestId': string,
-  'codeSystemName': string,
-  'requestSubject': string,
-  'requestStatus': string,
-  'requestType': string,
-  'requestStartTime': string,
-  'requestEndTime': string,
-  'requester': string,
-  'creationStartTime': string,
-  'creationEndTime': string,
+  requestId: string,
+  codeSystemName: string,
+  requestSubject: string,
+  requestStatus: string,
+  requestType: string,
+  requestStartTime: string,
+  requestEndTime: string,
+  requester: string,
+  creationStartTime: string,
+  creationEndTime: string,
 
   // searchFilters
   filterRequestTime: string,
