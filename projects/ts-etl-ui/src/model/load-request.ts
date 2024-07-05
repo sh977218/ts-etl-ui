@@ -44,8 +44,8 @@ type LoadRequestPayloadPagination = {
 }
 
 type LoadRequestPayloadSearchFilters = {
-  requestTime: string;
-  requester: string;
+  filterRequestTime: string;
+  filterRequester: string;
 }
 
 type LoadRequestPayloadSearchColumns = {
@@ -53,9 +53,12 @@ type LoadRequestPayloadSearchColumns = {
   codeSystemName: string;
   requestSubject: string;
   requestStatus: string;
+  requestType: string;
   requestStartTime: string;
   requestEndTime: string;
-  requestType: string;
+  requester: string;
+  creationStartTime: string;
+  creationEndTime: string;
 }
 
 type LoadRequestPayloadSortCriteria = {
@@ -76,17 +79,20 @@ export type FlatLoadRequestPayload = {
   pageSize: number,
 
   // searchColumns
-  codeSystemName: string,
-  requestEndTime: string,
-  requestId: string,
-  requestStartTime: string,
-  requestStatus: string,
-  requestSubject: string,
-  requestType: string,
+  "requestId": string,
+  "codeSystemName": string,
+  "requestSubject": string,
+  "requestStatus": string,
+  "requestType": string,
+  "requestStartTime": string,
+  "requestEndTime": string,
+  "requester": string,
+  "creationStartTime": string,
+  "creationEndTime": string,
 
   // searchFilters
-  requestTime: string,
-  requester: string,
+  filterRequestTime: string,
+  filterRequester: string,
 
   // sortCriteria
   sortBy: string,
@@ -94,31 +100,39 @@ export type FlatLoadRequestPayload = {
 }
 
 export const flattenLoadRequestPayload = (loadRequestPayload: LoadRequestPayload): FlatLoadRequestPayload => {
-  const { pagination, searchFilters, searchColumns, sortCriteria } = loadRequestPayload;
-  const { pageNum, pageSize } = pagination;
-  const { requestTime, requester } = searchFilters;
+  const {pagination, searchFilters, searchColumns, sortCriteria} = loadRequestPayload;
+  const {pageNum, pageSize} = pagination;
+  const {filterRequestTime, filterRequester} = searchFilters;
   const {
-    codeSystemName,
-    requestEndTime,
     requestId,
-    requestStartTime,
-    requestStatus,
+    codeSystemName,
     requestSubject,
+    requestStatus,
+    requestType,
+    requestStartTime,
+    requestEndTime,
+    requester,
+    creationStartTime,
+    creationEndTime
   } = searchColumns;
-  const { sortBy, sortDirection } = sortCriteria;
+  const {sortBy, sortDirection} = sortCriteria;
   return {
     pageNum,
     pageSize,
-    codeSystemName,
-    requestEndTime,
     requestId,
-    requestStartTime,
-    requestStatus,
+    codeSystemName,
     requestSubject,
-    requestTime,
+    requestStatus,
+    requestType,
+    requestStartTime,
+    requestEndTime,
     requester,
+    creationStartTime,
+    creationEndTime,
     sortBy,
     sortDirection,
+    filterRequestTime,
+    filterRequester
   } as FlatLoadRequestPayload;
 };
 
@@ -126,17 +140,20 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
   const {
     pageNum,
     pageSize,
-    codeSystemName,
-    requestEndTime,
     requestId,
-    requestStartTime,
-    requestStatus,
+    codeSystemName,
     requestSubject,
+    requestStatus,
     requestType,
-    requestTime,
+    requestStartTime,
+    requestEndTime,
     requester,
+    creationStartTime,
+    creationEndTime,
     sortBy,
     sortDirection,
+    filterRequestTime,
+    filterRequester
   } = flatLoadRequestPayload;
 
   return {
@@ -145,21 +162,23 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
       pageSize: pageSize || 10,
     },
     searchFilters: {
-      requestTime: requestTime || '',
-      requester: requester || '',
+      filterRequestTime: filterRequestTime || '',
+      filterRequester: filterRequester || '',
     },
     searchColumns: {
-      codeSystemName: codeSystemName || '',
-      requestEndTime: requestEndTime || '',
       requestId: requestId || '',
-      requestStartTime: requestStartTime || '',
-      requestStatus: requestStatus || '',
+      codeSystemName: codeSystemName || '',
       requestSubject: requestSubject || '',
-      // this is not implemented in NLM api
+      requestStatus: requestStatus || '',
       requestType: requestType || '',
+      requestStartTime: requestStartTime || '',
+      requestEndTime: requestEndTime || '',
+      requester: requester || '',
+      creationStartTime: creationStartTime || '',
+      creationEndTime: creationEndTime || ''
     },
     sortCriteria: {
-      sortBy: sortBy || 'requestSubject',
+      sortBy: sortBy || 'requestId',
       sortDirection: sortDirection || 'asc',
     },
 
