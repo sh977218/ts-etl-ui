@@ -79,16 +79,16 @@ export type FlatLoadRequestPayload = {
   pageSize: number,
 
   // searchColumns
-  "requestId": string,
-  "codeSystemName": string,
-  "requestSubject": string,
-  "requestStatus": string,
-  "requestType": string,
-  "requestStartTime": string,
-  "requestEndTime": string,
-  "requester": string,
-  "creationStartTime": string,
-  "creationEndTime": string,
+  'requestId': string,
+  'codeSystemName': string,
+  'requestSubject': string,
+  'requestStatus': string,
+  'requestType': string,
+  'requestStartTime': string,
+  'requestEndTime': string,
+  'requester': string,
+  'creationStartTime': string,
+  'creationEndTime': string,
 
   // searchFilters
   filterRequestTime: string,
@@ -100,9 +100,9 @@ export type FlatLoadRequestPayload = {
 }
 
 export const flattenLoadRequestPayload = (loadRequestPayload: LoadRequestPayload): FlatLoadRequestPayload => {
-  const {pagination, searchFilters, searchColumns, sortCriteria} = loadRequestPayload;
-  const {pageNum, pageSize} = pagination;
-  const {filterRequestTime, filterRequester} = searchFilters;
+  const { pagination, searchFilters, searchColumns, sortCriteria } = loadRequestPayload;
+  const { pageNum, pageSize } = pagination;
+  const { filterRequestTime, filterRequester } = searchFilters;
   const {
     requestId,
     codeSystemName,
@@ -113,9 +113,9 @@ export const flattenLoadRequestPayload = (loadRequestPayload: LoadRequestPayload
     requestEndTime,
     requester,
     creationStartTime,
-    creationEndTime
+    creationEndTime,
   } = searchColumns;
-  const {sortBy, sortDirection} = sortCriteria;
+  const { sortBy, sortDirection } = sortCriteria;
   return {
     pageNum,
     pageSize,
@@ -132,7 +132,7 @@ export const flattenLoadRequestPayload = (loadRequestPayload: LoadRequestPayload
     sortBy,
     sortDirection,
     filterRequestTime,
-    filterRequester
+    filterRequester,
   } as FlatLoadRequestPayload;
 };
 
@@ -153,7 +153,7 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
     sortBy,
     sortDirection,
     filterRequestTime,
-    filterRequester
+    filterRequester,
   } = flatLoadRequestPayload;
 
   return {
@@ -175,7 +175,7 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
       requestEndTime: requestEndTime || '',
       requester: requester || '',
       creationStartTime: creationStartTime || '',
-      creationEndTime: creationEndTime || ''
+      creationEndTime: creationEndTime || '',
     },
     sortCriteria: {
       sortBy: sortBy || 'requestId',
