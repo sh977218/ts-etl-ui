@@ -1,12 +1,12 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   computed,
   input,
   ViewChild,
 } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -58,6 +58,7 @@ export class VersionQaActivityComponent implements AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatTable) activitiesTable!: MatTable<VersionQAActivity>;
 
   displayedColumns: string[] = ['id', 'activity', 'availableDate', 'reason', 'nbNotes'];
   expandedElement: VersionQAActivity | null = null;
@@ -76,6 +77,7 @@ export class VersionQaActivityComponent implements AfterViewInit {
 
   constructor(private alertService: AlertService,
               private downloadService: DownloadService,
+              private cd: ChangeDetectorRef,
               private http: HttpClient) {
       const today = new Date();
       this.tomorrow = new Date(today);
@@ -88,12 +90,16 @@ export class VersionQaActivityComponent implements AfterViewInit {
     this.editAvailableDateForm.valueChanges
       .subscribe(() => {
         this.http.post<string>('/api/editAvailableDate', {
-          requestId: this.requestId,
+          requestId: this.requestId(),
           newDate: this.editAvailableDateForm.get('availableDate')?.value
         }).subscribe({
           next: () => {
             this.alertService.addAlert('info', `Available Date Updated`);
-            // this.versionQaActivities()[0]?.availableDate = this.editAvailableDateForm.get('availableDate')?.value;
+            if (this.editAvailableDateForm.get('availableDate')?.value) {
+              this.versionQaActivities()[0]!.availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
+            }
+            this.activitiesTable.renderRows();
+            this.cd.detectChanges();
           },
           error: () => this.alertService.addAlert('danger', 'Unexpected Error'),
         })

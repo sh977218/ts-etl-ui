@@ -7,7 +7,7 @@
         <mat-icon fontIcon="file_download"></mat-icon>
       </button>
     </div>
-    <table data-testid="qaActivitiesTable" mat-table [dataSource]="dataSource()" matSort multiTemplateDataRows>
+    <table data-testid="qaActivitiesTable" #activitiesTable mat-table [dataSource]="dataSource()" matSort multiTemplateDataRows>
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>Activity ID</th>
         <td mat-cell *matCellDef="let element"> {{element.id}}</td>
@@ -15,12 +15,12 @@
 
       <ng-container matColumnDef="activity">
         <th mat-header-cell *matHeaderCellDef>Activity</th>
-        <td mat-cell *matCellDef="let element"> {{element.activity}} </td>
+        <td mat-cell *matCellDef="let element">{{element.activity}} </td>
       </ng-container>
 
       <ng-container matColumnDef="availableDate">
         <th mat-header-cell *matHeaderCellDef>TS Available Date</th>
-        <td mat-cell *matCellDef="let element; let index = index">
+        <td mat-cell *matCellDef="let element; let index = dataIndex">
           <ng-container *ngIf="editDateMode === index; else noEdit">
             <form [formGroup]="editAvailableDateForm">
               <mat-form-field appearance="outline">
@@ -33,11 +33,17 @@
                       (click)="$event.stopPropagation(); editDateMode = -1;" class="transform scale-25">
                 <mat-icon fontIcon="check"></mat-icon>
               </button>
+              <button mat-icon-button color="primary" type="button"
+                      (click)="$event.stopPropagation(); editDateMode = -1;" class="transform scale-25">
+                <mat-icon fontIcon="cancel"></mat-icon>
+              </button>
             </form>
           </ng-container>
           <ng-template #noEdit>
             {{element.availableDate | date:'yyyy/MM/dd'}}
-            <button mat-icon-button color="primary" (click)="$event.stopPropagation(); editDateMode = index" class="transform scale-25">
+            <button mat-icon-button color="primary"
+                    *ngIf="versionQaActivities()[0].activity === 'Accept' && index === 0"
+                    (click)="$event.stopPropagation(); editDateMode = index" class="transform scale-25">
               <mat-icon fontIcon="edit"></mat-icon>
             </button>
           </ng-template>
