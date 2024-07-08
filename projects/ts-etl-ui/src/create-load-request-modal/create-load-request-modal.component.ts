@@ -15,6 +15,7 @@ import { MatRadioModule } from '@angular/material/radio';
 
 import { UserService } from '../service/user-service';
 import { sourceFilePathValidator } from '../service/app.validator';
+import { CODE_SYSTEM_NAMES, LOAD_REQUEST_TYPES } from '../service/constant';
 
 @Component({
   standalone: true,
@@ -58,7 +59,7 @@ export class CreateLoadRequestModalComponent {
 
   loadRequestCreationForm = new FormGroup(
     {
-      type: new FormControl<string>('', [Validators.required]),
+      requestType: new FormControl<string>('', [Validators.required]),
       codeSystemName: new FormControl<string>('', [Validators.required]),
       sourceFilePath: new FormControl<string>('', [Validators.required, sourceFilePathValidator()]),
       requestSubject: new FormControl<string>('', [Validators.required]),
@@ -78,7 +79,7 @@ export class CreateLoadRequestModalComponent {
     public userService: UserService) {
     userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''));
     this.loadRequestCreationForm.get('type')?.valueChanges.subscribe(value => {
-      if (value === 'scheduled') {
+      if (value === 'Scheduler') {
         this.form.addControl('scheduleDate', new FormControl<Date | undefined>(undefined, [Validators.required]));
         this.form.addControl('scheduleTime', new FormControl<Date | undefined>(undefined, [Validators.required]));
       } else {
@@ -104,4 +105,7 @@ export class CreateLoadRequestModalComponent {
       }
     }
   }
+
+  protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
+  protected readonly LOAD_REQUEST_TYPES = LOAD_REQUEST_TYPES;
 }

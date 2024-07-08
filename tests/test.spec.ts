@@ -19,6 +19,15 @@ class MaterialPO {
     return this.page.locator('mat-dialog-container');
   }
 
+  matSpinner() {
+    return this.page.locator('mat-spinner');
+  }
+
+  async waitForSpinner() {
+    await this.matSpinner().waitFor();
+    await this.matSpinner().waitFor({ state: 'hidden' });
+  }
+
   async checkAndCloseAlert(text: string | RegExp) {
     const snackBarContainer = this.page.locator('mat-snack-bar-container');
     const snackBarLabel = this.page.locator('.mat-mdc-snack-bar-label.mdc-snackbar__label');
@@ -37,6 +46,7 @@ test.describe('e2e test', async () => {
         UNEXPECTED_CONSOLE_LOG.push(consoleMessage.text());
       }
     });
+
     await page.goto('/');
     await test.step('has title', async () => {
       await expect(page).toHaveTitle('Please Log In');
@@ -90,9 +100,15 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly added load request', async () => {
+      await page.route('/api/loadRequests', async route => {
+        await page.waitForTimeout(2000);
+        await route.continue();
+      });
+
       await page.locator('[id="requestIdFilterInput"]').fill('149');
       await page.getByRole('button', { name: 'Search' }).click();
-      await expect(page.locator('td:has-text("regular")')).toBeVisible();
+      await materialPo.waitForSpinner();
+      await expect(page.locator('td:has-text("Regular")')).toBeVisible();
       await expect(page.locator('td:has-text("HPO")')).toBeVisible();
       await expect(page.getByText('newly created load request')).toBeVisible();
     });
@@ -106,8 +122,8 @@ test.describe('e2e test', async () => {
       await materialPo.checkAndCloseAlert('Export downloaded.');
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
-      expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, type, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","HPO","newly created load request","In Progress","regular",');
+      expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
+      expect(fileContent).toContain('"149","HPO","newly created load request","In Progress","Regular"');
     });
   });
 

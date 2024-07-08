@@ -59,6 +59,12 @@
                   "maximumError": "4kB"
                 }
               ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
+                  "with": "projects/ts-etl-ui/src/environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all"
             },
             "development": {
@@ -94,6 +100,10 @@
             },
             "development": {
               "buildTarget": "ts-etl-ui:build:development"
+            },
+            "integration": {
+              "buildTarget": "ts-etl-ui:build:development",
+              "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
             }
           },
           "defaultConfiguration": "development"

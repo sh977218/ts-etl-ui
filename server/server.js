@@ -18,101 +18,100 @@ function escapeRegex(input) {
 }
 
 app.post('/api/loadRequests', async (req, res) => {
+  const apiStartTime = new Date();
+  const { pagination, searchFilters, searchColumns, sortCriteria } = req.body;
+  const { pageNum, pageSize } = pagination;
+  const { filterRequestTime, filterRequester } = searchFilters;
   const {
     requestId,
     codeSystemName,
     requestSubject,
-    type,
     requestStatus,
-    requestTimeStart,
-    requestTimeEnd,
-    creationTimeStart,
-    creationTimeEnd,
-    requestDateRange,
     requestType,
+    requestStartTime,
+    requestEndTime,
     requester,
-    sort,
-    order,
-    pageNumber,
-    pageSize,
-  } = req.body;
+    creationStartTime,
+    creationEndTime,
+  } = searchColumns;
+  const { sortBy, sortDirection } = sortCriteria;
+
   const $match = {};
-  // requestId can be 0
-  if (requestId !== undefined) {
+  // searchColumns
+  if (requestId) {
     $match.requestId = Number.parseInt(requestId);
   }
   if (codeSystemName) {
     $match.codeSystemName = codeSystemName;
   }
-  if (type) {
-    $match.type = type;
-  }
-  if (requestType) {
-    $match.requester = requestType;
+  if (requestSubject) {
+    $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
   if (requestStatus) {
     $match.requestStatus = requestStatus;
   }
-  if (requestSubject) {
-    $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
+  if (requestType) {
+    $match.requestType = requestType;
   }
-  if (requester) {
-    $match.requester = new RegExp(escapeRegex(requester), 'i');
-  }
-  if (requestTimeStart) {
-    const dateObj = new Date(requestTimeStart);
+  if (requestStartTime) {
+    const dateObj = new Date(requestStartTime);
     $match.requestTime = {
       $gte: dateObj,
     };
   }
-  if (requestTimeEnd) {
-    const dateObj = new Date(requestTimeEnd);
+  if (requestEndTime) {
+    const dateObj = new Date(requestEndTime);
     if (!$match.requestTime) {
       $match.requestTime = {};
     }
     $match.requestTime['$lte'] = dateObj;
   }
-  if (creationTimeStart) {
-    const dateObj = new Date(creationTimeStart);
+  if (requester) {
+    $match.requester = new RegExp(escapeRegex(requester), 'i');
+  }
+
+  if (creationStartTime) {
+    const dateObj = new Date(creationStartTime);
     $match.creationTime = {
       $gte: dateObj,
     };
   }
-  if (creationTimeEnd) {
-    const dateObj = new Date(creationTimeEnd);
+  if (creationEndTime) {
+    const dateObj = new Date(creationEndTime);
     if (!$match.creationTime) {
       $match.creationTime = {};
     }
     $match.creationTime['$lte'] = dateObj;
   }
 
-  if (requestDateRange) {
+  // searchFilters
+  if (filterRequestTime) {
     const today = new Date();
     const startOfWeek = new Date();
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of the current week
     startOfWeek.setHours(0, 0, 0, 0);
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     startOfMonth.setHours(0, 0, 0, 0);
-    if (requestDateRange === 'today') {
+    if (filterRequestTime === 'today') {
       $match.requestTime = {
         $lte: today, $gte: new Date(today.getTime() - 24 * 60 * 60 * 1000),
       };
-    } else if (requestDateRange === 'thisWeek') {
+    } else if (filterRequestTime === 'thisWeek') {
       $match.requestTime = {
         $gte: startOfWeek, $lte: today,
       };
-    } else if (requestDateRange === 'lastWeek') {
+    } else if (filterRequestTime === 'lastWeek') {
       const startOfLastWeek = new Date();
       startOfLastWeek.setDate(startOfWeek.getDate() - 7 - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of last current week
       startOfLastWeek.setHours(0, 0, 0, 0);
       $match.requestTime = {
         $gte: startOfLastWeek, $lte: startOfWeek,
       };
-    } else if (requestDateRange === 'thisMonth') {
+    } else if (filterRequestTime === 'thisMonth') {
       $match.requestTime = {
         $gte: startOfMonth, $lte: today,
       };
-    } else if (requestDateRange === 'lastMonth') {
+    } else if (filterRequestTime === 'lastMonth') {
       const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       startOfLastMonth.setHours(0, 0, 0, 0);
       $match.requestTime = {
@@ -120,16 +119,35 @@ app.post('/api/loadRequests', async (req, res) => {
       };
     }
   }
-  const $sort = {};
-  $sort[sort] = order === 'asc' ? 1 : -1;
-  const pageNumberInt = +pageNumber;
-  const pageSizeInt = +pageSize;
-  const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
 
+  if (filterRequester) {
+    $match.requester = filterRequester;
+  }
+
+  // sortCriteria
+  const $sort = {};
+  $sort[sortBy] = sortDirection === 'asc' ? 1 : -1;
+
+  // pagination
+  const pageNumberInt = pageNum - 1;
+  const pageSizeInt = +pageSize;
+
+  const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
   const { loadRequestsCollection } = await mongoCollection();
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
+  const apiEndTime = new Date();
   res.send({
-    total_count: await loadRequestsCollection.countDocuments($match), items: loadRequests,
+    result: {
+      data: loadRequests,
+      hasPagination: true,
+      pagination: {
+        totalCount: await loadRequestsCollection.countDocuments($match),
+        page: pageNumberInt,
+        pageSize: pageSize,
+      },
+    },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    status: { success: true },
   });
 });
 
