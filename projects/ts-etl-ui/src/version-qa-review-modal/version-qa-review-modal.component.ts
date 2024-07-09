@@ -1,4 +1,4 @@
-import { NgForOf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { CommonModule, NgForOf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -16,6 +16,7 @@ import { UserService } from '../service/user-service';
   standalone: true,
   providers: [provideNativeDateAdapter()],
   imports: [
+    CommonModule,
     FormsModule,
     NgSwitch,
     NgSwitchCase,

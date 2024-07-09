@@ -209,6 +209,16 @@ app.post('/api/qaActivity', async (req, res) => {
   res.send();
 });
 
+app.post('/api/editAvailableDate', async (req, res) =>  {
+  const { versionQAsCollection } = await mongoCollection();
+  await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
+    $set: {
+      "versionQaActivities.0.availableDate": new Date(req.body.newDate),
+    },
+  });
+  res.send();
+})
+
 app.get('/api/codeSystems', async (req, res) => {
   const { codeSystemsCollection } = await mongoCollection();
   const codeSystems = await codeSystemsCollection.find({}).toArray();
