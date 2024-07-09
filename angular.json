@@ -67,6 +67,18 @@
               ],
               "outputHashing": "all"
             },
+            "integration": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
+                  "with": "projects/ts-etl-ui/src/environments/environment.integration.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -102,7 +114,7 @@
               "buildTarget": "ts-etl-ui:build:development"
             },
             "integration": {
-              "buildTarget": "ts-etl-ui:build:development",
+              "buildTarget": "ts-etl-ui:build:integration",
               "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
             }
           },

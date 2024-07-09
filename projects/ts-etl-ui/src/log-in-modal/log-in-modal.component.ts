@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialogModule} from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { environment } from '../environments/environment';
 
@@ -13,8 +13,8 @@ import { environment } from '../environments/environment';
 })
 export class LogInModalComponent {
 
-  redirectToLogin(){
-    window.location.href = `${environment.loginServiceUrl}?service=`+encodeURIComponent(window.location.origin)
+  redirectToLogin() {
+    window.location.href = `${environment.loginServiceUrl}?service=` + encodeURIComponent(window.location.origin + '/login-cb')
   }
 
 }
