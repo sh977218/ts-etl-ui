@@ -92,6 +92,7 @@ export class LoadRequestComponent implements AfterViewInit {
     'requester',
     'creationTime',
   ];
+  searchRowColumns = this.displayedColumns.map(c => `${c}-search`);
 
   columnsToDisplayWithExpand: WritableSignal<string[]> = signal([...this.displayedColumns]);
 
@@ -101,24 +102,26 @@ export class LoadRequestComponent implements AfterViewInit {
   user: User | null = null;
 
   resultsLength = 0;
+  resultsPageSize = 10;
 
-  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort!: MatSort;
+  @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
+  @ViewChild(MatSort, {static: false}) sort!: MatSort;
 
   searchCriteria = new FormGroup(
     {
       requestId: new FormControl<number | undefined>(undefined),
-      codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      codeSystemName: new FormControl<string | undefined>('', {updateOn: 'change'}),
       requestSubject: new FormControl<string | undefined>(''),
-      requestType: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      requestStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      requestTimeStart: new FormControl<Date | undefined>(undefined),
-      requestTimeEnd: new FormControl<Date | undefined>(undefined),
-      creationTimeStart: new FormControl<Date | undefined>(undefined),
-      creationTimeEnd: new FormControl<Date | undefined>(undefined),
-      requestTime: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      requester: new FormControl<string | undefined>(''),
-    }, { updateOn: 'submit' },
+      requestStatus: new FormControl<string | undefined>('', {updateOn: 'change'}),
+      requestType: new FormControl<string | undefined>('', {updateOn: 'change'}),
+      requestStartTime: new FormControl<Date | undefined>(undefined),
+      requestEndTime: new FormControl<Date | undefined>(undefined),
+      requester: new FormControl<Date | undefined>(undefined),
+      creationStartTime: new FormControl<Date | undefined>(undefined),
+      creationEndTime: new FormControl<Date | undefined>(undefined),
+      filterRequestTime: new FormControl<string | undefined>('', {updateOn: 'change'}),
+      filterRequester: new FormControl<string | undefined>(''),
+    }, {updateOn: 'submit'},
   );
 
   currentLoadRequestSearchCriteria: LoadRequestPayload = {
@@ -127,17 +130,20 @@ export class LoadRequestComponent implements AfterViewInit {
       pageSize: 10,
     },
     searchFilters: {
-      requestTime: '',
-      requester: '',
+      filterRequestTime: '',
+      filterRequester: '',
     },
     searchColumns: {
       requestId: '',
       codeSystemName: '',
       requestSubject: '',
       requestStatus: '',
+      requestType: '',
       requestStartTime: '',
       requestEndTime: '',
-      requestType: '',
+      requester: '',
+      creationStartTime: '',
+      creationEndTime: ''
     },
     sortCriteria: {
       sortDirection: 'asc',
@@ -158,7 +164,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .subscribe(val => {
         this.router.navigate(['load-requests'], {
           queryParamsHandling: 'merge',
-          queryParams: { expand: undefined, ...val },
+          queryParams: {expand: undefined, ...val},
         });
       });
   }
@@ -171,8 +177,8 @@ export class LoadRequestComponent implements AfterViewInit {
         return this.activatedRoute.queryParamMap.pipe(
           // query parameters are always string, convert to number if needed
           map((queryParams: Params) => {
-            const qp = { ...queryParams['params'] };
-            this.searchCriteria.patchValue(qp, { emitEvent: false });
+            const qp = {...queryParams['params']};
+            this.searchCriteria.patchValue(qp, {emitEvent: false});
             return qp;
           }),
           map((qp): LoadRequestPayload => {
@@ -190,6 +196,7 @@ export class LoadRequestComponent implements AfterViewInit {
               return [];
             }
             this.resultsLength = res?.result.pagination.totalCount || 0;
+            this.resultsPageSize = res?.result.pagination.pageSize || 10;
             return res?.result.data || [];
           }),
           map(items => {
@@ -223,7 +230,7 @@ export class LoadRequestComponent implements AfterViewInit {
         }>('/api/loadRequest', newLoadRequest as LoadRequest)),
       )
       .subscribe({
-        next: ({ requestId }) => {
+        next: ({requestId}) => {
           this.alertService.addAlert('info', `Request (ID: ${requestId}) created successfully`);
           this.reloadAllRequests$.next(true);
         },
@@ -256,7 +263,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    const { pageIndex, pageSize } = e;
+    const {pageIndex, pageSize} = e;
     this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
@@ -267,7 +274,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   handleSortEvent(e: Sort) {
-    const { active, direction } = e;
+    const {active, direction} = e;
 
     this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',

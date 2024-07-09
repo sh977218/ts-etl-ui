@@ -21,38 +21,59 @@ app.post('/api/loadRequests', async (req, res) => {
   const apiStartTime = new Date();
   const { pagination, searchFilters, searchColumns, sortCriteria } = req.body;
   const { pageNum, pageSize } = pagination;
+<<<<<<< HEAD
+  const { filterRequestTime, filterRequester } = searchFilters;
+=======
   const { requestTime, requester } = searchFilters;
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
   const {
     codeSystemName,
+<<<<<<< HEAD
+    requestSubject,
+    requestStatus,
+    requestType,
+    requestStartTime,
+    requestEndTime,
+    requester,
+    creationStartTime,
+    creationEndTime,
+=======
     requestEndTime,
     requestId,
     requestStartTime,
     requestStatus,
     requestSubject,
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
   } = searchColumns;
   const { sortBy, sortDirection } = sortCriteria;
 
   const $match = {};
+<<<<<<< HEAD
+  // searchColumns
+=======
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
   if (requestId) {
     $match.requestId = Number.parseInt(requestId);
   }
   if (codeSystemName) {
     $match.codeSystemName = codeSystemName;
   }
+<<<<<<< HEAD
+  if (requestSubject) {
+    $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
+=======
   if (requestTime) {
     $match.requestTime = requestTime;
   }
   if (requester) {
     $match.requester = requester;
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
   }
   if (requestStatus) {
     $match.requestStatus = requestStatus;
   }
-  if (requestSubject) {
-    $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
-  }
-  if (requester) {
-    $match.requester = new RegExp(escapeRegex(requester), 'i');
+  if (requestType) {
+    $match.requestType = requestType;
   }
   if (requestStartTime) {
     const dateObj = new Date(requestStartTime);
@@ -67,12 +88,29 @@ app.post('/api/loadRequests', async (req, res) => {
     }
     $match.requestTime['$lte'] = dateObj;
   }
+<<<<<<< HEAD
+  if (requester) {
+    $match.requester = new RegExp(escapeRegex(requester), 'i');
+  }
+
+  if (creationStartTime) {
+    const dateObj = new Date(creationStartTime);
+    $match.creationTime = {
+      $gte: dateObj,
+    };
+  }
+  if (creationEndTime) {
+    const dateObj = new Date(creationEndTime);
+    if (!$match.creationTime) {
+      $match.creationTime = {};
+=======
   /*
     if (creationTimeStart) {
       const dateObj = new Date(creationTimeStart);
       $match.creationTime = {
         $gte: dateObj,
       };
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
     }
     if (creationTimeEnd) {
       const dateObj = new Date(creationTimeEnd);
@@ -83,13 +121,29 @@ app.post('/api/loadRequests', async (req, res) => {
     }
   */
 
+<<<<<<< HEAD
+  // searchFilters
+  if (filterRequestTime) {
+=======
   if (requestTime) {
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
     const today = new Date();
     const startOfWeek = new Date();
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of the current week
     startOfWeek.setHours(0, 0, 0, 0);
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     startOfMonth.setHours(0, 0, 0, 0);
+<<<<<<< HEAD
+    if (filterRequestTime === 'today') {
+      $match.requestTime = {
+        $lte: today, $gte: new Date(today.getTime() - 24 * 60 * 60 * 1000),
+      };
+    } else if (filterRequestTime === 'thisWeek') {
+      $match.requestTime = {
+        $gte: startOfWeek, $lte: today,
+      };
+    } else if (filterRequestTime === 'lastWeek') {
+=======
     if (requestTime === 'today') {
       $match.requestTime = {
         $lte: today, $gte: new Date(today.getTime() - 24 * 60 * 60 * 1000),
@@ -99,17 +153,26 @@ app.post('/api/loadRequests', async (req, res) => {
         $gte: startOfWeek, $lte: today,
       };
     } else if (requestTime === 'lastWeek') {
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
       const startOfLastWeek = new Date();
       startOfLastWeek.setDate(startOfWeek.getDate() - 7 - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of last current week
       startOfLastWeek.setHours(0, 0, 0, 0);
       $match.requestTime = {
         $gte: startOfLastWeek, $lte: startOfWeek,
       };
+<<<<<<< HEAD
+    } else if (filterRequestTime === 'thisMonth') {
+      $match.requestTime = {
+        $gte: startOfMonth, $lte: today,
+      };
+    } else if (filterRequestTime === 'lastMonth') {
+=======
     } else if (requestTime === 'thisMonth') {
       $match.requestTime = {
         $gte: startOfMonth, $lte: today,
       };
     } else if (requestTime === 'lastMonth') {
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
       const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       startOfLastMonth.setHours(0, 0, 0, 0);
       $match.requestTime = {
@@ -117,15 +180,29 @@ app.post('/api/loadRequests', async (req, res) => {
       };
     }
   }
+
+  if (filterRequester) {
+    $match.requester = filterRequester;
+  }
+
+  // sortCriteria
   const $sort = {};
   $sort[sortBy] = sortDirection === 'asc' ? 1 : -1;
+<<<<<<< HEAD
+
+  // pagination
+=======
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
   const pageNumberInt = pageNum - 1;
   const pageSizeInt = +pageSize;
-  const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
 
+  const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
   const { loadRequestsCollection } = await mongoCollection();
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
+<<<<<<< HEAD
+=======
 
+>>>>>>> d9f9c510a67980dfc16257ffa2ae0e499e010d91
   const apiEndTime = new Date();
   res.send({
     result: {
@@ -199,6 +276,16 @@ app.post('/api/qaActivity', async (req, res) => {
   });
   res.send();
 });
+
+app.post('/api/editAvailableDate', async (req, res) =>  {
+  const { versionQAsCollection } = await mongoCollection();
+  await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
+    $set: {
+      "versionQaActivities.0.availableDate": new Date(req.body.newDate),
+    },
+  });
+  res.send();
+})
 
 app.get('/api/codeSystems', async (req, res) => {
   const { codeSystemsCollection } = await mongoCollection();
