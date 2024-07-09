@@ -92,6 +92,7 @@ export class LoadRequestComponent implements AfterViewInit {
     'requester',
     'creationTime',
   ];
+  searchRowColumns = this.displayedColumns.map(c => `${c}-search`);
 
   columnsToDisplayWithExpand: WritableSignal<string[]> = signal([...this.displayedColumns]);
 
