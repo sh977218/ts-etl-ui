@@ -139,9 +139,8 @@ test.describe('e2e test', async () => {
 
     await test.step(`Accept version QA`, async () => {
       const versionQRows = page.getByRole('table').locator('tbody tr');
-      const expandedRow = versionQRows.nth(1);
-      await page.locator('tbody tr td .fake-link').first().click();
-      await expandedRow.getByRole('button', { name: 'Accept' }).click();
+      await page.locator('tbody tr td .fake-link').nth(1).click();
+      await page.getByRole('button', { name: 'Accept' }).click();
       await matDialog.waitFor();
       await matDialog.getByPlaceholder('Notes').fill('Accepted by me');
       await matDialog.getByRole('button', { name: 'Save' }).click();

@@ -18,7 +18,7 @@ import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.compo
 import { triggerExpandTableAnimation } from '../animations';
 import { DatePipe, NgIf } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { map, of, tap } from 'rxjs';
+import { map, of, switchMap, tap } from 'rxjs';
 import { AlertService } from '../service/alert-service';
 import { saveAs } from 'file-saver';
 import { DownloadService } from '../service/download-service';
@@ -87,12 +87,14 @@ export class VersionQaActivityComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource().paginator = this.paginator;
     this.dataSource().sort = this.sort;
-    this.editAvailableDateForm.valueChanges
-      .subscribe(() => {
-        this.http.post<string>('/api/editAvailableDate', {
+    this.editAvailableDateForm.valueChanges.pipe(
+      switchMap(value => {
+        return this.http.post<string>('/api/editAvailableDate', {
           requestId: this.requestId(),
-          newDate: this.editAvailableDateForm.get('availableDate')?.value
-        }).subscribe({
+          newDate: value.availableDate
+        });
+      }),
+      tap({
           next: () => {
             this.alertService.addAlert('info', `Available Date Updated`);
             if (this.editAvailableDateForm.get('availableDate')?.value) {
@@ -102,8 +104,8 @@ export class VersionQaActivityComponent implements AfterViewInit {
             this.cd.detectChanges();
           },
           error: () => this.alertService.addAlert('danger', 'Unexpected Error'),
-        })
-      });
+      })
+    ).subscribe();
   }
 
   applyFilter(event: Event) {

@@ -40,7 +40,9 @@
             </form>
           </ng-container>
           <ng-template #noEdit>
-            {{element.availableDate | date:'yyyy/MM/dd'}}
+            <span style="vertical-align: super">
+              {{element.availableDate | date:'yyyy/MM/dd'}}
+            </span>
             <button mat-icon-button color="primary"
                     *ngIf="versionQaActivities()[0].activity === 'Accept' && index === 0"
                     (click)="$event.stopPropagation(); editDateMode = index" class="transform scale-25">
@@ -52,7 +54,7 @@
 
       <ng-container matColumnDef="reason">
         <th mat-header-cell *matHeaderCellDef>Reason</th>
-        <td mat-cell *matCellDef="let element"> {{element.reason}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.notes[0]?.notes}} </td>
       </ng-container>
 
       <ng-container matColumnDef="nbNotes">
