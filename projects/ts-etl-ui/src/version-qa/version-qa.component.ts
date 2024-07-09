@@ -29,6 +29,7 @@ import {
   VersionQaAcceptanceActionsComponent,
 } from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-version-qa',
@@ -140,7 +141,7 @@ export class VersionQaComponent implements AfterViewInit {
   }
 
   action(newQAActivity: VersionQAActivity, versionQA: VersionQA) {
-    this.http.post('/api/qaActivity', {
+    this.http.post(`${environment.apiServer}/api/qaActivity`, {
       requestId: versionQA!.requestId,
       qaActivity: newQAActivity,
     })
