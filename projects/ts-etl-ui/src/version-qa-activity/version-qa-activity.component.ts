@@ -26,6 +26,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-version-qa-activity',
@@ -89,7 +90,7 @@ export class VersionQaActivityComponent implements AfterViewInit {
     this.dataSource().sort = this.sort;
     this.editAvailableDateForm.valueChanges.pipe(
       switchMap(value => {
-        return this.http.post<string>('/api/editAvailableDate', {
+        return this.http.post<string>(`${environment.apiServer}/api/editAvailableDate`, {
           requestId: this.requestId(),
           newDate: value.availableDate
         });
