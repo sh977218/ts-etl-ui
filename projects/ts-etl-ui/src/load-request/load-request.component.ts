@@ -182,9 +182,12 @@ export class LoadRequestComponent implements AfterViewInit {
             // update UI from query parameters
             this.searchCriteria.patchValue(qp, { emitEvent: false });
             if (qp.pageNum) {
+              // mat paginator is 0 base index, but API expect 1 base index.
               this.paginator.pageIndex = qp.pageNum - 1;
             }
-            this.paginator.pageSize = qp.pageSize || 10;
+            if (qp.pageSize) {
+              this.paginator.pageSize = qp.pageSize || 10;
+            }
             return qp;
           }),
           map((qp): LoadRequestPayload => {
@@ -273,6 +276,7 @@ export class LoadRequestComponent implements AfterViewInit {
     this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
+        // mat paginator is 0 base index, but API expect 1 base index.
         pageNum: pageIndex + 1,
         pageSize,
       },
