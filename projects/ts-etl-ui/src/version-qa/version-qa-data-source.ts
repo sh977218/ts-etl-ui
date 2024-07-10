@@ -24,6 +24,6 @@ export class VersionQaDataSource {
   }
 
   getVersionQA(requestId: string) {
-    return this.http.get<VersionQA>(`versionQA/${requestId}`);
+    return this.http.get<VersionQA>(`${environment.apiServer}/versionQA/${requestId}`);
   }
 }
