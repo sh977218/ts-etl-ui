@@ -20,10 +20,10 @@ export class VersionQaDataSource {
   }
 
   getVersionQAs(versionQaSearchCriteria: VersionQaSearchCriteria) {
-    return this.http.post<VersionQAsApiResponse>(`${environment.apiServer}/api/versionQAs`, versionQaSearchCriteria);
+    return this.http.post<VersionQAsApiResponse>(`${environment.apiServer}/versionQAs`, versionQaSearchCriteria);
   }
 
   getVersionQA(requestId: string) {
-    return this.http.get<VersionQA>(`/api/versionQA/${requestId}`);
+    return this.http.get<VersionQA>(`${environment.apiServer}/versionQA/${requestId}`);
   }
 }
