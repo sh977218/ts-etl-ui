@@ -1,3 +1,5 @@
+import { SortDirection } from '@angular/material/sort';
+
 export type LoadRequestActivity = {
   componentName: string;
   startTime: string;
@@ -63,7 +65,7 @@ type LoadRequestPayloadSearchColumns = {
 
 type LoadRequestPayloadSortCriteria = {
   sortBy: string;
-  sortDirection: string;
+  sortDirection: SortDirection;
 }
 
 export type LoadRequestPayload = {

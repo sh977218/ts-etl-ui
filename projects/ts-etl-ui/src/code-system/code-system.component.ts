@@ -40,7 +40,7 @@ export class CodeSystemComponent {
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute) {
 
-    this.http.get<CodeSystem[]>(`${environment.apiServer}/api/codeSystems`).pipe(
+    this.http.get<CodeSystem[]>(`${environment.apiServer}/codeSystems`).pipe(
       tap({
         next: (codeSystems) => {
           this.dataSource = new MatTableDataSource(codeSystems);

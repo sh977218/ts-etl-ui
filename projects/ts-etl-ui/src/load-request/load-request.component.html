@@ -43,7 +43,8 @@
   <div class="mat-elevation-z8 ">
     <div class="example-table-container">
       <table mat-table [dataSource]="data()" class="example-table" multiTemplateDataRows
-             matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc"
+             matSort [matSortActive]="currentLoadRequestSearchCriteria.sortCriteria.sortBy" matSortDisableClear
+             [matSortDirection]="currentLoadRequestSearchCriteria.sortCriteria.sortDirection"
              (matSortChange)="handleSortEvent($event)">
 
         <ng-container matColumnDef="requestId">
@@ -225,7 +226,9 @@
         </tr>
       </table>
     </div>
-    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50, 100]" [pageSize]="resultsPageSize"
+    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50, 100]"
+                   [pageIndex]="currentLoadRequestSearchCriteria.pagination.pageNum - 1"
+                   [pageSize]="currentLoadRequestSearchCriteria.pagination.pageSize"
                    (page)="handlePageEvent($event)"
                    aria-label="Select page of load requests"></mat-paginator>
   </div>

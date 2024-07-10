@@ -127,7 +127,7 @@ export class LoadRequestComponent implements AfterViewInit {
 
   currentLoadRequestSearchCriteria: LoadRequestPayload = {
     pagination: {
-      pageNum: 0,
+      pageNum: 1,
       pageSize: 10,
     },
     searchFilters: {
@@ -181,13 +181,6 @@ export class LoadRequestComponent implements AfterViewInit {
             const qp = { ...queryParams['params'] };
             // update UI from query parameters
             this.searchCriteria.patchValue(qp, { emitEvent: false });
-            if (qp.pageNum) {
-              // mat paginator is 0 base index, but API expect 1 base index.
-              this.paginator.pageIndex = qp.pageNum - 1;
-            }
-            if (qp.pageSize) {
-              this.paginator.pageSize = qp.pageSize || 10;
-            }
             return qp;
           }),
           map((qp): LoadRequestPayload => {
@@ -197,7 +190,7 @@ export class LoadRequestComponent implements AfterViewInit {
           }),
           switchMap((loadRequestPayload) => {
             this.loadingService.showLoading();
-            return this.http.post<LoadRequestsResponse>(`${environment.apiServer}/api/loadRequests`, loadRequestPayload)
+            return this.http.post<LoadRequestsResponse>(`${environment.apiServer}/loadRequests`, loadRequestPayload)
               .pipe(catchError(() => of(null)));
           }),
           map((res: LoadRequestsResponse | null) => {
@@ -236,7 +229,7 @@ export class LoadRequestComponent implements AfterViewInit {
         filter(newLoadRequest => !!newLoadRequest),
         switchMap(newLoadRequest => this.http.post<{
           requestId: string
-        }>(`${environment.apiServer}/api/loadRequest`, newLoadRequest as LoadRequest)),
+        }>(`${environment.apiServer}/loadRequest`, newLoadRequest as LoadRequest)),
       )
       .subscribe({
         next: ({ requestId }) => {
@@ -248,7 +241,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   download() {
-    this.http.post<LoadRequestsResponse>(`${environment.apiServer}/api/loadRequests`,
+    this.http.post<LoadRequestsResponse>(`${environment.apiServer}/loadRequests`,
       Object.assign(this.currentLoadRequestSearchCriteria, {
           pagination: {
             pageNum: 1,
@@ -289,8 +282,8 @@ export class LoadRequestComponent implements AfterViewInit {
       queryParamsHandling: 'merge',
       queryParams: {
         pageNum: 1,
-        sort: active,
-        order: direction,
+        sortBy: active,
+        sortDirection: direction,
       },
     });
   }

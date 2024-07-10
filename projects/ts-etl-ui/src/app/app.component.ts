@@ -65,5 +65,5 @@ export class AppComponent {
     this.http.get<{
       pr: string,
       db: string
-    }>(`${environment.apiServer}/api/serverInfo`) : EMPTY;
+    }>(`${environment.apiServer}/serverInfo`) : EMPTY;
 }

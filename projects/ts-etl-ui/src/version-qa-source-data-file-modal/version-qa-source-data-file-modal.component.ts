@@ -18,6 +18,6 @@ export class VersionQaSourceDataFileModalComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) public fileId: string,
               private http: HttpClient) {
-    this.fileContent = http.get(`/api/file/${fileId}`, {responseType: "text"})
+    this.fileContent = http.get(`file/${fileId}`, {responseType: "text"})
   }
 }

@@ -5,5 +5,5 @@ export const environment: Environment = {
   environmentName: 'prod',
   ticketUrl: 'https://utslogin.nlm.nih.gov/serviceValidate',
   loginServiceUrl: 'https://uts.nlm.nih.gov/uts/login',
-  apiServer: '/portal-backend',
+  apiServer: '/portal-backend/api',
 };
