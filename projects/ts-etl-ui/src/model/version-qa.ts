@@ -38,7 +38,8 @@ export type VersionQAActivity = {
 export type QAActivityNote = {
   createdBy: string,
   createdTime: Date,
-  notes: string
+  notes: string,
+  hashtags: string
 }
 
 export type VersionQA = {

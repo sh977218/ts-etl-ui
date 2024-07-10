@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Add Note to Current Activity</h2>
+<form [formGroup]="addNoteForm">
+  <mat-dialog-content class="mat-typography">
+    <div class="flex flex-col">
+      <mat-form-field appearance="outline">
+        <mat-label>Hashtahgs</mat-label>
+        <textarea matInput placeholder="Hasthtags" formControlName="hashtags"></textarea>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Note</mat-label>
+        <textarea matInput placeholder="Note" formControlName="notes"></textarea>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button color="primary" type="submit" [disabled]="addNoteForm.invalid"
+            [mat-dialog-close]="addNoteForm.getRawValue()">Save
+    </button>
+    <button mat-raised-button mat-dialog-close cdkFocusInitial>Cancel</button>
+  </mat-dialog-actions>
+</form>
