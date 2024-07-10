@@ -179,7 +179,12 @@ export class LoadRequestComponent implements AfterViewInit {
           // query parameters are always string, convert to number if needed
           map((queryParams: Params) => {
             const qp = { ...queryParams['params'] };
+            // update UI from query parameters
             this.searchCriteria.patchValue(qp, { emitEvent: false });
+            if (qp.pageNum) {
+              this.paginator.pageIndex = qp.pageNum - 1;
+            }
+            this.paginator.pageSize = qp.pageSize || 10;
             return qp;
           }),
           map((qp): LoadRequestPayload => {
@@ -268,7 +273,7 @@ export class LoadRequestComponent implements AfterViewInit {
     this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
-        pageNum: pageIndex,
+        pageNum: pageIndex + 1,
         pageSize,
       },
     });
@@ -276,11 +281,10 @@ export class LoadRequestComponent implements AfterViewInit {
 
   handleSortEvent(e: Sort) {
     const { active, direction } = e;
-
     this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
-        pageNumber: 0,
+        pageNum: 1,
         sort: active,
         order: direction,
       },
