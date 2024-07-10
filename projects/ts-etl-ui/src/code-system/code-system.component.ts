@@ -15,6 +15,7 @@ import { MatListModule } from '@angular/material/list';
 import { CodeSystemVersionComponent } from '../code-system-version/code-system-version.component';
 import { triggerExpandTableAnimation } from '../animations';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-code-system',
@@ -39,7 +40,7 @@ export class CodeSystemComponent {
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute) {
 
-    this.http.get<CodeSystem[]>('/api/codeSystems').pipe(
+    this.http.get<CodeSystem[]>(`${environment.apiServer}/api/codeSystems`).pipe(
       tap({
         next: (codeSystems) => {
           this.dataSource = new MatTableDataSource(codeSystems);

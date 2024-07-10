@@ -48,6 +48,7 @@ import { CreateLoadRequestModalComponent } from '../create-load-request-modal/cr
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { CODE_SYSTEM_NAMES, LOAD_REQUEST_STATUSES, LOAD_REQUEST_TYPES } from '../service/constant';
+import { environment } from '../environments/environment';
 
 
 @Component({
@@ -188,7 +189,7 @@ export class LoadRequestComponent implements AfterViewInit {
           }),
           switchMap((loadRequestPayload) => {
             this.loadingService.showLoading();
-            return this.http.post<LoadRequestsResponse>('/api/loadRequests', loadRequestPayload)
+            return this.http.post<LoadRequestsResponse>(`${environment.apiServer}/api/loadRequests`, loadRequestPayload)
               .pipe(catchError(() => of(null)));
           }),
           map((res: LoadRequestsResponse | null) => {
@@ -227,7 +228,7 @@ export class LoadRequestComponent implements AfterViewInit {
         filter(newLoadRequest => !!newLoadRequest),
         switchMap(newLoadRequest => this.http.post<{
           requestId: string
-        }>('/api/loadRequest', newLoadRequest as LoadRequest)),
+        }>(`${environment.apiServer}/api/loadRequest`, newLoadRequest as LoadRequest)),
       )
       .subscribe({
         next: ({requestId}) => {
@@ -239,7 +240,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   download() {
-    this.http.post<LoadRequestsResponse>('/api/loadRequests',
+    this.http.post<LoadRequestsResponse>(`${environment.apiServer}/api/loadRequests`,
       Object.assign(this.currentLoadRequestSearchCriteria, {
           pagination: {
             pageNum: 1,

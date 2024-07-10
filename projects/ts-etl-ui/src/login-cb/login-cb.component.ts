@@ -11,7 +11,6 @@ import { UserService } from '../service/user-service';
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class LoginCbComponent {
-
   constructor(public activatedRoute: ActivatedRoute,
               public http: HttpClient,
               public dialog: MatDialog,

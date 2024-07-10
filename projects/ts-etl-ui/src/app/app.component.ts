@@ -17,6 +17,8 @@ import { LogInModalComponent } from '../log-in-modal/log-in-modal.component';
 import { UserService } from '../service/user-service';
 import { LoadingService } from '../service/loading-service';
 import { NavigationService } from '../service/navigation-service';
+import { environment } from '../environments/environment';
+import { EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -59,5 +61,9 @@ export class AppComponent {
       });
   }
 
-  serverInfo$ = this.http.get<{ pr: string, db: string }>('/api/serverInfo');
+  serverInfo$ = environment.environmentName === 'ci' ?
+    this.http.get<{
+      pr: string,
+      db: string
+    }>(`${environment.apiServer}/api/serverInfo`) : EMPTY;
 }
