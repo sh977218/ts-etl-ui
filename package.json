@@ -11,7 +11,6 @@
     "start:ci": "node --env-file .ci.env server/server.js",
     "build": "ng build -c development && node insert-commit-hash.js",
     "build:prod": "ng build -c production && node insert-commit-hash.js",
-    "build:integration": "ng build -c integration && node insert-commit-hash.js",
     "build:ci": "ng build -c ci && node insert-commit-hash.js",
     "watch": "ng build --watch --configuration development",
     "test": "playwright test --project=chromium",
