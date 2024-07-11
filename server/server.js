@@ -169,9 +169,9 @@ app.post('/api/loadRequest', async (req, res) => {
   res.send({ requestId: newLoadRequest.requestId });
 });
 
-app.post('/api/versionQAs', async (req, res) => {
+app.post('/api/loadVersions', async (req, res) => {
   const { loadNumber, sort, order } = req.body;
-  const { versionQAsCollection } = await mongoCollection();
+  const { loadVersionsCollection } = await mongoCollection();
   const $match = {};
   if (loadNumber !== null) {
     $match.loadNumber = loadNumber;
@@ -180,9 +180,9 @@ app.post('/api/versionQAs', async (req, res) => {
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
   const aggregation = [{ $match }, { $sort }];
-  const versionQAs = await versionQAsCollection.aggregate(aggregation).toArray();
+  const loadVersions = await loadVersionsCollection.aggregate(aggregation).toArray();
   res.send({
-    total_count: versionQAs.length, items: versionQAs,
+    total_count: loadVersions.length, items: loadVersions,
   });
 });
 
