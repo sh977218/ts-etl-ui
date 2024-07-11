@@ -31,6 +31,7 @@ import {
 import { AlertService } from '../service/alert-service';
 import { environment } from '../environments/environment';
 import { VersionQaAddNoteComponent } from '../version-qa-add-note/version-qa-add-note.component';
+import { CODE_SYSTEM_NAMES } from '../service/constant';
 
 @Component({
   selector: 'app-version-qa',
@@ -182,4 +183,5 @@ export class VersionQaComponent implements AfterViewInit {
     this.cd.detectChanges();
   }
 
+  protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
 }

@@ -10,8 +10,10 @@
         <ng-container matColumnDef="codeSystemName-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <input id="codeSystemNameFilterInput" class="w-3/4" matInput formControlName="codeSystemName"
-                     placeholder="search" size="4">
+              <select id="codeSystemNameFilterInput" class="w-20" formControlName="codeSystemName">
+                <option value="">ALL</option>
+                <option *ngFor="let CODE_SYSTEM_NAME of CODE_SYSTEM_NAMES">{{CODE_SYSTEM_NAME}}</option>
+              </select>
             </div>
           </th>
         </ng-container>
