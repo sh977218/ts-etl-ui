@@ -16,8 +16,8 @@ import { LoadingService } from '../service/loading-service';
 })
 export class LoadVersionReportComponent implements AfterViewInit {
 
-  versionQaDatabase: LoadVersionDataSource | null = null;
-  versionQA: LoadVersion | null = null;
+  loadVersionDatabase: LoadVersionDataSource | null = null;
+  loadVersion: LoadVersion | null = null;
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
@@ -26,7 +26,7 @@ export class LoadVersionReportComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.versionQaDatabase = new LoadVersionDataSource(this.http);
+    this.loadVersionDatabase = new LoadVersionDataSource(this.http);
 
     this.activatedRoute.paramMap
       .pipe(
@@ -35,13 +35,13 @@ export class LoadVersionReportComponent implements AfterViewInit {
           return params['params']['requestId'];
         }),
         switchMap(requestId => {
-          return this.versionQaDatabase!.getVersionQA(requestId).pipe(catchError(() => of(null)));
+          return this.loadVersionDatabase!.getLoadVersion(requestId).pipe(catchError(() => of(null)));
         }),
       )
       .subscribe({
         next: data => {
           this.loadingService.hideLoading();
-          this.versionQA = data;
+          this.loadVersion = data;
         },
         error: () => this.loadingService.hideLoading(),
       });

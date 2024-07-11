@@ -134,7 +134,7 @@
                  *ngIf="expandedElement === row">
               <div class="flex">
                 <div class="m-2" style="flex-grow:0.35">
-                  <app-load-version-detail [versionQA]="row" class="flex flex-grow"></app-load-version-detail>
+                  <app-load-version-detail [loadVersion]="row" class="flex flex-grow"></app-load-version-detail>
                 </div>
                 <div style="flex-grow:0.65">
                   <app-load-summary [loadSummary]="row.loadSummary"></app-load-summary>
@@ -154,9 +154,9 @@
               <div class="flex" style="flex-grow:1">
                 <fieldset>
                   <legend>QA Acceptance</legend>
-                  <app-load-version-acceptance-actions [versionQA]="row" (actionOutput)="action($event,row)">
+                  <app-load-version-acceptance-actions [loadVersion]="row" (actionOutput)="action($event,row)">
                   </app-load-version-acceptance-actions>
-                  <app-load-version-add-note [versionQA]="row" class="float-right"
+                  <app-load-version-add-note [loadVersion]="row" class="float-right"
                                              (actionOutput)="refreshActivityTable()"></app-load-version-add-note>
                   <app-load-version-activity [loadVersionActivities]="row.loadVersionActivities"
                                              [requestId]="row.requestId"

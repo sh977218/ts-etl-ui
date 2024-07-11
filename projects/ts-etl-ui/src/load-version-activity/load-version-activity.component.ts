@@ -129,7 +129,7 @@ export class LoadVersionActivityComponent implements AfterViewInit {
         }),
         tap({
           next: (blob) => {
-            saveAs(blob, 'versionQaActivity-export.csv');
+            saveAs(blob, 'loadVersionActivity-export.csv');
             this.alertService.addAlert('', 'QA Activities downloaded.');
           },
           error: () => this.alertService.addAlert('', 'QA Activities download failed.'),

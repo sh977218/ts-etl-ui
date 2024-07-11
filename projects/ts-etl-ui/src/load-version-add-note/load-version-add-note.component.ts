@@ -24,7 +24,7 @@ import { AlertService } from '../service/alert-service';
   templateUrl: './load-version-add-note.html',
 })
 export class LoadVersionAddNoteComponent {
-  @Input() versionQA!: LoadVersion;
+  @Input() loadVersion!: LoadVersion;
   @Output() actionOutput = new EventEmitter<LoadVersionActivity>();
   username: string = '';
 
@@ -39,7 +39,7 @@ export class LoadVersionAddNoteComponent {
   }
 
   openAddNote() {
-    const versionQA = this.versionQA;
+    const _loadVersion = this.loadVersion;
     this.dialog
       .open(LoadVersionAddNoteModalComponent, {
         width: '600px',
@@ -51,14 +51,14 @@ export class LoadVersionAddNoteComponent {
           activityNote.createdBy = this.username;
           activityNote.createdTime = new Date();
           return this.http.post<LoadVersion>('/api/addActivityNote', {
-            requestId: this.versionQA.requestId,
+            requestId: this.loadVersion.requestId,
             activityNote,
           });
         }),
       )
       .subscribe({
-        next: updatedVersionQa => {
-          versionQA.loadVersionActivities = updatedVersionQa.loadVersionActivities;
+        next: updatedLoadVersion => {
+          _loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
           this.alertService.addAlert('', 'Activity added successfully.');
           this.actionOutput.emit();
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),

@@ -4,10 +4,10 @@ import { SortDirection } from '@angular/material/sort';
 import { environment } from '../environments/environment';
 
 /*
- * because the versionQA is not server side pagination/sort/filter
+ * because the load version is not server side pagination/sort/filter yet
  * but I leave sort/order/pageNumber/pageSize in here in case we decide to do a sever side pagination
  */
-export type VersionQaSearchCriteria = {
+export type LoadVersionSearchCriteria = {
   loadNumber: number | null;
   sort: string,
   order: SortDirection,
@@ -19,11 +19,11 @@ export class LoadVersionDataSource {
   constructor(private http: HttpClient) {
   }
 
-  getVersionQAs(versionQaSearchCriteria: VersionQaSearchCriteria) {
-    return this.http.post<LoadVersionsApiResponse>(`${environment.apiServer}/loadVersions`, versionQaSearchCriteria);
+  getLoadVersions(loadVersionSearchCriteria: LoadVersionSearchCriteria) {
+    return this.http.post<LoadVersionsApiResponse>(`${environment.apiServer}/loadVersions`, loadVersionSearchCriteria);
   }
 
-  getVersionQA(requestId: string) {
+  getLoadVersion(requestId: string) {
     return this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${requestId}`);
   }
 }

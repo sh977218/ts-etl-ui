@@ -19,6 +19,6 @@ import { MatButton } from '@angular/material/button';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadVersionNoteComponent {
-  @Input() versionQaNotes: LoadVersionActivityNote[] = [];
+  @Input() loadVersionNotes: LoadVersionActivityNote[] = [];
   notesColumns: string[] = ['tags', 'notes', 'createdBy', 'createdTime', 'action'];
 }

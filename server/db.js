@@ -36,7 +36,7 @@ export function getPrNumber() {
 
 function getCollections() {
   const PR_NUMBER = getPrNumber();
-  return [`users${PR_NUMBER}`, `loadRequests${PR_NUMBER}`, `versionQAs${PR_NUMBER}`, `codeSystems${PR_NUMBER}`];
+  return [`users${PR_NUMBER}`, `loadRequests${PR_NUMBER}`, `loadVersions${PR_NUMBER}`, `codeSystems${PR_NUMBER}`];
 }
 
 function mongoClient() {

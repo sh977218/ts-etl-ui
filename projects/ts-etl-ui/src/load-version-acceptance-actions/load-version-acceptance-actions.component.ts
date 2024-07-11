@@ -23,7 +23,7 @@ import { LoadVersion, LoadVersionActivity } from '../model/load-version';
   templateUrl: './load-version-acceptance-actions.component.html',
 })
 export class LoadVersionAcceptanceActionsComponent {
-  @Input() versionQA!: LoadVersion;
+  @Input() loadVersion!: LoadVersion;
   @Output() actionOutput = new EventEmitter<LoadVersionActivity>();
 
   constructor(private dialog: MatDialog) {
@@ -39,8 +39,8 @@ export class LoadVersionAcceptanceActionsComponent {
       .pipe(
         filter(reason => !!reason),
       )
-      .subscribe((versionQAActivity: LoadVersionActivity) => {
-        this.actionOutput.emit(versionQAActivity);
+      .subscribe((loadVersionActivity: LoadVersionActivity) => {
+        this.actionOutput.emit(loadVersionActivity);
       });
   }
 
