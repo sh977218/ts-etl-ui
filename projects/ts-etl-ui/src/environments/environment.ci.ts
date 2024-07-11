@@ -5,5 +5,5 @@ export const environment: Environment = {
   environmentName: 'ci',
   ticketUrl: '/api/serviceValidate',
   loginServiceUrl: '/login-cb?ticket=anything',
-  apiServer: '',
+  apiServer: '/api',
 };

@@ -105,29 +105,29 @@ export class LoadRequestComponent implements AfterViewInit {
   resultsLength = 0;
   resultsPageSize = 10;
 
-  @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
-  @ViewChild(MatSort, {static: false}) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
   searchCriteria = new FormGroup(
     {
       requestId: new FormControl<number | undefined>(undefined),
-      codeSystemName: new FormControl<string | undefined>('', {updateOn: 'change'}),
+      codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestSubject: new FormControl<string | undefined>(''),
-      requestStatus: new FormControl<string | undefined>('', {updateOn: 'change'}),
-      requestType: new FormControl<string | undefined>('', {updateOn: 'change'}),
+      requestStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestType: new FormControl<string | undefined>('', { updateOn: 'change' }),
       requestStartTime: new FormControl<Date | undefined>(undefined),
       requestEndTime: new FormControl<Date | undefined>(undefined),
       requester: new FormControl<Date | undefined>(undefined),
       creationStartTime: new FormControl<Date | undefined>(undefined),
       creationEndTime: new FormControl<Date | undefined>(undefined),
-      filterRequestTime: new FormControl<string | undefined>('', {updateOn: 'change'}),
+      filterRequestTime: new FormControl<string | undefined>('', { updateOn: 'change' }),
       filterRequester: new FormControl<string | undefined>(''),
-    }, {updateOn: 'submit'},
+    }, { updateOn: 'submit' },
   );
 
   currentLoadRequestSearchCriteria: LoadRequestPayload = {
     pagination: {
-      pageNum: 0,
+      pageNum: 1,
       pageSize: 10,
     },
     searchFilters: {
@@ -144,7 +144,7 @@ export class LoadRequestComponent implements AfterViewInit {
       requestEndTime: '',
       requester: '',
       creationStartTime: '',
-      creationEndTime: ''
+      creationEndTime: '',
     },
     sortCriteria: {
       sortDirection: 'asc',
@@ -165,7 +165,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .subscribe(val => {
         this.router.navigate(['load-requests'], {
           queryParamsHandling: 'merge',
-          queryParams: {expand: undefined, ...val},
+          queryParams: { expand: undefined, ...val },
         });
       });
   }
@@ -178,8 +178,9 @@ export class LoadRequestComponent implements AfterViewInit {
         return this.activatedRoute.queryParamMap.pipe(
           // query parameters are always string, convert to number if needed
           map((queryParams: Params) => {
-            const qp = {...queryParams['params']};
-            this.searchCriteria.patchValue(qp, {emitEvent: false});
+            const qp = { ...queryParams['params'] };
+            // update UI from query parameters
+            this.searchCriteria.patchValue(qp, { emitEvent: false });
             return qp;
           }),
           map((qp): LoadRequestPayload => {
@@ -189,7 +190,7 @@ export class LoadRequestComponent implements AfterViewInit {
           }),
           switchMap((loadRequestPayload) => {
             this.loadingService.showLoading();
-            return this.http.post<LoadRequestsResponse>(`${environment.apiServer}/api/loadRequests`, loadRequestPayload)
+            return this.http.post<LoadRequestsResponse>(`${environment.apiServer}/loadRequests`, loadRequestPayload)
               .pipe(catchError(() => of(null)));
           }),
           map((res: LoadRequestsResponse | null) => {
@@ -228,10 +229,10 @@ export class LoadRequestComponent implements AfterViewInit {
         filter(newLoadRequest => !!newLoadRequest),
         switchMap(newLoadRequest => this.http.post<{
           requestId: string
-        }>(`${environment.apiServer}/api/loadRequest`, newLoadRequest as LoadRequest)),
+        }>(`${environment.apiServer}/loadRequest`, newLoadRequest as LoadRequest)),
       )
       .subscribe({
-        next: ({requestId}) => {
+        next: ({ requestId }) => {
           this.alertService.addAlert('info', `Request (ID: ${requestId}) created successfully`);
           this.reloadAllRequests$.next(true);
         },
@@ -240,7 +241,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   download() {
-    this.http.post<LoadRequestsResponse>(`${environment.apiServer}/api/loadRequests`,
+    this.http.post<LoadRequestsResponse>(`${environment.apiServer}/loadRequests`,
       Object.assign(this.currentLoadRequestSearchCriteria, {
           pagination: {
             pageNum: 1,
@@ -264,25 +265,25 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    const {pageIndex, pageSize} = e;
+    const { pageIndex, pageSize } = e;
     this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
-        pageNumber: pageIndex,
+        // mat paginator is 0 base index, but API expect 1 base index.
+        pageNum: pageIndex + 1,
         pageSize,
       },
     });
   }
 
   handleSortEvent(e: Sort) {
-    const {active, direction} = e;
-
+    const { active, direction } = e;
     this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
-        pageNumber: 0,
-        sort: active,
-        order: direction,
+        pageNum: 1,
+        sortBy: active,
+        sortDirection: direction,
       },
     });
   }

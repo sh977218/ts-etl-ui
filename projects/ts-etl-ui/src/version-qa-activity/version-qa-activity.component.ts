@@ -90,7 +90,7 @@ export class VersionQaActivityComponent implements AfterViewInit {
     this.dataSource().sort = this.sort;
     this.editAvailableDateForm.valueChanges.pipe(
       switchMap(value => {
-        return this.http.post<string>(`${environment.apiServer}/api/editAvailableDate`, {
+        return this.http.post<string>(`${environment.apiServer}/editAvailableDate`, {
           requestId: this.requestId(),
           newDate: value.availableDate
         });

@@ -108,7 +108,8 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "ts-etl-ui:build:production"
+              "buildTarget": "ts-etl-ui:build:production",
+              "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
             },
             "development": {
               "buildTarget": "ts-etl-ui:build:development"

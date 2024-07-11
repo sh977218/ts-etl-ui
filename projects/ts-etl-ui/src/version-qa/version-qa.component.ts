@@ -143,12 +143,12 @@ export class VersionQaComponent implements AfterViewInit {
   }
 
   action(newQAActivity: VersionQAActivity, versionQA: VersionQA) {
-    this.http.post(`${environment.apiServer}/api/qaActivity`, {
+    this.http.post(`${environment.apiServer}/qaActivity`, {
       requestId: versionQA!.requestId,
       qaActivity: newQAActivity,
     })
       .pipe(
-        switchMap(() => this.http.get<VersionQA>(`/api/versionQA/${versionQA.requestId}`)),
+        switchMap(() => this.http.get<VersionQA>(`${environment.apiServer}/versionQA/${versionQA.requestId}`)),
       )
       .subscribe({
         next: (updatedVersionQa) => {

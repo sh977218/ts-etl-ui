@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http'
 import {Component, Inject} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialogModule,} from '@angular/material/dialog'
 import {MatButtonModule} from "@angular/material/button";
+import { environment } from '../environments/environment'
 
 @Component({
   standalone: true,
@@ -18,6 +19,6 @@ export class VersionQaSourceDataFileModalComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) public fileId: string,
               private http: HttpClient) {
-    this.fileContent = http.get(`/api/file/${fileId}`, {responseType: "text"})
+    this.fileContent = http.get(`${environment.apiServer}/file/${fileId}`, {responseType: "text"})
   }
 }
