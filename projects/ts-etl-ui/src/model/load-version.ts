@@ -1,6 +1,6 @@
-export type VersionQAsApiResponse = {
+export type LoadVersionsApiResponse = {
   total_count: number,
-  items: VersionQA[]
+  items: LoadVersion[]
 }
 
 export type LoadComponent = {
@@ -42,7 +42,7 @@ export type QAActivityNote = {
   hashtags: string
 }
 
-export type VersionQA = {
+export type LoadVersion = {
   requestId: string
   loadNumber: number
   codeSystemName: string

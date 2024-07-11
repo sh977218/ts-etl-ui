@@ -13,7 +13,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 
-import { VersionQAActivity } from '../model/version-qa';
+import { VersionQAActivity } from '../model/load-version';
 import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.component';
 import { triggerExpandTableAnimation } from '../animations';
 import { DatePipe, NgIf } from '@angular/common';
@@ -70,8 +70,8 @@ export class VersionQaActivityComponent implements AfterViewInit {
 
   editAvailableDateForm = new FormGroup(
     {
-      availableDate: new FormControl<Date>(new Date(), [Validators.required])
-    }, {updateOn: 'submit'}
+      availableDate: new FormControl<Date>(new Date(), [Validators.required]),
+    }, { updateOn: 'submit' },
   );
 
   tomorrow: Date;
@@ -80,9 +80,9 @@ export class VersionQaActivityComponent implements AfterViewInit {
               private downloadService: DownloadService,
               private cd: ChangeDetectorRef,
               private http: HttpClient) {
-      const today = new Date();
-      this.tomorrow = new Date(today);
-      this.tomorrow.setDate(today.getDate() + 1);
+    const today = new Date();
+    this.tomorrow = new Date(today);
+    this.tomorrow.setDate(today.getDate() + 1);
   }
 
   ngAfterViewInit(): void {
@@ -92,20 +92,20 @@ export class VersionQaActivityComponent implements AfterViewInit {
       switchMap(value => {
         return this.http.post<string>(`${environment.apiServer}/editAvailableDate`, {
           requestId: this.requestId(),
-          newDate: value.availableDate
+          newDate: value.availableDate,
         });
       }),
       tap({
-          next: () => {
-            this.alertService.addAlert('info', `Available Date Updated`);
-            if (this.editAvailableDateForm.get('availableDate')?.value) {
-              this.versionQaActivities()[0]!.availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
-            }
-            this.activitiesTable.renderRows();
-            this.cd.detectChanges();
-          },
-          error: () => this.alertService.addAlert('danger', 'Unexpected Error'),
-      })
+        next: () => {
+          this.alertService.addAlert('info', `Available Date Updated`);
+          if (this.editAvailableDateForm.get('availableDate')?.value) {
+            this.versionQaActivities()[0]!.availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
+          }
+          this.activitiesTable.renderRows();
+          this.cd.detectChanges();
+        },
+        error: () => this.alertService.addAlert('danger', 'Unexpected Error'),
+      }),
     ).subscribe();
   }
 
@@ -123,7 +123,7 @@ export class VersionQaActivityComponent implements AfterViewInit {
       .pipe(
         map(data => {
           const headerList = [...this.displayedColumns];
-          data.forEach(item => item.nbNotes = item.notes.length)
+          data.forEach(item => item.nbNotes = item.notes.length);
           return this.downloadService.generateBlob(headerList, data);
         }),
         tap({

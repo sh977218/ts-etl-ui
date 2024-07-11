@@ -3,7 +3,7 @@ import {
   MatTableModule,
 } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
-import { QAActivityNote } from '../model/version-qa';
+import { QAActivityNote } from '../model/load-version';
 import { MatButton } from '@angular/material/button';
 
 @Component({

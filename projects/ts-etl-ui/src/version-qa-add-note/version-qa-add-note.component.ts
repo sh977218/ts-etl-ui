@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { filter, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-import { QAActivityNote, VersionQA, VersionQAActivity } from '../model/version-qa';
+import { QAActivityNote, LoadVersion, VersionQAActivity } from '../model/load-version';
 import { VersionQaAddNoteModalComponent } from '../version-qa-add-note/version-qa-add-note-modal.component';
 import { UserService } from '../service/user-service';
 import { AlertService } from '../service/alert-service';
@@ -24,7 +24,7 @@ import { AlertService } from '../service/alert-service';
   templateUrl: './version-qa-add-note.html',
 })
 export class VersionQaAddNoteComponent {
-  @Input() versionQA!: VersionQA;
+  @Input() versionQA!: LoadVersion;
   @Output() actionOutput = new EventEmitter<VersionQAActivity>();
   username: string = '';
 
@@ -42,7 +42,7 @@ export class VersionQaAddNoteComponent {
     const versionQA = this.versionQA;
     this.dialog
       .open(VersionQaAddNoteModalComponent, {
-        width: '600px'
+        width: '600px',
       })
       .afterClosed()
       .pipe(
@@ -50,11 +50,11 @@ export class VersionQaAddNoteComponent {
         switchMap((activityNote: QAActivityNote) => {
           activityNote.createdBy = this.username;
           activityNote.createdTime = new Date();
-          return this.http.post<VersionQA>('/api/addActivityNote', {
+          return this.http.post<LoadVersion>('/api/addActivityNote', {
             requestId: this.versionQA.requestId,
-            activityNote
-          })
-        })
+            activityNote,
+          });
+        }),
       )
       .subscribe({
         next: updatedVersionQa => {

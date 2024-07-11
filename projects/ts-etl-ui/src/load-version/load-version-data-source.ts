@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { VersionQA, VersionQAsApiResponse } from '../model/version-qa';
+import { LoadVersion, LoadVersionsApiResponse } from '../model/load-version';
 import { SortDirection } from '@angular/material/sort';
 import { environment } from '../environments/environment';
 
@@ -15,15 +15,15 @@ export type VersionQaSearchCriteria = {
   pageSize: number
 }
 
-export class VersionQaDataSource {
+export class LoadVersionDataSource {
   constructor(private http: HttpClient) {
   }
 
   getVersionQAs(versionQaSearchCriteria: VersionQaSearchCriteria) {
-    return this.http.post<VersionQAsApiResponse>(`${environment.apiServer}/versionQAs`, versionQaSearchCriteria);
+    return this.http.post<LoadVersionsApiResponse>(`${environment.apiServer}/versionQAs`, versionQaSearchCriteria);
   }
 
   getVersionQA(requestId: string) {
-    return this.http.get<VersionQA>(`${environment.apiServer}/versionQA/${requestId}`);
+    return this.http.get<LoadVersion>(`${environment.apiServer}/versionQA/${requestId}`);
   }
 }

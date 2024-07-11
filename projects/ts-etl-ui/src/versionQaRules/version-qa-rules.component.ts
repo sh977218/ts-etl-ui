@@ -4,7 +4,7 @@ import {
   MatTableModule,
 } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
-import { LoadRule } from '../model/version-qa';
+import { LoadRule } from '../model/load-version';
 
 @Component({
   selector: 'app-version-qa-rules',
@@ -31,14 +31,14 @@ export class VersionQaRulesComponent implements AfterViewInit {
     withData: 0,
     errors: 0,
     warnings: 0,
-    infos: 0
-  },{
+    infos: 0,
+  }, {
     type: 'Validation',
     total: 0,
     withData: 0,
     errors: 0,
     warnings: 0,
-    infos: 0
+    infos: 0,
   }];
   datasource = new MatTableDataSource(this.rulesData);
 
@@ -50,7 +50,7 @@ export class VersionQaRulesComponent implements AfterViewInit {
         if (r.error) this.rulesData[index].errors++;
         if (r.warning) this.rulesData[index].warnings++;
         if (r.info) this.rulesData[index].infos++;
-      })
+      });
     }
   }
 

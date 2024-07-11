@@ -17,8 +17,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { VersionQA, VersionQAActivity, VersionQAsApiResponse } from '../model/version-qa';
-import { VersionQaDataSource, VersionQaSearchCriteria } from './version-qa-data-source';
+import { LoadVersion, VersionQAActivity, LoadVersionsApiResponse } from '../model/load-version';
+import { LoadVersionDataSource, VersionQaSearchCriteria } from './load-version-data-source';
 import { LoadingService } from '../service/loading-service';
 import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail.component';
 import { triggerExpandTableAnimation } from '../animations';
@@ -34,7 +34,7 @@ import { VersionQaAddNoteComponent } from '../version-qa-add-note/version-qa-add
 import { CODE_SYSTEM_NAMES } from '../service/constant';
 
 @Component({
-  selector: 'app-version-qa',
+  selector: 'app-load-version',
   standalone: true,
   imports: [
     NgIf,
@@ -59,11 +59,11 @@ import { CODE_SYSTEM_NAMES } from '../service/constant';
     VersionQaAcceptanceActionsComponent,
     VersionQaAddNoteComponent,
   ],
-  templateUrl: './version-qa.component.html',
+  templateUrl: './load-version.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   animations: [triggerExpandTableAnimation],
 })
-export class VersionQaComponent implements AfterViewInit {
+export class LoadVersionComponent implements AfterViewInit {
   displayedColumns: string[] = [
     'codeSystemName',
     'version',
@@ -76,11 +76,11 @@ export class VersionQaComponent implements AfterViewInit {
   ];
   searchRowColumns = this.displayedColumns.map(c => `${c}-search`);
 
-  versionQaDatabase: VersionQaDataSource | null = null;
-  data: VersionQA[] = [];
+  versionQaDatabase: LoadVersionDataSource | null = null;
+  data: LoadVersion[] = [];
 
   resultsLength = 0;
-  expandedElement: VersionQA | null = null;
+  expandedElement: LoadVersion | null = null;
 
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
@@ -111,7 +111,7 @@ export class VersionQaComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.versionQaDatabase = new VersionQaDataSource(this.http);
+    this.versionQaDatabase = new LoadVersionDataSource(this.http);
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
@@ -141,7 +141,7 @@ export class VersionQaComponent implements AfterViewInit {
           return this.versionQaDatabase!.getVersionQAs(versionQaSearchCriteria)
             .pipe(catchError(() => of(null)));
         }),
-        map((data: VersionQAsApiResponse | null) => {
+        map((data: LoadVersionsApiResponse | null) => {
           if (data === null) {
             return [];
           }
@@ -161,13 +161,13 @@ export class VersionQaComponent implements AfterViewInit {
       });
   }
 
-  action(newQAActivity: VersionQAActivity, versionQA: VersionQA) {
+  action(newQAActivity: VersionQAActivity, versionQA: LoadVersion) {
     this.http.post(`${environment.apiServer}/qaActivity`, {
       requestId: versionQA!.requestId,
       qaActivity: newQAActivity,
     })
       .pipe(
-        switchMap(() => this.http.get<VersionQA>(`${environment.apiServer}/versionQA/${versionQA.requestId}`)),
+        switchMap(() => this.http.get<LoadVersion>(`${environment.apiServer}/versionQA/${versionQA.requestId}`)),
       )
       .subscribe({
         next: (updatedVersionQa) => {

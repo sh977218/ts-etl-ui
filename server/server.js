@@ -186,11 +186,11 @@ app.post('/api/versionQAs', async (req, res) => {
   });
 });
 
-app.get('/api/versionQA/:requestId', async (req, res) => {
-  const { versionQAsCollection } = await mongoCollection();
+app.get('/api/loadVersion/:requestId', async (req, res) => {
+  const { loadVersionsCollection } = await mongoCollection();
   // I'm not sure requestID will end up being unique here... we can change later if needed
-  const versionQA = await versionQAsCollection.findOne({ requestId: +req.params.requestId });
-  res.send(versionQA);
+  const loadVersion = await loadVersionsCollection.findOne({ requestId: +req.params.requestId });
+  res.send(loadVersion);
 });
 
 app.get('/api/file/:id', (req, res) => {
@@ -209,47 +209,47 @@ app.post('/api/qaActivity', async (req, res) => {
   res.send();
 });
 
-app.post('/api/addActivityNote', async (req, res) =>  {
+app.post('/api/addActivityNote', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   const vQA = await versionQAsCollection.findOne({ requestId: req.body.requestId });
   if (!vQA.versionQaActivities.length) {
     await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
       $set: {
-        "versionQaActivities": [{
+        'versionQaActivities': [{
           createdBy: req.body.activityNote.createdBy,
           notes: [{
             createdBy: req.body.activityNote.createdBy,
             createdTime: req.body.activityNote.createdTime,
             notes: req.body.activityNote.notes,
-            hashtags: req.body.activityNote.hashtags
-          }]
+            hashtags: req.body.activityNote.hashtags,
+          }],
         }],
       },
     });
   } else {
     await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
       $push: {
-        "versionQaActivities.0.notes": {
+        'versionQaActivities.0.notes': {
           createdBy: req.body.activityNote.createdBy,
           createdTime: req.body.activityNote.createdTime,
           notes: req.body.activityNote.notes,
-          hashtags: req.body.activityNote.hashtags
+          hashtags: req.body.activityNote.hashtags,
         },
       },
     });
   }
   res.send(await versionQAsCollection.findOne({ requestId: req.body.requestId }));
-})
+});
 
-app.post('/api/editAvailableDate', async (req, res) =>  {
+app.post('/api/editAvailableDate', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $set: {
-      "versionQaActivities.0.availableDate": new Date(req.body.newDate),
+      'versionQaActivities.0.availableDate': new Date(req.body.newDate),
     },
   });
   res.send();
-})
+});
 
 app.get('/api/codeSystems', async (req, res) => {
   const { codeSystemsCollection } = await mongoCollection();

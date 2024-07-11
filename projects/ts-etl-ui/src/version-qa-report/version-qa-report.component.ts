@@ -1,9 +1,9 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { VersionQaDataSource } from '../version-qa/version-qa-data-source';
+import { LoadVersionDataSource } from '../load-version/load-version-data-source';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
-import { VersionQA } from '../model/version-qa';
+import { LoadVersion } from '../model/load-version';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../service/loading-service';
 
@@ -17,8 +17,8 @@ import { LoadingService } from '../service/loading-service';
 })
 export class VersionQaReportComponent implements AfterViewInit {
 
-  versionQaDatabase: VersionQaDataSource | null = null;
-  versionQA: VersionQA | null = null;
+  versionQaDatabase: LoadVersionDataSource | null = null;
+  versionQA: LoadVersion | null = null;
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
@@ -27,7 +27,7 @@ export class VersionQaReportComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.versionQaDatabase = new VersionQaDataSource(this.http);
+    this.versionQaDatabase = new LoadVersionDataSource(this.http);
 
     this.activatedRoute.paramMap
       .pipe(

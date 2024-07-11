@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs';
 
 import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
-import { VersionQA, VersionQAActivity } from '../model/version-qa';
+import { LoadVersion, VersionQAActivity } from '../model/load-version';
 
 @Component({
   selector: 'app-version-qa-acceptance-actions',
@@ -21,7 +21,7 @@ import { VersionQA, VersionQAActivity } from '../model/version-qa';
   templateUrl: './version-qa-acceptance-actions.component.html',
 })
 export class VersionQaAcceptanceActionsComponent {
-  @Input() versionQA!: VersionQA;
+  @Input() versionQA!: LoadVersion;
   @Output() actionOutput = new EventEmitter<VersionQAActivity>();
 
   constructor(private dialog: MatDialog) {

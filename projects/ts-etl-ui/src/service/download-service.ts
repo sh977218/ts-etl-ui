@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { LoadRequest } from '../model/load-request';
-import { VersionQAActivity } from '../model/version-qa';
+import { VersionQAActivity } from '../model/load-version';
 
 type DownloadData = LoadRequest | VersionQAActivity
 
