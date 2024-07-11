@@ -209,6 +209,38 @@ app.post('/api/qaActivity', async (req, res) => {
   res.send();
 });
 
+app.post('/api/addActivityNote', async (req, res) =>  {
+  const { versionQAsCollection } = await mongoCollection();
+  const vQA = await versionQAsCollection.findOne({ requestId: req.body.requestId });
+  if (!vQA.versionQaActivities.length) {
+    await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
+      $set: {
+        "versionQaActivities": [{
+          createdBy: req.body.activityNote.createdBy,
+          notes: [{
+            createdBy: req.body.activityNote.createdBy,
+            createdTime: req.body.activityNote.createdTime,
+            notes: req.body.activityNote.notes,
+            hashtags: req.body.activityNote.hashtags
+          }]
+        }],
+      },
+    });
+  } else {
+    await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
+      $push: {
+        "versionQaActivities.0.notes": {
+          createdBy: req.body.activityNote.createdBy,
+          createdTime: req.body.activityNote.createdTime,
+          notes: req.body.activityNote.notes,
+          hashtags: req.body.activityNote.hashtags
+        },
+      },
+    });
+  }
+  res.send(await versionQAsCollection.findOne({ requestId: req.body.requestId }));
+})
+
 app.post('/api/editAvailableDate', async (req, res) =>  {
   const { versionQAsCollection } = await mongoCollection();
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {

@@ -86,6 +86,7 @@
                 <legend>QA Acceptance</legend>
                 <app-version-qa-acceptance-actions [versionQA]="row" (actionOutput)="action($event,row)">
                 </app-version-qa-acceptance-actions>
+                <app-version-qa-add-note [versionQA]="row" class="float-right" (actionOutput)="refreshActivityTable()"></app-version-qa-add-note>
                 <app-version-qa-activity [versionQaActivities]="row.versionQaActivities" [requestId]="row.requestId"
                                          class="flex flex-grow"></app-version-qa-activity>
               </fieldset>

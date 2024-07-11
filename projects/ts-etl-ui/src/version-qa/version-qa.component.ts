@@ -30,6 +30,7 @@ import {
 } from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
 import { environment } from '../environments/environment';
+import { VersionQaAddNoteComponent } from '../version-qa-add-note/version-qa-add-note.component';
 
 @Component({
   selector: 'app-version-qa',
@@ -55,6 +56,7 @@ import { environment } from '../environments/environment';
     VersionQaActivityComponent,
     LoadSummaryComponent,
     VersionQaAcceptanceActionsComponent,
+    VersionQaAddNoteComponent,
   ],
   templateUrl: './version-qa.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -156,6 +158,10 @@ export class VersionQaComponent implements AfterViewInit {
           this.alertService.addAlert('', 'Activity added successfully.');
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
       });
+  }
+
+  refreshActivityTable() {
+    this.cd.detectChanges();
   }
 
 }
