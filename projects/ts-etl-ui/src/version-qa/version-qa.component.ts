@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -31,6 +31,7 @@ import {
 import { AlertService } from '../service/alert-service';
 import { environment } from '../environments/environment';
 import { VersionQaAddNoteComponent } from '../version-qa-add-note/version-qa-add-note.component';
+import { CODE_SYSTEM_NAMES } from '../service/constant';
 
 @Component({
   selector: 'app-version-qa',
@@ -73,6 +74,7 @@ export class VersionQaComponent implements AfterViewInit {
     'requester',
     'requestTime',
   ];
+  searchRowColumns = this.displayedColumns.map(c => `${c}-search`);
 
   versionQaDatabase: VersionQaDataSource | null = null;
   data: VersionQA[] = [];
@@ -82,6 +84,23 @@ export class VersionQaComponent implements AfterViewInit {
 
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
+
+
+  searchCriteria = new FormGroup(
+    {
+      codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      version: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      loadNumber: new FormControl<number | undefined>(undefined),
+      versionStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      loadTimeStartTime: new FormControl<Date | undefined>(undefined),
+      loadTimeEndTime: new FormControl<Date | undefined>(undefined),
+      requestId: new FormControl<number | undefined>(undefined),
+      requester: new FormControl<Date | undefined>(undefined),
+      requestStartTime: new FormControl<Date | undefined>(undefined),
+      requestEndTime: new FormControl<Date | undefined>(undefined),
+    }, { updateOn: 'submit' },
+  );
+
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
@@ -164,4 +183,5 @@ export class VersionQaComponent implements AfterViewInit {
     this.cd.detectChanges();
   }
 
+  protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
 }

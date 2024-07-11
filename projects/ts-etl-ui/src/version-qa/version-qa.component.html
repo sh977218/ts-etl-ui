@@ -1,115 +1,189 @@
-<div class="mat-elevation-z8">
-  <div class="example-table-container">
-    <table mat-table [dataSource]="data" class="example-table" multiTemplateDataRows
-           matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc">
+<form [formGroup]="searchCriteria">
+  <div class="mat-elevation-z8">
+    <div class="example-table-container">
+      <table mat-table [dataSource]="data" class="example-table" multiTemplateDataRows
+             matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc">
+        <ng-container matColumnDef="codeSystemName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Code System Name</th>
+          <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
+        </ng-container>
+        <ng-container matColumnDef="codeSystemName-search">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex flex-col m-2">
+              <select id="codeSystemNameFilterInput" class="w-20" formControlName="codeSystemName">
+                <option value="">ALL</option>
+                <option *ngFor="let CODE_SYSTEM_NAME of CODE_SYSTEM_NAMES">{{CODE_SYSTEM_NAME}}</option>
+              </select>
+            </div>
+          </th>
+        </ng-container>
 
-      <ng-container matColumnDef="requestId">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Request ID</th>
-        <td mat-cell *matCellDef="let row">
-          <a routerLink="/load-requests" [queryParams]="{requestId:row.requestId,expand:true}">{{row.requestId}} </a>
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="version">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Version
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.version}}</td>
+        </ng-container>
+        <ng-container matColumnDef="version-search">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex flex-col m-2">
+              <input id="versionFilterInput" class="w-3/4" matInput formControlName="version"
+                     placeholder="search" size="4">
+            </div>
+          </th>
+        </ng-container>
 
-      <ng-container matColumnDef="loadNumber">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Load Number</th>
-        <td mat-cell *matCellDef="let row" (click)="expandedElement = expandedElement === row ? null : row">
-          <span class="fake-link">{{row.loadNumber}}</span>
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="loadNumber">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Load Number</th>
+          <td mat-cell *matCellDef="let row" (click)="expandedElement = expandedElement === row ? null : row">
+            <span class="fake-link">{{row.loadNumber}}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="loadNumber-search">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex flex-col m-2">
+              <input id="loadNumberFilterInput" class="w-3/4" matInput formControlName="loadNumber"
+                     placeholder="search" size="4" type="number">
+            </div>
+          </th>
+        </ng-container>
 
-      <ng-container matColumnDef="codeSystemName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Code System Name</th>
-        <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
-      </ng-container>
+        <ng-container matColumnDef="versionStatus">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Request Status
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.versionStatus}}</td>
+        </ng-container>
+        <ng-container matColumnDef="versionStatus-search">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex flex-col m-2">
+              <input id="versionStatusFilterInput" class="w-3/4" matInput formControlName="versionStatus"
+                     placeholder="search" size="4">
+            </div>
+          </th>
+        </ng-container>
 
-      <ng-container matColumnDef="versionStatus">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Request Status
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.versionStatus}}</td>
-      </ng-container>
+        <ng-container matColumnDef="loadTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Load Time
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.loadTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="loadTime-search">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex flex-col m-2">
+              <input id="loadTimeStartTime" matInput class="w-30" formControlName="loadTimeStartTime" type="date"
+                     [max]="searchCriteria.get('loadTimeEndTime')?.getRawValue()">
+              <input id="loadTimeEndTime" matInput class="w-30" formControlName="loadTimeEndTime" type="date"
+                     [min]="searchCriteria.get('loadTimeStartTime')?.getRawValue()">
+            </div>
+          </th>
+        </ng-container>
 
-      <ng-container matColumnDef="version">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Version
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.version}}</td>
-      </ng-container>
+        <ng-container matColumnDef="requestId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Request ID</th>
+          <td mat-cell *matCellDef="let row">
+            <a routerLink="/load-requests" [queryParams]="{requestId:row.requestId,expand:true}">{{row.requestId}} </a>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="requestId-search">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex flex-col m-2">
+              <input id="requestIdFilterInput" class="w-3/4" matInput formControlName="requestId"
+                     placeholder="search" size="4" type="number">
+            </div>
+          </th>
+        </ng-container>
 
-      <ng-container matColumnDef="requestTime">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Request Time
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.requestTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
-      </ng-container>
+        <ng-container matColumnDef="requester">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Requester
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.requester}}</td>
+        </ng-container>
+        <ng-container matColumnDef="requester-search">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex flex-col m-2">
+              <input id="requesterFilterInput" class="w-3/4" matInput formControlName="requester"
+                     placeholder="search" size="4">
+            </div>
+          </th>
+        </ng-container>
 
-      <ng-container matColumnDef="loadTime">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Load Time
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.loadTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
-      </ng-container>
+        <ng-container matColumnDef="requestTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Request Time
+          </th>
+          <td mat-cell *matCellDef="let row">{{row.requestTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="requestTime-search">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex flex-col m-2">
+              <input id="requestStartTime" matInput class="w-30" formControlName="requestStartTime" type="date"
+                     [max]="searchCriteria.get('requestEndTime')?.getRawValue()">
+              <input id="requestEndTime" matInput class="w-30" formControlName="requestEndTime" type="date"
+                     [min]="searchCriteria.get('requestStartTime')?.getRawValue()">
+            </div>
+          </th>
+        </ng-container>
 
-      <ng-container matColumnDef="requester">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-          Requester
-        </th>
-        <td mat-cell *matCellDef="let row">{{row.requester}}</td>
-      </ng-container>
-
-      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-      <ng-container matColumnDef="expandedDetail">
-        <td class="bg-gray-100" mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
-          <div class="" [@detailExpand]="row === expandedElement ? 'expanded' : 'collapsed'"
-               *ngIf="expandedElement === row">
-            <div class="flex">
-              <div class="m-2" style="flex-grow:0.35">
-                <app-version-qa-detail [versionQA]="row" class="flex flex-grow"></app-version-qa-detail>
-              </div>
-              <div style="flex-grow:0.65">
-                <app-load-summary [loadSummary]="row.loadSummary"></app-load-summary>
-                <h1>QA Actions</h1>
-                <fieldset>
-                  <a [routerLink]="['/version-qa-report', row.requestId]">Go to QA Report</a>
-                  <span class="block">
+        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+        <ng-container matColumnDef="expandedDetail">
+          <td class="bg-gray-100" mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+            <div class="" [@detailExpand]="row === expandedElement ? 'expanded' : 'collapsed'"
+                 *ngIf="expandedElement === row">
+              <div class="flex">
+                <div class="m-2" style="flex-grow:0.35">
+                  <app-version-qa-detail [versionQA]="row" class="flex flex-grow"></app-version-qa-detail>
+                </div>
+                <div style="flex-grow:0.65">
+                  <app-load-summary [loadSummary]="row.loadSummary"></app-load-summary>
+                  <h1>QA Actions</h1>
+                  <fieldset>
+                    <a [routerLink]="['/version-qa-report', row.requestId]">Go to QA Report</a>
+                    <span class="block">
                     <a [routerLink]="['/code-system-data', row.codeSystemName]">Analyze Code System Data</a>
                   </span>
-                  <span class="block">
+                    <span class="block">
                     <!-- this won't actually work - Security -->
-                    View Source Data Files <a  href="{{row.sourceFilePath}}" target="_blank">{{row.sourceFilePath}}</a>
+                    View Source Data Files <a href="{{row.sourceFilePath}}" target="_blank">{{row.sourceFilePath}}</a>
                   </span>
+                  </fieldset>
+                </div>
+              </div>
+              <div class="flex" style="flex-grow:1">
+                <fieldset>
+                  <legend>QA Acceptance</legend>
+                  <app-version-qa-acceptance-actions [versionQA]="row" (actionOutput)="action($event,row)">
+                  </app-version-qa-acceptance-actions>
+                  <app-version-qa-add-note [versionQA]="row" class="float-right"
+                                           (actionOutput)="refreshActivityTable()"></app-version-qa-add-note>
+                  <app-version-qa-activity [versionQaActivities]="row.versionQaActivities" [requestId]="row.requestId"
+                                           class="flex flex-grow"></app-version-qa-activity>
                 </fieldset>
               </div>
             </div>
-            <div class="flex" style="flex-grow:1">
-              <fieldset>
-                <legend>QA Acceptance</legend>
-                <app-version-qa-acceptance-actions [versionQA]="row" (actionOutput)="action($event,row)">
-                </app-version-qa-acceptance-actions>
-                <app-version-qa-add-note [versionQA]="row" class="float-right" (actionOutput)="refreshActivityTable()"></app-version-qa-add-note>
-                <app-version-qa-activity [versionQaActivities]="row.versionQaActivities" [requestId]="row.requestId"
-                                         class="flex flex-grow"></app-version-qa-activity>
-              </fieldset>
-            </div>
-          </div>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-          class="example-element-row"
-          [class.example-expanded-row]="expandedElement === row"
-      >
-      </tr>
-      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-header-row *matHeaderRowDef="searchRowColumns"></tr>
 
-      <tr *matNoDataRow>
-        <td class="mat-cell" colspan="9">
-          No results found.
-        </td>
-      </tr>
-    </table>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            class="example-element-row"
+            [class.example-expanded-row]="expandedElement === row"
+        >
+        </tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+        <tr *matNoDataRow>
+          <td class="mat-cell" colspan="9">
+            No results found.
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50]" [pageSize]="10"
+                   aria-label="Select page of load requests"></mat-paginator>
   </div>
-
-  <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50]" [pageSize]="10"
-                 aria-label="Select page of load requests"></mat-paginator>
-</div>
+</form>
