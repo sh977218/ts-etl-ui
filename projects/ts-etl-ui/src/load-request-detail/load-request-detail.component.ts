@@ -7,8 +7,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import {
-  LoadVersionQaReviewModalComponent,
-} from '../load-version-qa-review-modal/load-version-qa-review-modal.component';
+  LoadVersionReviewModalComponent,
+} from '../load-version-review-modal/load-version-review-modal.component';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
@@ -64,7 +64,7 @@ const LABEL_SORT_ARRAY = [
     MatTableModule,
     MatCardModule,
     MatDivider,
-    LoadVersionQaReviewModalComponent,
+    LoadVersionReviewModalComponent,
     MatIcon,
     NgIf,
     RouterLink,

@@ -7,13 +7,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { filter, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-import { QAActivityNote, LoadVersion, VersionQAActivity } from '../model/load-version';
-import { LoadVersionQaAddNoteModalComponent } from './load-version-qa-add-note-modal.component';
+import { LoadVersionActivityNote, LoadVersion, LoadVersionActivity } from '../model/load-version';
+import { LoadVersionAddNoteModalComponent } from './load-version-add-note-modal.component';
 import { UserService } from '../service/user-service';
 import { AlertService } from '../service/alert-service';
 
 @Component({
-  selector: 'app-load-version-qa-add-note',
+  selector: 'app-load-version-add-note',
   standalone: true,
   imports: [
     NgIf,
@@ -21,11 +21,11 @@ import { AlertService } from '../service/alert-service';
     MatTableModule,
     MatButtonModule,
   ],
-  templateUrl: './load-version-qa-add-note.html',
+  templateUrl: './load-version-add-note.html',
 })
-export class LoadVersionQaAddNoteComponent {
+export class LoadVersionAddNoteComponent {
   @Input() versionQA!: LoadVersion;
-  @Output() actionOutput = new EventEmitter<VersionQAActivity>();
+  @Output() actionOutput = new EventEmitter<LoadVersionActivity>();
   username: string = '';
 
   constructor(public userService: UserService,
@@ -41,13 +41,13 @@ export class LoadVersionQaAddNoteComponent {
   openAddNote() {
     const versionQA = this.versionQA;
     this.dialog
-      .open(LoadVersionQaAddNoteModalComponent, {
+      .open(LoadVersionAddNoteModalComponent, {
         width: '600px',
       })
       .afterClosed()
       .pipe(
         filter(reason => !!reason),
-        switchMap((activityNote: QAActivityNote) => {
+        switchMap((activityNote: LoadVersionActivityNote) => {
           activityNote.createdBy = this.username;
           activityNote.createdTime = new Date();
           return this.http.post<LoadVersion>('/api/addActivityNote', {
@@ -58,7 +58,7 @@ export class LoadVersionQaAddNoteComponent {
       )
       .subscribe({
         next: updatedVersionQa => {
-          versionQA.versionQaActivities = updatedVersionQa.versionQaActivities;
+          versionQA.loadVersionActivities = updatedVersionQa.loadVersionActivities;
           this.alertService.addAlert('', 'Activity added successfully.');
           this.actionOutput.emit();
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),

@@ -7,17 +7,17 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { triggerExpandTableAnimation } from '../animations';
 import {
-  LoadVersionQaReviewModalComponent,
-} from '../load-version-qa-review-modal/load-version-qa-review-modal.component';
+  LoadVersionReviewModalComponent,
+} from '../load-version-review-modal/load-version-review-modal.component';
 import {
-  LoadVersionQaSourceDataFileModalComponent,
-} from '../load-version-qa-source-data-file-modal/load-version-qa-source-data-file-modal.component';
-import type { LoadVersion, VersionQAActivity } from '../model/load-version';
-import { LoadVersionQaNoteComponent } from '../load-version-qa-note/load-version-qa-note.component';
+  LoadVersionSourceDataFileModalComponent,
+} from '../load-version-source-data-file-modal/load-version-source-data-file-modal.component';
+import type { LoadVersion, LoadVersionActivity } from '../model/load-version';
+import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 
 export interface RowElement {
   key: string;
-  value: string | number | Date | VersionQAActivity[];
+  value: string | number | Date | LoadVersionActivity[];
   type?: string;
 }
 
@@ -34,8 +34,8 @@ export interface RowElement {
     MatDialogModule,
     MatButtonModule,
     MatTableModule,
-    LoadVersionQaReviewModalComponent,
-    LoadVersionQaNoteComponent,
+    LoadVersionReviewModalComponent,
+    LoadVersionNoteComponent,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './load-version-detail.component.html',
@@ -57,7 +57,7 @@ export class LoadVersionDetailComponent implements OnInit {
     this.dataSource.push({ key: 'Status:', value: this.versionQA.versionStatus });
     this.dataSource.push({
       key: 'TS Available Date:',
-      value: this.versionQA.versionQaActivities[0]?.availableDate,
+      value: this.versionQA.loadVersionActivities[0]?.availableDate,
       type: 'date',
     });
     this.dataSource.push({ key: '', value: '' });
@@ -78,7 +78,7 @@ export class LoadVersionDetailComponent implements OnInit {
   }
 
   openSourceDataFileModal() {
-    this.dialog.open(LoadVersionQaSourceDataFileModalComponent, {
+    this.dialog.open(LoadVersionSourceDataFileModalComponent, {
       width: '600px',
       data: this.versionQA.version,
     })

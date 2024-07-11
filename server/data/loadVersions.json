@@ -11,17 +11,18 @@
       "effectiveDate": "2020-1-1",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
-      "versionQaActivities": [
+      "loadVersionActivities": [
         {
           "createdBy": "peterhuangnih",
           "activity": "Accept",
           "availableDate": "2024-07-03T04:00:00.000Z",
           "notes": [
             {
-            "notes": "Testing the Notes feature",
-            "createdTime": "2024-07-02T11:07:23.546Z",
-            "createdBy": "peterhuangnih"
-            }]
+              "notes": "Testing the Notes feature",
+              "createdTime": "2024-07-02T11:07:23.546Z",
+              "createdBy": "peterhuangnih"
+            }
+          ]
         }
       ],
       "loadSummary": {
@@ -33,7 +34,9 @@
             "duration": 402000,
             "errors": [],
             "warnings": [],
-            "infos": ["info on comp 1"]
+            "infos": [
+              "info on comp 1"
+            ]
           },
           {
             "componentName": "inject",
@@ -42,7 +45,10 @@
             "duration": 802000,
             "errors": [],
             "warnings": [],
-            "infos": ["info on comp 2", "second info on comp 2"]
+            "infos": [
+              "info on comp 2",
+              "second info on comp 2"
+            ]
           },
           {
             "componentName": "assert",
@@ -54,7 +60,7 @@
             "infos": []
           }
         ],
-        "qaRules":  [
+        "qaRules": [
           {
             "type": "Verification",
             "info": "Verified Rule 1"
@@ -84,7 +90,7 @@
       "effectiveDate": "2020-1-1",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
-      "versionQaActivities": [
+      "loadVersionActivities": [
       ],
       "loadSummary": {}
     },
@@ -99,7 +105,7 @@
       "effectiveDate": "2020-1-1",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2023-12-11T07:53:17+05:00",
-      "versionQaActivities": [
+      "loadVersionActivities": [
       ],
       "loadSummary": {}
     },
@@ -114,7 +120,7 @@
       "effectiveDate": "2020-1-1",
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2024-12-11T07:53:17+05:00",
-      "versionQaActivities": [
+      "loadVersionActivities": [
       ],
       "loadSummary": {}
     }

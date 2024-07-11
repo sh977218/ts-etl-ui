@@ -45,7 +45,7 @@
               {{element.availableDate | date:'yyyy/MM/dd'}}
             </span>
             <button mat-icon-button color="primary"
-                    *ngIf="versionQaActivities()[0].activity === 'Accept' && index === 0"
+                    *ngIf="loadVersionActivities()[0].activity === 'Accept' && index === 0"
                     (click)="$event.stopPropagation(); editDateMode = index" class="transform scale-25">
               <mat-icon fontIcon="edit"></mat-icon>
             </button>
@@ -70,7 +70,7 @@
         <td class="bg-gray-100" mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
           <div class="example-element-detail" [@detailExpand]="row === expandedElement ? 'expanded' : 'collapsed'">
             <div class="example-element-description" *ngIf="expandedElement === row">
-              <app-load-version-qa-note [versionQaNotes]="row.notes"></app-load-version-qa-note>
+              <app-load-version-note [versionQaNotes]="row.notes"></app-load-version-note>
             </div>
           </div>
         </td>

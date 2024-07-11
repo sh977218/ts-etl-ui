@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   input,
@@ -12,21 +13,21 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
-
-import { VersionQAActivity } from '../model/load-version';
-import { LoadVersionQaNoteComponent } from '../load-version-qa-note/load-version-qa-note.component';
-import { triggerExpandTableAnimation } from '../animations';
 import { DatePipe, NgIf } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { map, of, switchMap, tap } from 'rxjs';
-import { AlertService } from '../service/alert-service';
 import { saveAs } from 'file-saver';
-import { DownloadService } from '../service/download-service';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+
 import { environment } from '../environments/environment';
+import { triggerExpandTableAnimation } from '../animations';
+import { LoadVersionActivity } from '../model/load-version';
+import { AlertService } from '../service/alert-service';
+import { DownloadService } from '../service/download-service';
+import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 
 @Component({
   selector: 'app-load-version-activity',
@@ -39,7 +40,7 @@ import { environment } from '../environments/environment';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    LoadVersionQaNoteComponent,
+    LoadVersionNoteComponent,
     NgIf,
     MatIcon,
     DatePipe,
@@ -54,18 +55,18 @@ import { environment } from '../environments/environment';
 })
 export class LoadVersionActivityComponent implements AfterViewInit {
   requestId = input.required<number>();
-  versionQaActivities = input.required<VersionQAActivity[]>();
+  loadVersionActivities = input.required<LoadVersionActivity[]>();
   editDateMode = -1;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) activitiesTable!: MatTable<VersionQAActivity>;
+  @ViewChild(MatTable) activitiesTable!: MatTable<LoadVersionActivity>;
 
   displayedColumns: string[] = ['id', 'activity', 'availableDate', 'reason', 'nbNotes'];
-  expandedElement: VersionQAActivity | null = null;
+  expandedElement: LoadVersionActivity | null = null;
 
   dataSource = computed(() => {
-    return new MatTableDataSource<VersionQAActivity>(this.versionQaActivities().reverse());
+    return new MatTableDataSource<LoadVersionActivity>(this.loadVersionActivities().reverse());
   });
 
   editAvailableDateForm = new FormGroup(
@@ -99,7 +100,7 @@ export class LoadVersionActivityComponent implements AfterViewInit {
         next: () => {
           this.alertService.addAlert('info', `Available Date Updated`);
           if (this.editAvailableDateForm.get('availableDate')?.value) {
-            this.versionQaActivities()[0]!.availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
+            this.loadVersionActivities()[0]!.availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
           }
           this.activitiesTable.renderRows();
           this.cd.detectChanges();
@@ -119,7 +120,7 @@ export class LoadVersionActivityComponent implements AfterViewInit {
   }
 
   downloadQaActivities() {
-    of(this.versionQaActivities())
+    of(this.loadVersionActivities())
       .pipe(
         map(data => {
           const headerList = [...this.displayedColumns];

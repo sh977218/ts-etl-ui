@@ -12,9 +12,9 @@ import { LoadingService } from '../service/loading-service';
   imports: [
     NgIf,
   ],
-  templateUrl: './load-version-qa-report.component.html',
+  templateUrl: './load-version-report.component.html',
 })
-export class LoadVersionQaReportComponent implements AfterViewInit {
+export class LoadVersionReportComponent implements AfterViewInit {
 
   versionQaDatabase: LoadVersionDataSource | null = null;
   versionQA: LoadVersion | null = null;

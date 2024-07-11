@@ -17,20 +17,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { LoadVersion, VersionQAActivity, LoadVersionsApiResponse } from '../model/load-version';
+import { LoadVersion, LoadVersionActivity, LoadVersionsApiResponse } from '../model/load-version';
 import { LoadVersionDataSource, VersionQaSearchCriteria } from './load-version-data-source';
 import { LoadingService } from '../service/loading-service';
 import { triggerExpandTableAnimation } from '../animations';
 import { LoadVersionDetailComponent } from '../load-version-detail/load-version-detail.component';
-import { LoadVersionActivityComponent } from '../load-version-qa-activity/load-version-activity.component';
+import { LoadVersionActivityComponent } from '../load-version-activity/load-version-activity.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
 import {
-  LoadVersionQaAcceptanceActionsComponent,
-} from '../load-version-qa-acceptance-actions/load-version-qa-acceptance-actions.component';
+  LoadVersionAcceptanceActionsComponent,
+} from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
 import { environment } from '../environments/environment';
-import { LoadVersionQaAddNoteComponent } from '../load-version-qa-add-note/load-version-qa-add-note.component';
+import { LoadVersionAddNoteComponent } from '../load-version-add-note/load-version-add-note.component';
 import { CODE_SYSTEM_NAMES } from '../service/constant';
 
 @Component({
@@ -55,8 +55,8 @@ import { CODE_SYSTEM_NAMES } from '../service/constant';
     LoadVersionDetailComponent,
     LoadVersionActivityComponent,
     LoadSummaryComponent,
-    LoadVersionQaAcceptanceActionsComponent,
-    LoadVersionQaAddNoteComponent,
+    LoadVersionAcceptanceActionsComponent,
+    LoadVersionAddNoteComponent,
   ],
   templateUrl: './load-version.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -160,7 +160,7 @@ export class LoadVersionComponent implements AfterViewInit {
       });
   }
 
-  action(newQAActivity: VersionQAActivity, versionQA: LoadVersion) {
+  action(newQAActivity: LoadVersionActivity, versionQA: LoadVersion) {
     this.http.post(`${environment.apiServer}/qaActivity`, {
       requestId: versionQA!.requestId,
       qaActivity: newQAActivity,
@@ -170,7 +170,7 @@ export class LoadVersionComponent implements AfterViewInit {
       )
       .subscribe({
         next: (updatedVersionQa) => {
-          versionQA.versionQaActivities = updatedVersionQa.versionQaActivities;
+          versionQA.loadVersionActivities = updatedVersionQa.loadVersionActivities;
           versionQA.versionStatus = updatedVersionQa.versionStatus;
           this.cd.detectChanges();
           this.alertService.addAlert('', 'Activity added successfully.');

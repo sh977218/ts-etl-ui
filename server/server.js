@@ -203,7 +203,7 @@ app.post('/api/qaActivity', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
-      versionQaActivities: req.body.qaActivity,
+      loadVersionActivities: req.body.qaActivity,
     },
   });
   res.send();
@@ -212,10 +212,10 @@ app.post('/api/qaActivity', async (req, res) => {
 app.post('/api/addActivityNote', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   const vQA = await versionQAsCollection.findOne({ requestId: req.body.requestId });
-  if (!vQA.versionQaActivities.length) {
+  if (!vQA.loadVersionActivities.length) {
     await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
       $set: {
-        'versionQaActivities': [{
+        'loadVersionActivities': [{
           createdBy: req.body.activityNote.createdBy,
           notes: [{
             createdBy: req.body.activityNote.createdBy,
@@ -229,7 +229,7 @@ app.post('/api/addActivityNote', async (req, res) => {
   } else {
     await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
       $push: {
-        'versionQaActivities.0.notes': {
+        'loadVersionActivities.0.notes': {
           createdBy: req.body.activityNote.createdBy,
           createdTime: req.body.activityNote.createdTime,
           notes: req.body.activityNote.notes,
@@ -245,7 +245,7 @@ app.post('/api/editAvailableDate', async (req, res) => {
   const { versionQAsCollection } = await mongoCollection();
   await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
     $set: {
-      'versionQaActivities.0.availableDate': new Date(req.body.newDate),
+      'loadVersionActivities.0.availableDate': new Date(req.body.newDate),
     },
   });
   res.send();

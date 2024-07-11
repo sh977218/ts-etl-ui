@@ -12,9 +12,9 @@ import { environment } from '../environments/environment';
     MatDialogModule,
     MatButtonModule,
   ],
-  templateUrl: './load-version-qa-source-data-file-modal.component.html',
+  templateUrl: './load-version-source-data-file-modal.component.html',
 })
-export class LoadVersionQaSourceDataFileModalComponent {
+export class LoadVersionSourceDataFileModalComponent {
   fileContent;
 
   constructor(@Inject(MAT_DIALOG_DATA) public fileId: string,

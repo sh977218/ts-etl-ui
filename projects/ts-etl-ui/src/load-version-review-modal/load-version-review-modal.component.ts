@@ -29,9 +29,9 @@ import { UserService } from '../service/user-service';
     ReactiveFormsModule,
     NgForOf,
   ],
-  templateUrl: './load-version-qa-review-modal.component.html',
+  templateUrl: './load-version-review-modal.component.html',
 })
-export class LoadVersionQaReviewModalComponent {
+export class LoadVersionReviewModalComponent {
   dataSource: { tag: string };
   reviewForm = new FormGroup(
     {

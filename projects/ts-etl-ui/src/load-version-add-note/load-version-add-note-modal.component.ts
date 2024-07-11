@@ -28,9 +28,9 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
     ReactiveFormsModule,
     NgForOf,
   ],
-  templateUrl: './load-version-qa-add-note-modal.component.html',
+  templateUrl: './load-version-add-note-modal.component.html',
 })
-export class LoadVersionQaAddNoteModalComponent {
+export class LoadVersionAddNoteModalComponent {
   addNoteForm = new FormGroup(
     {
       hashtags: new FormControl<string>(''),

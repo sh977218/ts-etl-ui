@@ -26,16 +26,16 @@ export type LoadSummary = {
   qaRules: LoadRule[];
 }
 
-export type VersionQAActivity = {
+export type LoadVersionActivity = {
   id?: string;
   activity: string
   updatedTime: Date
   availableDate: Date,
   nbNotes?: number;
-  notes: QAActivityNote[]
+  notes: LoadVersionActivityNote[]
 }
 
-export type QAActivityNote = {
+export type LoadVersionActivityNote = {
   createdBy: string,
   createdTime: Date,
   notes: string,
@@ -54,7 +54,7 @@ export type LoadVersion = {
   requester: string;
   loadTime: Date;
   duration: string;
-  versionQaActivities: VersionQAActivity[];
+  loadVersionActivities: LoadVersionActivity[];
   obsoleteId: string;
   versionNumber: string;
   language: string;
