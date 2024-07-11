@@ -134,13 +134,13 @@
                  *ngIf="expandedElement === row">
               <div class="flex">
                 <div class="m-2" style="flex-grow:0.35">
-                  <app-version-qa-detail [versionQA]="row" class="flex flex-grow"></app-version-qa-detail>
+                  <app-load-version-detail [versionQA]="row" class="flex flex-grow"></app-load-version-detail>
                 </div>
                 <div style="flex-grow:0.65">
                   <app-load-summary [loadSummary]="row.loadSummary"></app-load-summary>
                   <h1>QA Actions</h1>
                   <fieldset>
-                    <a [routerLink]="['/version-qa-report', row.requestId]">Go to QA Report</a>
+                    <a [routerLink]="['/load-version-qa-report', row.requestId]">Go to QA Report</a>
                     <span class="block">
                     <a [routerLink]="['/code-system-data', row.codeSystemName]">Analyze Code System Data</a>
                   </span>
@@ -154,12 +154,12 @@
               <div class="flex" style="flex-grow:1">
                 <fieldset>
                   <legend>QA Acceptance</legend>
-                  <app-version-qa-acceptance-actions [versionQA]="row" (actionOutput)="action($event,row)">
-                  </app-version-qa-acceptance-actions>
-                  <app-version-qa-add-note [versionQA]="row" class="float-right"
-                                           (actionOutput)="refreshActivityTable()"></app-version-qa-add-note>
-                  <app-version-qa-activity [versionQaActivities]="row.versionQaActivities" [requestId]="row.requestId"
-                                           class="flex flex-grow"></app-version-qa-activity>
+                  <app-load-version-acceptance-actions [versionQA]="row" (actionOutput)="action($event,row)">
+                  </app-load-version-acceptance-actions>
+                  <app-load-version-qa-add-note [versionQA]="row" class="float-right"
+                                                (actionOutput)="refreshActivityTable()"></app-load-version-qa-add-note>
+                  <app-load-version-activity [versionQaActivities]="row.versionQaActivities" [requestId]="row.requestId"
+                                             class="flex flex-grow"></app-load-version-activity>
                 </fieldset>
               </div>
             </div>

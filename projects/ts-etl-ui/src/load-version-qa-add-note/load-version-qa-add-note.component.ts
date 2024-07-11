@@ -8,12 +8,12 @@ import { filter, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { QAActivityNote, LoadVersion, VersionQAActivity } from '../model/load-version';
-import { VersionQaAddNoteModalComponent } from '../version-qa-add-note/version-qa-add-note-modal.component';
+import { LoadVersionQaAddNoteModalComponent } from './load-version-qa-add-note-modal.component';
 import { UserService } from '../service/user-service';
 import { AlertService } from '../service/alert-service';
 
 @Component({
-  selector: 'app-version-qa-add-note',
+  selector: 'app-load-version-qa-add-note',
   standalone: true,
   imports: [
     NgIf,
@@ -21,9 +21,9 @@ import { AlertService } from '../service/alert-service';
     MatTableModule,
     MatButtonModule,
   ],
-  templateUrl: './version-qa-add-note.html',
+  templateUrl: './load-version-qa-add-note.html',
 })
-export class VersionQaAddNoteComponent {
+export class LoadVersionQaAddNoteComponent {
   @Input() versionQA!: LoadVersion;
   @Output() actionOutput = new EventEmitter<VersionQAActivity>();
   username: string = '';
@@ -41,7 +41,7 @@ export class VersionQaAddNoteComponent {
   openAddNote() {
     const versionQA = this.versionQA;
     this.dialog
-      .open(VersionQaAddNoteModalComponent, {
+      .open(LoadVersionQaAddNoteModalComponent, {
         width: '600px',
       })
       .afterClosed()

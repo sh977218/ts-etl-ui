@@ -8,14 +8,13 @@ import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../service/loading-service';
 
 @Component({
-  selector: 'app-version-qa-report',
   standalone: true,
   imports: [
     NgIf,
   ],
-  templateUrl: './version-qa-report.component.html',
+  templateUrl: './load-version-qa-report.component.html',
 })
-export class VersionQaReportComponent implements AfterViewInit {
+export class LoadVersionQaReportComponent implements AfterViewInit {
 
   versionQaDatabase: LoadVersionDataSource | null = null;
   versionQA: LoadVersion | null = null;

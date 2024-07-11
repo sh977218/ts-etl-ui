@@ -7,15 +7,15 @@ import { MatSortModule } from '@angular/material/sort';
 import { LoadRule } from '../model/load-version';
 
 @Component({
-  selector: 'app-version-qa-rules',
+  selector: 'app-load-version-qa-rules',
   standalone: true,
   imports: [
     MatSortModule,
     MatTableModule,
   ],
-  templateUrl: './version-qa-rules.component.html',
+  templateUrl: './load-version-qa-rules.component.html',
 })
-export class VersionQaRulesComponent implements AfterViewInit {
+export class LoadVersionQaRulesComponent implements AfterViewInit {
   @Input() qaRules!: LoadRule[];
   rulesColumns = ['type', 'total', 'withData', 'error', 'warning', 'info'];
   rulesData: {

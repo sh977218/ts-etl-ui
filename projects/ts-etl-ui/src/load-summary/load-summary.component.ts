@@ -5,7 +5,7 @@ import {
 import { MatSortModule } from '@angular/material/sort';
 import { LoadSummary } from '../model/load-version';
 import { DurationPipe } from '../service/app.pipe';
-import { VersionQaRulesComponent } from '../versionQaRules/version-qa-rules.component';
+import { LoadVersionQaRulesComponent } from '../load-version-qa-rules/load-version-qa-rules.component';
 
 @Component({
   selector: 'app-load-summary',
@@ -14,7 +14,7 @@ import { VersionQaRulesComponent } from '../versionQaRules/version-qa-rules.comp
     MatSortModule,
     MatTableModule,
     DurationPipe,
-    VersionQaRulesComponent,
+    LoadVersionQaRulesComponent,
   ],
   templateUrl: './load-summary.component.html',
   providers: [DurationPipe],

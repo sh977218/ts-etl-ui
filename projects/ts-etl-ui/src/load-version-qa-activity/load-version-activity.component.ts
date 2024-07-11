@@ -14,7 +14,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 
 import { VersionQAActivity } from '../model/load-version';
-import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.component';
+import { LoadVersionQaNoteComponent } from '../load-version-qa-note/load-version-qa-note.component';
 import { triggerExpandTableAnimation } from '../animations';
 import { DatePipe, NgIf } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
@@ -29,7 +29,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 @Component({
-  selector: 'app-version-qa-activity',
+  selector: 'app-load-version-activity',
   standalone: true,
   imports: [
     MatButtonModule,
@@ -39,20 +39,20 @@ import { environment } from '../environments/environment';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    VersionQaNoteComponent,
+    LoadVersionQaNoteComponent,
     NgIf,
     MatIcon,
     DatePipe,
     FormsModule,
     ReactiveFormsModule,
   ],
-  templateUrl: './version-qa-activity.component.html',
-  styleUrl: './version-qa-activity.component.scss',
+  templateUrl: './load-version-activity.component.html',
+  styleUrl: './load-version-activity.component.scss',
   animations: [triggerExpandTableAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideNativeDateAdapter()],
 })
-export class VersionQaActivityComponent implements AfterViewInit {
+export class LoadVersionActivityComponent implements AfterViewInit {
   requestId = input.required<number>();
   versionQaActivities = input.required<VersionQAActivity[]>();
   editDateMode = -1;

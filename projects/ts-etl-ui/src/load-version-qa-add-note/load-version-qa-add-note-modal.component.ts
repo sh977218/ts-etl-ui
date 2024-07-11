@@ -11,7 +11,6 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 
 
 @Component({
-  selector: 'app-version-qa-review-modal',
   standalone: true,
   providers: [provideNativeDateAdapter()],
   imports: [
@@ -29,9 +28,9 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
     ReactiveFormsModule,
     NgForOf,
   ],
-  templateUrl: './version-qa-add-note-modal.component.html',
+  templateUrl: './load-version-qa-add-note-modal.component.html',
 })
-export class VersionQaAddNoteModalComponent {
+export class LoadVersionQaAddNoteModalComponent {
   addNoteForm = new FormGroup(
     {
       hashtags: new FormControl<string>(''),

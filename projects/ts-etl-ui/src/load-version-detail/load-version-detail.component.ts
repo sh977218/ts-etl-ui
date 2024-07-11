@@ -3,15 +3,17 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { triggerExpandTableAnimation } from '../animations';
-import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
 import {
-  VersionQaSourceDataFileModalComponent,
-} from '../version-qa-source-data-file-modal/version-qa-source-data-file-modal.component';
+  LoadVersionQaReviewModalComponent,
+} from '../load-version-qa-review-modal/load-version-qa-review-modal.component';
+import {
+  LoadVersionQaSourceDataFileModalComponent,
+} from '../load-version-qa-source-data-file-modal/load-version-qa-source-data-file-modal.component';
 import type { LoadVersion, VersionQAActivity } from '../model/load-version';
-import { VersionQaNoteComponent } from '../version-qa-note/version-qa-note.component';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { LoadVersionQaNoteComponent } from '../load-version-qa-note/load-version-qa-note.component';
 
 export interface RowElement {
   key: string;
@@ -20,7 +22,7 @@ export interface RowElement {
 }
 
 @Component({
-  selector: 'app-version-qa-detail',
+  selector: 'app-load-version-detail',
   standalone: true,
   animations: [triggerExpandTableAnimation],
   imports: [
@@ -32,13 +34,13 @@ export interface RowElement {
     MatDialogModule,
     MatButtonModule,
     MatTableModule,
-    VersionQaReviewModalComponent,
-    VersionQaNoteComponent,
+    LoadVersionQaReviewModalComponent,
+    LoadVersionQaNoteComponent,
   ],
   providers: [provideNativeDateAdapter()],
-  templateUrl: './version-qa-detail.component.html',
+  templateUrl: './load-version-detail.component.html',
 })
-export class VersionQaDetailComponent implements OnInit {
+export class LoadVersionDetailComponent implements OnInit {
   @Input() versionQA!: LoadVersion;
 
   displayedColumns: string[] = ['key', 'value'];
@@ -76,7 +78,7 @@ export class VersionQaDetailComponent implements OnInit {
   }
 
   openSourceDataFileModal() {
-    this.dialog.open(VersionQaSourceDataFileModalComponent, {
+    this.dialog.open(LoadVersionQaSourceDataFileModalComponent, {
       width: '600px',
       data: this.versionQA.version,
     })

@@ -6,11 +6,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs';
 
-import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
+import {
+  LoadVersionQaReviewModalComponent,
+} from '../load-version-qa-review-modal/load-version-qa-review-modal.component';
 import { LoadVersion, VersionQAActivity } from '../model/load-version';
 
 @Component({
-  selector: 'app-version-qa-acceptance-actions',
+  selector: 'app-load-version-acceptance-actions',
   standalone: true,
   imports: [
     NgIf,
@@ -18,9 +20,9 @@ import { LoadVersion, VersionQAActivity } from '../model/load-version';
     MatTableModule,
     MatButtonModule,
   ],
-  templateUrl: './version-qa-acceptance-actions.component.html',
+  templateUrl: './load-version-qa-acceptance-actions.component.html',
 })
-export class VersionQaAcceptanceActionsComponent {
+export class LoadVersionQaAcceptanceActionsComponent {
   @Input() versionQA!: LoadVersion;
   @Output() actionOutput = new EventEmitter<VersionQAActivity>();
 
@@ -29,7 +31,7 @@ export class VersionQaAcceptanceActionsComponent {
 
   action(action: 'Accept' | 'Reject') {
     this.dialog
-      .open(VersionQaReviewModalComponent, {
+      .open(LoadVersionQaReviewModalComponent, {
         width: '600px',
         data: { tag: action },
       })
