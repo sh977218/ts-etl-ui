@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, model } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { filter, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-import { LoadVersionActivityNote, LoadVersion, LoadVersionActivity } from '../model/load-version';
+import { LoadVersionActivityNote, LoadVersion } from '../model/load-version';
 import { LoadVersionAddNoteModalComponent } from './load-version-add-note-modal.component';
 import { UserService } from '../service/user-service';
 import { AlertService } from '../service/alert-service';
@@ -24,8 +24,8 @@ import { AlertService } from '../service/alert-service';
   templateUrl: './load-version-add-note.html',
 })
 export class LoadVersionAddNoteComponent {
-  @Input() loadVersion!: LoadVersion;
-  @Output() actionOutput = new EventEmitter<LoadVersionActivity>();
+  loadVersion = model.required<LoadVersion>();
+  requestId = computed(() => this.loadVersion().requestId);
   username: string = '';
 
   constructor(public userService: UserService,
@@ -39,7 +39,6 @@ export class LoadVersionAddNoteComponent {
   }
 
   openAddNote() {
-    const _loadVersion = this.loadVersion;
     this.dialog
       .open(LoadVersionAddNoteModalComponent, {
         width: '600px',
@@ -51,16 +50,18 @@ export class LoadVersionAddNoteComponent {
           activityNote.createdBy = this.username;
           activityNote.createdTime = new Date();
           return this.http.post<LoadVersion>('/api/addActivityNote', {
-            requestId: this.loadVersion.requestId,
+            requestId: this.requestId(),
             activityNote,
           });
         }),
       )
       .subscribe({
         next: updatedLoadVersion => {
-          _loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
+          this.loadVersion.update((loadVersion) => {
+            loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
+            return loadVersion;
+          });
           this.alertService.addAlert('', 'Activity added successfully.');
-          this.actionOutput.emit();
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
       });
   }

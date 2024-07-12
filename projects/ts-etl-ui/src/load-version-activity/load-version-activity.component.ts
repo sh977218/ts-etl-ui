@@ -24,7 +24,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../environments/environment';
 import { triggerExpandTableAnimation } from '../animations';
-import { LoadVersionActivity } from '../model/load-version';
+import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 import { AlertService } from '../service/alert-service';
 import { DownloadService } from '../service/download-service';
 import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
@@ -54,8 +54,10 @@ import { LoadVersionNoteComponent } from '../load-version-note/load-version-note
   providers: [provideNativeDateAdapter()],
 })
 export class LoadVersionActivityComponent implements AfterViewInit {
-  requestId = input.required<number>();
-  loadVersionActivities = input.required<LoadVersionActivity[]>();
+  loadVersion = input.required<LoadVersion>();
+
+  requestId = computed(() => this.loadVersion().requestId);
+  loadVersionActivities = computed(() => this.loadVersion().loadVersionActivities);
   editDateMode = -1;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -63,7 +65,6 @@ export class LoadVersionActivityComponent implements AfterViewInit {
   @ViewChild(MatTable) activitiesTable!: MatTable<LoadVersionActivity>;
 
   displayedColumns: string[] = ['id', 'activity', 'availableDate', 'reason', 'nbNotes'];
-  expandedElement: LoadVersionActivity | null = null;
 
   dataSource = computed(() => {
     return new MatTableDataSource<LoadVersionActivity>(this.loadVersionActivities().reverse());

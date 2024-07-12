@@ -17,7 +17,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { LoadVersion, LoadVersionActivity, LoadVersionsApiResponse } from '../model/load-version';
+import {
+  LoadVersion,
+  LoadVersionsApiResponse,
+} from '../model/load-version';
 import { LoadVersionDataSource, LoadVersionSearchCriteria } from './load-version-data-source';
 import { LoadingService } from '../service/loading-service';
 import { triggerExpandTableAnimation } from '../animations';
@@ -29,9 +32,9 @@ import {
   LoadVersionAcceptanceActionsComponent,
 } from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
-import { environment } from '../environments/environment';
 import { LoadVersionAddNoteComponent } from '../load-version-add-note/load-version-add-note.component';
 import { CODE_SYSTEM_NAMES } from '../service/constant';
+import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 
 @Component({
   standalone: true,
@@ -57,6 +60,7 @@ import { CODE_SYSTEM_NAMES } from '../service/constant';
     LoadSummaryComponent,
     LoadVersionAcceptanceActionsComponent,
     LoadVersionAddNoteComponent,
+    LoadVersionNoteComponent,
   ],
   templateUrl: './load-version.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -158,28 +162,6 @@ export class LoadVersionComponent implements AfterViewInit {
         },
         error: () => this.loadingService.hideLoading(),
       });
-  }
-
-  action(newLoadVersionActivity: LoadVersionActivity, loadVersion: LoadVersion) {
-    this.http.post(`${environment.apiServer}/loadVersionActivity`, {
-      requestId: loadVersion!.requestId,
-      loadVersionActivity: newLoadVersionActivity,
-    })
-      .pipe(
-        switchMap(() => this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${loadVersion.requestId}`)),
-      )
-      .subscribe({
-        next: (updatedLoadVersion) => {
-          loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
-          loadVersion.versionStatus = updatedLoadVersion.versionStatus;
-          this.cd.detectChanges();
-          this.alertService.addAlert('', 'Activity added successfully.');
-        }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
-      });
-  }
-
-  refreshActivityTable() {
-    this.cd.detectChanges();
   }
 
   protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;

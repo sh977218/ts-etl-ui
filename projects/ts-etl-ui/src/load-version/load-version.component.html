@@ -151,18 +151,16 @@
                   </fieldset>
                 </div>
               </div>
-              <div class="flex" style="flex-grow:1">
+              <div class="flex grow">
                 <fieldset>
                   <legend>QA Acceptance</legend>
                   <div class="flex flex-col">
                     <div class="flex justify-between">
-                      <app-load-version-acceptance-actions [loadVersion]="row" (actionOutput)="action($event,row)">
-                      </app-load-version-acceptance-actions>
-                      <app-load-version-add-note [loadVersion]="row"
-                                                 (actionOutput)="refreshActivityTable()"></app-load-version-add-note>
+                      <app-load-version-acceptance-actions [loadVersion]="row"></app-load-version-acceptance-actions>
+                      <app-load-version-add-note [loadVersion]="row"></app-load-version-add-note>
                     </div>
-                    <app-load-version-activity [loadVersionActivities]="row.loadVersionActivities"
-                                               [requestId]="row.requestId"></app-load-version-activity>
+                    <app-load-version-activity [loadVersion]="row"></app-load-version-activity>
+                    <app-load-version-note [loadVersion]="row"></app-load-version-note>
                   </div>
                 </fieldset>
               </div>
