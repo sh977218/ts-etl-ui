@@ -156,7 +156,7 @@
                   <legend>QA Acceptance</legend>
                   <app-load-version-acceptance-actions [loadVersion]="row" (actionOutput)="action($event,row)">
                   </app-load-version-acceptance-actions>
-                  <app-load-version-add-note [loadVersion]="row" class="float-right"
+                  <app-load-version-add-note [loadVersion]="row" style="display: flex; justify-content: flex-end"
                                              (actionOutput)="refreshActivityTable()"></app-load-version-add-note>
                   <app-load-version-activity [loadVersionActivities]="row.loadVersionActivities"
                                              [requestId]="row.requestId"

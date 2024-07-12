@@ -201,10 +201,20 @@ app.get('/api/file/:id', (req, res) => {
 
 app.post('/api/loadVersionActivity', async (req, res) => {
   const { loadVersionsCollection } = await mongoCollection();
+  const vQA = await loadVersionsCollection.findOne({ requestId: req.body.requestId });
+  let versionStatus = { vQA };
+  if (req.body.loadVersionActivity.activity === 'Accept') {
+    versionStatus = 'Accepted';
+  } else if (req.body.loadVersionActivity.activity === 'Reject') {
+    versionStatus = 'Rejected';
+  } else if (req.body.loadVersionActivity.activity === 'Reset') {
+    versionStatus = 'Pending QA';
+  }
   await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       loadVersionActivities: req.body.loadVersionActivity,
     },
+    $set: {versionStatus: versionStatus}
   });
   res.send();
 });
@@ -287,10 +297,10 @@ app.use((req, res) => {
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
-  if (RESET_DB) {
+  // if (RESET_DB) {
     resetMongoCollection()
       .then(() => console.log('Reset DB successfully from server.js'))
       .catch(() => console.log('Reset DB failed from server.js'))
       .finally(() => console.log('Reset DB final callback from server.js'));
-  }
+  // }
 });
