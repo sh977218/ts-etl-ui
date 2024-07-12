@@ -12,7 +12,6 @@ import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Va
 import { UserService } from '../service/user-service';
 
 @Component({
-  selector: 'app-version-qa-review-modal',
   standalone: true,
   providers: [provideNativeDateAdapter()],
   imports: [
@@ -30,9 +29,9 @@ import { UserService } from '../service/user-service';
     ReactiveFormsModule,
     NgForOf,
   ],
-  templateUrl: './version-qa-review-modal.component.html',
+  templateUrl: './load-version-review-modal.component.html',
 })
-export class VersionQaReviewModalComponent {
+export class LoadVersionReviewModalComponent {
   dataSource: { tag: string };
   reviewForm = new FormGroup(
     {

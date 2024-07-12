@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
 import { LoadRequest } from '../model/load-request';
-import { VersionQAActivity } from '../model/version-qa';
+import { LoadVersionActivity } from '../model/load-version';
 
-type DownloadData = LoadRequest | VersionQAActivity
+type DownloadData = LoadRequest | LoadVersionActivity
 
 @Injectable({ providedIn: 'root' })
 export class DownloadService {

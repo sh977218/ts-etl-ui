@@ -6,11 +6,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs';
 
-import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
-import { VersionQA, VersionQAActivity } from '../model/version-qa';
+import {
+  LoadVersionReviewModalComponent,
+} from '../load-version-review-modal/load-version-review-modal.component';
+import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 
 @Component({
-  selector: 'app-version-qa-acceptance-actions',
+  selector: 'app-load-version-acceptance-actions',
   standalone: true,
   imports: [
     NgIf,
@@ -18,18 +20,18 @@ import { VersionQA, VersionQAActivity } from '../model/version-qa';
     MatTableModule,
     MatButtonModule,
   ],
-  templateUrl: './version-qa-acceptance-actions.component.html',
+  templateUrl: './load-version-acceptance-actions.component.html',
 })
-export class VersionQaAcceptanceActionsComponent {
-  @Input() versionQA!: VersionQA;
-  @Output() actionOutput = new EventEmitter<VersionQAActivity>();
+export class LoadVersionAcceptanceActionsComponent {
+  @Input() loadVersion!: LoadVersion;
+  @Output() actionOutput = new EventEmitter<LoadVersionActivity>();
 
   constructor(private dialog: MatDialog) {
   }
 
   action(action: 'Accept' | 'Reject') {
     this.dialog
-      .open(VersionQaReviewModalComponent, {
+      .open(LoadVersionReviewModalComponent, {
         width: '600px',
         data: { tag: action },
       })
@@ -37,8 +39,8 @@ export class VersionQaAcceptanceActionsComponent {
       .pipe(
         filter(reason => !!reason),
       )
-      .subscribe((versionQAActivity: VersionQAActivity) => {
-        this.actionOutput.emit(versionQAActivity);
+      .subscribe((loadVersionActivity: LoadVersionActivity) => {
+        this.actionOutput.emit(loadVersionActivity);
       });
   }
 

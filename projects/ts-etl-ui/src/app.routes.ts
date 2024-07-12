@@ -3,9 +3,9 @@ import { Routes } from '@angular/router';
 import { PleaseLogInComponent } from './please-log-in/please-log-in.component';
 import { LoginCbComponent } from './login-cb/login-cb.component';
 import { LoadRequestComponent } from './load-request/load-request.component';
-import { VersionQaComponent } from './version-qa/version-qa.component';
+import { LoadVersionComponent } from './load-version/load-version.component';
 import { CodeSystemComponent } from './code-system/code-system.component';
-import { VersionQaReportComponent } from './version-qa-report/version-qa-report.component';
+import { LoadVersionReportComponent } from './load-version-report/load-version-report.component';
 import { logInGuard } from './app.guard';
 
 export const routes: Routes = [
@@ -15,7 +15,7 @@ export const routes: Routes = [
     canActivate: [logInGuard],
   },
   {
-    path: 'load-versions', component: VersionQaComponent, title: 'Load Versions',
+    path: 'load-versions', component: LoadVersionComponent, title: 'Load Versions',
     canActivate: [logInGuard],
   },
   {
@@ -23,7 +23,7 @@ export const routes: Routes = [
     canActivate: [logInGuard],
   },
   {
-    path: 'version-qa-report/:requestId', component: VersionQaReportComponent, title: 'Version QA Report',
+    path: 'load-version-report/:requestId', component: LoadVersionReportComponent, title: 'Version QA Report',
     canActivate: [logInGuard],
   },
   {

@@ -138,7 +138,6 @@ test.describe('e2e test', async () => {
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
 
     await test.step(`Accept version QA`, async () => {
-      const versionQRows = page.getByRole('table').locator('tbody tr');
       await page.locator('tbody tr td .fake-link').nth(1).click();
       await page.getByRole('button', { name: 'Accept' }).click();
       await matDialog.waitFor();

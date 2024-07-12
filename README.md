@@ -19,7 +19,7 @@ Mongo can be used as perishable storage.
 
 - Register a free account: https://www.mongodb.com/products/platform/atlas-database
 - Create `Database` called `ts-etl-ui`
-- Create Collections called `users, loadRequests, versionQAs, codeSystems`
+- Create Collections called `users, loadRequests, loadVersions, codeSystems`
 - Inject/load data from `/server/data/`
 
 for CI, collection name appendix with ${pr_number}

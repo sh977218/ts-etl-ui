@@ -6,7 +6,9 @@ import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
-import { VersionQaReviewModalComponent } from '../version-qa-review-modal/version-qa-review-modal.component';
+import {
+  LoadVersionReviewModalComponent,
+} from '../load-version-review-modal/load-version-review-modal.component';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
@@ -62,7 +64,7 @@ const LABEL_SORT_ARRAY = [
     MatTableModule,
     MatCardModule,
     MatDivider,
-    VersionQaReviewModalComponent,
+    LoadVersionReviewModalComponent,
     MatIcon,
     NgIf,
     RouterLink,

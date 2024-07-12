@@ -169,9 +169,9 @@ app.post('/api/loadRequest', async (req, res) => {
   res.send({ requestId: newLoadRequest.requestId });
 });
 
-app.post('/api/versionQAs', async (req, res) => {
+app.post('/api/loadVersions', async (req, res) => {
   const { loadNumber, sort, order } = req.body;
-  const { versionQAsCollection } = await mongoCollection();
+  const { loadVersionsCollection } = await mongoCollection();
   const $match = {};
   if (loadNumber !== null) {
     $match.loadNumber = loadNumber;
@@ -180,17 +180,17 @@ app.post('/api/versionQAs', async (req, res) => {
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
   const aggregation = [{ $match }, { $sort }];
-  const versionQAs = await versionQAsCollection.aggregate(aggregation).toArray();
+  const loadVersions = await loadVersionsCollection.aggregate(aggregation).toArray();
   res.send({
-    total_count: versionQAs.length, items: versionQAs,
+    total_count: loadVersions.length, items: loadVersions,
   });
 });
 
-app.get('/api/versionQA/:requestId', async (req, res) => {
-  const { versionQAsCollection } = await mongoCollection();
+app.get('/api/loadVersion/:requestId', async (req, res) => {
+  const { loadVersionsCollection } = await mongoCollection();
   // I'm not sure requestID will end up being unique here... we can change later if needed
-  const versionQA = await versionQAsCollection.findOne({ requestId: +req.params.requestId });
-  res.send(versionQA);
+  const loadVersion = await loadVersionsCollection.findOne({ requestId: +req.params.requestId });
+  res.send(loadVersion);
 });
 
 app.get('/api/file/:id', (req, res) => {
@@ -199,57 +199,57 @@ app.get('/api/file/:id', (req, res) => {
   res.send(fileContent);
 });
 
-app.post('/api/qaActivity', async (req, res) => {
-  const { versionQAsCollection } = await mongoCollection();
-  await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
+app.post('/api/loadVersionActivity', async (req, res) => {
+  const { loadVersionsCollection } = await mongoCollection();
+  await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
-      versionQaActivities: req.body.qaActivity,
+      loadVersionActivities: req.body.loadVersionActivity,
     },
   });
   res.send();
 });
 
-app.post('/api/addActivityNote', async (req, res) =>  {
-  const { versionQAsCollection } = await mongoCollection();
-  const vQA = await versionQAsCollection.findOne({ requestId: req.body.requestId });
-  if (!vQA.versionQaActivities.length) {
-    await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
+app.post('/api/addActivityNote', async (req, res) => {
+  const { loadVersionsCollection } = await mongoCollection();
+  const vQA = await loadVersionsCollection.findOne({ requestId: req.body.requestId });
+  if (!vQA.loadVersionActivities.length) {
+    await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
       $set: {
-        "versionQaActivities": [{
+        'loadVersionActivities': [{
           createdBy: req.body.activityNote.createdBy,
           notes: [{
             createdBy: req.body.activityNote.createdBy,
             createdTime: req.body.activityNote.createdTime,
             notes: req.body.activityNote.notes,
-            hashtags: req.body.activityNote.hashtags
-          }]
+            hashtags: req.body.activityNote.hashtags,
+          }],
         }],
       },
     });
   } else {
-    await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
+    await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
       $push: {
-        "versionQaActivities.0.notes": {
+        'loadVersionActivities.0.notes': {
           createdBy: req.body.activityNote.createdBy,
           createdTime: req.body.activityNote.createdTime,
           notes: req.body.activityNote.notes,
-          hashtags: req.body.activityNote.hashtags
+          hashtags: req.body.activityNote.hashtags,
         },
       },
     });
   }
-  res.send(await versionQAsCollection.findOne({ requestId: req.body.requestId }));
-})
+  res.send(await loadVersionsCollection.findOne({ requestId: req.body.requestId }));
+});
 
-app.post('/api/editAvailableDate', async (req, res) =>  {
-  const { versionQAsCollection } = await mongoCollection();
-  await versionQAsCollection.updateOne({ requestId: req.body.requestId }, {
+app.post('/api/editAvailableDate', async (req, res) => {
+  const { loadVersionsCollection } = await mongoCollection();
+  await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
     $set: {
-      "versionQaActivities.0.availableDate": new Date(req.body.newDate),
+      'loadVersionActivities.0.availableDate': new Date(req.body.newDate),
     },
   });
   res.send();
-})
+});
 
 app.get('/api/codeSystems', async (req, res) => {
   const { codeSystemsCollection } = await mongoCollection();
@@ -279,7 +279,7 @@ app.get('/api/serverInfo', async (req, res) => {
   res.send({ pr, db: db.s.namespace.db });
 });
 
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
   fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
 });

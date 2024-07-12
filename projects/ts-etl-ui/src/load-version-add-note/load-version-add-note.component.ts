@@ -7,13 +7,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { filter, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-import { QAActivityNote, VersionQA, VersionQAActivity } from '../model/version-qa';
-import { VersionQaAddNoteModalComponent } from '../version-qa-add-note/version-qa-add-note-modal.component';
+import { LoadVersionActivityNote, LoadVersion, LoadVersionActivity } from '../model/load-version';
+import { LoadVersionAddNoteModalComponent } from './load-version-add-note-modal.component';
 import { UserService } from '../service/user-service';
 import { AlertService } from '../service/alert-service';
 
 @Component({
-  selector: 'app-version-qa-add-note',
+  selector: 'app-load-version-add-note',
   standalone: true,
   imports: [
     NgIf,
@@ -21,11 +21,11 @@ import { AlertService } from '../service/alert-service';
     MatTableModule,
     MatButtonModule,
   ],
-  templateUrl: './version-qa-add-note.html',
+  templateUrl: './load-version-add-note.html',
 })
-export class VersionQaAddNoteComponent {
-  @Input() versionQA!: VersionQA;
-  @Output() actionOutput = new EventEmitter<VersionQAActivity>();
+export class LoadVersionAddNoteComponent {
+  @Input() loadVersion!: LoadVersion;
+  @Output() actionOutput = new EventEmitter<LoadVersionActivity>();
   username: string = '';
 
   constructor(public userService: UserService,
@@ -39,26 +39,26 @@ export class VersionQaAddNoteComponent {
   }
 
   openAddNote() {
-    const versionQA = this.versionQA;
+    const _loadVersion = this.loadVersion;
     this.dialog
-      .open(VersionQaAddNoteModalComponent, {
-        width: '600px'
+      .open(LoadVersionAddNoteModalComponent, {
+        width: '600px',
       })
       .afterClosed()
       .pipe(
         filter(reason => !!reason),
-        switchMap((activityNote: QAActivityNote) => {
+        switchMap((activityNote: LoadVersionActivityNote) => {
           activityNote.createdBy = this.username;
           activityNote.createdTime = new Date();
-          return this.http.post<VersionQA>('/api/addActivityNote', {
-            requestId: this.versionQA.requestId,
-            activityNote
-          })
-        })
+          return this.http.post<LoadVersion>('/api/addActivityNote', {
+            requestId: this.loadVersion.requestId,
+            activityNote,
+          });
+        }),
       )
       .subscribe({
-        next: updatedVersionQa => {
-          versionQA.versionQaActivities = updatedVersionQa.versionQaActivities;
+        next: updatedLoadVersion => {
+          _loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
           this.alertService.addAlert('', 'Activity added successfully.');
           this.actionOutput.emit();
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),

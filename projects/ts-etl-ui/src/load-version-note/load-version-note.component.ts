@@ -3,22 +3,22 @@ import {
   MatTableModule,
 } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
-import { QAActivityNote } from '../model/version-qa';
+import { LoadVersionActivityNote } from '../model/load-version';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-  selector: 'app-version-qa-note',
+  selector: 'app-load-version-note',
   standalone: true,
   imports: [
     MatSortModule,
     MatTableModule,
     MatButton,
   ],
-  templateUrl: './version-qa-note.component.html',
-  styleUrl: './version-qa-note.component.scss',
+  templateUrl: './load-version-note.component.html',
+  styleUrl: './load-version-note.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VersionQaNoteComponent {
-  @Input() versionQaNotes: QAActivityNote[] = [];
+export class LoadVersionNoteComponent {
+  @Input() loadVersionNotes: LoadVersionActivityNote[] = [];
   notesColumns: string[] = ['tags', 'notes', 'createdBy', 'createdTime', 'action'];
 }

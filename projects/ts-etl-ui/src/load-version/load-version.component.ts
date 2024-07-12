@@ -17,24 +17,23 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { VersionQA, VersionQAActivity, VersionQAsApiResponse } from '../model/version-qa';
-import { VersionQaDataSource, VersionQaSearchCriteria } from './version-qa-data-source';
+import { LoadVersion, LoadVersionActivity, LoadVersionsApiResponse } from '../model/load-version';
+import { LoadVersionDataSource, LoadVersionSearchCriteria } from './load-version-data-source';
 import { LoadingService } from '../service/loading-service';
-import { VersionQaDetailComponent } from '../version-qa-detail/version-qa-detail.component';
 import { triggerExpandTableAnimation } from '../animations';
-import { VersionQaActivityComponent } from '../version-qa-activity/version-qa-activity.component';
+import { LoadVersionDetailComponent } from '../load-version-detail/load-version-detail.component';
+import { LoadVersionActivityComponent } from '../load-version-activity/load-version-activity.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
 import {
-  VersionQaAcceptanceActionsComponent,
-} from '../version-qa-acceptance-actions/version-qa-acceptance-actions.component';
+  LoadVersionAcceptanceActionsComponent,
+} from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
 import { environment } from '../environments/environment';
-import { VersionQaAddNoteComponent } from '../version-qa-add-note/version-qa-add-note.component';
+import { LoadVersionAddNoteComponent } from '../load-version-add-note/load-version-add-note.component';
 import { CODE_SYSTEM_NAMES } from '../service/constant';
 
 @Component({
-  selector: 'app-version-qa',
   standalone: true,
   imports: [
     NgIf,
@@ -53,17 +52,17 @@ import { CODE_SYSTEM_NAMES } from '../service/constant';
     MatCheckboxModule,
     MatOptionModule,
     MatSelectModule,
-    VersionQaDetailComponent,
-    VersionQaActivityComponent,
+    LoadVersionDetailComponent,
+    LoadVersionActivityComponent,
     LoadSummaryComponent,
-    VersionQaAcceptanceActionsComponent,
-    VersionQaAddNoteComponent,
+    LoadVersionAcceptanceActionsComponent,
+    LoadVersionAddNoteComponent,
   ],
-  templateUrl: './version-qa.component.html',
+  templateUrl: './load-version.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   animations: [triggerExpandTableAnimation],
 })
-export class VersionQaComponent implements AfterViewInit {
+export class LoadVersionComponent implements AfterViewInit {
   displayedColumns: string[] = [
     'codeSystemName',
     'version',
@@ -76,11 +75,11 @@ export class VersionQaComponent implements AfterViewInit {
   ];
   searchRowColumns = this.displayedColumns.map(c => `${c}-search`);
 
-  versionQaDatabase: VersionQaDataSource | null = null;
-  data: VersionQA[] = [];
+  loadVersionDatabase: LoadVersionDataSource | null = null;
+  data: LoadVersion[] = [];
 
   resultsLength = 0;
-  expandedElement: VersionQA | null = null;
+  expandedElement: LoadVersion | null = null;
 
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
@@ -111,7 +110,7 @@ export class VersionQaComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.versionQaDatabase = new VersionQaDataSource(this.http);
+    this.loadVersionDatabase = new LoadVersionDataSource(this.http);
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
@@ -126,22 +125,22 @@ export class VersionQaComponent implements AfterViewInit {
           }
           return qp;
         }),
-        map((qp): VersionQaSearchCriteria => {
-          const DEFAULT_SEARCH_CRITERIA: VersionQaSearchCriteria = {
+        map((qp): LoadVersionSearchCriteria => {
+          const DEFAULT_SEARCH_CRITERIA: LoadVersionSearchCriteria = {
             loadNumber: null,
             sort: 'requestId',
             order: 'asc',
             pageNumber: 0,
             pageSize: 10,
           };
-          const versionQaSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
-          return versionQaSearchCriteria;
+          const loadVersionSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
+          return loadVersionSearchCriteria;
         }),
-        switchMap((versionQaSearchCriteria) => {
-          return this.versionQaDatabase!.getVersionQAs(versionQaSearchCriteria)
+        switchMap((loadVersionSearchCriteria) => {
+          return this.loadVersionDatabase!.getLoadVersions(loadVersionSearchCriteria)
             .pipe(catchError(() => of(null)));
         }),
-        map((data: VersionQAsApiResponse | null) => {
+        map((data: LoadVersionsApiResponse | null) => {
           if (data === null) {
             return [];
           }
@@ -161,18 +160,18 @@ export class VersionQaComponent implements AfterViewInit {
       });
   }
 
-  action(newQAActivity: VersionQAActivity, versionQA: VersionQA) {
-    this.http.post(`${environment.apiServer}/qaActivity`, {
-      requestId: versionQA!.requestId,
-      qaActivity: newQAActivity,
+  action(newLoadVersionActivity: LoadVersionActivity, loadVersion: LoadVersion) {
+    this.http.post(`${environment.apiServer}/loadVersionActivity`, {
+      requestId: loadVersion!.requestId,
+      loadVersionActivity: newLoadVersionActivity,
     })
       .pipe(
-        switchMap(() => this.http.get<VersionQA>(`${environment.apiServer}/versionQA/${versionQA.requestId}`)),
+        switchMap(() => this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${loadVersion.requestId}`)),
       )
       .subscribe({
-        next: (updatedVersionQa) => {
-          versionQA.versionQaActivities = updatedVersionQa.versionQaActivities;
-          versionQA.versionStatus = updatedVersionQa.versionStatus;
+        next: (updatedLoadVersion) => {
+          loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
+          loadVersion.versionStatus = updatedLoadVersion.versionStatus;
           this.cd.detectChanges();
           this.alertService.addAlert('', 'Activity added successfully.');
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
