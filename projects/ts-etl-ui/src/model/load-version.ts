@@ -27,7 +27,7 @@ export type LoadSummary = {
 }
 
 export type LoadVersionActivity = {
-  id?: string;
+  id?: Date;
   activity: string
   updatedTime: Date
   availableDate: Date,

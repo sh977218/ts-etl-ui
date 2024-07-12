@@ -201,6 +201,7 @@ app.get('/api/file/:id', (req, res) => {
 
 app.post('/api/loadVersionActivity', async (req, res) => {
   const { loadVersionsCollection } = await mongoCollection();
+  req.body.loadVersionActivity.id = new Date();
   await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       loadVersionActivities: req.body.loadVersionActivity,
