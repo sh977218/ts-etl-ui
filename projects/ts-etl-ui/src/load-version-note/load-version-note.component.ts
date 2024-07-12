@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatButton } from '@angular/material/button';
@@ -17,10 +17,10 @@ import { LoadVersion, LoadVersionActivityNote } from '../model/load-version';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadVersionNoteComponent {
-  loadVersion = model.required<LoadVersion>();
+  loadVersion = input<LoadVersion>();
 
   loadVersionNotes = computed(() => {
-    return (this.loadVersion().loadVersionActivities || []).reduce((previousValue: LoadVersionActivityNote[], currentValue) => {
+    return (this.loadVersion()?.loadVersionActivities || []).reduce((previousValue: LoadVersionActivityNote[], currentValue) => {
       return previousValue.concat(currentValue.notes);
     }, []);
   });

@@ -12,13 +12,14 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { EMPTY } from 'rxjs';
+import 'zone.js';
 
 import { LogInModalComponent } from '../log-in-modal/log-in-modal.component';
 import { UserService } from '../service/user-service';
 import { LoadingService } from '../service/loading-service';
 import { NavigationService } from '../service/navigation-service';
 import { environment } from '../environments/environment';
-import { EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-root',

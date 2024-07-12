@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, computed, model } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, input } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
@@ -24,8 +24,8 @@ import { AlertService } from '../service/alert-service';
   templateUrl: './load-version-add-note.html',
 })
 export class LoadVersionAddNoteComponent {
-  loadVersion = model.required<LoadVersion>();
-  requestId = computed(() => this.loadVersion().requestId);
+  loadVersion = input<LoadVersion>();
+  requestId = computed(() => this.loadVersion()?.requestId);
   username: string = '';
 
   constructor(public userService: UserService,
@@ -56,11 +56,7 @@ export class LoadVersionAddNoteComponent {
         }),
       )
       .subscribe({
-        next: updatedLoadVersion => {
-          this.loadVersion.update((loadVersion) => {
-            loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
-            return loadVersion;
-          });
+        next: () => {
           this.alertService.addAlert('', 'Activity added successfully.');
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
       });

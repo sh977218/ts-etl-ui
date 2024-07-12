@@ -35,6 +35,7 @@ import { AlertService } from '../service/alert-service';
 import { LoadVersionAddNoteComponent } from '../load-version-add-note/load-version-add-note.component';
 import { CODE_SYSTEM_NAMES } from '../service/constant';
 import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
+import 'zone.js';
 
 @Component({
   standalone: true,
@@ -79,11 +80,11 @@ export class LoadVersionComponent implements AfterViewInit {
   ];
   searchRowColumns = this.displayedColumns.map(c => `${c}-search`);
 
-  loadVersionDatabase: LoadVersionDataSource | null = null;
+  loadVersionDatabase: LoadVersionDataSource | undefined;
   data: LoadVersion[] = [];
 
   resultsLength = 0;
-  expandedElement: LoadVersion | null = null;
+  expandedElement: LoadVersion | undefined;
 
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
@@ -162,6 +163,21 @@ export class LoadVersionComponent implements AfterViewInit {
         },
         error: () => this.loadingService.hideLoading(),
       });
+  }
+
+  addSomething() {
+    this.expandedElement!.codeSystemName = 'AAA';
+    this.expandedElement!.loadVersionActivities[0].notes = [{
+      createdBy: 'me',
+      createdTime: new Date(),
+      hashtags: 'a',
+      notes: 'aaaa ',
+    },
+      ...this.expandedElement!.loadVersionActivities[0].notes];
+  }
+
+  a() {
+    return this.expandedElement;
   }
 
   protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
