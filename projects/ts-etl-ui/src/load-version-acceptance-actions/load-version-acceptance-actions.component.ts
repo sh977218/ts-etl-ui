@@ -29,7 +29,7 @@ export class LoadVersionAcceptanceActionsComponent {
   constructor(private dialog: MatDialog) {
   }
 
-  action(action: 'Accept' | 'Reject') {
+  action(action: 'Accept' | 'Reject' | 'Reset') {
     this.dialog
       .open(LoadVersionReviewModalComponent, {
         width: '600px',

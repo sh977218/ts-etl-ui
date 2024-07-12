@@ -202,10 +202,20 @@ app.get('/api/file/:id', (req, res) => {
 app.post('/api/loadVersionActivity', async (req, res) => {
   const { loadVersionsCollection } = await mongoCollection();
   req.body.loadVersionActivity.id = new Date();
+  const vQA = await loadVersionsCollection.findOne({ requestId: req.body.requestId });
+  let versionStatus = { vQA };
+  if (req.body.loadVersionActivity.activity === 'Accept') {
+    versionStatus = 'Accepted';
+  } else if (req.body.loadVersionActivity.activity === 'Reject') {
+    versionStatus = 'Rejected';
+  } else if (req.body.loadVersionActivity.activity === 'Reset') {
+    versionStatus = 'Pending QA';
+  }
   await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       loadVersionActivities: req.body.loadVersionActivity,
     },
+    $set: {versionStatus: versionStatus}
   });
   res.send();
 });
