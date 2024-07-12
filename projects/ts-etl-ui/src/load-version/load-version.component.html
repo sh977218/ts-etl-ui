@@ -154,13 +154,16 @@
               <div class="flex" style="flex-grow:1">
                 <fieldset>
                   <legend>QA Acceptance</legend>
-                  <app-load-version-acceptance-actions [loadVersion]="row" (actionOutput)="action($event,row)">
-                  </app-load-version-acceptance-actions>
-                  <app-load-version-add-note [loadVersion]="row" style="display: flex; justify-content: flex-end"
-                                             (actionOutput)="refreshActivityTable()"></app-load-version-add-note>
-                  <app-load-version-activity [loadVersionActivities]="row.loadVersionActivities"
-                                             [requestId]="row.requestId"
-                                             class="flex flex-grow"></app-load-version-activity>
+                  <div class="flex flex-col">
+                    <div class="flex justify-between">
+                      <app-load-version-acceptance-actions [loadVersion]="row" (actionOutput)="action($event,row)">
+                      </app-load-version-acceptance-actions>
+                      <app-load-version-add-note [loadVersion]="row"
+                                                 (actionOutput)="refreshActivityTable()"></app-load-version-add-note>
+                    </div>
+                    <app-load-version-activity [loadVersionActivities]="row.loadVersionActivities"
+                                               [requestId]="row.requestId"></app-load-version-activity>
+                  </div>
                 </fieldset>
               </div>
             </div>
