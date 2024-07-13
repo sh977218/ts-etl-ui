@@ -3,11 +3,11 @@
     <legend>QA Activities</legend>
     <div class="flex">
       <button mat-icon-button color="primary" (click)="downloadQaActivities()" class="transform scale-25"
-              *ngIf="dataSource().data.length">
+              *ngIf="dataSource.data.length">
         <mat-icon fontIcon="file_download"></mat-icon>
       </button>
     </div>
-    <table data-testid="qaActivitiesTable" #activitiesTable mat-table [dataSource]="dataSource()" matSort
+    <table data-testid="qaActivitiesTable" #activitiesTable mat-table [dataSource]="dataSource" matSort
            multiTemplateDataRows>
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>Activity ID</th>
@@ -45,7 +45,7 @@
               {{element.availableDate | date:'yyyy/MM/dd'}}
             </span>
             <button mat-icon-button color="primary"
-                    *ngIf="loadVersionActivities()?.at(0)?.activity === 'Accept' && index === 0"
+                    *ngIf="loadVersion().loadVersionActivities[0].activity === 'Accept' && index === 0"
                     (click)="$event.stopPropagation(); editDateMode = index" class="transform scale-25">
               <mat-icon fontIcon="edit"></mat-icon>
             </button>

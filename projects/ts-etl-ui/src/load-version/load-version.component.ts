@@ -18,7 +18,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
 import {
-  LoadVersion, LoadVersionActivityNote,
+  LoadVersion, LoadVersionActivity, LoadVersionActivityNote,
   LoadVersionsApiResponse,
 } from '../model/load-version';
 import { LoadVersionDataSource, LoadVersionSearchCriteria } from './load-version-data-source';
@@ -36,6 +36,7 @@ import { CODE_SYSTEM_NAMES } from '../service/constant';
 import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal/load-version-add-note-modal.component';
 import { UserService } from '../service/user-service';
+import { environment } from '../environments/environment';
 
 @Component({
   standalone: true,
@@ -165,7 +166,24 @@ export class LoadVersionComponent implements AfterViewInit {
       });
   }
 
-  openAddNote(row: LoadVersion) {
+  action(newLoadVersionActivity: LoadVersionActivity, loadVersion: LoadVersion) {
+    this.http.post(`${environment.apiServer}/loadVersionActivity`, {
+      requestId: loadVersion!.requestId,
+      loadVersionActivity: newLoadVersionActivity,
+    })
+      .pipe(
+        switchMap(() => this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${loadVersion.requestId}`)),
+      )
+      .subscribe({
+        next: (updatedLoadVersion) => {
+          loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
+          loadVersion.versionStatus = updatedLoadVersion.versionStatus;
+          this.alertService.addAlert('', 'Activity added successfully.');
+        }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
+      });
+  }
+
+  openAddNoteModal(loadVersion: LoadVersion) {
     this.dialog
       .open(LoadVersionAddNoteModalComponent, {
         width: '600px',
@@ -174,18 +192,24 @@ export class LoadVersionComponent implements AfterViewInit {
       .pipe(
         filter(reason => !!reason),
         switchMap((activityNote: LoadVersionActivityNote) => {
+          this.loadingService.showLoading();
           activityNote.createdBy = this.username;
           activityNote.createdTime = new Date();
           return this.http.post<LoadVersion>('/api/addActivityNote', {
-            requestId: row.requestId,
+            requestId: loadVersion.requestId,
             activityNote,
-          });
+          }).pipe(map(() => activityNote));
         }),
       )
       .subscribe({
-        next: () => {
+        next: (activityNote: LoadVersionActivityNote) => {
+          loadVersion.loadVersionActivities[0].notes.push(activityNote);
+          this.loadingService.hideLoading();
           this.alertService.addAlert('', 'Activity added successfully.');
-        }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
+        }, error: () => {
+          this.loadingService.hideLoading();
+          this.alertService.addAlert('', 'Activity add failed.');
+        },
       });
   }
 

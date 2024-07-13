@@ -55,7 +55,6 @@ export class LoadVersionActivityComponent implements AfterViewInit {
   loadVersion = input.required<LoadVersion>();
 
   requestId = computed(() => this.loadVersion().requestId);
-  loadVersionActivities = computed(() => this.loadVersion().loadVersionActivities);
   editDateMode = -1;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -64,9 +63,7 @@ export class LoadVersionActivityComponent implements AfterViewInit {
 
   displayedColumns: string[] = ['id', 'activity', 'availableDate', 'reason', 'nbNotes'];
 
-  dataSource = computed(() => {
-    return new MatTableDataSource<LoadVersionActivity>(this.loadVersionActivities().reverse());
-  });
+  dataSource = new MatTableDataSource<LoadVersionActivity>([]);
 
   editAvailableDateForm = new FormGroup(
     {
@@ -86,8 +83,9 @@ export class LoadVersionActivityComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.dataSource().paginator = this.paginator;
-    this.dataSource().sort = this.sort;
+    this.dataSource = new MatTableDataSource(this.loadVersion().loadVersionActivities.reverse());
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
     this.editAvailableDateForm.valueChanges.pipe(
       switchMap(value => {
         return this.http.post<string>(`${environment.apiServer}/editAvailableDate`, {
@@ -99,7 +97,7 @@ export class LoadVersionActivityComponent implements AfterViewInit {
         next: () => {
           this.alertService.addAlert('info', `Available Date Updated`);
           if (this.editAvailableDateForm.get('availableDate')?.value) {
-            this.loadVersionActivities()[0]!.availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
+            this.loadVersion().loadVersionActivities[0].availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
           }
           this.activitiesTable.renderRows();
           this.cd.detectChanges();
@@ -111,15 +109,15 @@ export class LoadVersionActivityComponent implements AfterViewInit {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource().filter = filterValue.trim().toLowerCase();
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-    if (this.dataSource().paginator) {
-      this.dataSource().paginator?.firstPage();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator?.firstPage();
     }
   }
 
   downloadQaActivities() {
-    of(this.loadVersionActivities())
+    of(this.loadVersion().loadVersionActivities)
       .pipe(
         map(data => {
           const headerList = [...this.displayedColumns];
