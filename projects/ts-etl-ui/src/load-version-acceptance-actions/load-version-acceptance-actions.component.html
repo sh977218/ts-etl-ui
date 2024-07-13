@@ -1,7 +1,7 @@
-<ng-container *ngIf="versionStatus() === 'Pending QA'">
+<ng-container *ngIf="this.loadVersion().versionStatus === 'Pending QA'">
   <button mat-raised-button color="primary" (click)="action('Accept')">Accept</button>
   <button mat-raised-button color="warn" (click)="action('Reject')">Reject</button>
 </ng-container>
-<ng-container *ngIf="['Accepted', 'Rejected'].includes(versionStatus())">
+<ng-container *ngIf="['Accepted', 'Rejected'].includes(this.loadVersion().versionStatus)">
   <button mat-raised-button color="primary" (click)="action('Reset')">Reset</button>
 </ng-container>

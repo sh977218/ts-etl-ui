@@ -54,6 +54,10 @@ import { LoadVersionNoteComponent } from '../load-version-note/load-version-note
 export class LoadVersionActivityComponent implements AfterViewInit {
   loadVersion = input.required<LoadVersion>();
 
+  loadVersionActivities() {
+    return this.loadVersion().loadVersionActivities;
+  }
+
   requestId = computed(() => this.loadVersion().requestId);
   editDateMode = -1;
 

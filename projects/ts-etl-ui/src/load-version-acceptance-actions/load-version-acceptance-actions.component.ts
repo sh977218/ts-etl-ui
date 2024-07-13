@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, model, Output } from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
@@ -23,9 +23,8 @@ import {
   templateUrl: './load-version-acceptance-actions.component.html',
 })
 export class LoadVersionAcceptanceActionsComponent {
-  loadVersion = model.required<LoadVersion>({ alias: 'loadVersion' });
+  loadVersion = input.required<LoadVersion>();
   requestId = computed(() => this.loadVersion().requestId);
-  versionStatus = computed(() => this.loadVersion().versionStatus);
   @Output() actionOutput = new EventEmitter<LoadVersionActivity>();
 
   constructor(private dialog: MatDialog) {
