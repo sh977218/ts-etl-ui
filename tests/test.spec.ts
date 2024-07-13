@@ -144,6 +144,7 @@ test.describe('e2e test', async () => {
       await matDialog.getByPlaceholder('Notes').fill('Accepted by me');
       await matDialog.getByRole('button', { name: 'Save' }).click();
       await matDialog.waitFor({ state: 'hidden' });
+      await materialPo.checkAndCloseAlert('Activity added successfully.');
 
       const activityHistoryFirstRow = page.locator('table[data-testid=qaActivitiesTable] tbody tr').first();
       await activityHistoryFirstRow.click();

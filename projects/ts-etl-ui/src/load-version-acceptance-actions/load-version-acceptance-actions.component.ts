@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
@@ -6,10 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs';
 
+import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 import {
   LoadVersionReviewModalComponent,
 } from '../load-version-review-modal/load-version-review-modal.component';
-import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 
 @Component({
   selector: 'app-load-version-acceptance-actions',
@@ -23,7 +23,8 @@ import { LoadVersion, LoadVersionActivity } from '../model/load-version';
   templateUrl: './load-version-acceptance-actions.component.html',
 })
 export class LoadVersionAcceptanceActionsComponent {
-  @Input() loadVersion!: LoadVersion;
+  loadVersion = input.required<LoadVersion>();
+  requestId = computed(() => this.loadVersion().requestId);
   @Output() actionOutput = new EventEmitter<LoadVersionActivity>();
 
   constructor(private dialog: MatDialog) {
@@ -36,11 +37,11 @@ export class LoadVersionAcceptanceActionsComponent {
         data: { tag: action },
       })
       .afterClosed()
-      .pipe(
-        filter(reason => !!reason),
-      )
-      .subscribe((loadVersionActivity: LoadVersionActivity) => {
-        this.actionOutput.emit(loadVersionActivity);
+      .pipe(filter(reason => !!reason))
+      .subscribe({
+        next: (loadVersionActivity: LoadVersionActivity) => {
+          this.actionOutput.emit(loadVersionActivity);
+        },
       });
   }
 

@@ -1,10 +1,8 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import {
-  MatTableModule,
-} from '@angular/material/table';
+import { Component, input } from '@angular/core';
+import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
-import { LoadVersionActivityNote } from '../model/load-version';
 import { MatButton } from '@angular/material/button';
+import { LoadVersion, LoadVersionActivityNote } from '../model/load-version';
 
 @Component({
   selector: 'app-load-version-note',
@@ -16,9 +14,16 @@ import { MatButton } from '@angular/material/button';
   ],
   templateUrl: './load-version-note.component.html',
   styleUrl: './load-version-note.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadVersionNoteComponent {
-  @Input() loadVersionNotes: LoadVersionActivityNote[] = [];
+  loadVersion = input.required<LoadVersion>();
+
+  loadVersionActivityNotes() {
+    return (this.loadVersion().loadVersionActivities || []).reduce((previousValue: LoadVersionActivityNote[], currentValue) => {
+      return previousValue.concat(currentValue.notes);
+    }, []);
+  }
+
   notesColumns: string[] = ['tags', 'notes', 'createdBy', 'createdTime', 'action'];
+
 }
