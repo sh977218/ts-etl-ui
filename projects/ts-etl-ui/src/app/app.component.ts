@@ -13,7 +13,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { EMPTY } from 'rxjs';
-import 'zone.js';
 
 import { LogInModalComponent } from '../log-in-modal/log-in-modal.component';
 import { UserService } from '../service/user-service';

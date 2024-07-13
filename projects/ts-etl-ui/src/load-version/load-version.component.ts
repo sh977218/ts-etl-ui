@@ -4,7 +4,7 @@ import {
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -18,7 +18,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
 import {
-  LoadVersion,
+  LoadVersion, LoadVersionActivityNote,
   LoadVersionsApiResponse,
 } from '../model/load-version';
 import { LoadVersionDataSource, LoadVersionSearchCriteria } from './load-version-data-source';
@@ -32,10 +32,10 @@ import {
   LoadVersionAcceptanceActionsComponent,
 } from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
-import { LoadVersionAddNoteComponent } from '../load-version-add-note/load-version-add-note.component';
 import { CODE_SYSTEM_NAMES } from '../service/constant';
 import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
-import 'zone.js';
+import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal/load-version-add-note-modal.component';
+import { UserService } from '../service/user-service';
 
 @Component({
   standalone: true,
@@ -60,7 +60,6 @@ import 'zone.js';
     LoadVersionActivityComponent,
     LoadSummaryComponent,
     LoadVersionAcceptanceActionsComponent,
-    LoadVersionAddNoteComponent,
     LoadVersionNoteComponent,
   ],
   templateUrl: './load-version.component.html',
@@ -84,7 +83,8 @@ export class LoadVersionComponent implements AfterViewInit {
   data: LoadVersion[] = [];
 
   resultsLength = 0;
-  expandedElement: LoadVersion | undefined;
+  expandedElement: LoadVersion | null;
+  username: string = '';
 
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
@@ -105,13 +105,16 @@ export class LoadVersionComponent implements AfterViewInit {
     }, { updateOn: 'submit' },
   );
 
-
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private dialog: MatDialog,
               private cd: ChangeDetectorRef,
               private loadingService: LoadingService,
+              private userService: UserService,
               private alertService: AlertService) {
+    userService.user$.subscribe(user => {
+      this.username = user?.utsUser.username || '';
+    });
   }
 
   ngAfterViewInit() {
@@ -157,28 +160,35 @@ export class LoadVersionComponent implements AfterViewInit {
         next: data => {
           this.loadingService.hideLoading();
           this.data = data;
-          if (this.activatedRoute.snapshot.queryParams['expand'] === 'true') {
-            this.expandedElement = this.data[0];
-          }
         },
         error: () => this.loadingService.hideLoading(),
       });
   }
 
-  addSomething() {
-    this.expandedElement!.codeSystemName = 'AAA';
-    this.expandedElement!.loadVersionActivities[0].notes = [{
-      createdBy: 'me',
-      createdTime: new Date(),
-      hashtags: 'a',
-      notes: 'aaaa ',
-    },
-      ...this.expandedElement!.loadVersionActivities[0].notes];
+  openAddNote(row: LoadVersion) {
+    this.dialog
+      .open(LoadVersionAddNoteModalComponent, {
+        width: '600px',
+      })
+      .afterClosed()
+      .pipe(
+        filter(reason => !!reason),
+        switchMap((activityNote: LoadVersionActivityNote) => {
+          activityNote.createdBy = this.username;
+          activityNote.createdTime = new Date();
+          return this.http.post<LoadVersion>('/api/addActivityNote', {
+            requestId: row.requestId,
+            activityNote,
+          });
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.alertService.addAlert('', 'Activity added successfully.');
+        }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
+      });
   }
 
-  a() {
-    return this.expandedElement;
-  }
 
   protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
 }

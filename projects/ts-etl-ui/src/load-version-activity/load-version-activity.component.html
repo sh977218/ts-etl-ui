@@ -45,7 +45,7 @@
               {{element.availableDate | date:'yyyy/MM/dd'}}
             </span>
             <button mat-icon-button color="primary"
-                    *ngIf="loadVersionActivities()[0].activity === 'Accept' && index === 0"
+                    *ngIf="loadVersionActivities()?.at(0)?.activity === 'Accept' && index === 0"
                     (click)="$event.stopPropagation(); editDateMode = index" class="transform scale-25">
               <mat-icon fontIcon="edit"></mat-icon>
             </button>
@@ -74,7 +74,7 @@
       </tr>
 
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="example-element-row"></tr>
-      
+
     </table>
   </fieldset>
 </div>

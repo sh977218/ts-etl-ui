@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
@@ -50,7 +49,6 @@ import { LoadVersionNoteComponent } from '../load-version-note/load-version-note
   templateUrl: './load-version-activity.component.html',
   styleUrl: './load-version-activity.component.scss',
   animations: [triggerExpandTableAnimation],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideNativeDateAdapter()],
 })
 export class LoadVersionActivityComponent implements AfterViewInit {
