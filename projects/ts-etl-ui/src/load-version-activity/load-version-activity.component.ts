@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  computed,
   input,
   ViewChild,
 } from '@angular/core';
@@ -58,7 +57,6 @@ export class LoadVersionActivityComponent implements AfterViewInit {
     return this.loadVersion().loadVersionActivities;
   }
 
-  requestId = computed(() => this.loadVersion().requestId);
   editDateMode = -1;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -93,7 +91,7 @@ export class LoadVersionActivityComponent implements AfterViewInit {
     this.editAvailableDateForm.valueChanges.pipe(
       switchMap(value => {
         return this.http.post<string>(`${environment.apiServer}/editAvailableDate`, {
-          requestId: this.requestId(),
+          requestId: this.loadVersion().requestId,
           newDate: value.availableDate,
         });
       }),

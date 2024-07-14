@@ -1,5 +1,10 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NO_ERRORS_SCHEMA,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -8,7 +13,7 @@ import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
+import { MatTable, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,7 +23,9 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
 import {
-  LoadVersion, LoadVersionActivity, LoadVersionActivityNote,
+  LoadVersion,
+  LoadVersionActivity,
+  LoadVersionActivityNote,
   LoadVersionsApiResponse,
 } from '../model/load-version';
 import { LoadVersionDataSource, LoadVersionSearchCriteria } from './load-version-data-source';
@@ -87,6 +94,7 @@ export class LoadVersionComponent implements AfterViewInit {
   expandedElement: LoadVersion | null;
   username: string = '';
 
+  @ViewChild(MatTable, { static: false }) table!: MatTable<LoadVersion>;
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
@@ -167,6 +175,7 @@ export class LoadVersionComponent implements AfterViewInit {
   }
 
   action(newLoadVersionActivity: LoadVersionActivity, loadVersion: LoadVersion) {
+    this.loadingService.showLoading();
     this.http.post(`${environment.apiServer}/loadVersionActivity`, {
       requestId: loadVersion!.requestId,
       loadVersionActivity: newLoadVersionActivity,
@@ -178,6 +187,7 @@ export class LoadVersionComponent implements AfterViewInit {
         next: (updatedLoadVersion) => {
           loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
           loadVersion.versionStatus = updatedLoadVersion.versionStatus;
+          this.loadingService.hideLoading();
           this.alertService.addAlert('', 'Activity added successfully.');
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
       });

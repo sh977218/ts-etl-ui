@@ -54,7 +54,7 @@ export default defineConfig({
   projects: [
     {
       name: 'debug',
-      grep: [/@debug/],
+      grep: [/@smoke/, /@debug/],
     },
     {
       name: 'chromium',

@@ -145,10 +145,8 @@ test.describe('e2e test', async () => {
       await matDialog.getByRole('button', { name: 'Save' }).click();
       await matDialog.waitFor({ state: 'hidden' });
       await materialPo.checkAndCloseAlert('Activity added successfully.');
-
-      const activityHistoryFirstRow = page.locator('table[data-testid=qaActivitiesTable] tbody tr').first();
-      await activityHistoryFirstRow.click();
-      await expect(page.getByText('Accepted by me')).toBeVisible();
+      await expect(page.locator('app-load-version-activity').getByText('Accepted by me')).toBeVisible();
+      await expect(page.locator('app-load-version-note').getByText('Accepted by me')).toBeVisible();
     });
   });
 
