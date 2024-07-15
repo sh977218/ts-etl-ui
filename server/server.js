@@ -170,11 +170,34 @@ app.post('/api/loadRequest', async (req, res) => {
 });
 
 app.post('/api/loadVersions', async (req, res) => {
-  const { loadNumber, sort, order } = req.body;
+  const { sort, order, searchColumns } = req.body;
+  const {
+    requestId,
+    codeSystemName,
+    requester,
+    version,
+    versionStatus,
+    loadNumber,
+  } = searchColumns;
   const { loadVersionsCollection } = await mongoCollection();
   const $match = {};
-  if (loadNumber !== null) {
-    $match.loadNumber = loadNumber;
+  if (requestId) {
+    $match.requestId = Number.parseInt(requestId);
+  }
+  if (codeSystemName) {
+    $match.codeSystemName = codeSystemName;
+  }
+  if (versionStatus) {
+    $match.versionStatus = versionStatus;
+  }
+  if (requester) {
+    $match.requester = new RegExp(escapeRegex(requester), 'i');
+  }
+  if (version) {
+    $match.version = new RegExp(escapeRegex(version), 'i');
+  }
+  if (loadNumber) {
+    $match.loadNumber = new RegExp(escapeRegex(loadNumber), 'i');
   }
 
   const $sort = {};

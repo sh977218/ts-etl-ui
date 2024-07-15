@@ -23,3 +23,10 @@ export const LOAD_REQUEST_TYPES = [
   'Test',
   'Scheduler',
 ];
+
+export const VERSION_STATUSES = [
+  'Pending QA',
+  'Accepted',
+  'Rejected',
+  'Failed'
+]

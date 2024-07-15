@@ -23,9 +23,10 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
 import {
+  generateLoadVersionPayload,
   LoadVersion,
   LoadVersionActivity,
-  LoadVersionActivityNote,
+  LoadVersionActivityNote, LoadVersionPayload,
   LoadVersionsApiResponse,
 } from '../model/load-version';
 import { LoadVersionDataSource, LoadVersionSearchCriteria } from './load-version-data-source';
@@ -34,16 +35,17 @@ import { triggerExpandTableAnimation } from '../animations';
 import { LoadVersionDetailComponent } from '../load-version-detail/load-version-detail.component';
 import { LoadVersionActivityComponent } from '../load-version-activity/load-version-activity.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
-import { ActivatedRoute, Params, RouterLink } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import {
   LoadVersionAcceptanceActionsComponent,
 } from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
-import { CODE_SYSTEM_NAMES } from '../service/constant';
+import { CODE_SYSTEM_NAMES, VERSION_STATUSES } from '../service/constant';
 import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal/load-version-add-note-modal.component';
 import { UserService } from '../service/user-service';
 import { environment } from '../environments/environment';
+import { assign } from 'lodash';
 
 @Component({
   standalone: true,
@@ -102,7 +104,7 @@ export class LoadVersionComponent implements AfterViewInit {
   searchCriteria = new FormGroup(
     {
       codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      version: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      version: new FormControl<string | undefined>(''),
       loadNumber: new FormControl<number | undefined>(undefined),
       versionStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
       loadTimeStartTime: new FormControl<Date | undefined>(undefined),
@@ -114,8 +116,27 @@ export class LoadVersionComponent implements AfterViewInit {
     }, { updateOn: 'submit' },
   );
 
+  currentLoadVersionSearchCriteria: LoadVersionPayload = {
+    pagination: {
+      pageNum: 1,
+      pageSize: 10,
+    },
+    searchColumns: {
+      requestId: '',
+      codeSystemName: '',
+      requester: '',
+      versionStatus: '',
+      loadNumber: '',
+    },
+    sortCriteria: {
+      sortDirection: 'asc',
+      sortBy: 'loadNumber',
+    },
+  };
+
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
+              private router: Router,
               private dialog: MatDialog,
               private cd: ChangeDetectorRef,
               private loadingService: LoadingService,
@@ -124,6 +145,13 @@ export class LoadVersionComponent implements AfterViewInit {
     userService.user$.subscribe(user => {
       this.username = user?.utsUser.username || '';
     });
+    this.searchCriteria.valueChanges
+      .subscribe(val => {
+        this.router.navigate(['load-versions'], {
+          queryParamsHandling: 'merge',
+          queryParams: { expand: undefined, ...val },
+        });
+      });
   }
 
   ngAfterViewInit() {
@@ -137,14 +165,17 @@ export class LoadVersionComponent implements AfterViewInit {
         tap({ next: () => this.loadingService.showLoading() }),
         map((queryParams: Params) => {
           const qp = { ...queryParams['params'] };
-          if (qp.loadNumber) {
-            qp.loadNumber = parseInt(qp.loadNumber);
-          }
+          // update UI from query parameters
+          this.searchCriteria.patchValue(qp, { emitEvent: false });
           return qp;
+        }),
+        map((qp): LoadVersionPayload => {
+          const loadVersionPayload: LoadVersionPayload = generateLoadVersionPayload(qp);
+          assign(this.currentLoadVersionSearchCriteria, loadVersionPayload);
+          return this.currentLoadVersionSearchCriteria;
         }),
         map((qp): LoadVersionSearchCriteria => {
           const DEFAULT_SEARCH_CRITERIA: LoadVersionSearchCriteria = {
-            loadNumber: null,
             sort: 'requestId',
             order: 'asc',
             pageNumber: 0,
@@ -223,6 +254,7 @@ export class LoadVersionComponent implements AfterViewInit {
       });
   }
 
-
   protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
+  protected readonly VERSION_STATUSES = VERSION_STATUSES;
+
 }

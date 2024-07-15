@@ -1,3 +1,5 @@
+import { SearchPayloadPagination, SearchPayloadSortCriteria } from '../model/search';
+
 export type LoadVersionsApiResponse = {
   total_count: number,
   items: LoadVersion[]
@@ -44,7 +46,7 @@ export type LoadVersionActivityNote = {
 
 export type LoadVersion = {
   requestId: string
-  loadNumber: number
+  loadNumber: string
   codeSystemName: string
   sourceFilePath: string
   requestSubject: string
@@ -64,3 +66,72 @@ export type LoadVersion = {
   requestTime: Date;
   loadSummary: LoadSummary;
 }
+
+type LoadVersionPayloadSearchColumns = {
+  requestId: string;
+  codeSystemName: string;
+  requester: string;
+  versionStatus: string;
+  loadNumber: string;
+}
+
+
+export type LoadVersionPayload = {
+  pagination: SearchPayloadPagination,
+  searchColumns: LoadVersionPayloadSearchColumns,
+  sortCriteria: SearchPayloadSortCriteria,
+}
+
+export type FlatLoadVersionPayload = {
+  // pagination
+  pageNum: number,
+  pageSize: number,
+
+  // searchColumns
+  requestId: string,
+  codeSystemName: string,
+  requester: string,
+  version: string,
+  versionStatus: string,
+  loadNumber: string,
+
+  // sortCriteria
+  sortBy: string,
+  sortDirection: string,
+}
+
+export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersionPayload): LoadVersionPayload => {
+  const {
+    pageNum,
+    pageSize,
+    requestId,
+    codeSystemName,
+    version,
+    versionStatus,
+    loadNumber,
+    requester,
+    sortBy,
+    sortDirection,
+  } = flatLoadVersionPayload;
+
+  return {
+    pagination: {
+      pageNum: pageNum || 1,
+      pageSize: pageSize || 10,
+    },
+    searchColumns: {
+      requestId: requestId || '',
+      codeSystemName: codeSystemName || '',
+      requester: requester || '',
+      version: version || '',
+      versionStatus: versionStatus || '',
+      loadNumber: loadNumber || '',
+    },
+    sortCriteria: {
+      sortBy: sortBy || 'requestId',
+      sortDirection: sortDirection || 'asc',
+    },
+
+  } as LoadVersionPayload;
+};
+

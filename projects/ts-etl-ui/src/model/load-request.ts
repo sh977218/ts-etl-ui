@@ -1,4 +1,4 @@
-import { SortDirection } from '@angular/material/sort';
+import { SearchPayloadPagination, SearchPayloadSortCriteria } from '../model/search';
 
 export type LoadRequestActivity = {
   componentName: string;
@@ -31,7 +31,7 @@ export type LoadRequest = {
   creationTime: Date;
   requestStatus: string;
   numberOfMessages: number;
-  loadNumber: number;
+  loadNumber: string;
   loadStatus: string;
   loadTime: Date;
   duration: Date;
@@ -40,11 +40,6 @@ export type LoadRequest = {
 }
 
 // API request payload
-type LoadRequestPayloadPagination = {
-  pageNum: number;
-  pageSize: number;
-}
-
 type LoadRequestPayloadSearchFilters = {
   filterRequestTime: string;
   filterRequester: string;
@@ -63,16 +58,11 @@ type LoadRequestPayloadSearchColumns = {
   creationEndTime: string;
 }
 
-type LoadRequestPayloadSortCriteria = {
-  sortBy: string;
-  sortDirection: SortDirection;
-}
-
 export type LoadRequestPayload = {
-  pagination: LoadRequestPayloadPagination,
+  pagination: SearchPayloadPagination,
   searchFilters: LoadRequestPayloadSearchFilters,
   searchColumns: LoadRequestPayloadSearchColumns,
-  sortCriteria: LoadRequestPayloadSortCriteria,
+  sortCriteria: SearchPayloadSortCriteria,
 }
 
 export type FlatLoadRequestPayload = {
