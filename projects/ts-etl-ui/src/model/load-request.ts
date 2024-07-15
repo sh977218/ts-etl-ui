@@ -31,7 +31,7 @@ export type LoadRequest = {
   creationTime: Date;
   requestStatus: string;
   numberOfMessages: number;
-  loadNumber: number;
+  loadNumber: string;
   loadStatus: string;
   loadTime: Date;
   duration: Date;
