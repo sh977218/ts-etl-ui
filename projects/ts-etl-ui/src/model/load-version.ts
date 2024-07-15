@@ -89,6 +89,7 @@ export type FlatLoadVersionPayload = {
   requestId: string,
   codeSystemName: string,
   requester: string,
+  version: string,
 
   // sortCriteria
   sortBy: string,
@@ -101,6 +102,7 @@ export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersi
     pageSize,
     requestId,
     codeSystemName,
+    version,
     requester,
     sortBy,
     sortDirection,
@@ -115,6 +117,7 @@ export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersi
       requestId: requestId || '',
       codeSystemName: codeSystemName || '',
       requester: requester || '',
+      version: version || '',
     },
     sortCriteria: {
       sortBy: sortBy || 'requestId',

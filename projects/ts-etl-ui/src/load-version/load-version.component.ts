@@ -104,7 +104,7 @@ export class LoadVersionComponent implements AfterViewInit {
   searchCriteria = new FormGroup(
     {
       codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      version: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      version: new FormControl<string | undefined>(''),
       loadNumber: new FormControl<number | undefined>(undefined),
       versionStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
       loadTimeStartTime: new FormControl<Date | undefined>(undefined),
