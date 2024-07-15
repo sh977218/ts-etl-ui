@@ -125,7 +125,8 @@ export class LoadVersionComponent implements AfterViewInit {
       requestId: '',
       codeSystemName: '',
       requester: '',
-      versionStatus: ';'
+      versionStatus: '',
+      loadNumber: '',
     },
     sortCriteria: {
       sortDirection: 'asc',
@@ -175,7 +176,6 @@ export class LoadVersionComponent implements AfterViewInit {
         }),
         map((qp): LoadVersionSearchCriteria => {
           const DEFAULT_SEARCH_CRITERIA: LoadVersionSearchCriteria = {
-            loadNumber: null,
             sort: 'requestId',
             order: 'asc',
             pageNumber: 0,

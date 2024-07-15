@@ -8,7 +8,6 @@ import { environment } from '../environments/environment';
  * but I leave sort/order/pageNumber/pageSize in here in case we decide to do a sever side pagination
  */
 export type LoadVersionSearchCriteria = {
-  loadNumber: number | null;
   sort: string,
   order: SortDirection,
   pageNumber: number,
