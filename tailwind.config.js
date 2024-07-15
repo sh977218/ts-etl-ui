@@ -4,7 +4,9 @@ module.exports = {
     scale: {
       '25': '.25',
     }, extend: {
-      colors: {},
+      colors: {}, flexGrow: {
+        0.65: '0.65',
+      },
     },
   }, plugins: [], important: true,
 };

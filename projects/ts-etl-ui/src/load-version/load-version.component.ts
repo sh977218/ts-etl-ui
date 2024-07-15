@@ -1,14 +1,19 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, ViewChild,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NO_ERRORS_SCHEMA,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule, JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
+import { MatTable, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,7 +22,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { LoadVersion, LoadVersionActivity, LoadVersionsApiResponse } from '../model/load-version';
+import {
+  LoadVersion,
+  LoadVersionActivity,
+  LoadVersionActivityNote,
+  LoadVersionsApiResponse,
+} from '../model/load-version';
 import { LoadVersionDataSource, LoadVersionSearchCriteria } from './load-version-data-source';
 import { LoadingService } from '../service/loading-service';
 import { triggerExpandTableAnimation } from '../animations';
@@ -29,9 +39,11 @@ import {
   LoadVersionAcceptanceActionsComponent,
 } from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
-import { environment } from '../environments/environment';
-import { LoadVersionAddNoteComponent } from '../load-version-add-note/load-version-add-note.component';
 import { CODE_SYSTEM_NAMES } from '../service/constant';
+import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
+import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal/load-version-add-note-modal.component';
+import { UserService } from '../service/user-service';
+import { environment } from '../environments/environment';
 
 @Component({
   standalone: true,
@@ -56,7 +68,7 @@ import { CODE_SYSTEM_NAMES } from '../service/constant';
     LoadVersionActivityComponent,
     LoadSummaryComponent,
     LoadVersionAcceptanceActionsComponent,
-    LoadVersionAddNoteComponent,
+    LoadVersionNoteComponent,
   ],
   templateUrl: './load-version.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -75,12 +87,14 @@ export class LoadVersionComponent implements AfterViewInit {
   ];
   searchRowColumns = this.displayedColumns.map(c => `${c}-search`);
 
-  loadVersionDatabase: LoadVersionDataSource | null = null;
+  loadVersionDatabase: LoadVersionDataSource | undefined;
   data: LoadVersion[] = [];
 
   resultsLength = 0;
-  expandedElement: LoadVersion | null = null;
+  expandedElement: LoadVersion | null;
+  username: string = '';
 
+  @ViewChild(MatTable, { static: false }) table!: MatTable<LoadVersion>;
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
@@ -100,13 +114,16 @@ export class LoadVersionComponent implements AfterViewInit {
     }, { updateOn: 'submit' },
   );
 
-
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private dialog: MatDialog,
               private cd: ChangeDetectorRef,
               private loadingService: LoadingService,
+              private userService: UserService,
               private alertService: AlertService) {
+    userService.user$.subscribe(user => {
+      this.username = user?.utsUser.username || '';
+    });
   }
 
   ngAfterViewInit() {
@@ -152,15 +169,13 @@ export class LoadVersionComponent implements AfterViewInit {
         next: data => {
           this.loadingService.hideLoading();
           this.data = data;
-          if (this.activatedRoute.snapshot.queryParams['expand'] === 'true') {
-            this.expandedElement = this.data[0];
-          }
         },
         error: () => this.loadingService.hideLoading(),
       });
   }
 
   action(newLoadVersionActivity: LoadVersionActivity, loadVersion: LoadVersion) {
+    this.loadingService.showLoading();
     this.http.post(`${environment.apiServer}/loadVersionActivity`, {
       requestId: loadVersion!.requestId,
       loadVersionActivity: newLoadVersionActivity,
@@ -172,15 +187,42 @@ export class LoadVersionComponent implements AfterViewInit {
         next: (updatedLoadVersion) => {
           loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
           loadVersion.versionStatus = updatedLoadVersion.versionStatus;
-          this.cd.detectChanges();
+          this.loadingService.hideLoading();
           this.alertService.addAlert('', 'Activity added successfully.');
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
       });
   }
 
-  refreshActivityTable() {
-    this.cd.detectChanges();
+  openAddNoteModal(loadVersion: LoadVersion) {
+    this.dialog
+      .open(LoadVersionAddNoteModalComponent, {
+        width: '600px',
+      })
+      .afterClosed()
+      .pipe(
+        filter(reason => !!reason),
+        switchMap((activityNote: LoadVersionActivityNote) => {
+          this.loadingService.showLoading();
+          activityNote.createdBy = this.username;
+          activityNote.createdTime = new Date();
+          return this.http.post<LoadVersion>('/api/addActivityNote', {
+            requestId: loadVersion.requestId,
+            activityNote,
+          }).pipe(map(() => activityNote));
+        }),
+      )
+      .subscribe({
+        next: (activityNote: LoadVersionActivityNote) => {
+          loadVersion.loadVersionActivities[0].notes.push(activityNote);
+          this.loadingService.hideLoading();
+          this.alertService.addAlert('', 'Activity added successfully.');
+        }, error: () => {
+          this.loadingService.hideLoading();
+          this.alertService.addAlert('', 'Activity add failed.');
+        },
+      });
   }
+
 
   protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
 }

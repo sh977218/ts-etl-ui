@@ -1,9 +1,7 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  computed,
   input,
   ViewChild,
 } from '@angular/core';
@@ -24,7 +22,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../environments/environment';
 import { triggerExpandTableAnimation } from '../animations';
-import { LoadVersionActivity } from '../model/load-version';
+import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 import { AlertService } from '../service/alert-service';
 import { DownloadService } from '../service/download-service';
 import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
@@ -50,12 +48,15 @@ import { LoadVersionNoteComponent } from '../load-version-note/load-version-note
   templateUrl: './load-version-activity.component.html',
   styleUrl: './load-version-activity.component.scss',
   animations: [triggerExpandTableAnimation],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideNativeDateAdapter()],
 })
 export class LoadVersionActivityComponent implements AfterViewInit {
-  requestId = input.required<number>();
-  loadVersionActivities = input.required<LoadVersionActivity[]>();
+  loadVersion = input.required<LoadVersion>();
+
+  loadVersionActivities() {
+    return this.loadVersion().loadVersionActivities;
+  }
+
   editDateMode = -1;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -63,11 +64,8 @@ export class LoadVersionActivityComponent implements AfterViewInit {
   @ViewChild(MatTable) activitiesTable!: MatTable<LoadVersionActivity>;
 
   displayedColumns: string[] = ['id', 'activity', 'availableDate', 'reason', 'nbNotes'];
-  expandedElement: LoadVersionActivity | null = null;
 
-  dataSource = computed(() => {
-    return new MatTableDataSource<LoadVersionActivity>(this.loadVersionActivities().reverse());
-  });
+  dataSource = new MatTableDataSource<LoadVersionActivity>([]);
 
   editAvailableDateForm = new FormGroup(
     {
@@ -87,12 +85,13 @@ export class LoadVersionActivityComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.dataSource().paginator = this.paginator;
-    this.dataSource().sort = this.sort;
+    this.dataSource = new MatTableDataSource(this.loadVersion().loadVersionActivities.reverse());
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
     this.editAvailableDateForm.valueChanges.pipe(
       switchMap(value => {
         return this.http.post<string>(`${environment.apiServer}/editAvailableDate`, {
-          requestId: this.requestId(),
+          requestId: this.loadVersion().requestId,
           newDate: value.availableDate,
         });
       }),
@@ -100,7 +99,7 @@ export class LoadVersionActivityComponent implements AfterViewInit {
         next: () => {
           this.alertService.addAlert('info', `Available Date Updated`);
           if (this.editAvailableDateForm.get('availableDate')?.value) {
-            this.loadVersionActivities()[0]!.availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
+            this.loadVersion().loadVersionActivities[0].availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
           }
           this.activitiesTable.renderRows();
           this.cd.detectChanges();
@@ -112,15 +111,15 @@ export class LoadVersionActivityComponent implements AfterViewInit {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource().filter = filterValue.trim().toLowerCase();
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-    if (this.dataSource().paginator) {
-      this.dataSource().paginator?.firstPage();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator?.firstPage();
     }
   }
 
   downloadQaActivities() {
-    of(this.loadVersionActivities())
+    of(this.loadVersion().loadVersionActivities)
       .pipe(
         map(data => {
           const headerList = [...this.displayedColumns];

@@ -3,11 +3,11 @@
     <legend>QA Activities</legend>
     <div class="flex">
       <button mat-icon-button color="primary" (click)="downloadQaActivities()" class="transform scale-25"
-              *ngIf="dataSource().data.length">
+              *ngIf="dataSource.data.length">
         <mat-icon fontIcon="file_download"></mat-icon>
       </button>
     </div>
-    <table data-testid="qaActivitiesTable" #activitiesTable mat-table [dataSource]="dataSource()" matSort
+    <table data-testid="qaActivitiesTable" #activitiesTable mat-table [dataSource]="loadVersionActivities()" matSort
            multiTemplateDataRows>
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>Activity ID</th>
@@ -45,7 +45,7 @@
               {{element.availableDate | date:'yyyy/MM/dd'}}
             </span>
             <button mat-icon-button color="primary"
-                    *ngIf="loadVersionActivities()[0].activity === 'Accept' && index === 0"
+                    *ngIf="loadVersion().loadVersionActivities[0].activity === 'Accept' && index === 0"
                     (click)="$event.stopPropagation(); editDateMode = index" class="transform scale-25">
               <mat-icon fontIcon="edit"></mat-icon>
             </button>
@@ -60,19 +60,8 @@
 
       <ng-container matColumnDef="nbNotes">
         <th mat-header-cell *matHeaderCellDef> # of Notes</th>
-        <td mat-cell *matCellDef="let element"
-            (click)="expandedElement = expandedElement === element ? null : element">
+        <td mat-cell *matCellDef="let element">
           {{element.notes.length}}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="expandedDetail">
-        <td class="bg-gray-100" mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
-          <div class="example-element-detail" [@detailExpand]="row === expandedElement ? 'expanded' : 'collapsed'">
-            <div class="example-element-description" *ngIf="expandedElement === row">
-              <app-load-version-note [loadVersionNotes]="row.notes"></app-load-version-note>
-            </div>
-          </div>
         </td>
       </ng-container>
 
@@ -84,13 +73,7 @@
         </td>
       </tr>
 
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-          class="example-element-row"
-          [class.example-expanded-row]="expandedElement === row"
-          (click)="expandedElement = expandedElement === row ? null : row">
-      </tr>
-
-      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="example-element-row"></tr>
 
     </table>
   </fieldset>
