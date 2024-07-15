@@ -61,8 +61,10 @@
         <ng-container matColumnDef="versionStatus-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <input id="versionStatusFilterInput" class="w-3/4" matInput formControlName="versionStatus"
-                     placeholder="search" size="4">
+              <select id="versionStatusFilterInput" class="w-25" formControlName="versionStatus">
+                <option value="">ALL</option>
+                <option *ngFor="let status of VERSION_STATUSES">{{status}}</option>
+              </select>
             </div>
           </th>
         </ng-container>

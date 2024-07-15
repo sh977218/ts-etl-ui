@@ -71,6 +71,7 @@ type LoadVersionPayloadSearchColumns = {
   requestId: string;
   codeSystemName: string;
   requester: string;
+  versionStatus: string;
 }
 
 
@@ -90,6 +91,7 @@ export type FlatLoadVersionPayload = {
   codeSystemName: string,
   requester: string,
   version: string,
+  versionStatus: string,
 
   // sortCriteria
   sortBy: string,
@@ -103,6 +105,7 @@ export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersi
     requestId,
     codeSystemName,
     version,
+    versionStatus,
     requester,
     sortBy,
     sortDirection,
@@ -118,6 +121,7 @@ export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersi
       codeSystemName: codeSystemName || '',
       requester: requester || '',
       version: version || '',
+      versionStatus: versionStatus || '',
     },
     sortCriteria: {
       sortBy: sortBy || 'requestId',

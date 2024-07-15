@@ -40,7 +40,7 @@ import {
   LoadVersionAcceptanceActionsComponent,
 } from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
-import { CODE_SYSTEM_NAMES } from '../service/constant';
+import { CODE_SYSTEM_NAMES, VERSION_STATUSES } from '../service/constant';
 import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal/load-version-add-note-modal.component';
 import { UserService } from '../service/user-service';
@@ -125,6 +125,7 @@ export class LoadVersionComponent implements AfterViewInit {
       requestId: '',
       codeSystemName: '',
       requester: '',
+      versionStatus: ';'
     },
     sortCriteria: {
       sortDirection: 'asc',
@@ -254,5 +255,6 @@ export class LoadVersionComponent implements AfterViewInit {
   }
 
   protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
+  protected readonly VERSION_STATUSES = VERSION_STATUSES;
 
 }

@@ -176,6 +176,7 @@ app.post('/api/loadVersions', async (req, res) => {
     codeSystemName,
     requester,
     version,
+    versionStatus,
   } = searchColumns;
   const { loadVersionsCollection } = await mongoCollection();
   const $match = {};
@@ -187,6 +188,9 @@ app.post('/api/loadVersions', async (req, res) => {
   }
   if (codeSystemName) {
     $match.codeSystemName = codeSystemName;
+  }
+  if (versionStatus) {
+    $match.versionStatus = versionStatus;
   }
   if (requester) {
     $match.requester = new RegExp(escapeRegex(requester), 'i');
