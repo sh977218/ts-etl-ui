@@ -172,16 +172,23 @@ app.post('/api/loadRequest', async (req, res) => {
 app.post('/api/loadVersions', async (req, res) => {
   const { loadNumber, sort, order, searchColumns } = req.body;
   const {
+    requestId,
     codeSystemName,
+    requester,
   } = searchColumns;
   const { loadVersionsCollection } = await mongoCollection();
   const $match = {};
   if (loadNumber !== null) {
     $match.loadNumber = loadNumber;
   }
-
+  if (requestId) {
+    $match.requestId = Number.parseInt(requestId);
+  }
   if (codeSystemName) {
     $match.codeSystemName = codeSystemName;
+  }
+  if (requester) {
+    $match.requester = new RegExp(escapeRegex(requester), 'i');
   }
 
   const $sort = {};

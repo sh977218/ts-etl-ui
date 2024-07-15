@@ -124,6 +124,7 @@ export class LoadVersionComponent implements AfterViewInit {
     searchColumns: {
       requestId: '',
       codeSystemName: '',
+      requester: '',
     },
     sortCriteria: {
       sortDirection: 'asc',
@@ -162,7 +163,7 @@ export class LoadVersionComponent implements AfterViewInit {
         tap({ next: () => this.loadingService.showLoading() }),
         map((queryParams: Params) => {
           const qp = { ...queryParams['params'] };
-          // update UI from query parameters  
+          // update UI from query parameters
           this.searchCriteria.patchValue(qp, { emitEvent: false });
           return qp;
         }),

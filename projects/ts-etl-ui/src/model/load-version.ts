@@ -70,6 +70,7 @@ export type LoadVersion = {
 type LoadVersionPayloadSearchColumns = {
   requestId: string;
   codeSystemName: string;
+  requester: string;
 }
 
 
@@ -87,6 +88,7 @@ export type FlatLoadVersionPayload = {
   // searchColumns
   requestId: string,
   codeSystemName: string,
+  requester: string,
 
   // sortCriteria
   sortBy: string,
@@ -99,6 +101,7 @@ export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersi
     pageSize,
     requestId,
     codeSystemName,
+    requester,
     sortBy,
     sortDirection,
   } = flatLoadVersionPayload;
@@ -111,6 +114,7 @@ export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersi
     searchColumns: {
       requestId: requestId || '',
       codeSystemName: codeSystemName || '',
+      requester: requester || '',
     },
     sortCriteria: {
       sortBy: sortBy || 'requestId',

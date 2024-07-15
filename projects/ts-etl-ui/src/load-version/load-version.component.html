@@ -1,6 +1,10 @@
 <form [formGroup]="searchCriteria">
   <div class="mat-elevation-z8">
     <div class="example-table-container">
+      <button mat-fab color="primary" type="submit" class="hidden">
+        <mat-icon fontIcon="search"></mat-icon>
+        Search
+      </button>
       <table mat-table [dataSource]="data" class="example-table" multiTemplateDataRows
              matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc">
         <ng-container matColumnDef="codeSystemName">
