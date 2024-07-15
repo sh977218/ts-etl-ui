@@ -1,9 +1,11 @@
+@import '../color';
+
 .isActive {
-  background-color: #005cbb1a !important;
+  background-color: $darkBlue !important;
 }
 
 .mat-toolbar.mat-toolbar-single-row {
-  background-color: #d7e3ff !important;
+  background-color: $lightBlue !important;
 }
 
 

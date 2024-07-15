@@ -33,7 +33,8 @@
               "zone.js"
             ],
             "allowedCommonJsDependencies": [
-              "file-saver"
+              "file-saver",
+              "lodash"
             ],
             "tsConfig": "projects/ts-etl-ui/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
