@@ -1,3 +1,5 @@
+import { SearchPayloadPagination, SearchPayloadSortCriteria } from '../model/search';
+
 export type LoadVersionsApiResponse = {
   total_count: number,
   items: LoadVersion[]
@@ -64,3 +66,57 @@ export type LoadVersion = {
   requestTime: Date;
   loadSummary: LoadSummary;
 }
+
+type LoadVersionPayloadSearchColumns = {
+  requestId: string;
+  codeSystemName: string;
+}
+
+
+export type LoadVersionPayload = {
+  pagination: SearchPayloadPagination,
+  searchColumns: LoadVersionPayloadSearchColumns,
+  sortCriteria: SearchPayloadSortCriteria,
+}
+
+export type FlatLoadVersionPayload = {
+  // pagination
+  pageNum: number,
+  pageSize: number,
+
+  // searchColumns
+  requestId: string,
+  codeSystemName: string,
+
+  // sortCriteria
+  sortBy: string,
+  sortDirection: string,
+}
+
+export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersionPayload): LoadVersionPayload => {
+  const {
+    pageNum,
+    pageSize,
+    requestId,
+    codeSystemName,
+    sortBy,
+    sortDirection,
+  } = flatLoadVersionPayload;
+
+  return {
+    pagination: {
+      pageNum: pageNum || 1,
+      pageSize: pageSize || 10,
+    },
+    searchColumns: {
+      requestId: requestId || '',
+      codeSystemName: codeSystemName || '',
+    },
+    sortCriteria: {
+      sortBy: sortBy || 'requestId',
+      sortDirection: sortDirection || 'asc',
+    },
+
+  } as LoadVersionPayload;
+};
+
