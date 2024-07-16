@@ -110,17 +110,17 @@ export class LoadRequestComponent implements AfterViewInit {
   searchCriteria = new FormGroup(
     {
       requestId: new FormControl<number | undefined>(undefined),
-      codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      codeSystemName: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
       requestSubject: new FormControl<string | undefined>(undefined),
-      requestStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      requestType: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      requestStatus: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
+      requestType: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
       requestStartTime: new FormControl<Date | undefined>(undefined),
       requestEndTime: new FormControl<Date | undefined>(undefined),
       requester: new FormControl<string | undefined>(undefined),
       creationStartTime: new FormControl<Date | undefined>(undefined),
       creationEndTime: new FormControl<Date | undefined>(undefined),
-      filterRequestTime: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
-      filterRequester: new FormControl<string | undefined>(undefined),
+      filterRequestTime: new FormControl<Date | undefined>(undefined, { updateOn: 'change' }),
+      filterRequester: new FormControl<Date | undefined>(undefined),
     }, { updateOn: 'submit' },
   );
 
