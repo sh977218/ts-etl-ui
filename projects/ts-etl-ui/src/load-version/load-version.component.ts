@@ -107,8 +107,8 @@ export class LoadVersionComponent implements AfterViewInit {
       version: new FormControl<string | undefined>(''),
       loadNumber: new FormControl<number | undefined>(undefined),
       versionStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      loadTimeStartTime: new FormControl<Date | undefined>(undefined),
-      loadTimeEndTime: new FormControl<Date | undefined>(undefined),
+      loadStartTime: new FormControl<Date | undefined>(undefined),
+      loadEndTime: new FormControl<Date | undefined>(undefined),
       requestId: new FormControl<number | undefined>(undefined),
       requester: new FormControl<Date | undefined>(undefined),
       requestStartTime: new FormControl<Date | undefined>(undefined),
@@ -127,6 +127,10 @@ export class LoadVersionComponent implements AfterViewInit {
       requester: '',
       versionStatus: '',
       loadNumber: '',
+      loadStartTime: '',
+      loadEndTime: '',
+      requestStartTime: '',
+      requestEndTime: ''
     },
     sortCriteria: {
       sortDirection: 'asc',

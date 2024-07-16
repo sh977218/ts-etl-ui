@@ -91,43 +91,6 @@ export type FlatLoadRequestPayload = {
   sortDirection: string,
 }
 
-export const flattenLoadRequestPayload = (loadRequestPayload: LoadRequestPayload): FlatLoadRequestPayload => {
-  const { pagination, searchFilters, searchColumns, sortCriteria } = loadRequestPayload;
-  const { pageNum, pageSize } = pagination;
-  const { filterRequestTime, filterRequester } = searchFilters;
-  const {
-    requestId,
-    codeSystemName,
-    requestSubject,
-    requestStatus,
-    requestType,
-    requestStartTime,
-    requestEndTime,
-    requester,
-    creationStartTime,
-    creationEndTime,
-  } = searchColumns;
-  const { sortBy, sortDirection } = sortCriteria;
-  return {
-    pageNum,
-    pageSize,
-    requestId,
-    codeSystemName,
-    requestSubject,
-    requestStatus,
-    requestType,
-    requestStartTime,
-    requestEndTime,
-    requester,
-    creationStartTime,
-    creationEndTime,
-    sortBy,
-    sortDirection,
-    filterRequestTime,
-    filterRequester,
-  } as FlatLoadRequestPayload;
-};
-
 export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadRequestPayload): LoadRequestPayload => {
   const {
     pageNum,
@@ -176,7 +139,6 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
 
   } as LoadRequestPayload;
 };
-
 
 // API response
 type LoadRequestsResponseResultPagination = {

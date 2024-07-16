@@ -73,6 +73,10 @@ type LoadVersionPayloadSearchColumns = {
   requester: string;
   versionStatus: string;
   loadNumber: string;
+  loadStartTime: string;
+  loadEndTime: string;
+  requestStartTime: string;
+  requestEndTime: string;
 }
 
 
@@ -94,6 +98,10 @@ export type FlatLoadVersionPayload = {
   version: string,
   versionStatus: string,
   loadNumber: string,
+  requestStartTime: string;
+  requestEndTime: string;
+  loadStartTime: string;
+  loadEndTime: string;
 
   // sortCriteria
   sortBy: string,
@@ -110,10 +118,14 @@ export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersi
     versionStatus,
     loadNumber,
     requester,
+    loadStartTime,
+    loadEndTime,
+    requestStartTime,
+    requestEndTime,
     sortBy,
     sortDirection,
   } = flatLoadVersionPayload;
-
+  
   return {
     pagination: {
       pageNum: pageNum || 1,
@@ -126,6 +138,10 @@ export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersi
       version: version || '',
       versionStatus: versionStatus || '',
       loadNumber: loadNumber || '',
+      requestStartTime: requestStartTime || '',
+      requestEndTime: requestEndTime || '',
+      loadStartTime: loadStartTime || '',
+      loadEndTime: loadEndTime || '',
     },
     sortCriteria: {
       sortBy: sortBy || 'requestId',

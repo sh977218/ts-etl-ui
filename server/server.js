@@ -178,6 +178,10 @@ app.post('/api/loadVersions', async (req, res) => {
     version,
     versionStatus,
     loadNumber,
+    loadStartTime,
+    loadEndTime,
+    requestStartTime,
+    requestEndTime,
   } = searchColumns;
   const { loadVersionsCollection } = await mongoCollection();
   const $match = {};
@@ -199,6 +203,33 @@ app.post('/api/loadVersions', async (req, res) => {
   if (loadNumber) {
     $match.loadNumber = new RegExp(escapeRegex(loadNumber), 'i');
   }
+  if (requestStartTime) {
+    const dateObj = new Date(requestStartTime);
+    $match.requestTime = {
+      $gte: dateObj,
+    };
+  }
+  if (requestEndTime) {
+    const dateObj = new Date(requestEndTime);
+    if (!$match.requestTime) {
+      $match.requestTime = {};
+    }
+    $match.requestTime['$lte'] = dateObj;
+  }
+  if (loadStartTime) {
+    const dateObj = new Date(loadStartTime);
+    $match.loadTime = {
+      $gte: dateObj,
+    };
+  }
+  if (loadEndTime) {
+    const dateObj = new Date(loadEndTime);
+    if (!$match.loadTime) {
+      $match.loadTime = {};
+    }
+    $match.loadTime['$lte'] = dateObj;
+  }
+
 
   const $sort = {};
   $sort[sort] = order === 'asc' ? 1 : -1;
