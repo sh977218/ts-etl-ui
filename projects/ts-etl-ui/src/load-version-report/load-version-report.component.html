@@ -1,2 +1,73 @@
 <h1>Version QA Report</h1>
-<h2>Will go Here</h2>
+<fieldset>
+  <mat-accordion multi>
+    <mat-expansion-panel expanded="true" togglePosition="before">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Identification
+        </mat-panel-title>
+        <mat-panel-description>
+          <span class="flex-1 flex justify-center"></span>
+          <mat-icon aria-label="Copy Identification"
+                    [cdkCopyToClipboard]="loadVersion$ | async | json">content_copy
+          </mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="flex flex-row">
+        <fieldset *ngIf="loadVersion1$ | async as loadVersion" class="flex flex-col grow">
+          <dl *ngFor="let item of loadVersion | keyvalue">
+            <dt>{{ item.key }}:</dt>
+            <dd>{{ item.value }}</dd>
+          </dl>
+        </fieldset>
+        <fieldset *ngIf="loadVersion2$ | async as loadVersion" class="flex flex-col grow">
+          <dl *ngFor="let item of loadVersion | keyvalue">
+            <dt>{{ item.key }}:</dt>
+            <dd>{{ item.value }}</dd>
+          </dl>
+        </fieldset>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true" togglePosition="before">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Source Information
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true" togglePosition="before">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Load Version
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true" togglePosition="before">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Verification
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true" togglePosition="before">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Validation
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true" togglePosition="before">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Comparison
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+  </mat-accordion>
+</fieldset>

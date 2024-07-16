@@ -1,0 +1,27 @@
+@import '../color';
+
+mat-expansion-panel-header {
+  background-color: $lightBlue !important;
+}
+
+dl {
+  display: flex;
+  flex-direction: row;
+  margin: 0.5rem 0;
+
+  dt, dd {
+    display: flex;
+    margin: 0;
+    flex: 1 1 0
+  }
+
+  dt {
+    justify-content: end;
+    margin-right: 0.5rem;
+  }
+
+  dd {
+    justify-content: start;
+    margin-left: 0.5rem;
+  }
+}
