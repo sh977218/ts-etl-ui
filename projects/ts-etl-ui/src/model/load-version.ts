@@ -1,4 +1,4 @@
-import { SearchPayloadPagination, SearchPayloadSortCriteria } from '../model/search';
+import { SearchPayloadPagination, SearchPayloadSortCriteria } from './search';
 
 export type LoadVersionsApiResponse = {
   total_count: number,
@@ -86,6 +86,23 @@ export type LoadVersionPayload = {
   sortCriteria: SearchPayloadSortCriteria,
 }
 
+export class LoadVersionSearchCriteria {
+  requestId = '';
+  codeSystemName = '';
+  requester = '';
+  version = '';
+  versionStatus = '';
+  loadNumber = '';
+  requestStartTime = undefined;
+  requestEndTime = undefined;
+  loadStartTime = undefined;
+  loadEndTime = undefined;
+
+  constructor(qp: LoadVersionSearchCriteria) {
+    Object.assign(this, qp);
+  }
+}
+
 export type FlatLoadVersionPayload = {
   // pagination
   pageNum: number,
@@ -125,7 +142,7 @@ export const generateLoadVersionPayload = (flatLoadVersionPayload: FlatLoadVersi
     sortBy,
     sortDirection,
   } = flatLoadVersionPayload;
-  
+
   return {
     pagination: {
       pageNum: pageNum || 1,
