@@ -38,7 +38,8 @@ import { AlertService } from '../service/alert-service';
 import {
   generateLoadRequestPayload,
   LoadRequest,
-  LoadRequestPayload, LoadRequestSearchCriteria,
+  LoadRequestPayload,
+  LoadRequestSearchCriteria,
   LoadRequestsResponse,
 } from '../model/load-request';
 import { User } from '../model/user';

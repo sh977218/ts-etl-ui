@@ -28,7 +28,8 @@ import {
   LoadVersionActivity,
   LoadVersionActivityNote,
   LoadVersionPayload,
-  LoadVersionsApiResponse, LoadVersionSearchCriteria,
+  LoadVersionsApiResponse,
+  LoadVersionSearchCriteria,
 } from '../model/load-version';
 
 import { LoadVersionDataSource } from './load-version-data-source';

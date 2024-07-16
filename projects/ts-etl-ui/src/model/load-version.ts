@@ -87,12 +87,12 @@ export type LoadVersionPayload = {
 }
 
 export class LoadVersionSearchCriteria {
-  requestId = '';
+  requestId = undefined;
   codeSystemName = '';
-  requester = '';
-  version = '';
+  requester = undefined;
+  version = undefined;
   versionStatus = '';
-  loadNumber = '';
+  loadNumber = undefined;
   requestStartTime = undefined;
   requestEndTime = undefined;
   loadStartTime = undefined;

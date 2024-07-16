@@ -66,14 +66,14 @@ export type LoadRequestPayload = {
 }
 
 export class LoadRequestSearchCriteria {
-  requestId = '';
+  requestId = undefined;
   codeSystemName = '';
-  requestSubject = '';
+  requestSubject = undefined;
   requestStatus = '';
   requestType = '';
   requestStartTime = undefined;
   requestEndTime = undefined;
-  requester = '';
+  requester = undefined;
   creationStartTime = undefined;
   creationEndTime = undefined;
   filterRequestTime = undefined;
