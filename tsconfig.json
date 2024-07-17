@@ -30,6 +30,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "alwaysStrict": true,
     "strictBindCallApply": true,
     "esModuleInterop": true
   },
