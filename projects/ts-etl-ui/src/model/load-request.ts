@@ -80,7 +80,18 @@ export class LoadRequestSearchCriteria {
   filterRequester = undefined;
 
   constructor(qp: LoadRequestSearchCriteria) {
-    Object.assign(this, qp);
+    this.requestId = qp.requestId;
+    this.codeSystemName = qp.codeSystemName;
+    this.requestSubject = qp.requestSubject;
+    this.requestStatus = qp.requestStatus;
+    this.requestType = qp.requestType;
+    this.requestStartTime = qp.requestStartTime;
+    this.requestEndTime = qp.requestEndTime;
+    this.requester = qp.requester;
+    this.creationStartTime = qp.creationStartTime;
+    this.creationEndTime = qp.creationEndTime;
+    this.filterRequestTime = qp.filterRequestTime;
+    this.filterRequester = qp.filterRequester;
   }
 }
 
