@@ -49,6 +49,7 @@ import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal
 import { UserService } from '../service/user-service';
 import { environment } from '../environments/environment';
 import { assign } from 'lodash';
+import { LoadVersionRulesComponent } from '../load-version-rules/load-version-rules.component';
 
 @Component({
   standalone: true,
@@ -74,6 +75,8 @@ import { assign } from 'lodash';
     LoadSummaryComponent,
     LoadVersionAcceptanceActionsComponent,
     LoadVersionNoteComponent,
+    LoadVersionRulesComponent,
+    LoadVersionRulesComponent,
   ],
   templateUrl: './load-version.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],

@@ -144,6 +144,7 @@
                 </div>
                 <div class="grow-[0.65]">
                   <app-load-summary [loadSummary]="row.loadSummary"></app-load-summary>
+                  <app-load-version-rules [qaRules]="row.loadSummary.qaRules"></app-load-version-rules>
                   <h1>QA Actions</h1>
                   <fieldset>
                     <a [routerLink]="['/load-version-report', row.requestId]">Go to QA Report</a>
