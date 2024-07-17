@@ -73,7 +73,6 @@ export class LoadVersionReportComponent {
             }),
           );
       }),
-      shareReplay(1),
     );
 
   loadVersion1$ = this.loadVersion$
