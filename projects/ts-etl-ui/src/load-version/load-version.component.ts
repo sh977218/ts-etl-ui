@@ -173,7 +173,7 @@ export class LoadVersionComponent implements AfterViewInit {
         map((queryParams: Params) => {
           const qp = { ...queryParams['params'] };
           // update UI from query parameters
-          const searchCriteriaFromQueryParameter = new LoadVersionSearchCriteria(qp) as object;
+          const searchCriteriaFromQueryParameter = new LoadVersionSearchCriteria(qp);
           this.searchCriteria.patchValue(searchCriteriaFromQueryParameter, { emitEvent: false });
           return qp;
         }),

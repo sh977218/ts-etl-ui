@@ -180,7 +180,7 @@ export class LoadRequestComponent implements AfterViewInit {
           map((queryParams: Params) => {
             const qp = { ...queryParams['params'] };
             // update UI from query parameters
-            const searchCriteriaFromQueryParameter = new LoadRequestSearchCriteria(qp) as object;
+            const searchCriteriaFromQueryParameter = new LoadRequestSearchCriteria(qp);
             this.searchCriteria.patchValue(searchCriteriaFromQueryParameter, { emitEvent: false });
             return qp;
           }),
