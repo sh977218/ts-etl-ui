@@ -81,10 +81,10 @@ export class LoadRequestSearchCriteria {
 
   constructor(qp: LoadRequestSearchCriteria) {
     this.requestId = qp.requestId;
-    this.codeSystemName = qp.codeSystemName;
+    this.codeSystemName = qp.codeSystemName || '';
     this.requestSubject = qp.requestSubject;
-    this.requestStatus = qp.requestStatus;
-    this.requestType = qp.requestType;
+    this.requestStatus = qp.requestStatus || '';
+    this.requestType = qp.requestType || '';
     this.requestStartTime = qp.requestStartTime;
     this.requestEndTime = qp.requestEndTime;
     this.requester = qp.requester;

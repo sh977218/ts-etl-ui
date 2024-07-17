@@ -100,10 +100,10 @@ export class LoadVersionSearchCriteria {
 
   constructor(qp: LoadVersionSearchCriteria) {
     this.requestId = qp.requestId;
-    this.codeSystemName = qp.codeSystemName;
+    this.codeSystemName = qp.codeSystemName || '';
     this.requester = qp.requester;
     this.version = qp.version;
-    this.versionStatus = qp.versionStatus;
+    this.versionStatus = qp.versionStatus || '';
     this.loadNumber = qp.loadNumber;
     this.requestStartTime = qp.requestStartTime;
     this.requestEndTime = qp.requestEndTime;
