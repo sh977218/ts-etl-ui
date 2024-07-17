@@ -169,6 +169,11 @@ app.post('/api/loadRequest', async (req, res) => {
   res.send({ requestId: newLoadRequest.requestId });
 });
 
+app.get('/api/loadRequest/:requestId', async (req, res) => {
+  const { loadRequestsCollection } = await mongoCollection();
+  res.send(await loadRequestsCollection.findOne({ requestId: +req.params.requestId }));
+});
+
 app.post('/api/loadVersions', async (req, res) => {
   const { sort, order, searchColumns } = req.body;
   const {
