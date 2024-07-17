@@ -26,10 +26,13 @@ import {
   generateLoadVersionPayload,
   LoadVersion,
   LoadVersionActivity,
-  LoadVersionActivityNote, LoadVersionPayload,
+  LoadVersionActivityNote,
+  LoadVersionPayload,
   LoadVersionsApiResponse,
+  LoadVersionSearchCriteria,
 } from '../model/load-version';
-import { LoadVersionDataSource, LoadVersionSearchCriteria } from './load-version-data-source';
+
+import { LoadVersionDataSource } from './load-version-data-source';
 import { LoadingService } from '../service/loading-service';
 import { triggerExpandTableAnimation } from '../animations';
 import { LoadVersionDetailComponent } from '../load-version-detail/load-version-detail.component';
@@ -106,10 +109,10 @@ export class LoadVersionComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      codeSystemName: new FormControl<string | undefined>('', { updateOn: 'change' }),
-      version: new FormControl<string | undefined>(''),
+      codeSystemName: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
+      version: new FormControl<string | undefined>(undefined),
       loadNumber: new FormControl<number | undefined>(undefined),
-      versionStatus: new FormControl<string | undefined>('', { updateOn: 'change' }),
+      versionStatus: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
       loadStartTime: new FormControl<Date | undefined>(undefined),
       loadEndTime: new FormControl<Date | undefined>(undefined),
       requestId: new FormControl<number | undefined>(undefined),
@@ -133,7 +136,7 @@ export class LoadVersionComponent implements AfterViewInit {
       loadStartTime: '',
       loadEndTime: '',
       requestStartTime: '',
-      requestEndTime: ''
+      requestEndTime: '',
     },
     sortCriteria: {
       sortDirection: 'asc',
@@ -173,7 +176,8 @@ export class LoadVersionComponent implements AfterViewInit {
         map((queryParams: Params) => {
           const qp = { ...queryParams['params'] };
           // update UI from query parameters
-          this.searchCriteria.patchValue(qp, { emitEvent: false });
+          const searchCriteriaFromQueryParameter = new LoadVersionSearchCriteria(qp);
+          this.searchCriteria.patchValue(searchCriteriaFromQueryParameter, { emitEvent: false });
           return qp;
         }),
         map((qp): LoadVersionPayload => {
@@ -181,18 +185,8 @@ export class LoadVersionComponent implements AfterViewInit {
           assign(this.currentLoadVersionSearchCriteria, loadVersionPayload);
           return this.currentLoadVersionSearchCriteria;
         }),
-        map((qp): LoadVersionSearchCriteria => {
-          const DEFAULT_SEARCH_CRITERIA: LoadVersionSearchCriteria = {
-            sort: 'requestId',
-            order: 'asc',
-            pageNumber: 0,
-            pageSize: 10,
-          };
-          const loadVersionSearchCriteria = Object.assign(DEFAULT_SEARCH_CRITERIA, qp);
-          return loadVersionSearchCriteria;
-        }),
-        switchMap((loadVersionSearchCriteria) => {
-          return this.loadVersionDatabase!.getLoadVersions(loadVersionSearchCriteria)
+        switchMap((loadVersionPayload) => {
+          return this.loadVersionDatabase!.getLoadVersions(loadVersionPayload)
             .pipe(catchError(() => of(null)));
         }),
         map((data: LoadVersionsApiResponse | null) => {

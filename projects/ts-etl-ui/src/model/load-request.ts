@@ -1,4 +1,4 @@
-import { SearchPayloadPagination, SearchPayloadSortCriteria } from '../model/search';
+import { SearchPayloadPagination, SearchPayloadSortCriteria } from './search';
 
 export type LoadRequestActivity = {
   componentName: string;
@@ -63,6 +63,36 @@ export type LoadRequestPayload = {
   searchFilters: LoadRequestPayloadSearchFilters,
   searchColumns: LoadRequestPayloadSearchColumns,
   sortCriteria: SearchPayloadSortCriteria,
+}
+
+export class LoadRequestSearchCriteria {
+  requestId = undefined;
+  codeSystemName = '';
+  requestSubject = undefined;
+  requestStatus = '';
+  requestType = '';
+  requestStartTime = undefined;
+  requestEndTime = undefined;
+  requester = undefined;
+  creationStartTime = undefined;
+  creationEndTime = undefined;
+  filterRequestTime = undefined;
+  filterRequester = undefined;
+
+  constructor(qp: LoadRequestSearchCriteria) {
+    this.requestId = qp.requestId;
+    this.codeSystemName = qp.codeSystemName || '';
+    this.requestSubject = qp.requestSubject;
+    this.requestStatus = qp.requestStatus || '';
+    this.requestType = qp.requestType || '';
+    this.requestStartTime = qp.requestStartTime;
+    this.requestEndTime = qp.requestEndTime;
+    this.requester = qp.requester;
+    this.creationStartTime = qp.creationStartTime;
+    this.creationEndTime = qp.creationEndTime;
+    this.filterRequestTime = qp.filterRequestTime;
+    this.filterRequester = qp.filterRequester;
+  }
 }
 
 export type FlatLoadRequestPayload = {
