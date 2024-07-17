@@ -1,20 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { SortDirection } from '@angular/material/sort';
 import { environment } from '../environments/environment';
-import { LoadRequest, LoadRequestsResponse } from '../model/load-request';
-
-export type LoadRequestSearchCriteria = {
-  sort: string,
-  order: SortDirection,
-  pageNumber: number,
-  pageSize: number
-}
+import { LoadRequest, LoadRequestPayload, LoadRequestsResponse } from '../model/load-request';
 
 export class LoadRequestDataSource {
   constructor(private http: HttpClient) {
   }
 
-  getLoadRequests(loadRequestSearchCriteria: LoadRequestSearchCriteria) {
+  getLoadRequests(loadRequestSearchCriteria: LoadRequestPayload) {
     return this.http.post<LoadRequestsResponse>(`${environment.apiServer}/loadRequests`, loadRequestSearchCriteria);
   }
 
