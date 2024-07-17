@@ -11,6 +11,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { LoadVersion } from '../model/load-version';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
+import { LoadRequestDataSource } from '../load-request/load-request-data-source';
+import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 
 @Component({
   standalone: true,
@@ -25,6 +28,9 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
     AsyncPipe,
     CdkCopyToClipboard,
     JsonPipe,
+    LoadRequestMessageComponent,
+    LoadSummaryComponent,
+    LoadSummaryComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './load-version-report.component.html',
@@ -34,6 +40,7 @@ export class LoadVersionReportComponent {
   loadVersionKeys1: string[] = ['codeSystemName', 'version', 'loadNumber'];
   loadVersionKeys2 = ['requestId', 'sourceFilePath'];
   loadVersionDatabase: LoadVersionDataSource = new LoadVersionDataSource(this.http);
+  loadRequestDatabase: LoadRequestDataSource = new LoadRequestDataSource(this.http);
   loadVersion$ = this.activatedRoute.paramMap
     .pipe(
       tap({ next: () => this.loadingService.showLoading() }),
@@ -50,6 +57,22 @@ export class LoadVersionReportComponent {
           );
       }),
       shareReplay(1),
+    );
+  loadRequest$ = this.activatedRoute.paramMap
+    .pipe(
+      tap({ next: () => this.loadingService.showLoading() }),
+      map((params: Params) => {
+        return params['params']['requestId'];
+      }),
+      switchMap(requestId => {
+        return this.loadRequestDatabase.getLoadRequest(requestId)
+          .pipe(
+            tap({
+              next: () => this.loadingService.hideLoading(),
+              error: () => this.loadingService.hideLoading(),
+            }),
+          );
+      }),
     );
 
   loadVersion1$ = this.loadVersion$

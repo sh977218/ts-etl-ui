@@ -44,6 +44,13 @@
           Load Version
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <ng-container *ngIf="loadVersion$ | async as loadVersion">
+        <ng-container *ngIf="loadRequest$ | async as loadRequest">
+          <app-load-summary [loadSummary]="loadVersion.loadSummary"></app-load-summary>
+          <app-load-request-message [loadRequestMessages]="loadRequest.loadRequestMessages"></app-load-request-message>
+        </ng-container>
+      </ng-container>
+
     </mat-expansion-panel>
 
     <mat-expansion-panel expanded="true" togglePosition="before">
