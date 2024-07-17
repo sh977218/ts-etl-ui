@@ -2,7 +2,7 @@ import {
   AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, signal, ViewChild,
   WritableSignal,
 } from '@angular/core';
-import { AsyncPipe, CommonModule, DatePipe, NgIf, Location } from '@angular/common';
+import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
@@ -155,7 +155,6 @@ export class LoadRequestComponent implements AfterViewInit {
   constructor(public http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private router: Router,
-              private location: Location,
               public dialog: MatDialog,
               private loadingService: LoadingService,
               private userService: UserService,
@@ -212,7 +211,7 @@ export class LoadRequestComponent implements AfterViewInit {
               this.data.set(data);
               const expand = this.activatedRoute.snapshot.queryParams['expand'];
               if (expand) {
-                this.expandedElement = this.data().at(Number.parseInt(expand || 0));
+                this.expandedElement = this.data().at(Number.parseInt(expand) || 0);
               }
               this.loadingService.hideLoading();
             },

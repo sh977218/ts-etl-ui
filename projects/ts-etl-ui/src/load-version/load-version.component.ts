@@ -203,7 +203,7 @@ export class LoadVersionComponent implements AfterViewInit {
           this.data = data;
           const expand = this.activatedRoute.snapshot.queryParams['expand'];
           if (expand) {
-            this.expandedElement = this.data.at(Number.parseInt(expand || 0));
+            this.expandedElement = this.data.at(Number.parseInt(expand) || 0);
           }
         },
         error: () => this.loadingService.hideLoading(),
