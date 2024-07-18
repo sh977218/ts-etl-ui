@@ -209,8 +209,9 @@ export class LoadRequestComponent implements AfterViewInit {
           tap({
             next: data => {
               this.data.set(data);
-              if (this.activatedRoute.snapshot.queryParams['expand'] === 'true') {
-                this.expandedElement = this.data().at(0);
+              const expand = this.activatedRoute.snapshot.queryParams['expand'];
+              if (expand) {
+                this.expandedElement = this.data().at(Number.parseInt(expand) || 0);
               }
               this.loadingService.hideLoading();
             },
@@ -219,6 +220,10 @@ export class LoadRequestComponent implements AfterViewInit {
         );
       }))
       .subscribe();
+  }
+
+  expandRow(row: LoadRequest | null | undefined) {
+    this.expandedElement = this.expandedElement === row ? null : row;
   }
 
   openCreateLoadRequestModal() {

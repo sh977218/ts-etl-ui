@@ -39,7 +39,7 @@
 
         <ng-container matColumnDef="loadNumber">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Load Number</th>
-          <td mat-cell *matCellDef="let row" (click)="expandedElement = expandedElement === row ? null : row">
+          <td mat-cell *matCellDef="let row" (click)="expandRow(row)">
             <span class="fake-link">{{row.loadNumber}}</span>
           </td>
         </ng-container>
@@ -89,7 +89,7 @@
         <ng-container matColumnDef="requestId">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Request ID</th>
           <td mat-cell *matCellDef="let row">
-            <a routerLink="/load-requests" [queryParams]="{requestId:row.requestId,expand:true}">{{row.requestId}} </a>
+            <a routerLink="/load-requests" [queryParams]="{requestId:row.requestId,expand:0}">{{row.requestId}} </a>
           </td>
         </ng-container>
         <ng-container matColumnDef="requestId-search">

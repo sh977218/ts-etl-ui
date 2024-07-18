@@ -99,7 +99,7 @@ export class LoadVersionComponent implements AfterViewInit {
   data: LoadVersion[] = [];
 
   resultsLength = 0;
-  expandedElement: LoadVersion | null;
+  expandedElement: LoadVersion | null | undefined;
   username: string = '';
 
   @ViewChild(MatTable, { static: false }) table!: MatTable<LoadVersion>;
@@ -201,9 +201,17 @@ export class LoadVersionComponent implements AfterViewInit {
         next: data => {
           this.loadingService.hideLoading();
           this.data = data;
+          const expand = this.activatedRoute.snapshot.queryParams['expand'];
+          if (expand) {
+            this.expandedElement = this.data.at(Number.parseInt(expand) || 0);
+          }
         },
         error: () => this.loadingService.hideLoading(),
       });
+  }
+
+  expandRow(row: LoadVersion | null | undefined) {
+    this.expandedElement = this.expandedElement === row ? null : row;
   }
 
   action(newLoadVersionActivity: LoadVersionActivity, loadVersion: LoadVersion) {

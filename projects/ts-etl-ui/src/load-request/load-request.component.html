@@ -59,7 +59,7 @@
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
               <input id="requestIdFilterInput" class="w-3/4" matInput formControlName="requestId"
-                     placeholder="Ex. 148" size=4 type="number">
+                     placeholder="Ex. 148" size="4" type="number">
             </div>
           </th>
         </ng-container>
@@ -214,7 +214,7 @@
         <tr mat-row *matRowDef="let row; columns: columnsToDisplayWithExpand();"
             class="example-element-row"
             [class.example-expanded-row]="expandedElement === row"
-            (click)="expandedElement = expandedElement === row ? null : row;">
+            (click)="expandRow(row)">
         </tr>
 
         <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>

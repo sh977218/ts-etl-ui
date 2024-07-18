@@ -12,7 +12,7 @@
       <td mat-cell *matCellDef="let element">
         <ng-container [ngSwitch]="element.key">
           <ng-container *ngSwitchCase="'loadNumber'">
-            <a routerLink="/load-versions" [queryParams]="{loadNumber:element.value, expand:true}">{{element.value}}</a>
+            <a routerLink="/load-versions" [queryParams]="{loadNumber:element.value, expand:0}">{{element.value}}</a>
           </ng-container>
           <ng-container *ngSwitchDefault>
             {{element.value}}
