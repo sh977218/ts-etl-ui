@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AsyncPipe, JsonPipe, KeyValuePipe, NgForOf, NgIf } from '@angular/common';
 import { LoadVersionDataSource } from '../load-version/load-version-data-source';
-import { map, shareReplay, switchMap, tap } from 'rxjs';
+import { map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../service/loading-service';
@@ -75,7 +75,7 @@ export class LoadVersionReportComponent {
       }),
     );
 
-  loadVersion1$ = this.loadVersion$
+  identification1$ = this.loadVersion$
     .pipe(
       map((loadVersion: LoadVersion) => {
         const filtered = Object.entries(loadVersion).filter(
@@ -85,7 +85,7 @@ export class LoadVersionReportComponent {
       }),
     );
 
-  loadVersion2$ = this.loadVersion$
+  identification2$ = this.loadVersion$
     .pipe(
       map((loadVersion: LoadVersion) => {
         const filtered = Object.entries(loadVersion).filter(
@@ -94,6 +94,8 @@ export class LoadVersionReportComponent {
         return Object.fromEntries(filtered);
       }),
     );
+
+  sourceInformation$1 = of();
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,

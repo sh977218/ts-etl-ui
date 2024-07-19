@@ -35,7 +35,20 @@
           Source Information
         </mat-panel-title>
       </mat-expansion-panel-header>
-
+      <div class="flex flex-row">
+        <fieldset *ngIf="identification1$ | async as identification" class="flex flex-col grow">
+          <dl *ngFor="let item of identification | keyvalue">
+            <dt>{{ item.key }}:</dt>
+            <dd>{{ item.value }}</dd>
+          </dl>
+        </fieldset>
+        <fieldset *ngIf="identification2$ | async as identification" class="flex flex-col grow">
+          <dl *ngFor="let item of identification | keyvalue">
+            <dt>{{ item.key }}:</dt>
+            <dd>{{ item.value }}</dd>
+          </dl>
+        </fieldset>
+      </div>
     </mat-expansion-panel>
 
     <mat-expansion-panel expanded="true" togglePosition="before">

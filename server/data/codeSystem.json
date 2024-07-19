@@ -146,6 +146,11 @@
     {
       "codeSystemName": "MESH",
       "title": "Medical Subject Headings (MeSH)."
+    },
+    {
+      "codeSystemName": "CDT",
+      "sourceInformation": {
+      }
     }
   ]
 }
