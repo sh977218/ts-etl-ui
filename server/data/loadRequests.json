@@ -2,7 +2,7 @@
   "data": [
     {
       "requestId": 0,
-      "codeSystemName": "SNOMEDCT",
+      "codeSystemName": "CDT",
       "sourceFilePath": "C:\\Talley\\LOINC\\Hoffman",
       "requestSubject": "New version load for LOINC_linguistic",
       "requestStatus": "In Progress",

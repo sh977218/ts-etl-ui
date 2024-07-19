@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AsyncPipe, JsonPipe, KeyValuePipe, NgForOf, NgIf } from '@angular/common';
 import { LoadVersionDataSource } from '../load-version/load-version-data-source';
-import { map, of, shareReplay, switchMap, tap } from 'rxjs';
+import { map, shareReplay, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../service/loading-service';
@@ -14,6 +14,8 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadRequestDataSource } from '../load-request/load-request-data-source';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
+import { CodeSystem, CodeSystemSourceInformation } from '../model/code-system';
+import { environment } from '../environments/environment';
 
 @Component({
   standalone: true,
@@ -95,7 +97,56 @@ export class LoadVersionReportComponent {
       }),
     );
 
-  sourceInformation$1 = of();
+  sourceInformationKeys1: string[] = [
+    'Version ID',
+    'Source Family',
+    'Source Name',
+    'Normalized Source',
+    'Official Name',
+    'Stripped Source',
+    'Version',
+    'Low Source',
+    'Restriction Level',
+    'NLM Contact',
+    'Acquisition Contact',
+    'URL',
+    'Language',
+    'Citation',
+    'License Info',
+    'Character Set',
+    'Context Type',
+    'Rel Directionality Flag'];
+  sourceInformationKeys2 = ['Content Contact', 'License Contact'];
+
+
+  private sourceInformation$ = this.loadRequest$.pipe(
+    switchMap(loadRequest => {
+      return this.http.get<CodeSystem>(`${environment.apiServer}/codeSystem/${loadRequest.codeSystemName}`);
+    }),
+    map((codeSystem: CodeSystem) => {
+      return codeSystem.sourceInformation;
+    }),
+    shareReplay(1),
+  );
+  sourceInformation1$ = this.sourceInformation$
+    .pipe(
+      map((codeSystemSourceInformation: CodeSystemSourceInformation) => {
+        const filtered = Object.entries(codeSystemSourceInformation).filter(
+          ([k]) => this.sourceInformationKeys1.includes(k),
+        );
+        return Object.fromEntries(filtered);
+      }),
+    );
+
+  sourceInformation2$ = this.sourceInformation$
+    .pipe(
+      map((codeSystemSourceInformation: CodeSystemSourceInformation) => {
+        const filtered = Object.entries(codeSystemSourceInformation).filter(
+          ([k]) => this.sourceInformationKeys2.includes(k),
+        );
+        return Object.fromEntries(filtered);
+      }),
+    );
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,

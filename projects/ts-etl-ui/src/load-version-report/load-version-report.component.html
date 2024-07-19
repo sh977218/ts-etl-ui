@@ -14,14 +14,14 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="flex flex-row">
-        <fieldset *ngIf="loadVersion1$ | async as loadVersion" class="flex flex-col grow">
-          <dl *ngFor="let item of loadVersion | keyvalue">
+        <fieldset *ngIf="identification1$ | async as identification" class="flex flex-col basis-1/2">
+          <dl *ngFor="let item of identification | keyvalue">
             <dt>{{ item.key }}:</dt>
             <dd>{{ item.value }}</dd>
           </dl>
         </fieldset>
-        <fieldset *ngIf="loadVersion2$ | async as loadVersion" class="flex flex-col grow">
-          <dl *ngFor="let item of loadVersion | keyvalue">
+        <fieldset *ngIf="identification2$ | async as identification" class="flex flex-col basis-1/2">
+          <dl *ngFor="let item of identification | keyvalue">
             <dt>{{ item.key }}:</dt>
             <dd>{{ item.value }}</dd>
           </dl>
@@ -36,14 +36,14 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="flex flex-row">
-        <fieldset *ngIf="identification1$ | async as identification" class="flex flex-col grow">
-          <dl *ngFor="let item of identification | keyvalue">
+        <fieldset *ngIf="sourceInformation1$ | async as sourceInformation" class="flex flex-col basis-1/2">
+          <dl *ngFor="let item of sourceInformation | keyvalue">
             <dt>{{ item.key }}:</dt>
             <dd>{{ item.value }}</dd>
           </dl>
         </fieldset>
-        <fieldset *ngIf="identification2$ | async as identification" class="flex flex-col grow">
-          <dl *ngFor="let item of identification | keyvalue">
+        <fieldset *ngIf="sourceInformation2$ | async as sourceInformation" class="flex flex-col basis-1/2">
+          <dl *ngFor="let item of sourceInformation | keyvalue">
             <dt>{{ item.key }}:</dt>
             <dd>{{ item.value }}</dd>
           </dl>
