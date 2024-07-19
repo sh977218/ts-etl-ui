@@ -150,6 +150,26 @@
     {
       "codeSystemName": "CDT",
       "sourceInformation": {
+        "Version ID": "CDT12023120231002010003",
+        "Source Family": "CDT",
+        "Source Name": "CDT2023",
+        "Normalized Source": "CDT2023",
+        "Official Name": "Code on Dental Procedures and Nomenclature",
+        "Stripped Source": "CDT",
+        "Version": "2023",
+        "Low Source": "CDT2022",
+        "Restriction Level": "3",
+        "NLM Contact": "jarnotm@mail.nlm.nih.gov",
+        "Acquisition Contact": "jarnotm@mail.nlm.nih.gov",
+        "URL": "http://www.ada.org/22.aspx",
+        "Language": "ENG",
+        "Citation": "Code on Dental Procedures and Nomenclature 2022 Chicago, IL American Dental Association",
+        "License Info": "",
+        "Character Set": "UTF-8",
+        "Context Type": "",
+        "Rel Directionality Flag": "",
+        "Content Contact": "Frank Pokorny Senior Manager Dental Codes Maintenance and Development, Council on Dental Benefit Programs American Dental Association 211 East Chicago Ave. Chicago IL United States 60611-2678 312-440-2752 pokornyf@ada.org http://www.ada.org/",
+        "License Contact": "Debbie Labinger Manager, Special Accounts Senior Manager, Special Accounts and Licensing Program American Dental Association 211 East Chicago Ave. Chicago IL United States 60611-2678 312-440-7742 LabingerD@ada.org http://www.ada.org/"
       }
     }
   ]
