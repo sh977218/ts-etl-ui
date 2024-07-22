@@ -43,7 +43,7 @@
           </dl>
         </fieldset>
         <fieldset *ngIf="sourceInformation2$ | async as sourceInformation" class="flex flex-col basis-1/2">
-          <dl *ngFor="let item of sourceInformation | keyvalue">
+          <dl *ngFor="let item of sourceInformation | keyvalue: sourceInformationKeysCompareFn2">
             <dt>{{ item.key }}:</dt>
             <dd>{{ item.value }}</dd>
           </dl>

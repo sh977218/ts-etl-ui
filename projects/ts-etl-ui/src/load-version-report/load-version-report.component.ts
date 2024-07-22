@@ -121,7 +121,7 @@ export class LoadVersionReportComponent {
   sourceInformationKeysCompareFn1 = (a: KeyValue<string, string>, b: KeyValue<string, string>) => {
     return this.sourceInformationKeys1.indexOf(a.key) - this.sourceInformationKeys1.indexOf(b.key);
   };
-  
+
   sourceInformationKeysCompareFn2 = (a: KeyValue<string, string>, b: KeyValue<string, string>) => {
     return this.sourceInformationKeys2.indexOf(a.key) - this.sourceInformationKeys1.indexOf(b.key);
   };
@@ -142,8 +142,7 @@ export class LoadVersionReportComponent {
         const filtered = Object.entries(codeSystemSourceInformation).filter(
           ([k]) => this.sourceInformationKeys1.includes(k),
         );
-        const temp = Object.fromEntries(filtered);
-        return temp;
+        return Object.fromEntries(filtered);
       }),
     );
 
