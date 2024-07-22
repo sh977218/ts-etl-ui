@@ -12,7 +12,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -261,6 +261,18 @@ export class LoadVersionComponent implements AfterViewInit {
           this.alertService.addAlert('', 'Activity add failed.');
         },
       });
+  }
+
+  handleSortEvent(e: Sort) {
+    const { active, direction } = e;
+    this.router.navigate(['load-versions'], {
+      queryParamsHandling: 'merge',
+      queryParams: {
+        pageNum: 1,
+        sortBy: active,
+        sortDirection: direction,
+      },
+    });
   }
 
   protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
