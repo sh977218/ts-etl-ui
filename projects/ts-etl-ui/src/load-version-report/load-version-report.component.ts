@@ -119,7 +119,8 @@ export class LoadVersionReportComponent {
     'License Info',
     'Character Set',
     'Context Type',
-    'Rel Directionality Flag'];
+    'Rel Directionality Flag',
+  ];
   sourceInformationKeys2 = ['Content Contact', 'License Contact'];
 
   sourceInformationKeysCompareFn1 = (a: KeyValue<string, string>, b: KeyValue<string, string>) => {
