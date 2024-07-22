@@ -14,7 +14,11 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadRequestDataSource } from '../load-request/load-request-data-source';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
-import { CodeSystem, CodeSystemSourceInformation } from '../model/code-system';
+import {
+  CodeSystem,
+  CodeSystemSourceInformation1,
+  CodeSystemSourceInformation2,
+} from '../model/code-system';
 import { environment } from '../environments/environment';
 
 @Component({
@@ -122,7 +126,7 @@ export class LoadVersionReportComponent {
     return this.sourceInformationKeys1.indexOf(a.key) - this.sourceInformationKeys1.indexOf(b.key);
   };
 
-  sourceInformationKeysCompareFn2 = (a: KeyValue<string, string>, b: KeyValue<string, string>) => {
+  sourceInformationKeysCompareFn2 = (a: KeyValue<string, string[]>, b: KeyValue<string, string[]>) => {
     return this.sourceInformationKeys2.indexOf(a.key) - this.sourceInformationKeys1.indexOf(b.key);
   };
 
@@ -138,7 +142,7 @@ export class LoadVersionReportComponent {
   );
   sourceInformation1$ = this.sourceInformation$
     .pipe(
-      map((codeSystemSourceInformation: CodeSystemSourceInformation) => {
+      map((codeSystemSourceInformation: CodeSystemSourceInformation1) => {
         const filtered = Object.entries(codeSystemSourceInformation).filter(
           ([k]) => this.sourceInformationKeys1.includes(k),
         );
@@ -148,7 +152,7 @@ export class LoadVersionReportComponent {
 
   sourceInformation2$ = this.sourceInformation$
     .pipe(
-      map((codeSystemSourceInformation: CodeSystemSourceInformation) => {
+      map((codeSystemSourceInformation: CodeSystemSourceInformation2) => {
         const filtered = Object.entries(codeSystemSourceInformation).filter(
           ([k]) => this.sourceInformationKeys2.includes(k),
         );
