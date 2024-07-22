@@ -40,6 +40,7 @@ export class LoadVersionAcceptanceActionsComponent {
       .pipe(filter(reason => !!reason))
       .subscribe({
         next: (loadVersionActivity: LoadVersionActivity) => {
+          loadVersionActivity.activity = action;
           this.actionOutput.emit(loadVersionActivity);
         },
       });

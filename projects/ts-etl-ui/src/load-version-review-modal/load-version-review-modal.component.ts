@@ -36,7 +36,6 @@ export class LoadVersionReviewModalComponent {
   reviewForm = new FormGroup(
     {
       createdBy: new FormControl<string>({ value: '', disabled: true }),
-      activity: new FormControl<string>({ value: '', disabled: true }),
       availableDate: new FormControl<Date>(new Date(), [Validators.required]),
       notes: new FormArray([
         new FormGroup({
@@ -57,7 +56,6 @@ export class LoadVersionReviewModalComponent {
       this.reviewForm.get('createdBy')?.setValue(user?.utsUser.username || '');
       this.notes.at(0)?.get('createdBy')?.setValue(user?.utsUser.username || '');
     });
-    this.reviewForm.get('activity')?.setValue(this.dataSource.tag);
   }
 
   get notes() {
