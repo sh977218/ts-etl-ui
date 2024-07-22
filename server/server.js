@@ -175,7 +175,8 @@ app.get('/api/loadRequest/:requestId', async (req, res) => {
 });
 
 app.post('/api/loadVersions', async (req, res) => {
-  const { sort, order, searchColumns } = req.body;
+  const { order, searchColumns, sortCriteria } = req.body;
+  const { sortBy, sortDirection } = sortCriteria;
   const {
     requestId,
     codeSystemName,
@@ -235,9 +236,8 @@ app.post('/api/loadVersions', async (req, res) => {
     $match.loadTime['$lte'] = dateObj;
   }
 
-
   const $sort = {};
-  $sort[sort] = order === 'asc' ? 1 : -1;
+  $sort[sortBy] = sortDirection === 'asc' ? 1 : -1;
   const aggregation = [{ $match }, { $sort }];
   const loadVersions = await loadVersionsCollection.aggregate(aggregation).toArray();
   res.send({

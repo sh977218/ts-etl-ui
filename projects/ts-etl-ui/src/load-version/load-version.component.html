@@ -6,7 +6,8 @@
         Search
       </button>
       <table mat-table [dataSource]="data" class="example-table" multiTemplateDataRows
-             matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc">
+             matSort matSortActive="requestId" matSortDisableClear matSortDirection="asc"
+             (matSortChange)="handleSortEvent($event)">
         <ng-container matColumnDef="codeSystemName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Code System Name</th>
           <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
