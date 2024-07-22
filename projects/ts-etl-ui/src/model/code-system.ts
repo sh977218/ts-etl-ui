@@ -25,8 +25,9 @@ export type CodeSystemCode = {
   'termType': string
   'isActive': string
 }
+export type CodeSystemSourceInformation = CodeSystemSourceInformation1 & CodeSystemSourceInformation2;
 
-export type CodeSystemSourceInformation = {
+export type CodeSystemSourceInformation1 = {
   'Version ID': string;
   'Source Family': string;
   'Source Name': string;
@@ -45,7 +46,8 @@ export type CodeSystemSourceInformation = {
   'Character Set': string;
   'Context Type': string;
   'Rel Directionality Flag': string;
-  'Content Contact': string;
-  'License Contact': string;
 }
-
+export type CodeSystemSourceInformation2 = {
+  'Content Contact': string[];
+  'License Contact': string[];
+}
