@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { AsyncPipe, JsonPipe, KeyValue, KeyValuePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, JsonPipe, KeyValue, KeyValuePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { LoadVersionDataSource } from '../load-version/load-version-data-source';
 import { map, shareReplay, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
@@ -9,8 +9,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { LoadVersion } from '../model/load-version';
+import { MatTableModule } from '@angular/material/table';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+
+import { LoadVersion } from '../model/load-version';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadRequestDataSource } from '../load-request/load-request-data-source';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
@@ -20,6 +22,7 @@ import {
   CodeSystemSourceInformation2,
 } from '../model/code-system';
 import { environment } from '../environments/environment';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   standalone: true,
@@ -37,6 +40,9 @@ import { environment } from '../environments/environment';
     LoadRequestMessageComponent,
     LoadSummaryComponent,
     LoadSummaryComponent,
+    MatTableModule,
+    MatCheckbox,
+    NgClass,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './load-version-report.component.html',
@@ -131,7 +137,6 @@ export class LoadVersionReportComponent {
     return this.sourceInformationKeys2.indexOf(a.key) - this.sourceInformationKeys1.indexOf(b.key);
   };
 
-
   private sourceInformation$ = this.loadRequest$.pipe(
     switchMap(loadRequest => {
       return this.http.get<CodeSystem>(`${environment.apiServer}/codeSystem/${loadRequest.codeSystemName}`);
@@ -161,13 +166,48 @@ export class LoadVersionReportComponent {
       }),
     );
 
+  verificationSummary$ = this.loadVersion$.pipe(
+    map((loadVersion: LoadVersion) => {
+      return {
+        totalRules: loadVersion.verification.rules.length,
+        rulesWithData: loadVersion.verification.rules.filter(rule => rule.dataAvailable === 'Yes')?.length || 0,
+        error: loadVersion.verification.rules.reduce((previousValue: number, currentValue) => {
+          return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Error')?.length || 0;
+        }, 0),
+        messageGroupCountWarning: loadVersion.verification.rules.reduce((previousValue: number, currentValue) => {
+          return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Warning')?.length || 0;
+        }, 0),
+        info: loadVersion.verification.rules.reduce((previousValue: number, currentValue) => {
+          return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Info')?.length || 0;
+        }, 0),
+      };
+    }),
+  );
+
+
+  verificationQARulesColumn = [
+    'name', 'description', 'dataAvailable', 'messagesGroupCount', 'action',
+  ];
+  verificationQARules$ = this.loadVersion$.pipe(
+    map((loadVersion: LoadVersion) => {
+      return loadVersion.verification.rules.map(rule => {
+        return {
+          name: rule.name,
+          description: rule.description,
+          dataAvailable: rule.dataAvailable,
+          messagesGroupCount: {
+            numOfError: rule.messages.filter(message => message.messageGroup === 'Error')?.length || 0,
+            numOfWarning: rule.messages.filter(message => message.messageGroup === 'Warning')?.length || 0,
+            numOfInfo: rule.messages.filter(message => message.messageGroup === 'Info')?.length || 0,
+          },
+        };
+      });
+    }),
+  );
+
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private loadingService: LoadingService,
   ) {
-  }
-
-  setStep() {
-    console.log('');
   }
 }
