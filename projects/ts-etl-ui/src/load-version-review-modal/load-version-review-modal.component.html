@@ -1,16 +1,12 @@
-<h2 mat-dialog-title>{{dataSource.tag}} Version Notes</h2>
+<h2 mat-dialog-title>{{dataSource.tag}} Data Load</h2>
 <form [formGroup]="reviewForm">
   <mat-dialog-content class="mat-typography">
     <div class="flex flex-col">
       <mat-form-field appearance="outline">
-        <mat-label>Tag</mat-label>
-        <input matInput placeholder="Tag" formControlName="activity">
-      </mat-form-field>
-      <mat-form-field appearance="outline">
         <mat-label>Created By</mat-label>
         <input matInput formControlName="createdBy">
       </mat-form-field>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" *ngIf="dataSource.tag === 'Accept'">
         <mat-label>Available Date</mat-label>
         <input matInput formControlName="availableDate" [matDatepicker]="picker">
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
