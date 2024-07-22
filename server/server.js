@@ -274,7 +274,7 @@ app.post('/api/loadVersionActivity', async (req, res) => {
     $push: {
       loadVersionActivities: req.body.loadVersionActivity,
     },
-    $set: {versionStatus: versionStatus}
+    $set: { versionStatus: versionStatus },
   });
   res.send();
 });
@@ -325,6 +325,13 @@ app.get('/api/codeSystems', async (req, res) => {
   const { codeSystemsCollection } = await mongoCollection();
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
+});
+
+app.get('/api/codeSystem/:codeSystemName', async (req, res) => {
+  const codeSystemName = req.params.codeSystemName;
+  const { codeSystemsCollection } = await mongoCollection();
+  const codeSystem = await codeSystemsCollection.findOne({ codeSystemName });
+  res.send(codeSystem);
 });
 
 
