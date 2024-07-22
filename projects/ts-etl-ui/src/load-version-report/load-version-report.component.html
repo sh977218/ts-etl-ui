@@ -37,7 +37,7 @@
       </mat-expansion-panel-header>
       <div class="flex flex-row">
         <fieldset *ngIf="sourceInformation1$ | async as sourceInformation" class="flex flex-col basis-1/2">
-          <dl *ngFor="let item of sourceInformation | keyvalue">
+          <dl *ngFor="let item of sourceInformation | keyvalue: sourceInformationKeysCompareFn1">
             <dt>{{ item.key }}:</dt>
             <dd>{{ item.value }}</dd>
           </dl>

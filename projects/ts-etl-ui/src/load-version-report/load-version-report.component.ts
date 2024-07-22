@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { AsyncPipe, JsonPipe, KeyValuePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, JsonPipe, KeyValue, KeyValuePipe, NgForOf, NgIf } from '@angular/common';
 import { LoadVersionDataSource } from '../load-version/load-version-data-source';
 import { map, shareReplay, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
@@ -118,6 +118,14 @@ export class LoadVersionReportComponent {
     'Rel Directionality Flag'];
   sourceInformationKeys2 = ['Content Contact', 'License Contact'];
 
+  sourceInformationKeysCompareFn1 = (a: KeyValue<string, string>, b: KeyValue<string, string>) => {
+    return this.sourceInformationKeys1.indexOf(a.key) - this.sourceInformationKeys1.indexOf(b.key);
+  };
+  
+  sourceInformationKeysCompareFn2 = (a: KeyValue<string, string>, b: KeyValue<string, string>) => {
+    return this.sourceInformationKeys2.indexOf(a.key) - this.sourceInformationKeys1.indexOf(b.key);
+  };
+
 
   private sourceInformation$ = this.loadRequest$.pipe(
     switchMap(loadRequest => {
@@ -134,7 +142,8 @@ export class LoadVersionReportComponent {
         const filtered = Object.entries(codeSystemSourceInformation).filter(
           ([k]) => this.sourceInformationKeys1.includes(k),
         );
-        return Object.fromEntries(filtered);
+        const temp = Object.fromEntries(filtered);
+        return temp;
       }),
     );
 
