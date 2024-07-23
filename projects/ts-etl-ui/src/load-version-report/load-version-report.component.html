@@ -8,8 +8,8 @@
         </mat-panel-title>
         <mat-panel-description>
           <span class="flex-1 flex justify-center"></span>
-          <mat-icon aria-label="Copy Identification"
-                    [cdkCopyToClipboard]="loadVersion$ | async | json">content_copy
+          <mat-icon aria-label="Copy Identification" fontIcon="content_copy"
+                    [cdkCopyToClipboard]="loadVersion$ | async | json">
           </mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>
@@ -108,37 +108,112 @@
             <th mat-header-cell *matHeaderCellDef>Rule Name</th>
             <td mat-cell *matCellDef="let element">{{element.name}}</td>
           </ng-container>
+
           <ng-container matColumnDef="description">
             <th mat-header-cell *matHeaderCellDef>Rule Description</th>
             <td mat-cell *matCellDef="let element">{{element.description}}</td>
           </ng-container>
+
           <ng-container matColumnDef="dataAvailable">
             <th mat-header-cell *matHeaderCellDef>Data Available</th>
             <td mat-cell *matCellDef="let element">{{element.dataAvailable}}</td>
           </ng-container>
+
           <ng-container matColumnDef="messagesGroupCount">
             <th mat-header-cell *matHeaderCellDef colspan="3">Message Group Count</th>
             <ng-container *matCellDef="let element">
               <td mat-cell [ngClass]="element.messagesGroupCount.numOfError>0?'text-red-700':''">
-                <mat-icon fontIcon="error" class="scale-25"></mat-icon>
-                {{element.messagesGroupCount.numOfError}}
+                <div class="flex align-middle justify-end">
+                  <mat-icon fontIcon="error" class="text-base"
+                            *ngIf="element.messagesGroupCount.numOfError>0"></mat-icon>
+                  {{element.messagesGroupCount.numOfError}}
+                </div>
               </td>
-              <td mat-cell
-                  [ngClass]="element.messagesGroupCount.numOfError>0?'text-orange-700':''">
-                <mat-icon fontIcon="warning"></mat-icon>
-                {{element.messagesGroupCount.numOfWarning}}</td>
+              <td mat-cell [ngClass]="element.messagesGroupCount.numOfWarning>0?'text-orange-400':''">
+                <div class="flex align-middle justify-end">
+                  <mat-icon fontIcon="warning" class="text-base"
+                            *ngIf="element.messagesGroupCount.numOfWarning>0"></mat-icon>
+                  {{element.messagesGroupCount.numOfWarning}}</div>
+              </td>
               <td mat-cell>{{element.messagesGroupCount.numOfInfo}}</td>
             </ng-container>
           </ng-container>
+
+          <ng-container matColumnDef="empty">
+            <th mat-header-cell *matHeaderCellDef colspan="3"></th>
+          </ng-container>
+
+          <ng-container matColumnDef="numberOfError">
+            <th mat-header-cell *matHeaderCellDef> Error</th>
+          </ng-container>
+
+          <ng-container matColumnDef="numberOfWarning">
+            <th mat-header-cell *matHeaderCellDef> Warning</th>
+          </ng-container>
+
+          <ng-container matColumnDef="numberOfInfo">
+            <th mat-header-cell *matHeaderCellDef> Info</th>
+          </ng-container>
+
           <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef>Action</th>
             <td mat-cell *matCellDef="let element">
-              <mat-checkbox></mat-checkbox>
+              <div class="flex align-middle justify-end">
+                <mat-checkbox></mat-checkbox>
+                <button mat-icon-button [cdkCopyToClipboard]="element">
+                  <mat-icon fontIcon="content_copy"></mat-icon>
+                </button>
+              </div>
             </td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="verificationQARulesColumn"></tr>
+          <tr mat-header-row *matHeaderRowDef="['empty','numberOfError','numberOfWarning','numberOfInfo']"></tr>
           <tr mat-row *matRowDef="let row; columns: verificationQARulesColumn;"></tr>
+        </table>
+      </fieldset>
+
+      <fieldset *ngIf="verificationRuleMessages$ | async as verificationRuleMessages">
+        <legend>Rule Messages</legend>
+        <table mat-table [dataSource]="verificationRuleMessages">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Rule Name</th>
+            <td mat-cell *matCellDef="let element">{{element.name}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="messageGroup">
+            <th mat-header-cell *matHeaderCellDef>Message Group</th>
+            <td mat-cell *matCellDef="let element"
+                [ngClass]="{
+                'text-red-700' : element.messageGroup==='Error',
+                'text-orange-400' : element.messageGroup==='Warning',
+                'text-green-400' : element.messageGroup==='Info'
+                }">
+              {{element.messageGroup}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="messageType">
+            <th mat-header-cell *matHeaderCellDef>Message Type</th>
+            <td mat-cell *matCellDef="let element">{{element.messageType}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="tag">
+            <th mat-header-cell *matHeaderCellDef>Tag</th>
+            <td mat-cell *matCellDef="let element">{{element.tag}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="message">
+            <th mat-header-cell *matHeaderCellDef>Message</th>
+            <td mat-cell *matCellDef="let element">{{element.message}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="creationTime">
+            <th mat-header-cell *matHeaderCellDef>Creation Time</th>
+            <td mat-cell *matCellDef="let element">{{element.creationTime}}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="verificationRuleMessagesColumn"></tr>
+          <tr mat-row *matRowDef="let row; columns: verificationRuleMessagesColumn;"></tr>
         </table>
       </fieldset>
     </mat-expansion-panel>

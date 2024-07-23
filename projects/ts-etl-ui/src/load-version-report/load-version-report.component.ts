@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 
-import { LoadVersion } from '../model/load-version';
+import { LoadVersion, RuleMessage } from '../model/load-version';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadRequestDataSource } from '../load-request/load-request-data-source';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
@@ -23,12 +23,14 @@ import {
 } from '../model/code-system';
 import { environment } from '../environments/environment';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   standalone: true,
   imports: [
     NgIf,
     MatExpansionModule,
+    MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
@@ -188,6 +190,7 @@ export class LoadVersionReportComponent {
   verificationQARulesColumn = [
     'name', 'description', 'dataAvailable', 'messagesGroupCount', 'action',
   ];
+
   verificationQARules$ = this.loadVersion$.pipe(
     map((loadVersion: LoadVersion) => {
       return loadVersion.verification.rules.map(rule => {
@@ -202,6 +205,29 @@ export class LoadVersionReportComponent {
           },
         };
       });
+    }),
+  );
+
+  verificationRuleMessagesColumn = [
+    'name',
+    'messageGroup',
+    'messageType',
+    'tag',
+    'message',
+    'creationTime',
+  ];
+  verificationRuleMessages$ = this.loadVersion$.pipe(
+    map((loadVersion: LoadVersion) => {
+      return loadVersion.verification.rules.reduce((previousValue: (RuleMessage & {
+        'name': string
+      })[], currentValue) => {
+        return [...currentValue.messages.map(message => {
+          return {
+            name: currentValue.name,
+            ...message,
+          };
+        }), ...previousValue];
+      }, []);
     }),
   );
 
