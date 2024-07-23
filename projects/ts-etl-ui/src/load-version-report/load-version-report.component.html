@@ -76,31 +76,50 @@
       </mat-expansion-panel-header>
       <fieldset *ngIf="verificationSummary$ | async as verificationSummary">
         <legend>Summary</legend>
-        <table>
-          <thead>
-          <tr>
-            <th>Total Rules</th>
-            <th>Rules with Data</th>
-            <th>Error</th>
-            <th>MessageGroup Count Warning</th>
-            <th>Info</th>
-            <th>Action</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>{{verificationSummary.totalRules}}</td>
-            <td>{{verificationSummary.rulesWithData}}</td>
-            <td>{{verificationSummary.error}}</td>
-            <td>{{verificationSummary.messageGroupCountWarning}}</td>
-            <td>{{verificationSummary.info}}</td>
-            <td>
-              <mat-checkbox></mat-checkbox>
+        <table mat-table [dataSource]="verificationSummary">
+
+          <ng-container matColumnDef="totalRules">
+            <th mat-header-cell *matHeaderCellDef>Total Rules</th>
+            <td mat-cell *matCellDef="let element">{{element.totalRules}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="rulesWithData">
+            <th mat-header-cell *matHeaderCellDef>Rules with Data</th>
+            <td mat-cell *matCellDef="let element">{{element.rulesWithData}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="error">
+            <th mat-header-cell *matHeaderCellDef>Error</th>
+            <td mat-cell *matCellDef="let element">{{element.error}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="messageGroupCountWarning">
+            <th mat-header-cell *matHeaderCellDef>MessageGroup Count Warning</th>
+            <td mat-cell *matCellDef="let element">{{element.messageGroupCountWarning}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="info">
+            <th mat-header-cell *matHeaderCellDef>Info</th>
+            <td mat-cell *matCellDef="let element">{{element.info}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="flex align-middle">
+                <mat-checkbox></mat-checkbox>
+                <button mat-icon-button [cdkCopyToClipboard]="element">
+                  <mat-icon fontIcon="content_copy"></mat-icon>
+                </button>
+              </div>
             </td>
-          </tr>
-          </tbody>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="verificationSummaryColumn"></tr>
+          <tr mat-row *matRowDef="let row; columns: verificationSummaryColumn;"></tr>
         </table>
       </fieldset>
+
       <fieldset *ngIf="verificationQARules$ | async as verificationQARules">
         <legend>QA Rules</legend>
         <table mat-table [dataSource]="verificationQARules">

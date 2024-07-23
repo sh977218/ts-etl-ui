@@ -168,9 +168,13 @@ export class LoadVersionReportComponent {
       }),
     );
 
+  verificationSummaryColumn = [
+    'totalRules', 'rulesWithData', 'error', 'messageGroupCountWarning', 'info', 'action',
+  ];
+
   verificationSummary$ = this.loadVersion$.pipe(
     map((loadVersion: LoadVersion) => {
-      return {
+      return [{
         totalRules: loadVersion.verification.rules.length,
         rulesWithData: loadVersion.verification.rules.filter(rule => rule.dataAvailable === 'Yes')?.length || 0,
         error: loadVersion.verification.rules.reduce((previousValue: number, currentValue) => {
@@ -182,7 +186,7 @@ export class LoadVersionReportComponent {
         info: loadVersion.verification.rules.reduce((previousValue: number, currentValue) => {
           return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Info')?.length || 0;
         }, 0),
-      };
+      }];
     }),
   );
 
