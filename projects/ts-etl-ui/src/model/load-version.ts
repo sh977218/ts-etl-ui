@@ -47,6 +47,10 @@ export type RuleMessage = {
   'creationTime': Date
 }
 
+export type RuleMessageUI = RuleMessage & {
+  'name': string
+}
+
 export type LoadVersionActivity = {
   id?: Date;
   activity: string
