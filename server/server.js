@@ -156,13 +156,19 @@ async function getNextLoadRequestSequenceId() {
   return loadRequestsCollection.countDocuments({});
 }
 
+app.delete('/api/loadRequest/:reqId', async (req, res) => {
+  const { loadRequestsCollection } = await mongoCollection();
+  await loadRequestsCollection.deleteOne({requestId: +req.params.reqId});
+  res.send();
+});
+
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
   const { loadRequestsCollection } = await mongoCollection();
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   const result = await loadRequestsCollection.insertOne({
-    requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'In Progress', ...loadRequest,
+    requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
   });
 
   const newLoadRequest = await loadRequestsCollection.findOne({ _id: result.insertedId });
