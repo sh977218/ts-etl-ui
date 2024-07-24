@@ -50,6 +50,7 @@ import { LoadRequestDetailComponent } from '../load-request-detail/load-request-
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { CODE_SYSTEM_NAMES, LOAD_REQUEST_STATUSES, LOAD_REQUEST_TYPES } from '../service/constant';
 import { environment } from '../environments/environment';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 
 @Component({
@@ -244,6 +245,23 @@ export class LoadRequestComponent implements AfterViewInit {
         },
         error: () => this.alertService.addAlert('danger', 'Error create load request.'),
       });
+  }
+
+  openCancelDialog(reqId: number) {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+    })
+      .afterClosed()
+      .pipe(
+        filter((dialogResult: boolean) => dialogResult),
+        switchMap(() => this.http.delete(`${environment.apiServer}/loadRequest/${reqId}`))
+      )
+      .subscribe({
+        next: () => {
+          this.alertService.addAlert('info', `Request (ID: ${reqId}) deleted successfully`);
+          this.reloadAllRequests$.next(true);
+        }
+      })
   }
 
   download() {

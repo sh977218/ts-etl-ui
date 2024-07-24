@@ -123,7 +123,7 @@ test.describe('e2e test', async () => {
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","HPO","newly created load request","In Progress","Regular"');
+      expect(fileContent).toContain('"149","HPO","newly created load request","Open","Regular"');
     });
   });
 
