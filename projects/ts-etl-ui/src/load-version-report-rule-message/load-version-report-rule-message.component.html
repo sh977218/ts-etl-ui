@@ -54,8 +54,10 @@
       <ng-container matColumnDef="tag-search">
         <th mat-header-cell *matHeaderCellDef>
           <div class="flex flex-col m-2">
-            <input id="tagFilterInput" class="w-3/4" matInput formControlName="tag"
-                   placeholder="search">
+            <select id="tagSearch" class="w-20" formControlName="tag">
+              <option value="">All</option>
+              <option *ngFor="let tag of tags()">{{tag}}</option>
+            </select>
           </div>
         </th>
       </ng-container>
