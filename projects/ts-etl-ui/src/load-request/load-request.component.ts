@@ -122,7 +122,7 @@ export class LoadRequestComponent implements AfterViewInit {
       creationEndTime: new FormControl<Date | undefined>(undefined),
       filterRequestTime: new FormControl<Date | undefined>(undefined, { updateOn: 'change' }),
       filterRequester: new FormControl<Date | undefined>(undefined),
-    }, { updateOn: 'submit' },
+    },
   );
 
   currentLoadRequestSearchCriteria: LoadRequestPayload = {
