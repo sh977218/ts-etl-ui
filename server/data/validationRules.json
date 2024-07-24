@@ -1,0 +1,44 @@
+{
+  "data": [
+    {
+      "name": "Code.SumActiveInactive",
+      "description": "Sum of active/inactive codes is equal to total number of codes"
+    },
+    {
+      "name": "Code.DuplicateCode",
+      "description": "No duplicate codes in cs_code table"
+    },
+    {
+      "name": "QaCount.CountCompare",
+      "description": "Counts between expected and actual total counts"
+    },
+    {
+      "name": "Code.Hierarchy.OrphanCode",
+      "description": "Hierarchy contains orphan codes"
+    },
+    {
+      "name": "QaCount.RawCountMissing",
+      "description": "Raw counts are not present"
+    },
+    {
+      "name": "Code.Term.CodeNoTerms",
+      "description": "All the codes are mapped to terms"
+    },
+    {
+      "name": "Code.Attribute.InvalidName",
+      "description": "Attribute names are mapped to the reference table"
+    },
+    {
+      "name": "Code.Relationship.CodeNotFound",
+      "description": "All codes from cs_code_relationship table exist in cs_code table Codes contain leading or trailing spaces"
+    },
+    {
+      "name": "Code.ExtraSpaces",
+      "description": "All codes from cs_code_relationship table exist in cs_code table Codes contain leading or trailing spaces"
+    },
+    {
+      "name": "Code.Term.ExtraSpaces",
+      "description": "Terms contain leading or trailing spaces"
+    }
+  ]
+}

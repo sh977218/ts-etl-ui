@@ -28,6 +28,25 @@ export type LoadSummary = {
   qaRules: LoadRule[];
 }
 
+export type Verification = {
+  rules: Rule[]
+}
+
+export type Rule = {
+  'name': string,
+  'description': string,
+  'dataAvailable': string,
+  'messages': RuleMessage[]
+}
+
+export type RuleMessage = {
+  'messageGroup': string,
+  'messageType': string,
+  'tag': string,
+  'message': string,
+  'creationTime': Date
+}
+
 export type LoadVersionActivity = {
   id?: Date;
   activity: string
@@ -65,6 +84,7 @@ export type LoadVersion = {
   publishedDate: Date;
   requestTime: Date;
   loadSummary: LoadSummary;
+  verification: Verification
 }
 
 type LoadVersionPayloadSearchColumns = {

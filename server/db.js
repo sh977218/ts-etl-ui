@@ -3,7 +3,8 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 import DEFAULT_USER_DATA from './data/user.json' assert { type: 'json' };
 import DEFAULT_LOAD_REQUEST_DATA from './data/loadRequests.json' assert { type: 'json' };
 import DEFAULT_LOAD_VERSION_DATA from './data/loadVersions.json' assert { type: 'json' };
-import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystem.json' assert { type: 'json' };
+import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystems.json' assert { type: 'json' };
+import DEFAULT_VALIDATION_RULE_DATA from './data/validationRules.json' assert { type: 'json' };
 
 const IS_PULL_REQUEST = ['true', true, 1].includes(process.env.IS_PULL_REQUEST);
 const PR_FROM_ENV = process.env.PR || '';
@@ -69,6 +70,7 @@ export async function mongoCollection() {
     loadRequestsCollection: db.collection(`loadRequests${PR_NUMBER}`),
     loadVersionsCollection: db.collection(`loadVersions${PR_NUMBER}`),
     codeSystemsCollection: db.collection(`codeSystems${PR_NUMBER}`),
+    validationRulesCollection: db.collection(`validationRules${PR_NUMBER}`),
   };
 }
 
@@ -97,6 +99,7 @@ async function restoreMongoCollections(db) {
   await db.collection(`loadRequests${PR_NUMBER}`).insertMany(DEFAULT_LOAD_REQUEST_DATA.data);
   await db.collection(`loadVersions${PR_NUMBER}`).insertMany(DEFAULT_LOAD_VERSION_DATA.data);
   await db.collection(`codeSystems${PR_NUMBER}`).insertMany(DEFAULT_CODE_SYSTEM_DATA.data);
+  await db.collection(`validationRules${PR_NUMBER}`).insertMany(DEFAULT_VALIDATION_RULE_DATA.data);
 }
 
 export async function resetMongoCollection() {

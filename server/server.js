@@ -334,7 +334,6 @@ app.get('/api/codeSystem/:codeSystemName', async (req, res) => {
   res.send(codeSystem);
 });
 
-
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
   req.hostname;
