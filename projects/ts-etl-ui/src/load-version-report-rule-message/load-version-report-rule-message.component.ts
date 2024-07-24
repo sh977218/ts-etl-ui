@@ -4,6 +4,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RuleMessageUI } from '../model/load-version';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-load-version-report-rule-message',
@@ -37,15 +38,19 @@ export class LoadVersionReportRuleMessageComponent {
   searchCriteria = new FormGroup(
     {
       name: new FormControl<string | undefined>(undefined),
-      messageGroup: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
+      messageGroup: new FormControl<string | undefined>(undefined),
       messageType: new FormControl<string | undefined>(undefined),
       tag: new FormControl<string | undefined>(undefined),
-      message: new FormControl<string | undefined>(undefined),
+      message: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
       creationTime: new FormControl<Date | undefined>(undefined),
-    },
+    }, { updateOn: 'change' },
   );
 
+  constructor() {
+    this.searchCriteria.valueChanges.pipe(tap({ next: () => this.applyFilter() })).subscribe();
+  }
+
   applyFilter() {
-    this.dataSource().filter = this.searchCriteria.getRawValue().name || '';
+    this.dataSource().filter = this.searchCriteria.getRawValue().message || '';
   }
 }

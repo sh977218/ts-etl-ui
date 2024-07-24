@@ -1,5 +1,4 @@
-<form [formGroup]="searchCriteria" (ngSubmit)="applyFilter()">
-  <button type="submit" class="hidden">search</button>
+<form [formGroup]="searchCriteria">
   <fieldset>
     <legend>Rule Messages</legend>
     <table mat-table [dataSource]="dataSource()">
