@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 
-import { LoadVersion, RuleMessageUI } from '../model/load-version';
+import { LoadVersion, RuleMessageUI, RuleUI } from '../model/load-version';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadRequestDataSource } from '../load-request/load-request-data-source';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
@@ -27,6 +27,7 @@ import { MatButtonModule } from '@angular/material/button';
 import {
   LoadVersionReportRuleMessageComponent,
 } from '../load-version-report-rule-message/load-version-report-rule-message.component';
+import { LoadVersionReportRuleComponent } from '../load-version-report-rule/load-version-report-rule.component';
 
 @Component({
   standalone: true,
@@ -49,6 +50,7 @@ import {
     MatCheckbox,
     NgClass,
     LoadVersionReportRuleMessageComponent,
+    LoadVersionReportRuleComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './load-version-report.component.html',
@@ -194,11 +196,6 @@ export class LoadVersionReportComponent {
     }),
   );
 
-
-  verificationQARulesColumn = [
-    'name', 'description', 'dataAvailable', 'messagesGroupCount', 'action',
-  ];
-
   verificationQARules$ = this.loadVersion$.pipe(
     map((loadVersion: LoadVersion) => {
       return loadVersion.verification.rules.map(rule => {
@@ -211,7 +208,7 @@ export class LoadVersionReportComponent {
             numOfWarning: rule.messages.filter(message => message.messageGroup === 'Warning')?.length || 0,
             numOfInfo: rule.messages.filter(message => message.messageGroup === 'Info')?.length || 0,
           },
-        };
+        } as RuleUI;
       });
     }),
   );
