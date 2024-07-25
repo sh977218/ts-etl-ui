@@ -33,6 +33,8 @@ const LABEL_MAPPING: Record<string, string> = {
   loadStatus: 'Load Status',
   loadTime: 'Load Time',
   duration: 'Duration',
+  notificationEmail: 'Contact Email',
+  requestType: 'Request Type',
 };
 
 const LABEL_SORT_ARRAY = [

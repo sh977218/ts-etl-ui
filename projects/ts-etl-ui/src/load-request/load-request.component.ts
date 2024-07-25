@@ -264,6 +264,27 @@ export class LoadRequestComponent implements AfterViewInit {
       })
   }
 
+  openEditDialog(loadRequest: LoadRequest) {
+    this.dialog.open(CreateLoadRequestModalComponent, {
+      width: '700px',
+      data: loadRequest
+    })
+      .afterClosed()
+      .pipe(
+        filter(newLoadRequest => !!newLoadRequest),
+        switchMap(newLoadRequest => this.http.post<{
+          requestId: string
+        }>(`${environment.apiServer}/loadRequest/${loadRequest.requestId}`, newLoadRequest as LoadRequest)),
+      )
+      .subscribe({
+        next: ({ requestId }) => {
+          this.alertService.addAlert('info', `Request (ID: ${requestId}) edited successfully`);
+          this.reloadAllRequests$.next(true);
+        },
+        error: () => this.alertService.addAlert('danger', 'Error editing load request.'),
+      });
+  }
+
   download() {
     this.http.post<LoadRequestsResponse>(`${environment.apiServer}/loadRequests`,
       Object.assign(this.currentLoadRequestSearchCriteria, {
