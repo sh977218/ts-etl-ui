@@ -27,9 +27,10 @@ export class LoadVersionReportRuleMessageComponent {
   dataSource = computed(() => {
     const dataSource = new MatTableDataSource(this.verificationRuleMessages());
     dataSource.filterPredicate = (data: RuleMessageUI) => {
-      const tagMatched = !this.searchCriteria.getRawValue().tag || data.tag.includes(this.searchCriteria.getRawValue().tag || '');
-      const messageMatched = data.message.includes(this.searchCriteria.getRawValue().message || '');
-      return tagMatched && messageMatched;
+      const nameMatched = data.name.toLowerCase().includes((this.searchCriteria.getRawValue().name || '').toLowerCase());
+      const tagMatched = !this.searchCriteria.getRawValue().tag || data.tag.toLowerCase().includes((this.searchCriteria.getRawValue().tag || '').toLowerCase());
+      const messageMatched = data.message.toLowerCase().includes((this.searchCriteria.getRawValue().message || '').toLowerCase());
+      return nameMatched && tagMatched && messageMatched;
     };
     return dataSource;
   });
