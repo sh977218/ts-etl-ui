@@ -46,7 +46,7 @@ export class LoadVersionReportRuleComponent {
     'name', 'description', 'dataAvailable', 'messagesGroupCount', 'action',
   ];
 
-  searchRowColumns = ['name-search', 'description-search', 'dataAvailable-search', 'numberOfError', 'numberOfWarning', 'numberOfInfo', 'action'];
+  searchRowColumns = ['name-search', 'description-search', 'dataAvailable-search', 'numberOfError', 'numberOfWarning', 'numberOfInfo', 'empty'];
 
   searchCriteria = new FormGroup(
     {
