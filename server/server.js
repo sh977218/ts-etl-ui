@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'fs';
 
 import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
+import { TSError, UnauthorizedError } from './errors.js';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
 
@@ -158,6 +159,12 @@ async function getNextLoadRequestSequenceId() {
 
 app.delete('/api/loadRequest/:reqId', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
+
+  const loadRequest = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  if (loadRequest.requestStatus !== 'Open') {
+    throw new UnauthorizedError('Only Open Requests can be canceled');
+  }
+
   await loadRequestsCollection.deleteOne({requestId: +req.params.reqId});
   res.send();
 });
@@ -173,6 +180,26 @@ app.post('/api/loadRequest', async (req, res) => {
 
   const newLoadRequest = await loadRequestsCollection.findOne({ _id: result.insertedId });
   res.send({ requestId: newLoadRequest.requestId });
+});
+
+app.post('/api/loadRequest/:reqId', async (req, res) => {
+  const newLoadRequest = req.body;
+  const { loadRequestsCollection } = await mongoCollection();
+  const loadRequest = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  if (loadRequest.requestStatus !== 'Open') {
+    throw new UnauthorizedError('Only Open Requests can be edited');
+  }
+
+  await loadRequestsCollection.updateOne({ requestId: +req.params.reqId }, {
+    $set: {
+      codeSystemName: newLoadRequest.codeSystemName,
+      sourceFilePath: newLoadRequest.sourceFilePath,
+      requestSubject: newLoadRequest.requestSubject,
+      notificationEmail: newLoadRequest.notificationEmail,
+    },
+  });
+  const updatedLR = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  res.send(updatedLR);
 });
 
 app.get('/api/loadRequest/:requestId', async (req, res) => {
@@ -366,6 +393,12 @@ app.use((req, res) => {
   fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
 });
 
+app.use(async (err, req, res, next) => {
+  if (err instanceof TSError) {
+    return res.status(err.status).send(err);
+  }
+  return res.status(500).send({ name: 'Unexpected Error', message: 'Something broke!', status: 500 });
+});
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);

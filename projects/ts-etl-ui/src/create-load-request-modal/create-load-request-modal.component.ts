@@ -1,10 +1,10 @@
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NgForOf, NgIf } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Inject, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +16,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { UserService } from '../service/user-service';
 import { sourceFilePathValidator } from '../service/app.validator';
 import { CODE_SYSTEM_NAMES, LOAD_REQUEST_TYPES } from '../service/constant';
+import { LoadRequest } from '../model/load-request';
 
 @Component({
   standalone: true,
@@ -76,7 +77,8 @@ export class CreateLoadRequestModalComponent {
   };
 
   constructor(
-    public userService: UserService) {
+    public userService: UserService,
+    @Inject(MAT_DIALOG_DATA) public existingLoadRequest: LoadRequest) {
     userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''));
     this.loadRequestCreationForm.get('type')?.valueChanges.subscribe(value => {
       if (value === 'Scheduler') {
@@ -87,6 +89,9 @@ export class CreateLoadRequestModalComponent {
         this.form.removeControl('scheduleTime');
       }
     });
+    if (this.existingLoadRequest) {
+      this.loadRequestCreationForm.patchValue(existingLoadRequest);
+    }
   }
 
   get form() {
