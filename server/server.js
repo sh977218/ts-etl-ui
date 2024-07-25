@@ -198,7 +198,8 @@ app.post('/api/loadRequest/:reqId', async (req, res) => {
       notificationEmail: newLoadRequest.notificationEmail,
     },
   });
-  res.send({ requestId: newLoadRequest.requestId });
+  const updatedLR = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  res.send(updatedLR);
 });
 
 app.get('/api/loadRequest/:requestId', async (req, res) => {
