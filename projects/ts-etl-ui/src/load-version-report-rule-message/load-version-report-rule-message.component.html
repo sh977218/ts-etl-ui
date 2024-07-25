@@ -28,8 +28,10 @@
       <ng-container matColumnDef="messageGroup-search">
         <th mat-header-cell *matHeaderCellDef>
           <div class="flex flex-col m-2">
-            <input id="messageGroupFilterInput" class="w-3/4" matInput formControlName="messageGroup"
-                   placeholder="search">
+            <select id="messageGroupSearch" class="w-20" formControlName="messageGroup">
+              <option value="">All</option>
+              <option *ngFor="let messageGroup of messageGroups()">{{messageGroup}}</option>
+            </select>
           </div>
         </th>
       </ng-container>
@@ -41,8 +43,10 @@
       <ng-container matColumnDef="messageType-search">
         <th mat-header-cell *matHeaderCellDef>
           <div class="flex flex-col m-2">
-            <input id="messageTypeFilterInput" class="w-3/4" matInput formControlName="messageType"
-                   placeholder="search">
+            <select id="messageTypeSearch" class="w-20" formControlName="messageType">
+              <option value="">All</option>
+              <option *ngFor="let messageType of messageTypes()">{{messageType}}</option>
+            </select>
           </div>
         </th>
       </ng-container>
