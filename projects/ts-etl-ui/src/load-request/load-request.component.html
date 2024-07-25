@@ -198,9 +198,14 @@
               <div class="example-element-description" *ngIf="expandedElement === row">
                 <fieldset>
                   <legend>Load Request</legend>
-                  <button *ngIf="row.requestStatus === 'Open'" mat-fab extended (click)="openCancelDialog(row.requestId)">
-                    Cancel
-                  </button>
+                  <ng-container *ngIf="row.requestStatus === 'Open' && user?.utsUser!.username === row.requester" >
+                    <button mat-fab extended (click)="openEditDialog(row)">
+                      Edit
+                    </button>
+                    <button mat-fab extended (click)="openCancelDialog(row.requestId)">
+                      Cancel
+                    </button>
+                  </ng-container>
                   <app-load-request-detail [loadRequest]="row"></app-load-request-detail>
                   <app-load-request-activity [requestId]="row.requestId"
                                              [loadRequestActivities]="row.loadRequestActivities"></app-load-request-activity>
