@@ -39,6 +39,14 @@ export type Rule = {
   'messages': RuleMessage[]
 }
 
+export type RuleUI = {
+  'name': string,
+  'description': string,
+  'dataAvailable': string,
+  'messagesGroupCount': { numOfError: number, numOfWarning: number, numOfInfo: number }
+}
+
+
 export type RuleMessage = {
   'messageGroup': string,
   'messageType': string,
