@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA,
+  AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA,
   signal, ViewChild,
   WritableSignal,
 } from '@angular/core';
@@ -7,7 +7,7 @@ import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { MatTable, MatTableModule } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -109,7 +109,6 @@ export class LoadRequestComponent implements AfterViewInit {
 
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
-  @ViewChild(MatTable) lrTable!: MatTable<LoadRequest>;
 
   searchCriteria = new FormGroup(
     {
@@ -162,7 +161,6 @@ export class LoadRequestComponent implements AfterViewInit {
               private loadingService: LoadingService,
               private userService: UserService,
               public alertService: AlertService,
-              private cd: ChangeDetectorRef,
               private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
@@ -291,8 +289,6 @@ export class LoadRequestComponent implements AfterViewInit {
           ];
           this.data.set(updatedData);
           this.expandedElement = this.data().at(index);
-          this.lrTable.renderRows();
-          this.cd.detectChanges();
         },
         error: () => this.alertService.addAlert('danger', 'Error editing load request.'),
       });
