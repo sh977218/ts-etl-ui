@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, ViewChild } from '@angular/core';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -6,6 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { tap } from 'rxjs';
 
 import { RuleMessageUI } from '../model/load-version';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 
 @Component({
   selector: 'app-load-version-report-rule-message',
@@ -16,6 +18,8 @@ import { RuleMessageUI } from '../model/load-version';
     ReactiveFormsModule,
     MatTableModule,
     MatInputModule,
+    MatPaginatorModule,
+    MatSortModule,
     NgForOf,
   ],
   templateUrl: './load-version-report-rule-message.component.html',
@@ -63,13 +67,24 @@ export class LoadVersionReportRuleMessageComponent {
     }, { updateOn: 'change' },
   );
 
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
   constructor() {
+    effect(() => {
+      this.dataSource().paginator = this.paginator;
+      this.dataSource().sort = this.sort;
+    });
     this.searchCriteria.valueChanges.pipe(tap({ next: () => this.applyFilter() })).subscribe();
   }
 
   applyFilter() {
     // this line only triggers the filter event, but the 'filter' value is not actually used in 'filterPredicate'.
     this.dataSource().filter = this.searchCriteria.getRawValue().toString();
+
+    if (this.dataSource().paginator) {
+      this.dataSource().paginator?.firstPage();
+    }
   }
 
 }
