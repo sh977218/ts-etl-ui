@@ -37,8 +37,8 @@ export class LoadVersionReportRuleComponent {
   dataSource = computed(() => {
     const dataSource = new MatTableDataSource(this.verificationQARules());
     dataSource.filterPredicate = (data: RuleUI) => {
-      const nameMatched = data.name.toLowerCase().includes((this.searchCriteria.getRawValue().name || '').toLowerCase());
-      return nameMatched;
+      const descriptionMatched = data.description.toLowerCase().includes((this.searchCriteria.getRawValue().description || '').toLowerCase());
+      return descriptionMatched;
     };
     return dataSource;
   });
