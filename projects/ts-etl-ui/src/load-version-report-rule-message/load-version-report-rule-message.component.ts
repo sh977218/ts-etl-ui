@@ -29,11 +29,15 @@ export class LoadVersionReportRuleMessageComponent {
     dataSource.filterPredicate = (data: RuleMessageUI) => {
       const tagMatched = !this.searchCriteria.getRawValue().tag || data.tag.includes(this.searchCriteria.getRawValue().tag || '');
       const messageMatched = data.message.includes(this.searchCriteria.getRawValue().message || '');
-      return tagMatched && messageMatched;
+      const messageGroupMatched = !this.searchCriteria.getRawValue().messageGroup || data.messageGroup.toLowerCase().includes((this.searchCriteria.getRawValue().messageGroup || '').toLowerCase());
+      const messageTypeMatched = !this.searchCriteria.getRawValue().messageType || data.messageType.toLowerCase().includes((this.searchCriteria.getRawValue().messageType || '').toLowerCase());
+      return messageGroupMatched && messageTypeMatched && tagMatched && messageMatched;
     };
     return dataSource;
   });
   tags = computed(() => [...new Set(this.verificationRuleMessages().map(m => m.tag))]);
+  messageGroups = computed(() => [...new Set(this.verificationRuleMessages().map(m => m.messageGroup))]);
+  messageTypes = computed(() => [...new Set(this.verificationRuleMessages().map(m => m.messageType))]);
 
   verificationRuleMessagesColumn = [
     'name',
