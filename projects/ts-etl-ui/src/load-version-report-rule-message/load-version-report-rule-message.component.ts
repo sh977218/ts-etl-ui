@@ -27,17 +27,19 @@ export class LoadVersionReportRuleMessageComponent {
   dataSource = computed(() => {
     const dataSource = new MatTableDataSource(this.verificationRuleMessages());
     dataSource.filterPredicate = (data: RuleMessageUI) => {
-      const tagMatched = !this.searchCriteria.getRawValue().tag || data.tag.includes(this.searchCriteria.getRawValue().tag || '');
-      const messageMatched = data.message.includes(this.searchCriteria.getRawValue().message || '');
+      const nameMatched = data.name.toLowerCase().includes((this.searchCriteria.getRawValue().name || '').toLowerCase());
       const messageGroupMatched = !this.searchCriteria.getRawValue().messageGroup || data.messageGroup.toLowerCase().includes((this.searchCriteria.getRawValue().messageGroup || '').toLowerCase());
       const messageTypeMatched = !this.searchCriteria.getRawValue().messageType || data.messageType.toLowerCase().includes((this.searchCriteria.getRawValue().messageType || '').toLowerCase());
-      return messageGroupMatched && messageTypeMatched && tagMatched && messageMatched;
+      const tagMatched = !this.searchCriteria.getRawValue().tag || data.tag.toLowerCase().includes((this.searchCriteria.getRawValue().tag || '').toLowerCase());
+      const messageMatched = data.message.toLowerCase().includes((this.searchCriteria.getRawValue().message || '').toLowerCase());
+      return nameMatched && messageGroupMatched && messageTypeMatched && tagMatched && messageMatched;
     };
     return dataSource;
   });
-  tags = computed(() => [...new Set(this.verificationRuleMessages().map(m => m.tag))]);
+
   messageGroups = computed(() => [...new Set(this.verificationRuleMessages().map(m => m.messageGroup))]);
   messageTypes = computed(() => [...new Set(this.verificationRuleMessages().map(m => m.messageType))]);
+  tags = computed(() => [...new Set(this.verificationRuleMessages().map(m => m.tag))]);
 
   verificationRuleMessagesColumn = [
     'name',
