@@ -1,5 +1,6 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, signal, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA,
+  signal, ViewChild,
   WritableSignal,
 } from '@angular/core';
 import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
@@ -262,6 +263,35 @@ export class LoadRequestComponent implements AfterViewInit {
           this.reloadAllRequests$.next(true);
         }
       })
+  }
+
+  openEditDialog(loadRequest: LoadRequest) {
+    this.dialog.open(CreateLoadRequestModalComponent, {
+      width: '700px',
+      data: loadRequest
+    })
+      .afterClosed()
+      .pipe(
+        filter(newLoadRequest => !!newLoadRequest),
+        switchMap(newLoadRequest => this.http.post<LoadRequest>
+          (`${environment.apiServer}/loadRequest/${loadRequest.requestId}`, newLoadRequest as LoadRequest)),
+      )
+      .subscribe({
+        next: (newLR) => {
+          this.alertService.addAlert('info', `Request (ID: ${newLR.requestId}) edited successfully`);
+          // this.reloadAllRequests$.next(true);
+          const currentData = this.data();
+          const index = currentData.findIndex((lr: LoadRequest) => lr.requestId === newLR.requestId);
+          const updatedData = [
+            ...currentData.slice(0, index),
+            newLR,
+            ...currentData.slice(index + 1)
+          ];
+          this.data.set(updatedData);
+          this.expandedElement = this.data().at(index);
+        },
+        error: () => this.alertService.addAlert('danger', 'Error editing load request.'),
+      });
   }
 
   download() {
