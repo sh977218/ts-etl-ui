@@ -1,0 +1,14 @@
+<div class="flex flex-row">
+  <fieldset *ngIf="identification1$() | async as identification" class="flex flex-col basis-1/2">
+    <dl *ngFor="let item of identification | keyvalue : sourceInformationKeysCompareFn1">
+      <dt>{{ item.key }}:</dt>
+      <dd>{{ item.value }}</dd>
+    </dl>
+  </fieldset>
+  <fieldset *ngIf="identification2$() | async as identification" class="flex flex-col basis-1/2">
+    <dl *ngFor="let item of identification | keyvalue : sourceInformationKeysCompareFn2">
+      <dt>{{ item.key }}:</dt>
+      <dd>{{ item.value }}</dd>
+    </dl>
+  </fieldset>
+</div>
