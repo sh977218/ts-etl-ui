@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { NgClass, NgIf } from '@angular/common';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { RuleMessageUI } from '../model/load-version';
-import { MatInputModule } from '@angular/material/input';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
 import { tap } from 'rxjs';
+
+import { RuleMessageUI } from '../model/load-version';
 
 @Component({
   selector: 'app-load-version-report-rule-message',
@@ -15,6 +16,7 @@ import { tap } from 'rxjs';
     ReactiveFormsModule,
     MatTableModule,
     MatInputModule,
+    NgForOf,
   ],
   templateUrl: './load-version-report-rule-message.component.html',
   styleUrl: './load-version-report-rule-message.component.scss',
@@ -22,7 +24,16 @@ import { tap } from 'rxjs';
 })
 export class LoadVersionReportRuleMessageComponent {
   verificationRuleMessages = input.required<RuleMessageUI[]>();
-  dataSource = computed(() => new MatTableDataSource(this.verificationRuleMessages()));
+  dataSource = computed(() => {
+    const dataSource = new MatTableDataSource(this.verificationRuleMessages());
+    dataSource.filterPredicate = (data: RuleMessageUI) => {
+      const tagMatched = !this.searchCriteria.getRawValue().tag || data.tag.includes(this.searchCriteria.getRawValue().tag || '');
+      const messageMatched = data.message.includes(this.searchCriteria.getRawValue().message || '');
+      return tagMatched && messageMatched;
+    };
+    return dataSource;
+  });
+  tags = computed(() => [...new Set(this.verificationRuleMessages().map(m => m.tag))]);
 
   verificationRuleMessagesColumn = [
     'name',
@@ -51,6 +62,8 @@ export class LoadVersionReportRuleMessageComponent {
   }
 
   applyFilter() {
-    this.dataSource().filter = this.searchCriteria.getRawValue().message || '';
+    // this line only triggers the filter event, but the 'filter' value is not actually used in 'filterPredicate'.
+    this.dataSource().filter = this.searchCriteria.getRawValue().toString();
   }
+
 }
