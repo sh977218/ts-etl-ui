@@ -68,7 +68,7 @@ test.describe('e2e test', async () => {
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
-    await expect(page.getByRole('link', { name: 'Load Requests' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Load Request' })).toBeVisible();
 
     await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Reset' })).toBeVisible();
@@ -133,7 +133,7 @@ test.describe('e2e test', async () => {
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
-    await page.getByRole('link', { name: 'QA Versions' }).click();
+    await page.getByRole('link', { name: 'Version QA' }).click();
 
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
 
@@ -153,7 +153,7 @@ test.describe('e2e test', async () => {
   test('Code System Tab', async ({ page }) => {
     await suite('Code System');
 
-    await page.getByRole('link', { name: 'Code Systems' }).click();
+    await page.getByRole('link', { name: 'Code System' }).click();
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
   });
 

@@ -148,7 +148,7 @@
                   <app-load-version-rules [qaRules]="row.loadSummary.qaRules"></app-load-version-rules>
                   <h1>QA Actions</h1>
                   <fieldset>
-                    <a [routerLink]="['/load-version-report', row.requestId]">Go to QA Report</a>
+                    <a [routerLink]="['/load-version-report', row.requestId]" target="_blank">Go to QA Report</a>
                     <span class="block">
                     <a [routerLink]="['/code-system-data', row.codeSystemName]">Analyze Code System Data</a>
                   </span>
@@ -194,7 +194,7 @@
       </table>
     </div>
 
-    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50]" [pageSize]="10"
+    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50]" [pageSize]="10" [showFirstLastButtons]="true"
                    aria-label="Select page of load requests"></mat-paginator>
   </div>
 </form>
