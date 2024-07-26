@@ -4,6 +4,6 @@ export const environment: Environment = {
   /* eslint-disable */
   environmentName: 'ci',
   ticketUrl: '/api/serviceValidate',
-  loginServiceUrl: '/login-cb?ticket=anything',
+  loginServiceUrl: 'http://localhost:3000/nih-login',
   apiServer: '/api',
 };
