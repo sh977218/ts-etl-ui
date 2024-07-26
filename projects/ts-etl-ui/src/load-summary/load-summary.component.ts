@@ -1,11 +1,9 @@
 import { Component, Input } from '@angular/core';
-import {
-  MatTableModule,
-} from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { LoadSummary } from '../model/load-version';
-import { DurationPipe } from '../service/app.pipe';
 import { LoadVersionRulesComponent } from '../load-version-rules/load-version-rules.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-load-summary',
@@ -13,11 +11,11 @@ import { LoadVersionRulesComponent } from '../load-version-rules/load-version-ru
   imports: [
     MatSortModule,
     MatTableModule,
-    DurationPipe,
     LoadVersionRulesComponent,
+    DatePipe,
   ],
   templateUrl: './load-summary.component.html',
-  providers: [DurationPipe],
+  providers: [],
 })
 export class LoadSummaryComponent {
   @Input() loadSummary!: LoadSummary;
