@@ -92,11 +92,41 @@ export async function dropMongoCollection(db) {
 async function restoreMongoCollections(db) {
   const PR_NUMBER = getPrNumber();
   await db.collection(`users${PR_NUMBER}`).insertMany(DEFAULT_USER_DATA.data);
+  // patch loadRequest data
   DEFAULT_LOAD_REQUEST_DATA.data.forEach(r => r.requestTime = new Date(r.requestTime));
   DEFAULT_LOAD_REQUEST_DATA.data.forEach(r => r.creationTime = new Date(r.creationTime));
+  DEFAULT_LOAD_REQUEST_DATA.data.forEach(r => {
+    if (r.loadStartTime) {
+      r.loadStartTime = new Date(r.loadStartTime);
+    } else {
+      r.loadStartTime = randomDate(new Date(2010, 0, 1), new Date());
+    }
+  });
+  DEFAULT_LOAD_REQUEST_DATA.data.forEach(r => {
+    if (r.loadEndTime) {
+      r.loadEndTime = new Date(r.loadEndTime);
+    } else {
+      r.loadEndTime = randomDate(new Date(2012, 0, 1), new Date());
+    }
+  });
+  DEFAULT_LOAD_REQUEST_DATA.data.forEach(r => r.loadElapsedTime = r.loadEndTime - r.loadStartTime);
+
+  // patch loadVersion data
   DEFAULT_LOAD_VERSION_DATA.data.forEach(r => r.requestTime = new Date(r.requestTime));
-  DEFAULT_LOAD_VERSION_DATA.data.forEach(r => r.loadStartTime = randomDate(new Date(2010, 0, 1), new Date()));
-  DEFAULT_LOAD_VERSION_DATA.data.forEach(r => r.loadEndTime = randomDate(new Date(2010, 0, 1), new Date()));
+  DEFAULT_LOAD_VERSION_DATA.data.forEach(r => {
+    if (r.loadStartTime) {
+      r.loadStartTime = new Date(r.loadStartTime);
+    } else {
+      r.loadStartTime = randomDate(new Date(2010, 0, 1), new Date());
+    }
+  });
+  DEFAULT_LOAD_VERSION_DATA.data.forEach(r => {
+    if (r.loadEndTime) {
+      r.loadEndTime = new Date(r.loadEndTime);
+    } else {
+      r.loadEndTime = randomDate(new Date(2012, 0, 1), new Date());
+    }
+  });
   DEFAULT_LOAD_VERSION_DATA.data.forEach(r => r.loadElapsedTime = r.loadEndTime - r.loadStartTime);
   await db.collection(`loadRequests${PR_NUMBER}`).insertMany(DEFAULT_LOAD_REQUEST_DATA.data);
   await db.collection(`loadVersions${PR_NUMBER}`).insertMany(DEFAULT_LOAD_VERSION_DATA.data);

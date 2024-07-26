@@ -15,7 +15,6 @@
       "loadStatus": "Pending QA",
       "loadStartTime": "2017-03-05T08:44:28+05:00",
       "loadEndTime": "2018-03-05T08:44:28+05:00",
-      "duration": "00:03:54",
       "loadRequestActivities": [
         {
           "componentName": "Extract",

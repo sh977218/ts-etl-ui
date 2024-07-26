@@ -1,8 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { AsyncPipe, KeyValue, KeyValuePipe, NgForOf, NgIf } from '@angular/common';
+import {
+  AsyncPipe,
+  DatePipe,
+  KeyValue,
+  KeyValuePipe,
+  NgForOf,
+  NgIf,
+  NgSwitch,
+  NgSwitchCase,
+  NgSwitchDefault,
+} from '@angular/common';
 import { LoadVersion } from '../model/load-version';
 import { map, Observable } from 'rxjs';
 import { LoadRequest } from '../model/load-request';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-load-version-report-identification',
@@ -12,6 +23,11 @@ import { LoadRequest } from '../model/load-request';
     KeyValuePipe,
     NgForOf,
     NgIf,
+    DatePipe,
+    NgSwitchCase,
+    RouterLink,
+    NgSwitch,
+    NgSwitchDefault,
   ],
   templateUrl: './load-version-report-identification.component.html',
   styleUrl: './load-version-report-identification.component.scss',
@@ -26,8 +42,13 @@ export class LoadVersionReportIdentificationComponent {
     'loadNumber': 'Load Number',
     'versionStatus': 'Load Status',
     'effectiveDate': 'TS Available Date',
+    'loadStartTime': 'Load Start Time',
+    'loadEndTime': 'Load End Time',
+    'loadElapsedTime': 'Elapsed Time',
   };
   identificationKeys2: Record<string, string> = {
+    'language': 'Language',
+    'effectiveDate': 'EffectiveDate',
     'requestId': 'Request ID',
     'requestType': 'Request Type',
     'requestTime': 'Request Time',

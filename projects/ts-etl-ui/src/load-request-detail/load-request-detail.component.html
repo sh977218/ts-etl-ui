@@ -14,6 +14,9 @@
           <ng-container *ngSwitchCase="'loadNumber'">
             <a routerLink="/load-versions" [queryParams]="{loadNumber:element.value, expand:0}">{{element.value}}</a>
           </ng-container>
+          <ng-container *ngSwitchCase="'loadElapsedTime'">
+            {{element.value | date:'hh:mm:ss'}}
+          </ng-container>
           <ng-container *ngSwitchDefault>
             {{element.value}}
           </ng-container>

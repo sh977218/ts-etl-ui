@@ -87,7 +87,7 @@ export type LoadVersion = {
   requester: string;
   loadStartTime: Date;
   loadEndTime: Date;
-  duration: string;
+  loadElapsedTime: Date;
   loadVersionActivities: LoadVersionActivity[];
   obsoleteId: string;
   versionNumber: string;
