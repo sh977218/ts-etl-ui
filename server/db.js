@@ -95,7 +95,9 @@ async function restoreMongoCollections(db) {
   DEFAULT_LOAD_REQUEST_DATA.data.forEach(r => r.requestTime = new Date(r.requestTime));
   DEFAULT_LOAD_REQUEST_DATA.data.forEach(r => r.creationTime = new Date(r.creationTime));
   DEFAULT_LOAD_VERSION_DATA.data.forEach(r => r.requestTime = new Date(r.requestTime));
-  DEFAULT_LOAD_VERSION_DATA.data.forEach(r => r.loadTime = new Date(r.loadTime));
+  DEFAULT_LOAD_VERSION_DATA.data.forEach(r => r.loadStartTime = randomDate(new Date(2010, 0, 1), new Date()));
+  DEFAULT_LOAD_VERSION_DATA.data.forEach(r => r.loadEndTime = randomDate(new Date(2010, 0, 1), new Date()));
+  DEFAULT_LOAD_VERSION_DATA.data.forEach(r => r.loadElapsedTime = r.loadEndTime - r.loadStartTime);
   await db.collection(`loadRequests${PR_NUMBER}`).insertMany(DEFAULT_LOAD_REQUEST_DATA.data);
   await db.collection(`loadVersions${PR_NUMBER}`).insertMany(DEFAULT_LOAD_VERSION_DATA.data);
   await db.collection(`codeSystems${PR_NUMBER}`).insertMany(DEFAULT_CODE_SYSTEM_DATA.data);
@@ -114,4 +116,8 @@ export async function resetMongoCollection() {
   await createMongoCollections(db, PR_NUMBER);
   await restoreMongoCollections(db, PR_NUMBER);
   await client.close();
+}
+
+function randomDate(start, end) {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 }

@@ -88,7 +88,7 @@ export class LoadVersionComponent implements AfterViewInit {
     'version',
     'loadNumber',
     'versionStatus',
-    'loadTime',
+    'loadStartTime',
     'requestId',
     'requester',
     'requestTime',

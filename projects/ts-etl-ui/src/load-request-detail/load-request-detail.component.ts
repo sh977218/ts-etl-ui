@@ -31,7 +31,7 @@ const LABEL_MAPPING: Record<string, string> = {
   numberOfMessages: '# of Messages',
   loadNumber: 'Load Number',
   loadStatus: 'Load Status',
-  loadTime: 'Load Time',
+  loadStartTime: 'Load Start Time',
   duration: 'Duration',
   notificationEmail: 'Contact Email',
   requestType: 'Request Type',
@@ -50,7 +50,7 @@ const LABEL_SORT_ARRAY = [
   'numberOfMessages',
   'loadNumber',
   'loadStatus',
-  'loadTime',
+  'loadStartTime',
   'duration',
 ];
 
