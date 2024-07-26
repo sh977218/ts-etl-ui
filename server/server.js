@@ -1,5 +1,11 @@
 import express from 'express';
-import fs from 'fs';
+import { readFileSync, createReadStream } from 'fs';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
 import { TSError, UnauthorizedError } from './errors.js';
@@ -13,6 +19,9 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static('dist/ts-etl-ui/browser'));
+
+app.set('view engine', 'ejs');
+app.set('views', join(__dirname, 'views'));
 
 function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -139,12 +148,8 @@ app.post('/api/loadRequests', async (req, res) => {
   const apiEndTime = new Date();
   res.send({
     result: {
-      data: loadRequests,
-      hasPagination: true,
-      pagination: {
-        totalCount: await loadRequestsCollection.countDocuments($match),
-        page: pageNumberInt,
-        pageSize: pageSize,
+      data: loadRequests, hasPagination: true, pagination: {
+        totalCount: await loadRequestsCollection.countDocuments($match), page: pageNumberInt, pageSize: pageSize,
       },
     },
     service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
@@ -160,12 +165,12 @@ async function getNextLoadRequestSequenceId() {
 app.delete('/api/loadRequest/:reqId', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
 
-  const loadRequest = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be canceled');
   }
 
-  await loadRequestsCollection.deleteOne({requestId: +req.params.reqId});
+  await loadRequestsCollection.deleteOne({ requestId: +req.params.reqId });
   res.send();
 });
 
@@ -185,7 +190,7 @@ app.post('/api/loadRequest', async (req, res) => {
 app.post('/api/loadRequest/:reqId', async (req, res) => {
   const newLoadRequest = req.body;
   const { loadRequestsCollection } = await mongoCollection();
-  const loadRequest = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be edited');
   }
@@ -198,7 +203,7 @@ app.post('/api/loadRequest/:reqId', async (req, res) => {
       notificationEmail: newLoadRequest.notificationEmail,
     },
   });
-  const updatedLR = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  const updatedLR = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
   res.send(updatedLR);
 });
 
@@ -287,7 +292,7 @@ app.get('/api/loadVersion/:requestId', async (req, res) => {
 
 app.get('/api/file/:id', (req, res) => {
   const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
-  const fileContent = fs.readFileSync(fileLocation);
+  const fileContent = readFileSync(fileLocation);
   res.send(fileContent);
 });
 
@@ -306,8 +311,7 @@ app.post('/api/loadVersionActivity', async (req, res) => {
   await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       loadVersionActivities: req.body.loadVersionActivity,
-    },
-    $set: { versionStatus: versionStatus },
+    }, $set: { versionStatus: versionStatus },
   });
   res.send();
 });
@@ -319,8 +323,7 @@ app.post('/api/addActivityNote', async (req, res) => {
     await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
       $set: {
         'loadVersionActivities': [{
-          createdBy: req.body.activityNote.createdBy,
-          notes: [{
+          createdBy: req.body.activityNote.createdBy, notes: [{
             createdBy: req.body.activityNote.createdBy,
             createdTime: req.body.activityNote.createdTime,
             notes: req.body.activityNote.notes,
@@ -367,20 +370,53 @@ app.get('/api/codeSystem/:codeSystemName', async (req, res) => {
   res.send(codeSystem);
 });
 
+// this map simulate UTS ticket to username
+const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
 // in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
-  req.hostname;
-
-  const { usersCollection } = await mongoCollection();
-  if (req.query.ticket.includes('anything')) {
-    const user = await usersCollection.findOne({});
-    res.send(user);
-    return;
-  }
-
-  const user = await usersCollection.findOne({ 'utsUser.username': req.query.ticket });
-  res.send(user);
+  /*
+  @todo Implement me in TS backend
+  res.send(await ticketToUtsUser(req.query.ticket));
+   */
+  res.send(await ticketToUtsUserMock(req.query.ticket));
 });
+
+async function ticketToUtsUserMock(ticket) {
+  const { usersCollection } = await mongoCollection();
+  const utsUsername = ticketMap.get(ticket);
+  const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
+  return user;
+}
+
+async function ticketToUtsUser() {
+  /*
+  @todo Implement me
+   */
+  const fakeUser = {
+    'userID': '',
+    'credentialType': '',
+    'firstName': '',
+    'authenticationDate': '',
+    'isFromNewLogin': '',
+    'authenticationMethod': '',
+    'successfulAuthenticationHandlers': '',
+    'longTermAuthenticationRequestTokenUsed': '',
+    'email': 'fakeemail@nih.gov',
+    'lastName': 'fake last name',
+    'idpUserOrg': 'fake idp',
+    'success': true,
+    'userStatus': 'fakeStatus',
+    'jwtToken': 'fakeToken',
+    'utsUser': {
+      'username': 'fakeUsername',
+      'apiKey': 'fakeUser-api-key',
+      'idpUserOrg': 'google',
+      'firstName': 'fakeUserFirstName',
+      'lastName': 'fakeUserLastName',
+    },
+  };
+  return fakeUser;
+}
 
 app.get('/api/serverInfo', async (req, res) => {
   const pr = getPrNumber();
@@ -388,9 +424,14 @@ app.get('/api/serverInfo', async (req, res) => {
   res.send({ pr, db: db.s.namespace.db });
 });
 
+app.get('/nih-login', (req, res) => {
+  const returnURL = req.query.service;
+  res.render('nih-login', { returnURL: returnURL });
+});
+
 app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
-  fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
+  createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
 });
 
 app.use(async (err, req, res, next) => {
