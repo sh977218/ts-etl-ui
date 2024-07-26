@@ -85,8 +85,9 @@ export type LoadVersion = {
   version: string
   effectiveDate: Date
   requester: string;
-  loadTime: Date;
-  duration: string;
+  loadStartTime: Date;
+  loadEndTime: Date;
+  loadElapsedTime: Date;
   loadVersionActivities: LoadVersionActivity[];
   obsoleteId: string;
   versionNumber: string;
@@ -139,7 +140,6 @@ export class LoadVersionSearchCriteria {
     this.loadNumber = qp.loadNumber;
     this.requestStartTime = qp.requestStartTime;
     this.requestEndTime = qp.requestEndTime;
-    this.loadStartTime = qp.loadStartTime;
     this.loadStartTime = qp.loadStartTime;
     this.loadEndTime = qp.loadEndTime;
   }

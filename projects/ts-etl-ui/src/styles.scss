@@ -78,3 +78,33 @@ fieldset {
   color: blue;
   text-decoration: underline;
 }
+
+
+dl {
+  display: flex;
+  flex-direction: row;
+  margin: 0.5rem 0;
+
+  dt, dd {
+    display: flex;
+    margin: 0;
+  }
+
+  dt {
+    flex-basis: 30%
+  }
+
+  dd {
+    flex-basis: 70%
+  }
+
+  dt {
+    justify-content: end;
+    margin-right: 0.5rem;
+  }
+
+  dd {
+    justify-content: start;
+    margin-left: 0.5rem;
+  }
+}

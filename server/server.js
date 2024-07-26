@@ -262,16 +262,16 @@ app.post('/api/loadVersions', async (req, res) => {
   }
   if (loadStartTime) {
     const dateObj = new Date(loadStartTime);
-    $match.loadTime = {
+    $match.loadStartTime = {
       $gte: dateObj,
     };
   }
   if (loadEndTime) {
     const dateObj = new Date(loadEndTime);
-    if (!$match.loadTime) {
-      $match.loadTime = {};
+    if (!$match.loadStartTime) {
+      $match.loadStartTime = {};
     }
-    $match.loadTime['$lte'] = dateObj;
+    $match.loadStartTime['$lte'] = dateObj;
   }
 
   const $sort = {};

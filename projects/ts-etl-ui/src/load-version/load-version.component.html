@@ -70,13 +70,13 @@
           </th>
         </ng-container>
 
-        <ng-container matColumnDef="loadTime">
+        <ng-container matColumnDef="loadStartTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-            Load Time
+            Load Start Time
           </th>
-          <td mat-cell *matCellDef="let row">{{row.loadTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
+          <td mat-cell *matCellDef="let row">{{row.loadStartTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
         </ng-container>
-        <ng-container matColumnDef="loadTime-search">
+        <ng-container matColumnDef="loadStartTime-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
               <input id="loadStartTime" matInput class="w-30" formControlName="loadStartTime" type="date"
@@ -148,7 +148,7 @@
                   <app-load-version-rules [qaRules]="row.loadSummary.qaRules"></app-load-version-rules>
                   <h1>QA Actions</h1>
                   <fieldset>
-                    <a [routerLink]="['/load-version-report', row.requestId]">Go to QA Report</a>
+                    <a [routerLink]="['/load-version-report', row.requestId]" target="_blank">Go to QA Report</a>
                     <span class="block">
                     <a [routerLink]="['/code-system-data', row.codeSystemName]">Analyze Code System Data</a>
                   </span>
@@ -194,7 +194,7 @@
       </table>
     </div>
 
-    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50]" [pageSize]="10"
+    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50]" [pageSize]="10" [showFirstLastButtons]="true"
                    aria-label="Select page of load requests"></mat-paginator>
   </div>
 </form>

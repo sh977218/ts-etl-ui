@@ -3,7 +3,8 @@
     {
       "requestId": 0,
       "loadNumber": "20231012080001",
-      "loadTime": "2023-10-12T08:00:01+05:00",
+      "loadStartTime": "2023-10-12T08:00:01+05:00",
+      "loadEndTime": "2023-10-12T08:01:04+05:00",
       "codeSystemName": "CDT",
       "sourceFilePath": "file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/HPO100923",
       "versionStatus": "Accepted",
@@ -221,7 +222,8 @@
     {
       "requestId": 1,
       "loadNumber": "20230912080001",
-      "loadTime": "2023-09-12T08:00:01+05:00",
+      "loadStartTime": "2023-09-12T08:00:01+05:00",
+      "loadEndTime": "2024-09-12T08:00:01+05:00",
       "codeSystemName": "LOINC  ",
       "sourceFilePath": "C:\\Talley\\LOINC\\Hoffman",
       "versionStatus": "Pending QA",
@@ -236,7 +238,8 @@
     {
       "requestId": 2,
       "loadNumber": "20231212080001",
-      "loadTime": "2023-12-12T08:00:01+05:00",
+      "loadStartTime": "2023-12-12T08:00:01+05:00",
+      "loadEndTime": "2024-12-12T08:00:01+05:00",
       "codeSystemName": "SNOMEDCT",
       "sourceFilePath": "C:\\Talley\\LOINC\\Hoffman",
       "versionStatus": "Failed",
@@ -251,7 +254,8 @@
     {
       "requestId": 3,
       "loadNumber": "20240501081501",
-      "loadTime": "2024-05-01T08:15:01+05:00",
+      "loadStartTime": "2024-05-01T08:15:01+05:00",
+      "loadEndTime": "2025-05-01T08:15:01+05:00",
       "codeSystemName": "RXNORM",
       "sourceFilePath": "C:\\Talley\\RXNOEM\\Hoffman",
       "versionStatus": "Available",

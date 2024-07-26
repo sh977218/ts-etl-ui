@@ -87,6 +87,6 @@
       <tr mat-header-row *matHeaderRowDef="searchRowColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: verificationQARulesColumn;"></tr>
     </table>
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of rules"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of rules" [showFirstLastButtons]="true"></mat-paginator>
   </fieldset>
 </form>
