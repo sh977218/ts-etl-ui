@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 import { LoadRequest, LoadRequestActivity, LoadRequestMessage } from '../model/load-request';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
-import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { DatePipe, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
@@ -31,8 +31,8 @@ const LABEL_MAPPING: Record<string, string> = {
   numberOfMessages: '# of Messages',
   loadNumber: 'Load Number',
   loadStatus: 'Load Status',
-  loadTime: 'Load Time',
-  duration: 'Duration',
+  loadStartTime: 'Load Start Time',
+  loadElapsedTime: 'Elapsed Time',
   notificationEmail: 'Contact Email',
   requestType: 'Request Type',
 };
@@ -50,8 +50,8 @@ const LABEL_SORT_ARRAY = [
   'numberOfMessages',
   'loadNumber',
   'loadStatus',
-  'loadTime',
-  'duration',
+  'loadStartTime',
+  'loadElapsedTime',
 ];
 
 @Component({
@@ -70,6 +70,7 @@ const LABEL_SORT_ARRAY = [
     MatIcon,
     NgIf,
     RouterLink,
+    DatePipe,
   ],
   templateUrl: './load-request-detail.component.html',
   styleUrl: './load-request-detail.component.scss',
@@ -87,7 +88,7 @@ export class LoadRequestDetailComponent implements OnInit {
 
   ngOnInit() {
     this.dataSource = Object.keys(this.loadRequest)
-      .filter(k => !['_id', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate'].includes(k))
+      .filter(k => !['_id', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadEndTime'].includes(k))
       .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
       .map(key => {
         return {

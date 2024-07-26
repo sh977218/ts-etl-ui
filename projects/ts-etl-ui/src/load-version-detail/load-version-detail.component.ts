@@ -61,8 +61,8 @@ export class LoadVersionDetailComponent implements OnInit {
       type: 'date',
     });
     this.dataSource.push({ key: '', value: '' });
-    this.dataSource.push({ key: 'Load Time:', value: this.loadVersion.loadTime, type: 'date' });
-    this.dataSource.push({ key: 'Duration:', value: this.loadVersion.duration });
+    this.dataSource.push({ key: 'Load Start Time:', value: this.loadVersion.loadStartTime, type: 'date' });
+    this.dataSource.push({ key: 'Elapsed Time:', value: this.loadVersion.loadElapsedTime });
     this.dataSource.push({ key: '# of Messaged:', value: (this.loadVersion.notes || []).length });
     this.dataSource.push({ key: '', value: '' });
     this.dataSource.push({ key: 'Version Number:', value: this.loadVersion.versionNumber });

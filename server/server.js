@@ -160,12 +160,12 @@ async function getNextLoadRequestSequenceId() {
 app.delete('/api/loadRequest/:reqId', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
 
-  const loadRequest = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be canceled');
   }
 
-  await loadRequestsCollection.deleteOne({requestId: +req.params.reqId});
+  await loadRequestsCollection.deleteOne({ requestId: +req.params.reqId });
   res.send();
 });
 
@@ -185,7 +185,7 @@ app.post('/api/loadRequest', async (req, res) => {
 app.post('/api/loadRequest/:reqId', async (req, res) => {
   const newLoadRequest = req.body;
   const { loadRequestsCollection } = await mongoCollection();
-  const loadRequest = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be edited');
   }
@@ -198,7 +198,7 @@ app.post('/api/loadRequest/:reqId', async (req, res) => {
       notificationEmail: newLoadRequest.notificationEmail,
     },
   });
-  const updatedLR = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  const updatedLR = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
   res.send(updatedLR);
 });
 
@@ -257,16 +257,16 @@ app.post('/api/loadVersions', async (req, res) => {
   }
   if (loadStartTime) {
     const dateObj = new Date(loadStartTime);
-    $match.loadTime = {
+    $match.loadStartTime = {
       $gte: dateObj,
     };
   }
   if (loadEndTime) {
     const dateObj = new Date(loadEndTime);
-    if (!$match.loadTime) {
-      $match.loadTime = {};
+    if (!$match.loadStartTime) {
+      $match.loadStartTime = {};
     }
-    $match.loadTime['$lte'] = dateObj;
+    $match.loadStartTime['$lte'] = dateObj;
   }
 
   const $sort = {};

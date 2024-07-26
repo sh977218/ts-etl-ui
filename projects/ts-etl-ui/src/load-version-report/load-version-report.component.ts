@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AsyncPipe, JsonPipe, KeyValue, KeyValuePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { LoadVersionDataSource } from '../load-version/load-version-data-source';
-import { catchError, map, shareReplay, switchMap, tap } from 'rxjs';
+import { catchError, combineLatestWith, map, Observable, shareReplay, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../service/loading-service';
@@ -28,6 +28,10 @@ import {
   LoadVersionReportRuleMessageComponent,
 } from '../load-version-report-rule-message/load-version-report-rule-message.component';
 import { LoadVersionReportRuleComponent } from '../load-version-report-rule/load-version-report-rule.component';
+import {
+  LoadVersionReportIdentificationComponent,
+} from '../load-version-identification/load-version-report-identification.component';
+import { LoadRequest } from '../model/load-request';
 
 @Component({
   standalone: true,
@@ -51,14 +55,14 @@ import { LoadVersionReportRuleComponent } from '../load-version-report-rule/load
     NgClass,
     LoadVersionReportRuleMessageComponent,
     LoadVersionReportRuleComponent,
+    LoadVersionReportIdentificationComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './load-version-report.component.html',
   styleUrls: ['./load-version-report.component.scss'],
 })
 export class LoadVersionReportComponent {
-  loadVersionKeys1: string[] = ['codeSystemName', 'version', 'loadNumber'];
-  loadVersionKeys2 = ['requestId', 'sourceFilePath'];
+
   loadVersionDatabase: LoadVersionDataSource = new LoadVersionDataSource(this.http);
   loadRequestDatabase: LoadRequestDataSource = new LoadRequestDataSource(this.http);
   loadVersion$ = this.activatedRoute.paramMap
@@ -95,25 +99,7 @@ export class LoadVersionReportComponent {
       }),
     );
 
-  identification1$ = this.loadVersion$
-    .pipe(
-      map((loadVersion: LoadVersion) => {
-        const filtered = Object.entries(loadVersion).filter(
-          ([k]) => this.loadVersionKeys1.includes(k),
-        );
-        return Object.fromEntries(filtered);
-      }),
-    );
-
-  identification2$ = this.loadVersion$
-    .pipe(
-      map((loadVersion: LoadVersion) => {
-        const filtered = Object.entries(loadVersion).filter(
-          ([k]) => this.loadVersionKeys2.includes(k),
-        );
-        return Object.fromEntries(filtered);
-      }),
-    );
+  identification$: Observable<[LoadRequest, LoadVersion]> = this.loadRequest$.pipe(combineLatestWith(this.loadVersion$));
 
   sourceInformationKeys1: string[] = [
     'Version ID',

@@ -70,13 +70,13 @@
           </th>
         </ng-container>
 
-        <ng-container matColumnDef="loadTime">
+        <ng-container matColumnDef="loadStartTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
-            Load Time
+            Load Start Time
           </th>
-          <td mat-cell *matCellDef="let row">{{row.loadTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
+          <td mat-cell *matCellDef="let row">{{row.loadStartTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
         </ng-container>
-        <ng-container matColumnDef="loadTime-search">
+        <ng-container matColumnDef="loadStartTime-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
               <input id="loadStartTime" matInput class="w-30" formControlName="loadStartTime" type="date"

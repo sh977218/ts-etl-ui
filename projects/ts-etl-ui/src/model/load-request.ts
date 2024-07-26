@@ -33,7 +33,8 @@ export type LoadRequest = {
   numberOfMessages: number;
   loadNumber: string;
   loadStatus: string;
-  loadTime: Date;
+  loadStartTime: Date;
+  loadEndTime: Date;
   duration: Date;
   loadRequestActivities: LoadRequestActivity[]
   loadRequestMessages: LoadRequestMessage[]
