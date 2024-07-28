@@ -10,8 +10,14 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you
-change any of the source files.
+- Edit `host` file, add the following line to map development domain, so UTS allows the request.
+  the request.
+
+```
+127.0.0.1       ts.mlb.nih.gov
+```
+
+- Run `ng serve` for a dev server. Navigate to `http://ts.mlb.nih.gov:4200/`.
 
 ## Mongo
 
