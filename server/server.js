@@ -373,6 +373,9 @@ app.get('/api/codeSystem/:codeSystemName', async (req, res) => {
 
 // this map simulate UTS ticket to username
 const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
+/*
+@todo TS's backend needs to implement this API.
+ */
 app.get('/api/serviceValidate', async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
