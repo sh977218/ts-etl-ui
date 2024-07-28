@@ -4,6 +4,6 @@ export const environment: Environment = {
   /* eslint-disable */
   environmentName: 'prod',
   ticketUrl: 'https://utslogin.nlm.nih.gov/serviceValidate',
-  loginServiceUrl: 'https://uts.nlm.nih.gov/uts/login',
+  loginServiceUrl: 'https://login-prod.nlm.nih.gov/uts/login',
   apiServer: '/portal-backend/api',
 };

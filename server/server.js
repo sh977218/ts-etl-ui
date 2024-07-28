@@ -30,9 +30,9 @@ function escapeRegex(input) {
 
 app.post('/api/loadRequests', async (req, res) => {
   const apiStartTime = new Date();
-  const {pagination, searchFilters, searchColumns, sortCriteria} = req.body;
-  const {pageNum, pageSize} = pagination;
-  const {filterRequestTime, filterRequester} = searchFilters;
+  const { pagination, searchFilters, searchColumns, sortCriteria } = req.body;
+  const { pageNum, pageSize } = pagination;
+  const { filterRequestTime, filterRequester } = searchFilters;
   const {
     requestId,
     codeSystemName,
@@ -45,7 +45,7 @@ app.post('/api/loadRequests', async (req, res) => {
     creationStartTime,
     creationEndTime,
   } = searchColumns;
-  const {sortBy, sortDirection} = sortCriteria;
+  const { sortBy, sortDirection } = sortCriteria;
 
   const $match = {};
   // searchColumns
@@ -143,8 +143,8 @@ app.post('/api/loadRequests', async (req, res) => {
   const pageNumberInt = pageNum - 1;
   const pageSizeInt = +pageSize;
 
-  const aggregation = [{$match}, {$sort}, {$skip: pageNumberInt * pageSizeInt}, {$limit: pageSizeInt}];
-  const {loadRequestsCollection} = await mongoCollection();
+  const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
+  const { loadRequestsCollection } = await mongoCollection();
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   const apiEndTime = new Date();
   res.send({
@@ -153,50 +153,50 @@ app.post('/api/loadRequests', async (req, res) => {
         totalCount: await loadRequestsCollection.countDocuments($match), page: pageNumberInt, pageSize: pageSize,
       },
     },
-    service: {url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime},
-    status: {success: true},
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    status: { success: true },
   });
 });
 
 async function getNextLoadRequestSequenceId() {
-  const {loadRequestsCollection} = await mongoCollection();
+  const { loadRequestsCollection } = await mongoCollection();
   return loadRequestsCollection.countDocuments({});
 }
 
 app.delete('/api/loadRequest/:reqId', async (req, res) => {
-  const {loadRequestsCollection} = await mongoCollection();
+  const { loadRequestsCollection } = await mongoCollection();
 
-  const loadRequest = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be canceled');
   }
 
-  await loadRequestsCollection.deleteOne({requestId: +req.params.reqId});
+  await loadRequestsCollection.deleteOne({ requestId: +req.params.reqId });
   res.send();
 });
 
 app.post('/api/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
-  const {loadRequestsCollection} = await mongoCollection();
+  const { loadRequestsCollection } = await mongoCollection();
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   const result = await loadRequestsCollection.insertOne({
     requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
   });
 
-  const newLoadRequest = await loadRequestsCollection.findOne({_id: result.insertedId});
-  res.send({requestId: newLoadRequest.requestId});
+  const newLoadRequest = await loadRequestsCollection.findOne({ _id: result.insertedId });
+  res.send({ requestId: newLoadRequest.requestId });
 });
 
 app.post('/api/loadRequest/:reqId', async (req, res) => {
   const newLoadRequest = req.body;
-  const {loadRequestsCollection} = await mongoCollection();
-  const loadRequest = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  const { loadRequestsCollection } = await mongoCollection();
+  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be edited');
   }
 
-  await loadRequestsCollection.updateOne({requestId: +req.params.reqId}, {
+  await loadRequestsCollection.updateOne({ requestId: +req.params.reqId }, {
     $set: {
       codeSystemName: newLoadRequest.codeSystemName,
       sourceFilePath: newLoadRequest.sourceFilePath,
@@ -204,18 +204,18 @@ app.post('/api/loadRequest/:reqId', async (req, res) => {
       notificationEmail: newLoadRequest.notificationEmail,
     },
   });
-  const updatedLR = await loadRequestsCollection.findOne({requestId: +req.params.reqId});
+  const updatedLR = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
   res.send(updatedLR);
 });
 
 app.get('/api/loadRequest/:requestId', async (req, res) => {
-  const {loadRequestsCollection} = await mongoCollection();
-  res.send(await loadRequestsCollection.findOne({requestId: +req.params.requestId}));
+  const { loadRequestsCollection } = await mongoCollection();
+  res.send(await loadRequestsCollection.findOne({ requestId: +req.params.requestId }));
 });
 
 app.post('/api/loadVersions', async (req, res) => {
-  const {order, searchColumns, sortCriteria} = req.body;
-  const {sortBy, sortDirection} = sortCriteria;
+  const { order, searchColumns, sortCriteria } = req.body;
+  const { sortBy, sortDirection } = sortCriteria;
   const {
     requestId,
     codeSystemName,
@@ -228,7 +228,7 @@ app.post('/api/loadVersions', async (req, res) => {
     requestStartTime,
     requestEndTime,
   } = searchColumns;
-  const {loadVersionsCollection} = await mongoCollection();
+  const { loadVersionsCollection } = await mongoCollection();
   const $match = {};
   if (requestId) {
     $match.requestId = Number.parseInt(requestId);
@@ -277,7 +277,7 @@ app.post('/api/loadVersions', async (req, res) => {
 
   const $sort = {};
   $sort[sortBy] = sortDirection === 'asc' ? 1 : -1;
-  const aggregation = [{$match}, {$sort}];
+  const aggregation = [{ $match }, { $sort }];
   const loadVersions = await loadVersionsCollection.aggregate(aggregation).toArray();
   res.send({
     total_count: loadVersions.length, items: loadVersions,
@@ -285,9 +285,9 @@ app.post('/api/loadVersions', async (req, res) => {
 });
 
 app.get('/api/loadVersion/:requestId', async (req, res) => {
-  const {loadVersionsCollection} = await mongoCollection();
+  const { loadVersionsCollection } = await mongoCollection();
   // I'm not sure requestID will end up being unique here... we can change later if needed
-  const loadVersion = await loadVersionsCollection.findOne({requestId: +req.params.requestId});
+  const loadVersion = await loadVersionsCollection.findOne({ requestId: +req.params.requestId });
   res.send(loadVersion);
 });
 
@@ -298,10 +298,10 @@ app.get('/api/file/:id', (req, res) => {
 });
 
 app.post('/api/loadVersionActivity', async (req, res) => {
-  const {loadVersionsCollection} = await mongoCollection();
+  const { loadVersionsCollection } = await mongoCollection();
   req.body.loadVersionActivity.id = new Date();
-  const vQA = await loadVersionsCollection.findOne({requestId: req.body.requestId});
-  let versionStatus = {vQA};
+  const vQA = await loadVersionsCollection.findOne({ requestId: req.body.requestId });
+  let versionStatus = { vQA };
   if (req.body.loadVersionActivity.activity === 'Accept') {
     versionStatus = 'Accepted';
   } else if (req.body.loadVersionActivity.activity === 'Reject') {
@@ -309,19 +309,19 @@ app.post('/api/loadVersionActivity', async (req, res) => {
   } else if (req.body.loadVersionActivity.activity === 'Reset') {
     versionStatus = 'Pending QA';
   }
-  await loadVersionsCollection.updateOne({requestId: req.body.requestId}, {
+  await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       loadVersionActivities: req.body.loadVersionActivity,
-    }, $set: {versionStatus: versionStatus},
+    }, $set: { versionStatus: versionStatus },
   });
   res.send();
 });
 
 app.post('/api/addActivityNote', async (req, res) => {
-  const {loadVersionsCollection} = await mongoCollection();
-  const vQA = await loadVersionsCollection.findOne({requestId: req.body.requestId});
+  const { loadVersionsCollection } = await mongoCollection();
+  const vQA = await loadVersionsCollection.findOne({ requestId: req.body.requestId });
   if (!vQA.loadVersionActivities.length) {
-    await loadVersionsCollection.updateOne({requestId: req.body.requestId}, {
+    await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
       $set: {
         'loadVersionActivities': [{
           createdBy: req.body.activityNote.createdBy, notes: [{
@@ -334,7 +334,7 @@ app.post('/api/addActivityNote', async (req, res) => {
       },
     });
   } else {
-    await loadVersionsCollection.updateOne({requestId: req.body.requestId}, {
+    await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
       $push: {
         'loadVersionActivities.0.notes': {
           createdBy: req.body.activityNote.createdBy,
@@ -345,12 +345,12 @@ app.post('/api/addActivityNote', async (req, res) => {
       },
     });
   }
-  res.send(await loadVersionsCollection.findOne({requestId: req.body.requestId}));
+  res.send(await loadVersionsCollection.findOne({ requestId: req.body.requestId }));
 });
 
 app.post('/api/editAvailableDate', async (req, res) => {
-  const {loadVersionsCollection} = await mongoCollection();
-  await loadVersionsCollection.updateOne({requestId: req.body.requestId}, {
+  const { loadVersionsCollection } = await mongoCollection();
+  await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
     $set: {
       'loadVersionActivities.0.availableDate': new Date(req.body.newDate),
     },
@@ -359,97 +359,47 @@ app.post('/api/editAvailableDate', async (req, res) => {
 });
 
 app.get('/api/codeSystems', async (req, res) => {
-  const {codeSystemsCollection} = await mongoCollection();
+  const { codeSystemsCollection } = await mongoCollection();
   const codeSystems = await codeSystemsCollection.find({}).toArray();
   res.send(codeSystems);
 });
 
 app.get('/api/codeSystem/:codeSystemName', async (req, res) => {
   const codeSystemName = req.params.codeSystemName;
-  const {codeSystemsCollection} = await mongoCollection();
-  const codeSystem = await codeSystemsCollection.findOne({codeSystemName});
+  const { codeSystemsCollection } = await mongoCollection();
+  const codeSystem = await codeSystemsCollection.findOne({ codeSystemName });
   res.send(codeSystem);
 });
 
 // this map simulate UTS ticket to username
 const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
-// in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
 app.get('/api/serviceValidate', async (req, res) => {
-  /*
-  @todo Implement me in TS backend
-  res.send(await ticketToUtsUser(req.query.ticket));
-   */
-  const ticket = req.query.ticket
-
-  try {
-    const profileResponse = await fetch(
-      `https://uts-ws.nlm.nih.gov/rest/serviceValidate?service=https://cde.nlm.nih.gov&ticket=ST-11191-mJ0uGKcFcgTnrpMDA4ACq5O2vB0-pvlb7login01`
-    );
-    if (!profileResponse.ok) {
-      throw new Error(`Response status: ${profileResponse.status}`);
-    }
-    const a = await profileResponse.text();
-    const profile = await profileResponse.json();
-    if (!profile?.utsUser?.username) {
-      res.status(401).send(`Incorrect username, password or service ticket.`);
-      return;
-    }
-  } catch (error) {
-    console.error(error.message);
+  const ticket = req.query.ticket;
+  const service = req.query.service;
+  const app = req.query.app;
+  // On Production, UTS expect those 3 parameters
+  if (app !== 'angular' || !service || !ticket) {
+    return res.status(500).send();
   }
-  res.send(await ticketToUtsUserMock(req.query.ticket));
-});
-
-async function ticketToUtsUserMock(ticket) {
-  const {usersCollection} = await mongoCollection();
+  const { usersCollection } = await mongoCollection();
   const utsUsername = ticketMap.get(ticket);
-  const user = await usersCollection.findOne({'utsUser.username': utsUsername});
-  return user;
-}
-
-async function ticketToUtsUser() {
-  /*
-  @todo Implement me
-   */
-  const fakeUser = {
-    'userID': '',
-    'credentialType': '',
-    'firstName': '',
-    'authenticationDate': '',
-    'isFromNewLogin': '',
-    'authenticationMethod': '',
-    'successfulAuthenticationHandlers': '',
-    'longTermAuthenticationRequestTokenUsed': '',
-    'email': 'fakeemail@nih.gov',
-    'lastName': 'fake last name',
-    'idpUserOrg': 'fake idp',
-    'success': true,
-    'userStatus': 'fakeStatus',
-    'jwtToken': 'fakeToken',
-    'utsUser': {
-      'username': 'fakeUsername',
-      'apiKey': 'fakeUser-api-key',
-      'idpUserOrg': 'google',
-      'firstName': 'fakeUserFirstName',
-      'lastName': 'fakeUserLastName',
-    },
-  };
-  return fakeUser;
-}
+  const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
+  res.send(user);
+});
 
 app.get('/api/serverInfo', async (req, res) => {
   const pr = getPrNumber();
-  const {db} = await mongoCollection();
-  res.send({pr, db: db.s.namespace.db});
+  const { db } = await mongoCollection();
+  res.send({ pr, db: db.s.namespace.db });
 });
 
 app.get('/nih-login', (req, res) => {
   const returnURL = req.query.service;
-  res.render('nih-login', {returnURL: returnURL});
+  res.render('nih-login', { returnURL: returnURL });
 });
 
 app.use((req, res) => {
-  res.writeHead(200, {'content-type': 'text/html'});
+  res.writeHead(200, { 'content-type': 'text/html' });
   createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
 });
 
@@ -457,7 +407,7 @@ app.use(async (err, req, res, next) => {
   if (err instanceof TSError) {
     return res.status(err.status).send(err);
   }
-  return res.status(500).send({name: 'Unexpected Error', message: 'Something broke!', status: 500});
+  return res.status(500).send({ name: 'Unexpected Error', message: 'Something broke!', status: 500 });
 });
 
 app.listen(port, () => {

@@ -26,8 +26,9 @@ export class UserService {
 
   logInWithTicket(ticket: string) {
     const params = {
-      service: window.location.origin,
+      service: window.location.origin + '/login-cb',
       ticket,
+      app: 'angular',
     };
     return this.http.get<User>(`${environment.ticketUrl}`, { params })
       .pipe(
@@ -37,8 +38,8 @@ export class UserService {
             localStorage.setItem('user', JSON.stringify(res));
             this.router.navigate(['/load-requests']);
           },
-          error: () => {
-            this.alertService.addAlert('danger', 'error log in');
+          error: (e) => {
+            this.alertService.addAlert('danger', `error log in ${e}`);
             this._user$.next(null);
             this.router.navigate(['/']);
           },

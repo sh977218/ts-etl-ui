@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../service/user-service';
+import { switchMap } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -16,12 +17,13 @@ export class LoginCbComponent {
               public dialog: MatDialog,
               public userService: UserService,
   ) {
-    activatedRoute.queryParamMap.subscribe(qp => {
-      const ticket = qp.get('ticket');
-      if (ticket) {
-        userService.logInWithTicket(ticket).subscribe();
-      }
-    });
+    activatedRoute.queryParamMap
+      .pipe(
+        switchMap(qp => {
+          const ticket = qp.get('ticket') || '';
+          return userService.logInWithTicket(ticket);
+        }),
+      ).subscribe();
   }
 
 }

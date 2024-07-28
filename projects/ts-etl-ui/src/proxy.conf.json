@@ -3,7 +3,7 @@
     "target": "http://localhost:3000/"
   },
   "/ticketUrl": {
-    "target": "https://uts-ws.nlm.nih.gov/rest/serviceValidate",
+    "target": "https://utslogin.nlm.nih.gov/serviceValidate",
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": {
