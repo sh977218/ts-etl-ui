@@ -6,6 +6,7 @@
   "scripts": {
     "ng": "ng",
     "serve": "ng serve",
+    "serve:ci": "ng serve -c ci",
     "serve:integration": "ng serve -c integration",
     "start": "node --env-file .prod.env server/server.js",
     "start:ci": "node --env-file .ci.env server/server.js",
@@ -34,6 +35,7 @@
     "@angular/platform-browser": "^17.0.3",
     "@angular/platform-browser-dynamic": "^17.0.3",
     "@angular/router": "^17.0.3",
+    "ejs": "^3.1.10",
     "express": "^4.19.2",
     "file-saver": "^2.0.5",
     "moment": "^2.30.1",

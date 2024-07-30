@@ -7,14 +7,14 @@ import { environment } from '../environments/environment';
   standalone: true,
   imports: [
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
   ],
-  templateUrl: './log-in-modal.component.html'
+  templateUrl: './log-in-modal.component.html',
 })
 export class LogInModalComponent {
 
   redirectToLogin() {
-    window.location.href = `${environment.loginServiceUrl}?service=` + encodeURIComponent(window.location.origin + '/login-cb')
+    window.location.href = `${environment.loginServiceUrl}?service=` + window.location.origin + '/login-cb';
   }
 
 }

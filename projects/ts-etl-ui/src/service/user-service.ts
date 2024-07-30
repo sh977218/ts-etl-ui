@@ -1,40 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, of, tap } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { environment } from '../environments/environment';
 import { AlertService } from './alert-service';
 import { User } from '../model/user';
 
-const fakeUser: User = {
-  "userID": '',
-  "credentialType": '',
-  "firstName": '',
-  "authenticationDate": '',
-  "isFromNewLogin": '',
-  "authenticationMethod": '',
-  "successfulAuthenticationHandlers": '',
-  "longTermAuthenticationRequestTokenUsed": '',
-  "email": "fakeemail@nih.gov",
-  "lastName": "fake last name",
-  "idpUserOrg": "fake idp",
-  "success": true,
-  "userStatus": "fakeStatus",
-  "jwtToken": "fakeToken",
-  "utsUser": {
-    "username": "fakeUsername",
-    "apiKey": "fakeUser-api-key",
-    "idpUserOrg": "google",
-    "firstName": "fakeUserFirstName",
-    "lastName": "fakeUserLastName"
-  }
-}
-
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class UserService {
   private _user$ = new BehaviorSubject<User | null>(null);
-
 
   constructor(public http: HttpClient,
               public router: Router,
@@ -51,10 +26,11 @@ export class UserService {
 
   logInWithTicket(ticket: string) {
     const params = {
-      service: window.location.origin,
+      service: window.location.origin + '/login-cb',
       ticket,
+      app: 'angular',
     };
-    return (['integration', 'prod'].includes(environment.environmentName) ? of(fakeUser) : this.http.get<User>(`${environment.ticketUrl}`, {params}))
+    return this.http.get<User>(`${environment.ticketUrl}`, { params })
       .pipe(
         tap({
           next: (res) => {
@@ -62,8 +38,8 @@ export class UserService {
             localStorage.setItem('user', JSON.stringify(res));
             this.router.navigate(['/load-requests']);
           },
-          error: () => {
-            this.alertService.addAlert('danger', 'error log in');
+          error: (e) => {
+            this.alertService.addAlert('danger', `error log in ${e}`);
             this._user$.next(null);
             this.router.navigate(['/']);
           },

@@ -1,5 +1,12 @@
 import express from 'express';
-import fs from 'fs';
+import { readFileSync, createReadStream } from 'fs';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import fetch from 'node-fetch';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
 import { TSError, UnauthorizedError } from './errors.js';
@@ -13,6 +20,9 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static('dist/ts-etl-ui/browser'));
+
+app.set('view engine', 'ejs');
+app.set('views', join(__dirname, 'views'));
 
 function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -139,12 +149,8 @@ app.post('/api/loadRequests', async (req, res) => {
   const apiEndTime = new Date();
   res.send({
     result: {
-      data: loadRequests,
-      hasPagination: true,
-      pagination: {
-        totalCount: await loadRequestsCollection.countDocuments($match),
-        page: pageNumberInt,
-        pageSize: pageSize,
+      data: loadRequests, hasPagination: true, pagination: {
+        totalCount: await loadRequestsCollection.countDocuments($match), page: pageNumberInt, pageSize: pageSize,
       },
     },
     service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
@@ -287,7 +293,7 @@ app.get('/api/loadVersion/:requestId', async (req, res) => {
 
 app.get('/api/file/:id', (req, res) => {
   const fileLocation = DEFAULT_FILE_FOLDER + req.params.id;
-  const fileContent = fs.readFileSync(fileLocation);
+  const fileContent = readFileSync(fileLocation);
   res.send(fileContent);
 });
 
@@ -306,8 +312,7 @@ app.post('/api/loadVersionActivity', async (req, res) => {
   await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
     $push: {
       loadVersionActivities: req.body.loadVersionActivity,
-    },
-    $set: { versionStatus: versionStatus },
+    }, $set: { versionStatus: versionStatus },
   });
   res.send();
 });
@@ -319,8 +324,7 @@ app.post('/api/addActivityNote', async (req, res) => {
     await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
       $set: {
         'loadVersionActivities': [{
-          createdBy: req.body.activityNote.createdBy,
-          notes: [{
+          createdBy: req.body.activityNote.createdBy, notes: [{
             createdBy: req.body.activityNote.createdBy,
             createdTime: req.body.activityNote.createdTime,
             notes: req.body.activityNote.notes,
@@ -367,18 +371,22 @@ app.get('/api/codeSystem/:codeSystemName', async (req, res) => {
   res.send(codeSystem);
 });
 
-// in front end, go to localhost:4200/login-cb?ticket=ludetc to login as ludetc
+// this map simulate UTS ticket to username
+const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
+/*
+@todo TS's backend needs to implement this API.
+ */
 app.get('/api/serviceValidate', async (req, res) => {
-  req.hostname;
-
-  const { usersCollection } = await mongoCollection();
-  if (req.query.ticket.includes('anything')) {
-    const user = await usersCollection.findOne({});
-    res.send(user);
-    return;
+  const ticket = req.query.ticket;
+  const service = req.query.service;
+  const app = req.query.app;
+  // On Production, UTS expect those 3 parameters
+  if (app !== 'angular' || !service || !ticket) {
+    return res.status(500).send();
   }
-
-  const user = await usersCollection.findOne({ 'utsUser.username': req.query.ticket });
+  const { usersCollection } = await mongoCollection();
+  const utsUsername = ticketMap.get(ticket);
+  const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
   res.send(user);
 });
 
@@ -388,9 +396,14 @@ app.get('/api/serverInfo', async (req, res) => {
   res.send({ pr, db: db.s.namespace.db });
 });
 
+app.get('/nih-login', (req, res) => {
+  const returnURL = req.query.service;
+  res.render('nih-login', { returnURL: returnURL });
+});
+
 app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
-  fs.createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
+  createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
 });
 
 app.use(async (err, req, res, next) => {
