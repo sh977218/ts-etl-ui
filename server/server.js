@@ -380,7 +380,7 @@ app.get('/api/serviceValidate', async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
   const app = req.query.app;
-  // On Production, UTS expect those 3 parameters
+  // UTS expect those 3 parameters
   if (app !== 'angular' || !service || !ticket) {
     return res.status(500).send();
   }

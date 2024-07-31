@@ -26,6 +26,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "optimization": false,
+            "extractLicenses": false,
+            "sourceMap": true,
             "outputPath": "dist/ts-etl-ui",
             "index": "projects/ts-etl-ui/src/index.html",
             "browser": "projects/ts-etl-ui/src/main.ts",
@@ -47,7 +50,7 @@
             "scripts": []
           },
           "configurations": {
-            "production": {
+            "prod": {
               "budgets": [
                 {
                   "type": "initial",
@@ -68,6 +71,14 @@
               ],
               "outputHashing": "all"
             },
+            "render": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
+                  "with": "projects/ts-etl-ui/src/environments/environment.render.ts"
+                }
+              ]
+            },
             "integration": {
               "optimization": false,
               "extractLicenses": false,
@@ -81,15 +92,6 @@
               "outputHashing": "all"
             },
             "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
-                  "with": "projects/ts-etl-ui/src/environments/environment.development.ts"
-                }
-              ]
             },
             "ci": {
               "fileReplacements": [
@@ -100,7 +102,7 @@
               ]
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "prod"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -108,9 +110,12 @@
             "proxyConfig": "projects/ts-etl-ui/src/proxy.conf.json"
           },
           "configurations": {
-            "production": {
-              "buildTarget": "ts-etl-ui:build:production",
+            "prod": {
+              "buildTarget": "ts-etl-ui:build:prod",
               "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
+            },
+            "render": {
+              "buildTarget": "ts-etl-ui:build:render"
             },
             "development": {
               "host": "ts.mlb.nih.gov",
