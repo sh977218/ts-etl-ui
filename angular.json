@@ -26,6 +26,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "baseHref": "/portal-frontend/",
             "optimization": false,
             "extractLicenses": false,
             "sourceMap": true,
