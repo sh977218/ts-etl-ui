@@ -47,7 +47,7 @@ export default defineConfig({
     screenshot: 'on',
     browserName: 'chromium',
     ignoreHTTPSErrors: true,
-    baseURL: process.env['CI'] ? 'http://localhost:3000' : 'http://localhost:4200',
+    baseURL: process.env['CI'] ? 'http://localhost:3000/portal-frontend/' : 'http://localhost:4200/portal-frontend/',
   },
 
   /* Configure projects for major browsers */
