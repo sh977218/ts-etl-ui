@@ -3,7 +3,7 @@ import { readFileSync, createReadStream } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import fetch from 'node-fetch';
+import jwt from 'jsonwebtoken';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -387,6 +387,8 @@ app.get('/api/serviceValidate', async (req, res) => {
   const { usersCollection } = await mongoCollection();
   const utsUsername = ticketMap.get(ticket);
   const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
+  const jwtToken = jwt.sign({ sub: user.username }, 'some-secret');
+  res.cookie('Bearer', `${jwtToken}`);
   res.send(user);
 });
 
