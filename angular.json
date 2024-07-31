@@ -30,7 +30,7 @@
             "optimization": false,
             "extractLicenses": false,
             "sourceMap": true,
-            "outputPath": "dist/portal-frontend/ts-etl-ui",
+            "outputPath": "dist/ts-etl-ui",
             "index": "projects/ts-etl-ui/src/index.html",
             "browser": "projects/ts-etl-ui/src/main.ts",
             "polyfills": [

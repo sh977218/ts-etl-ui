@@ -403,7 +403,11 @@ app.get('/nih-login', (req, res) => {
   res.render('nih-login', { returnURL: returnURL });
 });
 
-app.use((req, res) => {
+app.get('/', (req, res) => {
+  res.redirect('/portal-frontend');
+});
+
+app.get('/portal-frontend', (req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
   createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
 });
