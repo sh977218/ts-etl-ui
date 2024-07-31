@@ -94,13 +94,7 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
-                  "with": "projects/ts-etl-ui/src/environments/environment.development.ts"
-                }
-              ]
+              "sourceMap": true
             },
             "ci": {
               "fileReplacements": [

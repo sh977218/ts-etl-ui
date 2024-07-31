@@ -2,8 +2,8 @@ import { Environment } from '../model/environment';
 
 export const environment: Environment = {
   /* eslint-disable */
-  environmentName: 'prod',
-  ticketUrl: 'https://utslogin.nlm.nih.gov/serviceValidate',
-  loginServiceUrl: 'https://login-prod.nlm.nih.gov/uts/login',
+  environmentName: 'development',
+  ticketUrl: '/api/serviceValidate',
+  loginServiceUrl: 'http://localhost:3000/nih-login',
   apiServer: '/api',
 };
