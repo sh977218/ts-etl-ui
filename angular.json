@@ -105,10 +105,6 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "host": "ts.mlb.nih.gov",
-            "port": 4200,
-            "disableHostCheck": true,
-            "ssl": true,
             "proxyConfig": "projects/ts-etl-ui/src/proxy.conf.json"
           },
           "configurations": {
@@ -117,6 +113,10 @@
               "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
             },
             "development": {
+              "host": "ts.mlb.nih.gov",
+              "port": 4200,
+              "disableHostCheck": true,
+              "ssl": true,
               "buildTarget": "ts-etl-ui:build:development"
             },
             "integration": {
