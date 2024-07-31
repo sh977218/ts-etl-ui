@@ -14,7 +14,7 @@ import { environment } from '../environments/environment';
 export class LogInModalComponent {
 
   redirectToLogin() {
-    window.location.href = `${environment.loginServiceUrl}?service=` + window.location.origin + '/login-cb';
+    window.location.href = environment.environmentName === 'development' ? 'window.location.origin' : '' + `${environment.loginServiceUrl}?service=` + window.location.origin + '/login-cb';
   }
 
 }
