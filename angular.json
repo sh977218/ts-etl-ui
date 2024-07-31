@@ -68,6 +68,17 @@
               ],
               "outputHashing": "all"
             },
+            "render": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
+                  "with": "projects/ts-etl-ui/src/environments/environment.render.ts"
+                }
+              ]
+            },
             "integration": {
               "optimization": false,
               "extractLicenses": false,
@@ -111,6 +122,9 @@
             "production": {
               "buildTarget": "ts-etl-ui:build:production",
               "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
+            },
+            "render": {
+              "buildTarget": "ts-etl-ui:build:render"
             },
             "development": {
               "host": "ts.mlb.nih.gov",

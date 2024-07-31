@@ -14,7 +14,9 @@ import { environment } from '../environments/environment';
 export class LogInModalComponent {
 
   redirectToLogin() {
-    window.location.href = environment.environmentName === 'development' ? 'window.location.origin' : '' + `${environment.loginServiceUrl}?service=` + window.location.origin + '/login-cb';
+    // on render.com or PR preview, the login URL needs to be in the same domain
+    const loginServiceUrlDomain = ['render'].includes(environment.environmentName) ? `${window.location.hostname}` : ``;
+    window.location.href = `${loginServiceUrlDomain}${environment.loginServiceUrl}?service=` + window.location.origin + '/login-cb';
   }
 
 }
