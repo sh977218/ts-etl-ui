@@ -26,7 +26,7 @@ export class UserService {
 
   logInWithTicket(ticket: string) {
     const params = {
-      service: window.location.origin + '/login-cb',
+      service: window.location.origin + `${['prod'].includes(environment.environmentName)? '/portal-frontend' : ''}/login-cb`,
       ticket,
       app: 'angular',
     };

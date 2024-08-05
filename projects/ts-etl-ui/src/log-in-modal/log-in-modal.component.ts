@@ -12,11 +12,9 @@ import { environment } from '../environments/environment';
   templateUrl: './log-in-modal.component.html',
 })
 export class LogInModalComponent {
-  protected readonly environment = environment;
 
   redirectToLogin() {
-    const loginURL= `${environment.loginServiceUrl}?service=` + window.location.origin + `${['prod'].includes(this.environment.environmentName)? '/portal-frontend' : ''}/login-cb`;
-    console.log(`environment.environmentName: ${this.environment.environmentName}`)
+    const loginURL= `${environment.loginServiceUrl}?service=` + window.location.origin + `${['prod'].includes(environment.environmentName)? '/portal-frontend' : ''}/login-cb`;
     window.location.href = loginURL
   }
 
