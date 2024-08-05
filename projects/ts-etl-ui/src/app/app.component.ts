@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -27,6 +27,7 @@ import { environment } from '../environments/environment';
   imports: [
     NgIf,
     AsyncPipe,
+    JsonPipe,
     RouterModule,
     MatDialogModule,
     MatIconModule,
