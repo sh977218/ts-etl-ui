@@ -15,7 +15,9 @@ export class LogInModalComponent {
 
   redirectToLogin() {
     const loginURL= `${environment.loginServiceUrl}?service=` + window.location.origin + `${['prod'].includes(environment.environmentName)? '/portal-frontend' : ''}/login-cb`;
+    console.log(`environment.environmentName: ${environment.environmentName}`)
     window.location.href = loginURL
   }
 
+  protected readonly environment = environment;
 }
