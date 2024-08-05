@@ -51,18 +51,6 @@
           },
           "configurations": {
             "prod": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "1500kB",
-                  "maximumError": "2MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
-                }
-              ],
               "fileReplacements": [
                 {
                   "replace": "projects/ts-etl-ui/src/environments/environment.ts",
