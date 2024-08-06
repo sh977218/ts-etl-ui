@@ -41,8 +41,6 @@ export default defineConfig({
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    video: 'on',
-    trace: 'on',
     headless: !!process.env['CI'],
     screenshot: 'on',
     browserName: 'chromium',
@@ -55,6 +53,11 @@ export default defineConfig({
     {
       name: 'debug',
       grep: [/@smoke/, /@debug/],
+      use: {
+        video: 'on',
+        trace: 'on',
+        screenshot: 'on',
+      },
     },
     {
       name: 'chromium',
