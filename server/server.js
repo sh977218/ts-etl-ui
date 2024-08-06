@@ -385,14 +385,18 @@ app.get('/api/serviceValidate', async (req, res) => {
   const app = req.query.app;
   // UTS expect those 3 parameters
   if (app !== 'angular' || !service || !ticket) {
-    return res.status(500).send();
+    return res.status(400).send();
   }
   const { usersCollection } = await mongoCollection();
   const utsUsername = ticketMap.get(ticket);
   const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
-  const jwtToken = jwt.sign({ data: user.utsUser.username }, 'some-secret');
-  res.cookie('Bearer', `${jwtToken}`);
-  res.send(user);
+  if (user.utsUser) {
+    const jwtToken = jwt.sign({ data: user.utsUser.username }, 'some-secret');
+    res.cookie('Bearer', `${jwtToken}`);
+    res.send(user);
+  } else {
+    return res.status(401).send();
+  }
 });
 
 app.get('/api/login', async (req, res) => {

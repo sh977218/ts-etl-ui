@@ -64,7 +64,7 @@ export class AppComponent {
         error: (e) => {
           alertService.addAlert('danger', `error log in ${e}`);
           userService.user$.next(null);
-          localStorage.setItem('Bearer', jwtToken);
+          localStorage.removeItem('Bearer');
           router.navigate(['/']);
         },
       });
