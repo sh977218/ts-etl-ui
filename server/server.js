@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import jwt from 'jsonwebtoken';
 
+import cookieParser from 'cookie-parser';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -19,6 +21,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static('dist/ts-etl-ui/browser'));
 
 app.set('view engine', 'ejs');
@@ -387,8 +390,16 @@ app.get('/api/serviceValidate', async (req, res) => {
   const { usersCollection } = await mongoCollection();
   const utsUsername = ticketMap.get(ticket);
   const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
-  const jwtToken = jwt.sign({ sub: user.username }, 'some-secret');
+  const jwtToken = jwt.sign({ data: user.utsUser.username }, 'some-secret');
   res.cookie('Bearer', `${jwtToken}`);
+  res.send(user);
+});
+
+app.get('/api/login', async (req, res) => {
+  const jwtToken = req.cookies['Bearer'];
+  const payload = jwt.verify(jwtToken, 'some-secret');
+  const { usersCollection } = await mongoCollection();
+  const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
   res.send(user);
 });
 

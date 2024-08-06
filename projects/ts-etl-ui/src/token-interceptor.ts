@@ -1,23 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpInterceptor } from '@angular/common/http';
-
-const localStorageJwtTokenKey = 'jwtToken';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor() {
+
+  constructor(private injector: Injector) {
   }
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   intercept(request: HttpRequest<any>, next: HttpHandler) {
-    const jwtToken = localStorage.getItem(localStorageJwtTokenKey);
+    const cookieService = this.injector.get(CookieService);
+
+    const jwtToken = localStorage.getItem('Bearer');
 
     if (jwtToken) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer  ${localStorage.getItem(localStorageJwtTokenKey)}`,
-        },
-      });
+      cookieService.set('Bearer', jwtToken);
     }
     return next.handle(request);
   }

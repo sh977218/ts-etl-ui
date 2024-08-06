@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -19,6 +19,7 @@ import { UserService } from '../service/user-service';
 import { LoadingService } from '../service/loading-service';
 import { NavigationService } from '../service/navigation-service';
 import { environment } from '../environments/environment';
+import { AlertService } from '../service/alert-service';
 
 @Component({
   selector: 'app-root',
@@ -46,11 +47,28 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent {
 
-  constructor(public http: HttpClient,
+  constructor(private router: Router,
+              public http: HttpClient,
               public dialog: MatDialog,
               public loadingService: LoadingService,
               public userService: UserService,
-              public navigationService: NavigationService) {
+              public navigationService: NavigationService,
+              private alertService: AlertService) {
+    const jwtToken = localStorage.getItem('Bearer');
+    if (jwtToken) {
+      userService.logInWithJwt().subscribe({
+        next: (res) => {
+          userService.user$.next(res);
+          router.navigate(['/load-requests']);
+        },
+        error: (e) => {
+          alertService.addAlert('danger', `error log in ${e}`);
+          userService.user$.next(null);
+          localStorage.setItem('Bearer', jwtToken);
+          router.navigate(['/']);
+        },
+      });
+    }
   }
 
   openLoginModal() {
