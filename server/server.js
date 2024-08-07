@@ -379,6 +379,8 @@ const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticke
 /*
 @todo TS's backend needs to implement this API.
  */
+const COOKIE_EXPIRATION_IN_MS = 60 * 1000 * 5; // 5 minutes
+
 app.get('/api/serviceValidate', async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
@@ -392,7 +394,9 @@ app.get('/api/serviceValidate', async (req, res) => {
   const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
   if (user.utsUser) {
     const jwtToken = jwt.sign({ data: user.utsUser.username }, 'some-secret');
-    res.cookie('Bearer', `${jwtToken}`);
+    res.cookie('Bearer', `${jwtToken}`, {
+      expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
+    });
     res.send(user);
   } else {
     return res.status(401).send();
