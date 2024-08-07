@@ -6,6 +6,7 @@ export const environment: Environment = {
   production: true,
   ticketUrl: '/api/serviceValidate',
   loginUrl: '/api/login',
+  logoutUrl: '/api/logout',
   loginServiceUrl: '/nih-login',
   apiServer: '/api',
 };

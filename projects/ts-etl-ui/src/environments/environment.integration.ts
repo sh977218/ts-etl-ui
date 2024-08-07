@@ -6,6 +6,7 @@ export const environment: Environment = {
   production: false,
   ticketUrl: '/ticketUrl',
   loginUrl: '/loginUrl',
+  logoutUrl: '/logoutUrl',
   loginServiceUrl: 'https://login-prod.nlm.nih.gov/uts/login',
   apiServer: '/portal-backend/api',
 };

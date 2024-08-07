@@ -8,8 +8,8 @@
     "changeOrigin": true
   },
   "/ticketUrl": {
-    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend/user/serviceValidate",
-    //    "target": "http://localhost:3001/user/serviceValidate",
+    //"target": "https://tsdata-dev.nlm.nih.gov/portal-backend/user/serviceValidate",
+    "target": "http://localhost:3001/user/serviceValidate",
     "secure": false,
     "pathRewrite": {
       "^/ticketUrl": ""
@@ -17,11 +17,20 @@
     "changeOrigin": true
   },
   "/loginUrl": {
-    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend/user/loginUrl",
-    //    "target": "http://localhost:3001/user/loginUrl",
+    //"target": "https://tsdata-dev.nlm.nih.gov/portal-backend/user/loginUrl",
+    "target": "http://localhost:3001/user/login",
     "secure": false,
     "pathRewrite": {
       "^/loginUrl": ""
+    },
+    "changeOrigin": true
+  },
+  "/logoutUrl": {
+    //"target": "https://tsdata-dev.nlm.nih.gov/portal-backend/user/logoutUrl",
+    "target": "http://localhost:3001/user/logout",
+    "secure": false,
+    "pathRewrite": {
+      "^/logoutUrl": ""
     },
     "changeOrigin": true
   }

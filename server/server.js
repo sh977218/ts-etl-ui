@@ -20,6 +20,12 @@ const DEFAULT_FILE_FOLDER = 'server/data/';
 const app = express();
 const port = process.env.PORT || 3000;
 
+/*
+@Todo those can be from config
+*/
+const COOKIE_EXPIRATION_IN_MS = 60 * 1000 * 60 * 2; // 2 hours
+const SECRET_TOKEN = 'some-secret'; // should be from process.env
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static('dist/ts-etl-ui/browser'));
@@ -379,8 +385,6 @@ const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticke
 /*
 @todo TS's backend needs to implement this API.
  */
-const COOKIE_EXPIRATION_IN_MS = 60 * 1000 * 5; // 5 minutes
-
 app.get('/api/serviceValidate', async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
@@ -393,7 +397,7 @@ app.get('/api/serviceValidate', async (req, res) => {
   const utsUsername = ticketMap.get(ticket);
   const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
   if (user.utsUser) {
-    const jwtToken = jwt.sign({ data: user.utsUser.username }, 'some-secret');
+    const jwtToken = jwt.sign({ data: user.utsUser.username }, SECRET_TOKEN);
     res.cookie('Bearer', `${jwtToken}`, {
       expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
     });
@@ -405,7 +409,7 @@ app.get('/api/serviceValidate', async (req, res) => {
 
 app.get('/api/login', async (req, res) => {
   const jwtToken = req.cookies['Bearer'];
-  const payload = jwt.verify(jwtToken, 'some-secret');
+  const payload = jwt.verify(jwtToken, SECRET_TOKEN);
   const { usersCollection } = await mongoCollection();
   const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
   res.send(user);

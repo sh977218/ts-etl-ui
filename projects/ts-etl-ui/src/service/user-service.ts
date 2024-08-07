@@ -35,7 +35,7 @@ export class UserService {
 
   logOut() {
     this._user$.next(null);
-    this.http.post(`${environment.apiServer}/logout`, {}).subscribe();
+    this.http.post(`${environment.loginUrl}`, {}).subscribe();
     this.cookieService.delete('Bearer');
     this.router.navigate(['/please-log-in']);
   }

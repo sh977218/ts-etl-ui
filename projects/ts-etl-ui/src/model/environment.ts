@@ -3,6 +3,7 @@ export type Environment = {
   production: boolean;
   ticketUrl: string;
   loginUrl: string;
+  logoutUrl: string;
   loginServiceUrl: string,
   apiServer: string
 }
