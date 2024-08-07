@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import jwt from 'jsonwebtoken';
 
+import cookieParser from 'cookie-parser';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -18,7 +20,14 @@ const DEFAULT_FILE_FOLDER = 'server/data/';
 const app = express();
 const port = process.env.PORT || 3000;
 
+/*
+@Todo those can be from config
+*/
+const COOKIE_EXPIRATION_IN_MS = 60 * 1000 * 60 * 2; // 2 hours
+const SECRET_TOKEN = 'some-secret'; // should be from process.env
+
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static('dist/ts-etl-ui/browser'));
 
 app.set('view engine', 'ejs');
@@ -382,14 +391,33 @@ app.get('/api/serviceValidate', async (req, res) => {
   const app = req.query.app;
   // UTS expect those 3 parameters
   if (app !== 'angular' || !service || !ticket) {
-    return res.status(500).send();
+    return res.status(400).send();
   }
   const { usersCollection } = await mongoCollection();
   const utsUsername = ticketMap.get(ticket);
   const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
-  const jwtToken = jwt.sign({ sub: user.username }, 'some-secret');
-  res.cookie('Bearer', `${jwtToken}`);
+  if (user.utsUser) {
+    const jwtToken = jwt.sign({ data: user.utsUser.username }, SECRET_TOKEN);
+    res.cookie('Bearer', `${jwtToken}`, {
+      expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
+    });
+    res.send(user);
+  } else {
+    return res.status(401).send();
+  }
+});
+
+app.get('/api/login', async (req, res) => {
+  const jwtToken = req.cookies['Bearer'];
+  const payload = jwt.verify(jwtToken, SECRET_TOKEN);
+  const { usersCollection } = await mongoCollection();
+  const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
   res.send(user);
+});
+
+app.post('/api/logout', async (req, res) => {
+  res.clearCookie('Bearer');
+  res.send();
 });
 
 app.get('/api/serverInfo', async (req, res) => {
