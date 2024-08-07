@@ -407,6 +407,11 @@ app.get('/api/login', async (req, res) => {
   res.send(user);
 });
 
+app.post('/api/logout', async (req, res) => {
+  res.clearCookie('Bearer');
+  res.send();
+});
+
 app.get('/api/serverInfo', async (req, res) => {
   const pr = getPrNumber();
   const { db } = await mongoCollection();

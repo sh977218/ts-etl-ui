@@ -20,7 +20,7 @@ export class LoginCbComponent {
               public dialog: MatDialog,
               public userService: UserService,
               public alertService: AlertService,
-              cookieService: CookieService,
+              private cookieService: CookieService,
   ) {
     activatedRoute.queryParamMap
       .pipe(
@@ -35,13 +35,12 @@ export class LoginCbComponent {
         tap({
           next: (res) => {
             this.userService.user$.next(res);
-            localStorage.setItem('Bearer', cookieService.get('Bearer'));
             this.router.navigate(['/load-requests']);
           },
           error: (e) => {
             this.alertService.addAlert('danger', `error log in ${e}`);
             this.userService.user$.next(null);
-            localStorage.removeItem('Bearer');
+            cookieService.delete('Bearer');
             this.router.navigate(['/']);
           },
         }),

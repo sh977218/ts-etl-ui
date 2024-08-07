@@ -5,13 +5,15 @@ import { Router } from '@angular/router';
 
 import { environment } from '../environments/environment';
 import { User } from '../model/user';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private _user$ = new BehaviorSubject<User | null>(null);
 
   constructor(public http: HttpClient,
-              public router: Router) {
+              public router: Router,
+              private cookieService: CookieService) {
   }
 
   get user$() {
@@ -33,7 +35,8 @@ export class UserService {
 
   logOut() {
     this._user$.next(null);
-    localStorage.removeItem('Bearer');
+    this.http.post(`${environment.apiServer}/logout`, {}).subscribe();
+    this.cookieService.delete('Bearer');
     this.router.navigate(['/please-log-in']);
   }
 }

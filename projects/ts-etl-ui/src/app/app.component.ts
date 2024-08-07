@@ -20,6 +20,7 @@ import { LoadingService } from '../service/loading-service';
 import { NavigationService } from '../service/navigation-service';
 import { environment } from '../environments/environment';
 import { AlertService } from '../service/alert-service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-root',
@@ -53,18 +54,20 @@ export class AppComponent {
               public loadingService: LoadingService,
               public userService: UserService,
               public navigationService: NavigationService,
-              private alertService: AlertService) {
-    const jwtToken = localStorage.getItem('Bearer');
-    if (jwtToken) {
+              private alertService: AlertService,
+              private cookieService: CookieService,
+  ) {
+    const jwtTokenInCookie = cookieService.get('Bearer');
+    if (jwtTokenInCookie) {
       userService.logInWithJwt().subscribe({
         next: (res) => {
           userService.user$.next(res);
           router.navigate(['/load-requests']);
         },
-        error: (e) => {
-          alertService.addAlert('danger', `error log in ${e}`);
+        error: () => {
+          alertService.addAlert('danger', `error log in`);
           userService.user$.next(null);
-          localStorage.removeItem('Bearer');
+          cookieService.delete('Bearer');
           router.navigate(['/']);
         },
       });
