@@ -5,7 +5,7 @@ export const environment: Environment = {
   environmentName: 'render',
   production: true,
   ticketUrl: '/api/serviceValidate',
-  loginUrl: '/api/loginUrl',
+  loginUrl: '/api/login',
   loginServiceUrl: '/nih-login',
   apiServer: '/api',
 };
