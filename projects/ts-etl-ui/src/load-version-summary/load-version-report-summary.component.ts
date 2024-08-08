@@ -1,13 +1,15 @@
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+
 import { Summary } from '../model/load-version';
-import { MatButtonModule } from '@angular/material/button';
+
 
 @Component({
   selector: 'app-load-version-summary',
