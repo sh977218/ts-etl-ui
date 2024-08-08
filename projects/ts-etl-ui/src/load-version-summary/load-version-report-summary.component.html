@@ -1,0 +1,66 @@
+<fieldset>
+  <legend>Summary</legend>
+  <table mat-table [dataSource]="dataSource()">
+    <ng-container matColumnDef="totalRules">
+      <th mat-header-cell *matHeaderCellDef>Total Rules</th>
+      <td mat-cell *matCellDef="let element">{{element.totalRules}}</td>
+    </ng-container>
+    <ng-container matColumnDef="rulesWithData">
+      <th mat-header-cell *matHeaderCellDef>Rule with Data</th>
+      <td mat-cell *matCellDef="let element">{{element.rulesWithData}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="messagesGroupCount">
+      <th mat-header-cell *matHeaderCellDef colspan="3">Message Group Count</th>
+      <ng-container *matCellDef="let element">
+        <td mat-cell [ngClass]="element.messagesGroupCount.numOfError>0?'text-red-700':''">
+          <div class="flex align-middle items-center">
+            <mat-icon fontIcon="error" class="text-base"
+                      *ngIf="element.messagesGroupCount.numOfError>0"></mat-icon>
+            {{element.messagesGroupCount.numOfError}}
+          </div>
+        </td>
+        <td mat-cell [ngClass]="element.messagesGroupCount.numOfWarning>0?'text-orange-400':''">
+          <div class="flex align-middle items-center">
+            <mat-icon fontIcon="warning" class="text-base"
+                      *ngIf="element.messagesGroupCount.numOfWarning>0"></mat-icon>
+            {{element.messagesGroupCount.numOfWarning}}</div>
+        </td>
+        <td mat-cell>{{element.messagesGroupCount.numOfInfo}}</td>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="empty">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <ng-container matColumnDef="numberOfError">
+      <th mat-header-cell *matHeaderCellDef> Error</th>
+    </ng-container>
+
+    <ng-container matColumnDef="numberOfWarning">
+      <th mat-header-cell *matHeaderCellDef> Warning</th>
+    </ng-container>
+
+    <ng-container matColumnDef="numberOfInfo">
+      <th mat-header-cell *matHeaderCellDef> Info</th>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef>Action</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="flex align-middle justify-end">
+          <mat-checkbox></mat-checkbox>
+          <button mat-icon-button [cdkCopyToClipboard]="element">
+            <mat-icon fontIcon="content_copy"></mat-icon>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="summaryColumn"></tr>
+    <tr mat-header-row *matHeaderRowDef="summaryRowColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: summaryColumn;"></tr>
+  </table>
+
+</fieldset>

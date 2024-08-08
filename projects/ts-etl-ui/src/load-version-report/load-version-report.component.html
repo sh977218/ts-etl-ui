@@ -62,51 +62,7 @@
           Verification
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <fieldset *ngIf="verificationSummary$ | async as verificationSummary">
-        <legend>Summary</legend>
-        <table mat-table [dataSource]="verificationSummary">
-
-          <ng-container matColumnDef="totalRules">
-            <th mat-header-cell *matHeaderCellDef>Total Rules</th>
-            <td mat-cell *matCellDef="let element">{{element.totalRules}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="rulesWithData">
-            <th mat-header-cell *matHeaderCellDef>Rules with Data</th>
-            <td mat-cell *matCellDef="let element">{{element.rulesWithData}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="error">
-            <th mat-header-cell *matHeaderCellDef>Error</th>
-            <td mat-cell *matCellDef="let element">{{element.error}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="messageGroupCountWarning">
-            <th mat-header-cell *matHeaderCellDef>MessageGroup Count Warning</th>
-            <td mat-cell *matCellDef="let element">{{element.messageGroupCountWarning}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="info">
-            <th mat-header-cell *matHeaderCellDef>Info</th>
-            <td mat-cell *matCellDef="let element">{{element.info}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef>Action</th>
-            <td mat-cell *matCellDef="let element">
-              <div class="flex align-middle">
-                <mat-checkbox></mat-checkbox>
-                <button mat-icon-button [cdkCopyToClipboard]="element">
-                  <mat-icon fontIcon="content_copy"></mat-icon>
-                </button>
-              </div>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="verificationSummaryColumn"></tr>
-          <tr mat-row *matRowDef="let row; columns: verificationSummaryColumn;"></tr>
-        </table>
-      </fieldset>
+      <app-load-version-summary [summary]="(verificationSummary$ | async) || []"></app-load-version-summary>
       <app-load-version-report-rule [verificationQARules]="(verificationQARules$ | async) || []">
       </app-load-version-report-rule>
       <app-load-version-report-rule-message [verificationRuleMessages]="(verificationRuleMessages$ | async) || []">
@@ -119,6 +75,8 @@
           Validation
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <app-load-version-summary
+        [summary]="(validationSummary$ | async) || []"></app-load-version-summary>
     </mat-expansion-panel>
 
     <mat-expansion-panel expanded="true" togglePosition="before">

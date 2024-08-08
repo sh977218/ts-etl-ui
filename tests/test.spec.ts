@@ -151,6 +151,15 @@ test.describe('e2e test', async () => {
       await expect(page.locator('app-load-version-activity').getByText('Accepted by me')).toBeVisible();
       await expect(page.locator('app-load-version-note').getByText('Accepted by me')).toBeVisible();
     });
+
+    await test.step(`Open QA Report page`, async () => {
+      const [qaReportPage] = await Promise.all([
+        page.waitForEvent('popup'),
+        page.getByRole('link', { name: 'Go to QA Report' }).click(),
+      ]);
+
+      await expect(qaReportPage).toHaveTitle(`Version QA Report`);
+    });
   });
 
   test('Code System Tab', async ({ page }) => {
