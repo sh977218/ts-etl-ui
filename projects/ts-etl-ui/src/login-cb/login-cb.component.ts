@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../service/user-service';
-import { EMPTY, switchMap, tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { AlertService } from '../service/alert-service';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -29,19 +29,19 @@ export class LoginCbComponent {
           if (ticket) {
             return userService.logInWithTicket(ticket);
           } else {
-            return EMPTY;
+            throw new Error('No ticket found.');
           }
         }),
         tap({
           next: (res) => {
             this.userService.user$.next(res);
-            this.router.navigate(['/load-requests']);
+            router.navigate(['/']);
           },
           error: (e) => {
             this.alertService.addAlert('danger', `error log in ${e}`);
             this.userService.user$.next(null);
             cookieService.delete('Bearer');
-            this.router.navigate(['/']);
+            router.navigate(['/please-log-in']);
           },
         }),
       ).subscribe();

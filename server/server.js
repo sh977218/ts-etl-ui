@@ -409,6 +409,7 @@ app.get('/api/serviceValidate', async (req, res) => {
 
 app.get('/api/login', async (req, res) => {
   const jwtToken = req.cookies['Bearer'];
+  if (!jwtToken) return res.status(401).send();
   const payload = jwt.verify(jwtToken, SECRET_TOKEN);
   const { usersCollection } = await mongoCollection();
   const user = await usersCollection.findOne({ 'utsUser.username': payload.data });

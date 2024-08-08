@@ -62,15 +62,16 @@ export class AppComponent {
       userService.logInWithJwt().subscribe({
         next: (res) => {
           userService.user$.next(res);
-          router.navigate(['/load-requests']);
         },
         error: () => {
           alertService.addAlert('danger', `error log in`);
           userService.user$.next(null);
           cookieService.delete('Bearer');
-          router.navigate(['/']);
+          router.navigate(['./please-log-in']);
         },
       });
+    } else {
+      userService.user$.next(null);
     }
   }
 

@@ -9,7 +9,7 @@ import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private _user$ = new BehaviorSubject<User | null>(null);
+  private _user$ = new BehaviorSubject<User | null | undefined>(undefined);
 
   constructor(public http: HttpClient,
               public router: Router,

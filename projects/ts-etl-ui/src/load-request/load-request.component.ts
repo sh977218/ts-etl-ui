@@ -102,7 +102,7 @@ export class LoadRequestComponent implements AfterViewInit {
   data: WritableSignal<LoadRequest[]> = signal([]);
 
   expandedElement: LoadRequest | null | undefined = null;
-  user: User | null = null;
+  user: User | null | undefined = undefined;
 
   resultsLength = 0;
   resultsPageSize = 10;
@@ -255,26 +255,26 @@ export class LoadRequestComponent implements AfterViewInit {
       .afterClosed()
       .pipe(
         filter((dialogResult: boolean) => dialogResult),
-        switchMap(() => this.http.delete(`${environment.apiServer}/loadRequest/${reqId}`))
+        switchMap(() => this.http.delete(`${environment.apiServer}/loadRequest/${reqId}`)),
       )
       .subscribe({
         next: () => {
           this.alertService.addAlert('info', `Request (ID: ${reqId}) deleted successfully`);
           this.reloadAllRequests$.next(true);
-        }
-      })
+        },
+      });
   }
 
   openEditDialog(loadRequest: LoadRequest) {
     this.dialog.open(CreateLoadRequestModalComponent, {
       width: '700px',
-      data: loadRequest
+      data: loadRequest,
     })
       .afterClosed()
       .pipe(
         filter(newLoadRequest => !!newLoadRequest),
         switchMap(newLoadRequest => this.http.post<LoadRequest>
-          (`${environment.apiServer}/loadRequest/${loadRequest.requestId}`, newLoadRequest as LoadRequest)),
+        (`${environment.apiServer}/loadRequest/${loadRequest.requestId}`, newLoadRequest as LoadRequest)),
       )
       .subscribe({
         next: (newLR) => {
@@ -285,7 +285,7 @@ export class LoadRequestComponent implements AfterViewInit {
           const updatedData = [
             ...currentData.slice(0, index),
             newLR,
-            ...currentData.slice(index + 1)
+            ...currentData.slice(index + 1),
           ];
           this.data.set(updatedData);
           this.expandedElement = this.data().at(index);
