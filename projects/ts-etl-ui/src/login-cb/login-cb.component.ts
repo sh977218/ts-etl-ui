@@ -1,11 +1,15 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import { UserService } from '../service/user-service';
-import { switchMap, tap } from 'rxjs';
-import { AlertService } from '../service/alert-service';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { switchMap, tap } from 'rxjs';
+
+import { AlertService } from '../service/alert-service';
+import { UserService } from '../service/user-service';
+
+
+
 
 @Component({
   standalone: true,

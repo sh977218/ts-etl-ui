@@ -1,4 +1,3 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import {
   AsyncPipe,
   DatePipe,
@@ -10,10 +9,15 @@ import {
   NgSwitchCase,
   NgSwitchDefault,
 } from '@angular/common';
-import { LoadVersion } from '../model/load-version';
-import { map, Observable } from 'rxjs';
-import { LoadRequest } from '../model/load-request';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { map, Observable } from 'rxjs';
+
+import { LoadRequest } from '../model/load-request';
+import { LoadVersion } from '../model/load-version';
+
+
+
 
 @Component({
   selector: 'app-load-version-report-identification',

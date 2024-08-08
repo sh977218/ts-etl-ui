@@ -1,17 +1,17 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MatSort, MatSortModule } from "@angular/material/sort";
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
-import { MatTableDataSource, MatTableModule } from "@angular/material/table";
-import { MatInputModule } from "@angular/material/input";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
 import { NgForOf, NgIf } from "@angular/common";
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
 import { MatListModule } from "@angular/material/list";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
+import { MatSort, MatSortModule } from "@angular/material/sort";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 
-import { CodeSystemVersion } from "../model/code-system";
-import { CodeSystemCodeComponent } from "../code-system-code/code-system-code.component";
 import { triggerExpandTableAnimation } from "../animations";
+import { CodeSystemCodeComponent } from "../code-system-code/code-system-code.component";
+import { CodeSystemVersion } from "../model/code-system";
 
 @Component({
     selector: 'app-code-system-version',

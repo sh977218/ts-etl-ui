@@ -1,3 +1,5 @@
+import { DatePipe, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -5,27 +7,25 @@ import {
   input,
   ViewChild,
 } from '@angular/core';
-import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { DatePipe, NgIf } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
-import { map, of, switchMap, tap } from 'rxjs';
-import { saveAs } from 'file-saver';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { saveAs } from 'file-saver';
+import { map, of, switchMap, tap } from 'rxjs';
 
-import { environment } from '../environments/environment';
 import { triggerExpandTableAnimation } from '../animations';
+import { environment } from '../environments/environment';
+import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 import { AlertService } from '../service/alert-service';
 import { DownloadService } from '../service/download-service';
-import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 
 @Component({
   selector: 'app-load-version-activity',

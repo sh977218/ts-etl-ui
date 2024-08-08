@@ -1,11 +1,12 @@
 import { CommonModule, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
 
 import { triggerExpandTableAnimation } from '../animations';
+import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 import {
   LoadVersionReviewModalComponent,
 } from '../load-version-review-modal/load-version-review-modal.component';
@@ -13,7 +14,6 @@ import {
   LoadVersionSourceDataFileModalComponent,
 } from '../load-version-source-data-file-modal/load-version-source-data-file-modal.component';
 import type { LoadVersion, LoadVersionActivity } from '../model/load-version';
-import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 
 export interface RowElement {
   key: string;

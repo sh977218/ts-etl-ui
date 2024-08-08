@@ -1,21 +1,22 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { catchError, tap, throwError } from 'rxjs';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-
-import { CodeSystem } from '../model/code-system';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { NgForOf, NgIf } from '@angular/common';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { CodeSystemVersionComponent } from '../code-system-version/code-system-version.component';
-import { triggerExpandTableAnimation } from '../animations';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
+import { catchError, tap, throwError } from 'rxjs';
+
+import { triggerExpandTableAnimation } from '../animations';
+import { CodeSystemVersionComponent } from '../code-system-version/code-system-version.component';
 import { environment } from '../environments/environment';
+import { CodeSystem } from '../model/code-system';
+
 
 @Component({
   selector: 'app-code-system',

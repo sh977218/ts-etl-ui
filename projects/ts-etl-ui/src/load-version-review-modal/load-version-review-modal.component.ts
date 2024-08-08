@@ -1,13 +1,13 @@
 import { CommonModule, NgForOf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Component, Inject } from '@angular/core';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { provideNativeDateAdapter } from '@angular/material/core';
-import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { UserService } from '../service/user-service';
 

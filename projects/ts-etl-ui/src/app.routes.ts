@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 
-import { PleaseLogInComponent } from './please-log-in/please-log-in.component';
-import { LoginCbComponent } from './login-cb/login-cb.component';
+import { logInGuard } from './app.guard';
+import { CodeSystemComponent } from './code-system/code-system.component';
 import { LoadRequestComponent } from './load-request/load-request.component';
 import { LoadVersionComponent } from './load-version/load-version.component';
-import { CodeSystemComponent } from './code-system/code-system.component';
 import { LoadVersionReportComponent } from './load-version-report/load-version-report.component';
-import { logInGuard } from './app.guard';
+import { LoginCbComponent } from './login-cb/login-cb.component';
+import { PleaseLogInComponent } from './please-log-in/please-log-in.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/load-requests', pathMatch: 'full' },
