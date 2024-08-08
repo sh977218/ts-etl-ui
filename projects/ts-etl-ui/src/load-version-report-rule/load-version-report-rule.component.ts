@@ -10,6 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { tap } from 'rxjs';
 import { RuleUI } from '../model/load-version';
+import { LogViewModalComponent } from '../log-view-modal/log-view-modal';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-load-version-report-rule',
@@ -60,7 +62,7 @@ export class LoadVersionReportRuleComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor() {
+  constructor(private dialog: MatDialog) {
     effect(() => {
       this.dataSource().paginator = this.paginator;
       this.dataSource().sort = this.sort;
@@ -75,6 +77,13 @@ export class LoadVersionReportRuleComponent {
     if (this.dataSource().paginator) {
       this.dataSource().paginator?.firstPage();
     }
+  }
+
+  openLogViewer(element: RuleUI) {
+    this.dialog.open(LogViewModalComponent, {
+      width: '800px',
+      data: element,
+    })
   }
 
 
