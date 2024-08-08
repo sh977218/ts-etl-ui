@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { tap } from 'rxjs';
 import { RuleUI } from '../model/load-version';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-load-version-report-rule',
@@ -21,6 +22,7 @@ import { RuleUI } from '../model/load-version';
     ReactiveFormsModule,
     MatCheckboxModule,
     MatIconModule,
+    MatButtonModule,
     MatTableModule,
     MatInputModule,
     MatPaginatorModule,

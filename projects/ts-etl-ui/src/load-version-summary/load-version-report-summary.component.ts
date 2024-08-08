@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Summary } from '../model/load-version';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-load-version-summary',
@@ -17,6 +18,7 @@ import { Summary } from '../model/load-version';
     NgForOf,
     ReactiveFormsModule,
     MatIconModule,
+    MatButtonModule,
     MatCheckboxModule,
     MatTableModule,
     MatInputModule,
