@@ -45,8 +45,8 @@ import {
   LoadRequestSearchCriteria,
   LoadRequestsResponse,
 } from '../model/load-request';
-import { AlertService } from '../service/alert-service';
 import { User } from '../model/user';
+import { AlertService } from '../service/alert-service';
 import { CODE_SYSTEM_NAMES, LOAD_REQUEST_STATUSES, LOAD_REQUEST_TYPES } from '../service/constant';
 import { DownloadService } from '../service/download-service';
 import { LoadingService } from '../service/loading-service';
