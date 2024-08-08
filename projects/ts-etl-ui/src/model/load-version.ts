@@ -46,7 +46,6 @@ export type RuleUI = {
   'messagesGroupCount': { numOfError: number, numOfWarning: number, numOfInfo: number }
 }
 
-
 export type RuleMessage = {
   'messageGroup': string,
   'messageType': string,
@@ -57,6 +56,16 @@ export type RuleMessage = {
 
 export type RuleMessageUI = RuleMessage & {
   'name': string
+}
+
+export type Validation = {
+  rules: Rule[]
+}
+
+export type Summary = {
+  'totalRules': number,
+  'rulesWithData': number,
+  'messagesGroupCount': { numOfError: number, numOfWarning: number, numOfInfo: number }
 }
 
 export type LoadVersionActivity = {
@@ -98,6 +107,7 @@ export type LoadVersion = {
   requestTime: Date;
   loadSummary: LoadSummary;
   verification: Verification
+  validation: Validation
 }
 
 type LoadVersionPayloadSearchColumns = {

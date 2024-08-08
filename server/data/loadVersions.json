@@ -217,6 +217,114 @@
             "messages": []
           }
         ]
+      },
+      "validation": {
+        "rules": [
+          {
+            "name": "Code.SumActiveInactive",
+            "description": "Sum of active/inactive codes is equal to total number of codes",
+            "dataAvailable": "Yes",
+            "messages": [
+              {
+                "messageGroup": "Info",
+                "messageType": "INFO",
+                "tag": "ACTIVE_INACTIVE_CODE_COUNT",
+                "message": "The sum of active/inactive codes is equal to total codes count",
+                "creationTime": "2023/10/02 01:03:18 AM"
+              }
+            ]
+          },
+          {
+            "name": "Code.DuplicateCode",
+            "description": "No duplicate codes in cs_code table",
+            "dataAvailable": "Yes",
+            "messages": [
+              {
+                "messageGroup": "Error",
+                "messageType": "ERROR",
+                "tag": "DUPLICATE_CODE_COUNT",
+                "message": "Code D90001 appears more than once",
+                "creationTime": "2023/10/02 01:03:20 AM"
+              },
+              {
+                "messageGroup": "Error",
+                "messageType": "ERROR",
+                "tag": "DUPLICATE_CODE_COUNT",
+                "message": "Code D90002 appears more than once",
+                "creationTime": "2023/10/02 01:03:20 AM"
+              },
+              {
+                "messageGroup": "Error",
+                "messageType": "ERROR",
+                "tag": "DUPLICATE_CODE_COUNT",
+                "message": "Code D90003 appears more than once",
+                "creationTime": "2023/10/02 01:03:20 AM"
+              },
+              {
+                "messageGroup": "Error",
+                "messageType": "ERROR",
+                "tag": "DUPLICATE_CODE_COUNT",
+                "message": "Code D90004 appears more than once",
+                "creationTime": "2023/10/02 01:03:20 AM"
+              },
+              {
+                "messageGroup": "Error",
+                "messageType": "ERROR",
+                "tag": "DUPLICATE_CODE_COUNT",
+                "message": "Code D90005 appears more than once",
+                "creationTime": "2023/10/02 01:03:20 AM"
+              }
+            ]
+          },
+          {
+            "name": "QaCount.CountCompare",
+            "description": "Counts between expected and actual total counts",
+            "dataAvailable": "Yes",
+            "messages": [
+              {
+                "messageGroup": "Warning",
+                "messageType": "WARNING",
+                "tag": "EXPECTED_VS_ACTUAL",
+                "message": "The difference of TERM between expected and actual number is not available",
+                "creationTime": "2023/10/02 01:03:23 AM"
+              },
+              {
+                "messageGroup": "Warning",
+                "messageType": "WARNING",
+                "tag": "EXPECTED_VS_ACTUAL",
+                "message": "The difference of RELATIONSHIP between expected and actual number is not available",
+                "creationTime": "2023/10/02 01:03:24 AM"
+              }
+            ]
+          },
+          {
+            "name": "Code.Hierarchy.OrphanCode",
+            "description": "Hierarchy contains orphan codes",
+            "dataAvailable": "No",
+            "messages": [
+              {
+                "messageGroup": "Error",
+                "messageType": "DEV",
+                "tag": "CODE_NO_TERM",
+                "message": "Code D90012 is not mapped to a term",
+                "creationTime": "2023/10/02 01:03:27 AM"
+              },
+              {
+                "messageGroup": "Error",
+                "messageType": "DEV",
+                "tag": "CODE_NO_TERM",
+                "message": "Code D90013 is not mapped to a term",
+                "creationTime": "2023/10/02 01:03:27 AM"
+              }
+            ]
+          },
+          {
+            "name": "QaCount.RawCountMissing",
+            "description": "Raw counts are not present",
+            "dataAvailable": "Yes",
+            "messages": []
+          }
+        ]
       }
     },
     {
