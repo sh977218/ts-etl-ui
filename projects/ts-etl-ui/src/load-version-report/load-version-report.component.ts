@@ -20,6 +20,9 @@ import { LoadVersionDataSource } from '../load-version/load-version-data-source'
 import {
   LoadVersionReportIdentificationComponent,
 } from '../load-version-identification/load-version-report-identification.component';
+import {
+  LoadVersionReportComparisonComponent,
+} from '../load-version-report-comparison/load-version-report-comparison.component';
 import { LoadVersionReportRuleComponent } from '../load-version-report-rule/load-version-report-rule.component';
 import {
   LoadVersionReportRuleMessageComponent,
@@ -67,6 +70,7 @@ import { LoadingService } from '../service/loading-service';
     LoadVersionReportRuleComponent,
     LoadVersionReportIdentificationComponent,
     LoadVersionReportSummaryComponent,
+    LoadVersionReportComparisonComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   templateUrl: './load-version-report.component.html',
