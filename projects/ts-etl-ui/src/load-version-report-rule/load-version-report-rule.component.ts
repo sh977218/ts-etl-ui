@@ -11,6 +11,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { tap } from 'rxjs';
 
 import { RuleUI } from '../model/load-version';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-load-version-report-rule',
@@ -22,6 +23,7 @@ import { RuleUI } from '../model/load-version';
     ReactiveFormsModule,
     MatCheckboxModule,
     MatIconModule,
+    MatButtonModule,
     MatTableModule,
     MatInputModule,
     MatPaginatorModule,
