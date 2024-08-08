@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
+import { BehaviorSubject } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { User } from '../model/user';
-import { CookieService } from 'ngx-cookie-service';
+
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

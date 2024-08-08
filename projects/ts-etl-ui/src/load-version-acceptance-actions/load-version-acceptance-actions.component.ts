@@ -1,15 +1,15 @@
-import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { filter } from 'rxjs';
 
-import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 import {
   LoadVersionReviewModalComponent,
 } from '../load-version-review-modal/load-version-review-modal.component';
+import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 
 @Component({
   selector: 'app-load-version-acceptance-actions',

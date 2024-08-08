@@ -1,26 +1,25 @@
-import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { Router, RouterModule } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 import { EMPTY } from 'rxjs';
 
+import { environment } from '../environments/environment';
 import { LogInModalComponent } from '../log-in-modal/log-in-modal.component';
-import { UserService } from '../service/user-service';
+import { AlertService } from '../service/alert-service';
 import { LoadingService } from '../service/loading-service';
 import { NavigationService } from '../service/navigation-service';
-import { environment } from '../environments/environment';
-import { AlertService } from '../service/alert-service';
-import { CookieService } from 'ngx-cookie-service';
+import { UserService } from '../service/user-service';
 
 @Component({
   selector: 'app-root',

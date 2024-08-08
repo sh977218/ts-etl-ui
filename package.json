@@ -69,6 +69,7 @@
     "allure-playwright": "^3.0.0-beta.4",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.54.0",
+    "eslint-plugin-import": "^2.29.1",
     "husky": "^9.0.11",
     "lodash": "^4.17.21",
     "ngx-cookie-service": "^17.1.0",

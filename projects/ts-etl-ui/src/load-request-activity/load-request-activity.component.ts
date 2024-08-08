@@ -1,16 +1,16 @@
+import { NgIf } from '@angular/common';
 import {
   AfterViewInit,
   Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit, ViewChild,
 } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import {
   MatTableDataSource, MatTableModule,
 } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
 
 import { LoadRequestActivity } from '../model/load-request';
 

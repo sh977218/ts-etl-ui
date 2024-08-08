@@ -1,3 +1,5 @@
+import { CommonModule, JsonPipe, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -6,22 +8,35 @@ import {
   NO_ERRORS_SCHEMA,
   ViewChild,
 } from '@angular/core';
-import { CommonModule, JsonPipe, NgIf } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
-import { MatTable, MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatTable, MatTableModule } from '@angular/material/table';
+import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
+import { assign } from 'lodash';
+import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
 
+import { LoadVersionDataSource } from './load-version-data-source';
+
+import { triggerExpandTableAnimation } from '../animations';
+import { environment } from '../environments/environment';
+import { LoadSummaryComponent } from '../load-summary/load-summary.component';
+import {
+  LoadVersionAcceptanceActionsComponent,
+} from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
+import { LoadVersionActivityComponent } from '../load-version-activity/load-version-activity.component';
+import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal/load-version-add-note-modal.component';
+import { LoadVersionDetailComponent } from '../load-version-detail/load-version-detail.component';
+import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
+import { LoadVersionRulesComponent } from '../load-version-rules/load-version-rules.component';
 import {
   generateLoadVersionPayload,
   LoadVersion,
@@ -31,25 +46,10 @@ import {
   LoadVersionsApiResponse,
   LoadVersionSearchCriteria,
 } from '../model/load-version';
-
-import { LoadVersionDataSource } from './load-version-data-source';
-import { LoadingService } from '../service/loading-service';
-import { triggerExpandTableAnimation } from '../animations';
-import { LoadVersionDetailComponent } from '../load-version-detail/load-version-detail.component';
-import { LoadVersionActivityComponent } from '../load-version-activity/load-version-activity.component';
-import { LoadSummaryComponent } from '../load-summary/load-summary.component';
-import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
-import {
-  LoadVersionAcceptanceActionsComponent,
-} from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
 import { AlertService } from '../service/alert-service';
 import { CODE_SYSTEM_NAMES, VERSION_STATUSES } from '../service/constant';
-import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
-import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal/load-version-add-note-modal.component';
+import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
-import { environment } from '../environments/environment';
-import { assign } from 'lodash';
-import { LoadVersionRulesComponent } from '../load-version-rules/load-version-rules.component';
 
 @Component({
   standalone: true,

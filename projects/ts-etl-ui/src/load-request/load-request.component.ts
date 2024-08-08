@@ -1,23 +1,25 @@
+import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA,
   signal, ViewChild,
   WritableSignal,
 } from '@angular/core';
-import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatOptionModule } from '@angular/material/core';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { saveAs } from 'file-saver';
+import { assign } from 'lodash';
 import {
   catchError,
   filter,
@@ -28,14 +30,14 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { saveAs } from 'file-saver';
-import { assign } from 'lodash';
 
 import { triggerExpandTableAnimation } from '../animations';
-import { LoadingService } from '../service/loading-service';
-import { UserService } from '../service/user-service';
-import { DownloadService } from '../service/download-service';
-import { AlertService } from '../service/alert-service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
+import { environment } from '../environments/environment';
+import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
+import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
+import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import {
   generateLoadRequestPayload,
   LoadRequest,
@@ -44,14 +46,11 @@ import {
   LoadRequestsResponse,
 } from '../model/load-request';
 import { User } from '../model/user';
-
-import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
-import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
-import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
-import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
+import { AlertService } from '../service/alert-service';
 import { CODE_SYSTEM_NAMES, LOAD_REQUEST_STATUSES, LOAD_REQUEST_TYPES } from '../service/constant';
-import { environment } from '../environments/environment';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { DownloadService } from '../service/download-service';
+import { LoadingService } from '../service/loading-service';
+import { UserService } from '../service/user-service';
 
 
 @Component({

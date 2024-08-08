@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { LoadVersion, LoadVersionPayload, LoadVersionsApiResponse } from '../model/load-version';
+
 import { environment } from '../environments/environment';
+import { LoadVersion, LoadVersionPayload, LoadVersionsApiResponse } from '../model/load-version';
 
 export class LoadVersionDataSource {
   constructor(private http: HttpClient) {
