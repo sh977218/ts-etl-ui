@@ -21,22 +21,21 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
-
-import { CODE_SYSTEM_NAMES, VERSION_STATUSES } from '../service/constant';
-import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
-import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal/load-version-add-note-modal.component';
-import { UserService } from '../service/user-service';
-import { environment } from '../environments/environment';
 import { assign } from 'lodash';
 import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
+
 import { LoadVersionDataSource } from './load-version-data-source';
+
 import { triggerExpandTableAnimation } from '../animations';
+import { environment } from '../environments/environment';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import {
   LoadVersionAcceptanceActionsComponent,
 } from '../load-version-acceptance-actions/load-version-acceptance-actions.component';
 import { LoadVersionActivityComponent } from '../load-version-activity/load-version-activity.component';
+import { LoadVersionAddNoteModalComponent } from '../load-version-add-note-modal/load-version-add-note-modal.component';
 import { LoadVersionDetailComponent } from '../load-version-detail/load-version-detail.component';
+import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
 import { LoadVersionRulesComponent } from '../load-version-rules/load-version-rules.component';
 import {
   generateLoadVersionPayload,
@@ -48,7 +47,9 @@ import {
   LoadVersionSearchCriteria,
 } from '../model/load-version';
 import { AlertService } from '../service/alert-service';
+import { CODE_SYSTEM_NAMES, VERSION_STATUSES } from '../service/constant';
 import { LoadingService } from '../service/loading-service';
+import { UserService } from '../service/user-service';
 
 @Component({
   standalone: true,

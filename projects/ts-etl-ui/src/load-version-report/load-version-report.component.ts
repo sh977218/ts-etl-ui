@@ -1,27 +1,21 @@
-import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, JsonPipe, KeyValue, KeyValuePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
-import { LoadSummaryComponent } from '../load-summary/load-summary.component';
-import {
-  CodeSystem,
-  CodeSystemSourceInformation1,
-  CodeSystemSourceInformation2,
-} from '../model/code-system';
-import { environment } from '../environments/environment';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params } from '@angular/router';
 import { catchError, combineLatestWith, map, Observable, shareReplay, switchMap, tap } from 'rxjs';
 
+import { environment } from '../environments/environment';
 import { LoadRequestDataSource } from '../load-request/load-request-data-source';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
+import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import { LoadVersionDataSource } from '../load-version/load-version-data-source';
 import {
   LoadVersionReportIdentificationComponent,
@@ -30,6 +24,11 @@ import { LoadVersionReportRuleComponent } from '../load-version-report-rule/load
 import {
   LoadVersionReportRuleMessageComponent,
 } from '../load-version-report-rule-message/load-version-report-rule-message.component';
+import {
+  CodeSystem,
+  CodeSystemSourceInformation1,
+  CodeSystemSourceInformation2,
+} from '../model/code-system';
 import { LoadRequest } from '../model/load-request';
 import { LoadVersion, RuleMessageUI, RuleUI } from '../model/load-version';
 import { LoadingService } from '../service/loading-service';
