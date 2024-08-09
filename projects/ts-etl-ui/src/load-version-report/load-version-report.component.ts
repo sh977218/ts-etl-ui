@@ -10,7 +10,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params } from '@angular/router';
-import { catchError, combineLatestWith, map, Observable, shareReplay, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  combineLatestWith,
+  distinctUntilChanged,
+  map,
+  Observable,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { LoadRequestDataSource } from '../load-request/load-request-data-source';
@@ -86,6 +95,7 @@ export class LoadVersionReportComponent {
       map((params: Params) => {
         return params['params']['requestId'];
       }),
+      distinctUntilChanged(),
       switchMap(requestId => {
         return this.loadVersionDatabase.getLoadVersion(requestId)
           .pipe(
@@ -197,7 +207,7 @@ export class LoadVersionReportComponent {
             numOfWarning: rule.messages.filter(message => message.messageGroup === 'Warning')?.length || 0,
             numOfInfo: rule.messages.filter(message => message.messageGroup === 'Info')?.length || 0,
           },
-          messages: rule.messages
+          messages: rule.messages,
         } as RuleUI;
       });
     }),

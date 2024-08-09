@@ -1,0 +1,36 @@
+{
+  "data": [
+    {
+      "summary": {
+        "Code System Name": "CDT",
+        "Version": "2023",
+        "Load Number": "2023100201003",
+        "Total number of codes": 897,
+        "Number of active codes": 895,
+        "Number of inactive codes": 2,
+        "Total number of terms": 897,
+        "Total number of properties": 2406,
+        "Total number of remap codes": 0,
+        "Total number of hierarchies": 885,
+        "Total number of relationships": 0,
+        "Total number of attributes": 3644
+      }
+    },
+    {
+      "summary": {
+        "Code System Name": "CDT",
+        "Version": "2022",
+        "Load Number": "20230928102341",
+        "Total number of codes": 874,
+        "Number of active codes": 869,
+        "Number of inactive codes": 5,
+        "Total number of terms": 874,
+        "Total number of properties": 0,
+        "Total number of remap codes": 0,
+        "Total number of hierarchies": 862,
+        "Total number of relationships": 2571,
+        "Total number of attributes": 3621
+      }
+    }
+  ]
+}

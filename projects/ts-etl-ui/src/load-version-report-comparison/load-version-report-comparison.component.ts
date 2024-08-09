@@ -1,6 +1,12 @@
 import { AsyncPipe, KeyValuePipe, NgClass, NgForOf, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { catchError, forkJoin, map, switchMap } from 'rxjs';
+
+import { environment } from '../environments/environment';
+import { VersionStatus, VersionStatusMeta } from '../model/code-system';
 
 @Component({
   selector: 'app-load-version-report-comparison',
@@ -18,96 +24,51 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadVersionReportComparisonComponent {
-  summary = [
-    {
-      summary: 'Code System Name',
-      thisVersion: 'CDT',
-      previousVersion: 'CDT',
-      difference: '',
-    },
-    {
-      summary: 'Version',
-      thisVersion: '2023',
-      previousVersion: '2022',
-      difference: '',
-    },
-    {
-      summary: 'Load Number',
-      thisVersion: '2023100201003',
-      previousVersion: '20230928102341',
-      difference: '',
-    },
-    {
-      summary: 'Total number of codes',
-      thisVersion: 897,
-      previousVersion: 874,
-      difference: 23,
-    },
-    {
-      summary: 'Number of active codes',
-      thisVersion: 895,
-      previousVersion: 869,
-      difference: 26,
-      indent: true,
-    },
-    {
-      summary: 'Number of inactive codes',
-      thisVersion: 2,
-      previousVersion: 5,
-      difference: -3,
-      indent: true,
-    },
-    {
-      summary: 'Total number of terms',
-      thisVersion: 897,
-      previousVersion: 874,
-      difference: 23,
-    },
-    {
-      summary: 'Total number of properties',
-      thisVersion: 2406,
-      previousVersion: 0,
-      difference: 2406,
-    },
-    {
-      summary: 'Total number of remap codes',
-      thisVersion: 0,
-      previousVersion: 0,
-      difference: 0,
-    },
-    {
-      summary: 'Total number of hierarchies',
-      thisVersion: 885,
-      previousVersion: 862,
-      difference: 23,
-    },
-    {
-      summary: 'Total number of terms',
-      thisVersion: 897,
-      previousVersion: 874,
-      difference: 23,
-    },
-    {
-      summary: 'Total number of transitive closures',
-      thisVersion: 2654,
-      previousVersion: 2571,
-      difference: 83,
-    },
-    {
-      summary: 'Total number of relationships',
-      thisVersion: 0,
-      previousVersion: 0,
-      difference: 0,
-    },
-    {
-      summary: 'Total number of attributes',
-      thisVersion: 3644,
-      previousVersion: 3621,
-      difference: 23,
-    },
-  ];
+  codeSystemName = input.required<string>();
 
-  summaryDataSource = new MatTableDataSource(this.summary);
+  summaryDataSource =
+    toObservable(this.codeSystemName).pipe(
+      catchError(() => []),
+      switchMap((codeSystemName: string) => {
+        return this.http.get<VersionStatusMeta>(`${environment.apiServer}/versionStatusMeta/${codeSystemName}`)
+          .pipe(
+            catchError(() => []),
+            switchMap((versionStatusMeta: VersionStatusMeta) => {
+              return forkJoin([
+                this.http.get<VersionStatus>(`${environment.apiServer}/versionStatus/${versionStatusMeta.codeSystemName}/${versionStatusMeta.currentVersion}`)
+                  .pipe(
+                    map((versionStatus: VersionStatus) => versionStatus!.summary),
+                  ),
+                this.http.get<VersionStatus>(`${environment.apiServer}/versionStatus/${versionStatusMeta.codeSystemName}/${versionStatusMeta.priorVersion}`)
+                  .pipe(
+                    map((versionStatus: VersionStatus) => versionStatus.summary),
+                  ),
+              ])
+                .pipe(catchError(() => []),
+                );
+            }),
+            map(([currentVersionSummary, priorVersionSummary]) => {
+              const versionSummary = [];
+              if (!currentVersionSummary || !priorVersionSummary) return [];
+              for (const [k, currentV] of Object.entries(currentVersionSummary)) {
+                const prior = Object.entries(currentVersionSummary).find((o) => {
+                  return o[0] === k;
+                });
+                const priorV = prior ? prior[1] : '';
+                const result = {
+                  summary: k,
+                  thisVersion: currentV,
+                  previousVersion: priorV,
+                  difference: (typeof currentV === 'number' && typeof priorV === 'number') ? (currentV - priorV) : '',
+                  indent: ['Number of active codes', 'Number of inactive codes'].includes(k),
+                };
+                versionSummary.push(result);
+              }
+              return versionSummary;
+            }),
+          );
+      }),
+    );
 
   summaryColumn = ['summary', 'thisVersion', 'previousVersion', 'difference'];
 
@@ -254,5 +215,8 @@ export class LoadVersionReportComparisonComponent {
   dataTypeDataSource = new MatTableDataSource(this.dataType);
 
   dataTypeColumn = ['dataType', 'change', 'thisVersion', 'action'];
+
+  constructor(private http: HttpClient) {
+  }
 
 }
