@@ -43,11 +43,18 @@ export type RuleUI = {
   'name': string,
   'description': string,
   'dataAvailable': string,
-  'messagesGroupCount': { numOfError: number, numOfWarning: number, numOfInfo: number }
+  'messagesGroupCount': { numOfError: number, numOfWarning: number, numOfInfo: number },
+  messages: RuleMessage[]
+}
+
+export enum MessageGroup {
+  ERROR = 'Error',
+  WARNING = 'Warning',
+  INFO = 'Info',
 }
 
 export type RuleMessage = {
-  'messageGroup': string,
+  'messageGroup': MessageGroup,
   'messageType': string,
   'tag': string,
   'message': string,

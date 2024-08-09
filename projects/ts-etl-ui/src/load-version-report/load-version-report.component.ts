@@ -193,6 +193,7 @@ export class LoadVersionReportComponent {
             numOfWarning: rule.messages.filter(message => message.messageGroup === 'Warning')?.length || 0,
             numOfInfo: rule.messages.filter(message => message.messageGroup === 'Info')?.length || 0,
           },
+          messages: rule.messages
         } as RuleUI;
       });
     }),

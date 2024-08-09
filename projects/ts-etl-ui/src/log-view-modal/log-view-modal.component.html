@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Log Notes</h2>
+<mat-dialog-content class="mat-typography">
+  <div *ngFor="let groupedMessage of groupedMessages | keyvalue">
+    <h3 *ngIf="groupedMessage">{{ groupedMessage.key }}</h3>
+    <ng-container *ngIf="groupedMessage.value as messages">
+      <ul *ngIf="messages?.length">
+        <li *ngFor="let message of messages">
+          <strong>{{ message.tag }}:</strong> {{ message.message }}
+          <small>({{ message.creationTime }})</small>
+        </li>
+      </ul>
+    </ng-container>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close cdkFocusInitial>Close</button>
+</mat-dialog-actions>
