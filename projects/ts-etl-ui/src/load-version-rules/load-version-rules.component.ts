@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
+import { MatSortModule } from '@angular/material/sort';
 import {
   MatTableDataSource,
   MatTableModule,
 } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
+
 import { LoadRule } from '../model/load-version';
 
 @Component({

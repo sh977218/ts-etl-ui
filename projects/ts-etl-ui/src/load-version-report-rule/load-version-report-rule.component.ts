@@ -1,17 +1,20 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, ViewChild } from '@angular/core';
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, input, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { tap } from 'rxjs';
+
 import { RuleUI } from '../model/load-version';
 import { LogViewModalComponent } from '../log-view-modal/log-view-modal';
 import { MatDialog } from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-load-version-report-rule',
@@ -23,6 +26,7 @@ import { MatDialog } from '@angular/material/dialog';
     ReactiveFormsModule,
     MatCheckboxModule,
     MatIconModule,
+    MatButtonModule,
     MatTableModule,
     MatInputModule,
     MatPaginatorModule,

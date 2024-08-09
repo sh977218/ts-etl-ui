@@ -1,37 +1,47 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, JsonPipe, KeyValue, KeyValuePipe, NgClass, NgForOf, NgIf } from '@angular/common';
-import { LoadVersionDataSource } from '../load-version/load-version-data-source';
-import { catchError, combineLatestWith, map, Observable, shareReplay, switchMap, tap } from 'rxjs';
-import { ActivatedRoute, Params } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { LoadingService } from '../service/loading-service';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { ActivatedRoute, Params } from '@angular/router';
+import { catchError, combineLatestWith, map, Observable, shareReplay, switchMap, tap } from 'rxjs';
 
-import { LoadVersion, RuleMessageUI, RuleUI } from '../model/load-version';
-import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
+import { environment } from '../environments/environment';
 import { LoadRequestDataSource } from '../load-request/load-request-data-source';
+import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
+import { LoadVersionDataSource } from '../load-version/load-version-data-source';
+import {
+  LoadVersionReportIdentificationComponent,
+} from '../load-version-identification/load-version-report-identification.component';
+import { LoadVersionReportRuleComponent } from '../load-version-report-rule/load-version-report-rule.component';
+import {
+  LoadVersionReportRuleMessageComponent,
+} from '../load-version-report-rule-message/load-version-report-rule-message.component';
+import {
+  LoadVersionReportSummaryComponent,
+} from '../load-version-summary/load-version-report-summary.component';
 import {
   CodeSystem,
   CodeSystemSourceInformation1,
   CodeSystemSourceInformation2,
 } from '../model/code-system';
-import { environment } from '../environments/environment';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatButtonModule } from '@angular/material/button';
-import {
-  LoadVersionReportRuleMessageComponent,
-} from '../load-version-report-rule-message/load-version-report-rule-message.component';
-import { LoadVersionReportRuleComponent } from '../load-version-report-rule/load-version-report-rule.component';
-import {
-  LoadVersionReportIdentificationComponent,
-} from '../load-version-identification/load-version-report-identification.component';
 import { LoadRequest } from '../model/load-request';
+import {
+  LoadVersion,
+  RuleMessageUI,
+  RuleUI,
+  Summary,
+  Validation,
+  Verification,
+} from '../model/load-version';
+import { LoadingService } from '../service/loading-service';
 
 @Component({
   standalone: true,
@@ -56,8 +66,9 @@ import { LoadRequest } from '../model/load-request';
     LoadVersionReportRuleMessageComponent,
     LoadVersionReportRuleComponent,
     LoadVersionReportIdentificationComponent,
+    LoadVersionReportSummaryComponent,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   templateUrl: './load-version-report.component.html',
   styleUrls: ['./load-version-report.component.scss'],
 })
@@ -165,20 +176,8 @@ export class LoadVersionReportComponent {
   ];
 
   verificationSummary$ = this.loadVersion$.pipe(
-    map((loadVersion: LoadVersion) => {
-      return [{
-        totalRules: loadVersion.verification.rules.length,
-        rulesWithData: loadVersion.verification.rules.filter(rule => rule.dataAvailable === 'Yes')?.length || 0,
-        error: loadVersion.verification.rules.reduce((previousValue: number, currentValue) => {
-          return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Error')?.length || 0;
-        }, 0),
-        messageGroupCountWarning: loadVersion.verification.rules.reduce((previousValue: number, currentValue) => {
-          return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Warning')?.length || 0;
-        }, 0),
-        info: loadVersion.verification.rules.reduce((previousValue: number, currentValue) => {
-          return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Info')?.length || 0;
-        }, 0),
-      }];
+    map((loadVersion) => {
+      return this.ruleToSummary(loadVersion.verification);
     }),
   );
 
@@ -214,6 +213,31 @@ export class LoadVersionReportComponent {
     }),
     catchError(() => []),
   );
+
+  validationSummary$ = this.loadVersion$.pipe(
+    map((loadVersion) => {
+      return this.ruleToSummary(loadVersion.validation);
+    }),
+  );
+
+  private ruleToSummary = (v: Verification | Validation) => {
+    const rules = v.rules;
+    return [{
+      totalRules: rules.length,
+      rulesWithData: rules.filter(rule => rule.dataAvailable === 'Yes')?.length || 0,
+      messagesGroupCount: {
+        numOfError: rules.reduce((previousValue: number, currentValue) => {
+          return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Error')?.length || 0;
+        }, 0),
+        numOfWarning: rules.reduce((previousValue: number, currentValue) => {
+          return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Warning')?.length || 0;
+        }, 0),
+        numOfInfo: rules.reduce((previousValue: number, currentValue) => {
+          return previousValue + currentValue.messages.filter(message => message.messageGroup === 'Info')?.length || 0;
+        }, 0),
+      },
+    }] as Summary[];
+  };
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,

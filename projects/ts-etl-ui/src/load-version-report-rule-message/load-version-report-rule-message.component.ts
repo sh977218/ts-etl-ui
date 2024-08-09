@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, ViewChild } from '@angular/core';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, input, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { tap } from 'rxjs';
 
 import { RuleMessageUI } from '../model/load-version';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+
 
 @Component({
   selector: 'app-load-version-report-rule-message',

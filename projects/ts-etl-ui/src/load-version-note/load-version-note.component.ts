@@ -1,7 +1,8 @@
 import { Component, input } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
 import { MatButton } from '@angular/material/button';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+
 import { LoadVersion, LoadVersionActivityNote } from '../model/load-version';
 
 @Component({

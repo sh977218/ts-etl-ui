@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpInterceptor } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
