@@ -12,7 +12,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { tap } from 'rxjs';
 
-import { LogViewModalComponent } from '../log-view-modal/log-view-modal';
+import { LogViewModalComponent } from '../log-view-modal/log-view-modal.component';
 import { RuleUI } from '../model/load-version';
 
 @Component({
