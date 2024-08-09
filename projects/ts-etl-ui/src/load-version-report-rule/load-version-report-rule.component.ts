@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, ViewChild 
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -11,10 +12,8 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { tap } from 'rxjs';
 
-import { RuleUI } from '../model/load-version';
 import { LogViewModalComponent } from '../log-view-modal/log-view-modal';
-import { MatDialog } from '@angular/material/dialog';
-
+import { RuleUI } from '../model/load-version';
 
 @Component({
   selector: 'app-load-version-report-rule',
@@ -87,7 +86,7 @@ export class LoadVersionReportRuleComponent {
     this.dialog.open(LogViewModalComponent, {
       width: '800px',
       data: element,
-    })
+    });
   }
 
 

@@ -47,8 +47,14 @@ export type RuleUI = {
   messages: RuleMessage[]
 }
 
+export enum MessageGroup {
+  ERROR = 'Error',
+  WARNING = 'Warning',
+  INFO = 'Info',
+}
+
 export type RuleMessage = {
-  'messageGroup': string,
+  'messageGroup': MessageGroup,
   'messageType': string,
   'tag': string,
   'message': string,
