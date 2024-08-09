@@ -22,7 +22,8 @@
             {
               "notes": "Testing the Notes feature",
               "createdTime": "2023-07-02T11:07:23.546Z",
-              "createdBy": "peterhuangnih"
+              "createdBy": "peterhuangnih",
+              "hashtags": ["Verification", "TestTag"]
             }
           ]
         }
