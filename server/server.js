@@ -380,11 +380,40 @@ app.get('/api/codeSystem/:codeSystemName', async (req, res) => {
   res.send(codeSystem);
 });
 
+app.get('/api/versionStatus/:codeSystemName/:version', async (req, res) => {
+  const { codeSystemName, version } = req.params;
+  const { versionStatusCollection } = await mongoCollection();
+  const versionStatus = await versionStatusCollection.findOne({
+    'summary.Code System Name': codeSystemName,
+    'summary.Version': version,
+  });
+  res.send(versionStatus);
+});
+
+app.get('/api/versionStatusMeta/:codeSystemName', async (req, res) => {
+  const { codeSystemName } = req.params;
+  res.send({
+    codeSystemName,
+    currentVersion: 2023,
+    priorVersion: 2022,
+  });
+});
+
+app.get('/api/serverInfo', async (req, res) => {
+  const pr = getPrNumber();
+  const { db } = await mongoCollection();
+  res.send({ pr, db: db.s.namespace.db });
+});
+
+app.get('/nih-login', (req, res) => {
+  const returnURL = req.query.service;
+  res.render('nih-login', { returnURL: returnURL });
+});
+
+
+/* @todo TS's backend needs to implement the following APIs. */
 // this map simulate UTS ticket to username
 const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
-/*
-@todo TS's backend needs to implement this API.
- */
 app.get('/api/serviceValidate', async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
@@ -420,17 +449,7 @@ app.post('/api/logout', async (req, res) => {
   res.clearCookie('Bearer');
   res.send();
 });
-
-app.get('/api/serverInfo', async (req, res) => {
-  const pr = getPrNumber();
-  const { db } = await mongoCollection();
-  res.send({ pr, db: db.s.namespace.db });
-});
-
-app.get('/nih-login', (req, res) => {
-  const returnURL = req.query.service;
-  res.render('nih-login', { returnURL: returnURL });
-});
+/* @todo END  */
 
 app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
