@@ -140,8 +140,8 @@
         <ng-container matColumnDef="requestTime">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
-              <label for="requestStartTime" class="m-2" mat-sort-header disableClear>Request Time</label>
-            </div>>
+              <label for="requestRange" class="m-2" mat-sort-header disableClear>Request Time</label>
+            </div>
           </th>
           <td mat-cell
               *matCellDef="let row">{{row.requestTime.replace(' ', '') | date:'yyyy/MM/dd hh:mma':'GMT+05:00' }}</td>
@@ -149,10 +149,23 @@
         <ng-container matColumnDef="requestTime-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <input id="requestStartTime" matInput class="w-30" formControlName="requestStartTime" type="date"
-                     [max]="searchCriteria.get('requestEndTime')?.getRawValue()">
-              <input id="requestEndTime" matInput class="w-30" formControlName="requestEndTime" type="date"
-                     [min]="searchCriteria.get('requestStartTime')?.getRawValue()">
+              <mat-form-field appearance="outline" id="requestRange">
+                <mat-label>Enter a date range</mat-label>
+                <mat-date-range-input formGroupName="requestRange" [rangePicker]="requestRangePicker">
+                  <input matStartDate formControlName="requestStartTime" placeholder="Start date">
+                  <input matEndDate formControlName="requestEndTime" placeholder="End date">
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="requestRangePicker"></mat-datepicker-toggle>
+                <mat-date-range-picker #requestRangePicker>
+                  <mat-date-range-picker-actions>
+                    <button mat-button matDateRangePickerCancel>Cancel</button>
+                    <button mat-raised-button color="warn" matDateRangePickerApply="requestStartTime = null">Clear
+                    </button>
+                    <button mat-raised-button color="primary" matDateRangePickerApply>Apply</button>
+                  </mat-date-range-picker-actions>
+                </mat-date-range-picker>
+              </mat-form-field>
             </div>
           </th>
         </ng-container>
@@ -176,7 +189,7 @@
         <ng-container matColumnDef="creationTime">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
-              <label for="creationStartTime" class="m-2" mat-sort-header disableClear>Creation Time</label>
+              <label for="createRange" class="m-2" mat-sort-header disableClear>Creation Time</label>
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.creationTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
@@ -184,10 +197,17 @@
         <ng-container matColumnDef="creationTime-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <input id="creationStartTime" matInput class="w-30" formControlName="creationStartTime" type="date"
-                     [max]="searchCriteria.get('creationEndTime')?.getRawValue()">
-              <input id="creationEndTime" matInput class="w-30" formControlName="creationEndTime" type="date"
-                     [min]="searchCriteria.get('creationStartTime')?.getRawValue()">
+              <mat-form-field class="example-full-width" appearance="fill" id="createRange">
+                <mat-label>Enter a date range</mat-label>
+                <mat-date-range-input formGroupName="requestCreationRange" [rangePicker]="createRangePicker">
+                  <input matStartDate formControlName="requestCreationStartTime"
+                         placeholder="Request Creation Start date">
+                  <input matEndDate formControlName="requestCreationEndTime" placeholder="Request Creation End date">
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="createRangePicker"></mat-datepicker-toggle>
+                <mat-date-range-picker #createRangePicker></mat-date-range-picker>
+              </mat-form-field>
             </div>
           </th>
         </ng-container>
@@ -198,7 +218,7 @@
               <div class="example-element-description" *ngIf="expandedElement === row">
                 <fieldset>
                   <legend>Load Request</legend>
-                  <ng-container *ngIf="row.requestStatus === 'Open' && user?.utsUser!.username === row.requester" >
+                  <ng-container *ngIf="row.requestStatus === 'Open' && user?.utsUser!.username === row.requester">
                     <button mat-fab extended (click)="openEditDialog(row)">
                       Edit
                     </button>

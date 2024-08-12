@@ -8,7 +8,8 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatOptionModule } from '@angular/material/core';
+import { MatOptionModule, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -52,7 +53,6 @@ import { DownloadService } from '../service/download-service';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
-
 @Component({
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +65,7 @@ import { UserService } from '../service/user-service';
     MatInputModule,
     MatTableModule,
     MatButtonModule,
+    MatDatepickerModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatDialogModule,
@@ -80,7 +81,7 @@ import { UserService } from '../service/user-service';
   templateUrl: './load-request.component.html',
   animations: [triggerExpandTableAnimation],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
-  providers: [DatePipe],
+  providers: [provideNativeDateAdapter(), DatePipe],
 })
 export class LoadRequestComponent implements AfterViewInit {
   reloadAllRequests$ = new Subject();
@@ -116,11 +117,15 @@ export class LoadRequestComponent implements AfterViewInit {
       requestSubject: new FormControl<string | undefined>(undefined),
       requestStatus: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
       requestType: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
-      requestStartTime: new FormControl<Date | undefined>(undefined),
-      requestEndTime: new FormControl<Date | undefined>(undefined),
+      requestRange: new FormGroup({
+        requestStartTime: new FormControl<Date | undefined>(undefined),
+        requestEndTime: new FormControl<Date | undefined>(undefined),
+      }),
       requester: new FormControl<string | undefined>(undefined),
-      creationStartTime: new FormControl<Date | undefined>(undefined),
-      creationEndTime: new FormControl<Date | undefined>(undefined),
+      requestCreationRange: new FormGroup({
+        requestCreationStartTime: new FormControl<Date | undefined>(undefined),
+        requestCreationEndTime: new FormControl<Date | undefined>(undefined),
+      }),
       filterRequestTime: new FormControl<Date | undefined>(undefined, { updateOn: 'change' }),
       filterRequester: new FormControl<Date | undefined>(undefined),
     }, { updateOn: 'submit' },
