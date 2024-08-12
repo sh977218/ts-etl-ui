@@ -85,7 +85,7 @@ import { UserService } from '../service/user-service';
 export class LoadRequestComponent implements AfterViewInit {
   reloadAllRequests$ = new Subject();
   displayedColumns: string[] = [
-    'requestId',
+    'opRequestSeq',
     'codeSystemName',
     'requestSubject',
     'requestStatus',
@@ -111,16 +111,16 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      requestId: new FormControl<number | undefined>(undefined),
+      opRequestSeq: new FormControl<number | undefined>(undefined),
       codeSystemName: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
       requestSubject: new FormControl<string | undefined>(undefined),
       requestStatus: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
       requestType: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
-      requestStartTime: new FormControl<Date | undefined>(undefined),
-      requestEndTime: new FormControl<Date | undefined>(undefined),
+      requestTimeFrom: new FormControl<Date | undefined>(undefined),
+      requestTimeTo: new FormControl<Date | undefined>(undefined),
       requester: new FormControl<string | undefined>(undefined),
-      creationStartTime: new FormControl<Date | undefined>(undefined),
-      creationEndTime: new FormControl<Date | undefined>(undefined),
+      creationTimeFrom: new FormControl<Date | undefined>(undefined),
+      creationTimeTo: new FormControl<Date | undefined>(undefined),
       filterRequestTime: new FormControl<Date | undefined>(undefined, { updateOn: 'change' }),
       filterRequester: new FormControl<Date | undefined>(undefined),
     }, { updateOn: 'submit' },
@@ -136,16 +136,16 @@ export class LoadRequestComponent implements AfterViewInit {
       filterRequester: '',
     },
     searchColumns: {
-      requestId: '',
+      opRequestSeq: '',
       codeSystemName: '',
       requestSubject: '',
       requestStatus: '',
       requestType: '',
-      requestStartTime: '',
-      requestEndTime: '',
+      requestTimeFrom: '',
+      requestTimeTo: '',
       requester: '',
-      creationStartTime: '',
-      creationEndTime: '',
+      creationTimeFrom: '',
+      creationTimeTo: '',
     },
     sortCriteria: {
       sortDirection: 'asc',
@@ -235,12 +235,12 @@ export class LoadRequestComponent implements AfterViewInit {
       .pipe(
         filter(newLoadRequest => !!newLoadRequest),
         switchMap(newLoadRequest => this.http.post<{
-          requestId: string
+          opRequestSeq: string
         }>(`${environment.apiServer}/loadRequest`, newLoadRequest as LoadRequest)),
       )
       .subscribe({
-        next: ({ requestId }) => {
-          this.alertService.addAlert('info', `Request (ID: ${requestId}) created successfully`);
+        next: ({ opRequestSeq }) => {
+          this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
           this.reloadAllRequests$.next(true);
         },
         error: () => this.alertService.addAlert('danger', 'Error create load request.'),
@@ -273,14 +273,14 @@ export class LoadRequestComponent implements AfterViewInit {
       .pipe(
         filter(newLoadRequest => !!newLoadRequest),
         switchMap(newLoadRequest => this.http.post<LoadRequest>
-        (`${environment.apiServer}/loadRequest/${loadRequest.requestId}`, newLoadRequest as LoadRequest)),
+        (`${environment.apiServer}/loadRequest/${loadRequest.opRequestSeq}`, newLoadRequest as LoadRequest)),
       )
       .subscribe({
         next: (newLR) => {
-          this.alertService.addAlert('info', `Request (ID: ${newLR.requestId}) edited successfully`);
+          this.alertService.addAlert('info', `Request (ID: ${newLR.opRequestSeq}) edited successfully`);
           // this.reloadAllRequests$.next(true);
           const currentData = this.data();
-          const index = currentData.findIndex((lr: LoadRequest) => lr.requestId === newLR.requestId);
+          const index = currentData.findIndex((lr: LoadRequest) => lr.opRequestSeq === newLR.opRequestSeq);
           const updatedData = [
             ...currentData.slice(0, index),
             newLR,

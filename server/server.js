@@ -43,23 +43,23 @@ app.post('/load-request/list', async (req, res) => {
   const { pageNum, pageSize } = pagination;
   const { filterRequestTime, filterRequester } = searchFilters;
   const {
-    requestId,
+    opRequestSeq,
     codeSystemName,
     requestSubject,
     requestStatus,
     requestType,
-    requestStartTime,
-    requestEndTime,
+    requestTimeFrom,
+    requestTimeTo,
     requester,
-    creationStartTime,
-    creationEndTime,
+    creationTimeFrom,
+    creationTimeTo,
   } = searchColumns;
   const { sortBy, sortDirection } = sortCriteria;
 
   const $match = {};
   // searchColumns
-  if (requestId) {
-    $match.requestId = Number.parseInt(requestId);
+  if (opRequestSeq) {
+    $match.opRequestSeq = Number.parseInt(opRequestSeq);
   }
   if (codeSystemName) {
     $match.codeSystemName = codeSystemName;
@@ -73,14 +73,14 @@ app.post('/load-request/list', async (req, res) => {
   if (requestType) {
     $match.requestType = requestType;
   }
-  if (requestStartTime) {
-    const dateObj = new Date(requestStartTime);
+  if (requestTimeFrom) {
+    const dateObj = new Date(requestTimeFrom);
     $match.requestTime = {
       $gte: dateObj,
     };
   }
-  if (requestEndTime) {
-    const dateObj = new Date(requestEndTime);
+  if (requestTimeTo) {
+    const dateObj = new Date(requestTimeTo);
     if (!$match.requestTime) {
       $match.requestTime = {};
     }
@@ -90,14 +90,14 @@ app.post('/load-request/list', async (req, res) => {
     $match.requester = new RegExp(escapeRegex(requester), 'i');
   }
 
-  if (creationStartTime) {
-    const dateObj = new Date(creationStartTime);
+  if (creationTimeFrom) {
+    const dateObj = new Date(creationTimeFrom);
     $match.creationTime = {
       $gte: dateObj,
     };
   }
-  if (creationEndTime) {
-    const dateObj = new Date(creationEndTime);
+  if (creationTimeTo) {
+    const dateObj = new Date(creationTimeTo);
     if (!$match.creationTime) {
       $match.creationTime = {};
     }
