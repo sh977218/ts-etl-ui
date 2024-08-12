@@ -152,6 +152,16 @@ test.describe('e2e test', async () => {
       await expect(page.locator('app-load-version-note').getByText('Accepted by me')).toBeVisible();
     });
 
+    await test.step('Add note', async () => {
+      await page.getByRole('button', { name: 'Add Note' }).click();
+      await page.locator('mat-dialog-contains input').fill('Test.Hashtag1');
+      await page.locator('mat-dialog-contains input').nth(1).fill('Test.Hashtag2');
+      await page.locator('mat-dialog-contains textarea').fill('New Test Note');
+      await page.getByRole('button', { name: 'Save' }).click();
+      await materialPo.checkAndCloseAlert('Activity added successfully.');
+      await expect(page.locator('app-load-version-note').getByText('#Test.Hashtag2')).toBeVisible();
+    })
+
     await test.step(`Open QA Report page`, async () => {
       const [qaReportPage] = await Promise.all([
         page.waitForEvent('popup'),

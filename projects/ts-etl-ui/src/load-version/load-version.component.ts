@@ -245,6 +245,7 @@ export class LoadVersionComponent implements AfterViewInit {
           this.loadingService.showLoading();
           activityNote.createdBy = this.username;
           activityNote.createdTime = new Date();
+          activityNote.hashtags = activityNote.hashtags.filter(n => n !== '');
           return this.http.post<LoadVersion>('/api/addActivityNote', {
             requestId: loadVersion.requestId,
             activityNote,

@@ -2,10 +2,16 @@
 <form [formGroup]="addNoteForm">
   <mat-dialog-content class="mat-typography">
     <div class="flex flex-col">
-      <mat-form-field appearance="outline">
-        <mat-label>Hashtahgs</mat-label>
-        <textarea matInput placeholder="Hasthtags" formControlName="hashtags"></textarea>
-      </mat-form-field>
+      <div formArrayName="hashtags">
+        <div *ngFor="let sc of hashtags.controls; let i = index">
+          <mat-form-field appearance="outline" >
+            <mat-label>Hashtags</mat-label>
+            <div >
+              <input matInput [formControlName]="i" placeholder="Choose a hashtag" (input)="sanitizeHashtags(i)">
+            </div>
+          </mat-form-field>
+        </div>
+      </div>
       <mat-form-field appearance="outline">
         <mat-label>Note</mat-label>
         <textarea matInput placeholder="Note" formControlName="notes"></textarea>
