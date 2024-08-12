@@ -154,9 +154,9 @@ test.describe('e2e test', async () => {
 
     await test.step('Add note', async () => {
       await page.getByRole('button', { name: 'Add Note' }).click();
-      await page.locator('mat-dialog-contains input').fill('Test.Hashtag1');
-      await page.locator('mat-dialog-contains input').nth(1).fill('Test.Hashtag2');
-      await page.locator('mat-dialog-contains textarea').fill('New Test Note');
+      await page.locator('mat-dialog-content input').fill('Test.Hashtag1');
+      await page.locator('mat-dialog-content input').nth(1).fill('Test.Hashtag2');
+      await page.locator('mat-dialog-content textarea').fill('New Test Note');
       await page.getByRole('button', { name: 'Save' }).click();
       await materialPo.checkAndCloseAlert('Activity added successfully.');
       await expect(page.locator('app-load-version-note').getByText('#Test.Hashtag2')).toBeVisible();
