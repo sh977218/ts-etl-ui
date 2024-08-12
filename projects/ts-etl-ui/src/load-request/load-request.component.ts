@@ -192,7 +192,7 @@ export class LoadRequestComponent implements AfterViewInit {
           }),
           switchMap((loadRequestPayload) => {
             this.loadingService.showLoading();
-            return this.http.post<LoadRequestsResponse>(`${environment.apiServer}/loadRequests`, loadRequestPayload)
+            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, loadRequestPayload)
               .pipe(catchError(() => of(null)));
           }),
           map((res: LoadRequestsResponse | null) => {

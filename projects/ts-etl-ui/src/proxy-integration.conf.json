@@ -7,6 +7,14 @@
     },
     "changeOrigin": true
   },
+  "/portal-backend/newApi": {
+    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend",
+    "secure": false,
+    "pathRewrite": {
+      "^/portal-backend/newApi": ""
+    },
+    "changeOrigin": true
+  },
   "/ticketUrl": {
     //"target": "https://tsdata-dev.nlm.nih.gov/portal-backend/user/serviceValidate",
     "target": "http://localhost:3001/user/serviceValidate",

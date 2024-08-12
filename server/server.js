@@ -37,7 +37,7 @@ function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-app.post('/api/loadRequests', async (req, res) => {
+app.post('/load-request/list', async (req, res) => {
   const apiStartTime = new Date();
   const { pagination, searchFilters, searchColumns, sortCriteria } = req.body;
   const { pageNum, pageSize } = pagination;

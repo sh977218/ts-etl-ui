@@ -9,4 +9,5 @@ export const environment: Environment = {
   logoutUrl: '/api/logout',
   loginServiceUrl: '/nih-login',
   apiServer: '/api',
+  newApiServer: '/newApi',
 };
