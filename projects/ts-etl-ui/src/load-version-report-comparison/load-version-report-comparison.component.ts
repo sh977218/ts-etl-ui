@@ -26,6 +26,21 @@ import { VersionStatus, VersionStatusMeta } from '../model/code-system';
 export class LoadVersionReportComparisonComponent {
   codeSystemName = input.required<string>();
 
+  versionStatusSummaryMap: Record<string, string> = {
+    codeSystemName: 'Code System Name',
+    version: 'Version',
+    loadNumber: 'Load Number',
+    totalNumberOfCodes: 'Total number of codes',
+    numberOfActiveCodes: 'Number of active codes',
+    numberOfInactiveCodes: 'Number of inactive codes',
+    totalNumberOfTerms: 'Total number of terms',
+    totalNumberOfProperties: 'Total number of properties',
+    totalNumberOfRemapCodes: 'Total number of remap codes',
+    totalNumberOfHierarchies: 'Total number of hierarchies',
+    totalNumberOfRelationships: 'Total number of relationships',
+    totalNumberOfAttributes: 'Total number of attributes',
+  };
+
   summaryDataSource =
     toObservable(this.codeSystemName).pipe(
       catchError(() => []),
@@ -56,7 +71,7 @@ export class LoadVersionReportComparisonComponent {
                 });
                 const priorV = prior ? prior[1] : '';
                 const result = {
-                  summary: k,
+                  summary: this.versionStatusSummaryMap[k],
                   thisVersion: currentV,
                   previousVersion: priorV,
                   difference: (typeof currentV === 'number' && typeof priorV === 'number') ? (currentV - priorV) : '',
