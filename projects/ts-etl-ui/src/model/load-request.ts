@@ -52,8 +52,8 @@ type LoadRequestPayloadSearchColumns = {
   requestSubject: string;
   requestStatus: string;
   requestType: string;
-  requestTimeFrom: string;
-  requestTimeTo: string;
+  requestTimeFrom?: Date;
+  requestTimeTo?: Date;
   requester: string;
   creationTimeFrom: string;
   creationTimeTo: string;
@@ -107,8 +107,8 @@ export type FlatLoadRequestPayload = {
   requestSubject: string,
   requestStatus: string,
   requestType: string,
-  requestTimeFrom: string,
-  requestTimeTo: string,
+  requestTimeFrom?: Date,
+  requestTimeTo?: Date,
   requester: string,
   creationTimeFrom: string,
   creationTimeTo: string,
@@ -157,11 +157,11 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
       requestSubject: requestSubject || '',
       requestStatus: requestStatus || '',
       requestType: requestType || '',
-      requestTimeFrom: requestTimeFrom || '',
-      requestTimeTo: requestTimeTo || '',
+      requestTimeFrom: requestTimeFrom? new Date(requestTimeFrom): undefined,
+      requestTimeTo: requestTimeTo? new Date(requestTimeTo): undefined,
       requester: requester || '',
-      creationTimeFrom: creationTimeFrom || '',
-      creationTimeTo: creationTimeTo || '',
+      creationTimeFrom: creationTimeFrom || undefined,
+      creationTimeTo: creationTimeTo || undefined,
     },
     sortCriteria: {
       sortBy: sortBy || 'opRequestSeq',

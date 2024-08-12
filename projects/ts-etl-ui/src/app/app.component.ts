@@ -11,6 +11,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
+import { isEmpty } from 'lodash';
 import { CookieService } from 'ngx-cookie-service';
 import { EMPTY } from 'rxjs';
 
@@ -58,17 +59,22 @@ export class AppComponent {
   ) {
     const jwtTokenInCookie = cookieService.get('Bearer');
     if (jwtTokenInCookie) {
-      userService.logInWithJwt().subscribe({
-        next: (res) => {
-          userService.user$.next(res);
-        },
-        error: () => {
-          alertService.addAlert('danger', `error log in`);
-          userService.user$.next(null);
-          cookieService.delete('Bearer');
-          router.navigate(['./please-log-in']);
-        },
-      });
+      userService.logInWithJwt()
+        .subscribe({
+          next: (res) => {
+            if (isEmpty(res)) {
+              cookieService.delete('Bearer');
+            } else {
+              userService.user$.next(res);
+            }
+          },
+          error: () => {
+            alertService.addAlert('danger', `error log in`);
+            userService.user$.next(null);
+            cookieService.delete('Bearer');
+            router.navigate(['./please-log-in']);
+          },
+        });
     } else {
       userService.user$.next(null);
     }
