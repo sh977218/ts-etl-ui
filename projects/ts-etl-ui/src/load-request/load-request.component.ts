@@ -290,7 +290,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   download() {
-    this.http.post<LoadRequestsResponse>(`${environment.apiServer}/loadRequests`,
+    this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`,
       Object.assign(this.currentLoadRequestSearchCriteria, {
           pagination: {
             pageNum: 1,
