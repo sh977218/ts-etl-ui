@@ -51,3 +51,27 @@ export type CodeSystemSourceInformation2 = {
   'Content Contact': string[];
   'License Contact': string[];
 }
+
+export type VersionStatusSummary = {
+  'Code System Name': string,
+  'Version': string,
+  'Load Number': string,
+  'Total number of codes': number,
+  'Number of active codes': number,
+  'Number of inactive codes': number,
+  'Total number of terms': number,
+  'Total number of properties': number,
+  'Total number of remap codes': number,
+  'Total number of hierarchies': number,
+  'Total number of relationships': number,
+  'Total number of attributes': number,
+}
+
+export type VersionStatus = {
+  summary: VersionStatusSummary
+}
+export type VersionStatusMeta = {
+  codeSystemName: string,
+  currentVersion: number,
+  priorVersion: number,
+}

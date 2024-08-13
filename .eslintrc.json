@@ -1,8 +1,5 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "projects/**/*"
-  ],
   "overrides": [
     {
       "files": [
@@ -25,12 +22,32 @@
             "prefix": "app",
             "style": "kebab-case"
           }
+        ],
+        "import/order": [
+          1,
+          {
+            "groups": [
+              "external",
+              "builtin",
+              "internal",
+              "sibling",
+              "parent",
+              "index"
+            ],
+            "newlines-between": "always",
+            "alphabetize": {
+              /* sort in ascending order. Options: ["ignore", "asc", "desc"] */
+              "order": "asc",
+              /* ignore case. Options: [true, false] */
+              "caseInsensitive": false
+            }
+          }
         ]
       }
     },
     {
       "files": [
-        "*.html"
+        "projects/**/*.html"
       ],
       "extends": [
         "plugin:@angular-eslint/template/recommended",

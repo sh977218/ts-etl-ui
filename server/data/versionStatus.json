@@ -1,0 +1,36 @@
+{
+  "data": [
+    {
+      "summary": {
+        "codeSystemName": "CDT",
+        "version": "2023",
+        "loadNumber": "2023100201003",
+        "totalNumberOfCodes": 897,
+        "numberOfActiveCodes": 895,
+        "numberOfInactiveCodes": 2,
+        "totalNumberOfTerms": 897,
+        "totalNumberOfProperties": 2406,
+        "totalNumberOfRemapCodes": 0,
+        "totalNumberOfHierarchies": 885,
+        "totalNumberOfRelationships": 0,
+        "totalNumberOfAttributes": 3644
+      }
+    },
+    {
+      "summary": {
+        "codeSystemName": "CDT",
+        "version": "2022",
+        "loadNumber": "20220928102341",
+        "totalNumberOfCodes": 874,
+        "numberOfActiveCodes": 869,
+        "numberOfInactiveCodes": 5,
+        "totalNumberOfTerms": 874,
+        "totalNumberOfProperties": 0,
+        "totalNumberOfRemapCodes": 0,
+        "totalNumberOfHierarchies": 862,
+        "totalNumberOfRelationships": 2571,
+        "totalNumberOfAttributes": 3621
+      }
+    }
+  ]
+}
