@@ -1,7 +1,7 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { CommonModule, NgForOf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
@@ -38,9 +38,7 @@ import { MatInputModule } from '@angular/material/input';
 export class LoadVersionAddNoteModalComponent {
   addNoteForm = new FormGroup(
     {
-      hashtags: new FormArray([
-        new FormControl<string>(''),
-      ]),
+      hashtags: new FormControl<string[]>([]),
       notes: new FormControl<string>('', [Validators.required]),
     },
   );
