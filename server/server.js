@@ -172,15 +172,15 @@ async function getNextLoadRequestSequenceId() {
   return loadRequestsCollection.countDocuments({});
 }
 
-app.delete('/api/loadRequest/:reqId', async (req, res) => {
+app.delete('/api/loadRequest/:opRequestSeq', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
 
-  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
+  const loadRequest = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be canceled');
   }
 
-  await loadRequestsCollection.deleteOne({ requestId: +req.params.reqId });
+  await loadRequestsCollection.deleteOne({ opRequestSeq: +req.params.opRequestSeq });
   res.send();
 });
 
@@ -190,22 +190,22 @@ app.post('/api/loadRequest', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   const result = await loadRequestsCollection.insertOne({
-    requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
+    opRequestSeq: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
   });
 
   const newLoadRequest = await loadRequestsCollection.findOne({ _id: result.insertedId });
-  res.send({ requestId: newLoadRequest.requestId });
+  res.send({ opRequestSeq: newLoadRequest.opRequestSeq });
 });
 
-app.post('/api/loadRequest/:reqId', async (req, res) => {
+app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
   const newLoadRequest = req.body;
   const { loadRequestsCollection } = await mongoCollection();
-  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
+  const loadRequest = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be edited');
   }
 
-  await loadRequestsCollection.updateOne({ requestId: +req.params.reqId }, {
+  await loadRequestsCollection.updateOne({ requestId: +req.params.opRequestSeq }, {
     $set: {
       codeSystemName: newLoadRequest.codeSystemName,
       sourceFilePath: newLoadRequest.sourceFilePath,
@@ -213,13 +213,13 @@ app.post('/api/loadRequest/:reqId', async (req, res) => {
       notificationEmail: newLoadRequest.notificationEmail,
     },
   });
-  const updatedLR = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
+  const updatedLR = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
   res.send(updatedLR);
 });
 
-app.get('/api/loadRequest/:requestId', async (req, res) => {
+app.get('/api/loadRequest/:opRequestSeq', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
-  res.send(await loadRequestsCollection.findOne({ requestId: +req.params.requestId }));
+  res.send(await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq }));
 });
 
 app.post('/api/loadVersions', async (req, res) => {
