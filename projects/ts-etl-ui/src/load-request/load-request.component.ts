@@ -141,11 +141,7 @@ export class LoadRequestComponent implements AfterViewInit {
       requestSubject: '',
       requestStatus: '',
       requestType: '',
-      requestTimeFrom: undefined,
-      requestTimeTo: undefined,
       requester: '',
-      creationTimeFrom: '',
-      creationTimeTo: '',
     },
     sortCriteria: {
       sortDirection: 'asc',
