@@ -1,17 +1,22 @@
+import { DatePipe, NgForOf } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 
-import { LoadVersion, LoadVersionActivityNote } from '../model/load-version';
+import { LoadVersion } from '../model/load-version';
 
 @Component({
   selector: 'app-load-version-note',
   standalone: true,
+  providers: [provideNativeDateAdapter()],
   imports: [
     MatSortModule,
     MatTableModule,
     MatButton,
+    DatePipe,
+    NgForOf,
   ],
   templateUrl: './load-version-note.component.html',
   styleUrl: './load-version-note.component.scss',
@@ -19,12 +24,15 @@ import { LoadVersion, LoadVersionActivityNote } from '../model/load-version';
 export class LoadVersionNoteComponent {
   loadVersion = input.required<LoadVersion>();
 
-  loadVersionActivityNotes() {
-    return (this.loadVersion().loadVersionActivities || []).reduce((previousValue: LoadVersionActivityNote[], currentValue) => {
-      return previousValue.concat(currentValue.notes);
-    }, []);
+  unwoundActivities() {
+    return (this.loadVersion().loadVersionActivities || []).flatMap(activity =>
+      activity.notes.map(note => ({
+        ...activity,
+        notes: note
+      }))
+    );
   }
 
-  notesColumns: string[] = ['tags', 'notes', 'createdBy', 'createdTime', 'action'];
+  notesColumns: string[] = ['activityId', 'hashtags', 'notes', 'createdBy', 'createdTime'];
 
 }

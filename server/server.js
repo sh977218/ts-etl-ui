@@ -329,6 +329,9 @@ app.post('/api/loadVersionActivity', async (req, res) => {
 app.post('/api/addActivityNote', async (req, res) => {
   const { loadVersionsCollection } = await mongoCollection();
   const vQA = await loadVersionsCollection.findOne({ requestId: req.body.requestId });
+  if (typeof req.body.activityNote.hashtags === 'string') {
+    req.body.activityNote.hashtags = req.body.activityNote.hashtags.split('\n');
+  }
   if (!vQA.loadVersionActivities.length) {
     await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
       $set: {
