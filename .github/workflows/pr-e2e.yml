@@ -43,12 +43,18 @@ jobs:
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npm run test
 
-      - name: Upload all report to github-pages
-        if: always()
+      - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
         uses: actions/upload-pages-artifact@v3
         with:
           path: playwright-report
 
+      - name: Deploy playwright report to Github Pages
+        if: always()
+        id: deploy-playwright-report-to-github-page
+        uses: actions/deploy-pages@v4
+        with:
+          preview: true
+
       - name: update job summary
         if: always()
-        run: echo "# Deployed all report to ${{ steps.deploy-all-report-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to-github-page.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
