@@ -1,11 +1,13 @@
 import { DatePipe, NgForOf } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { AfterViewInit, Component, input } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSortModule } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { tap } from 'rxjs';
 
-import { LoadVersion } from '../model/load-version';
+import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 
 @Component({
   selector: 'app-load-version-note',
@@ -15,24 +17,62 @@ import { LoadVersion } from '../model/load-version';
     MatSortModule,
     MatTableModule,
     MatButton,
+    ReactiveFormsModule,
     DatePipe,
     NgForOf,
   ],
   templateUrl: './load-version-note.component.html',
   styleUrl: './load-version-note.component.scss',
 })
-export class LoadVersionNoteComponent {
+export class LoadVersionNoteComponent implements AfterViewInit {
   loadVersion = input.required<LoadVersion>();
+  dataSource = new MatTableDataSource<LoadVersionActivity>([]);
 
   unwoundActivities() {
     return (this.loadVersion().loadVersionActivities || []).flatMap(activity =>
       activity.notes.map(note => ({
         ...activity,
-        notes: note
+        notes: [note]
       }))
     );
   }
+  usersList() {
+    return new Set(this.unwoundActivities().map(ua => ua.notes[0].createdBy));
+  }
+  hashtagsList() {
+    return new Set(this.loadVersion().loadVersionActivities.flatMap(activity =>
+      activity.notes.flatMap(note => note.hashtags)
+    ));
+  }
 
   notesColumns: string[] = ['activityId', 'hashtags', 'notes', 'createdBy', 'createdTime'];
+  searchRowColumns = this.notesColumns.map(c => `${c}-search`);
 
+  ngAfterViewInit(): void {
+    this.dataSource = new MatTableDataSource(this.unwoundActivities());
+    this.dataSource.filterPredicate = (data: LoadVersionActivity) => {
+      let hashtagMatched = true;
+      if (this.searchCriteria.getRawValue().hashtags?.length) {
+        hashtagMatched = data.notes[0].hashtags.includes((this.searchCriteria.getRawValue().hashtags || ''));
+      }
+      let createdByMatch = true;
+      if (this.searchCriteria.getRawValue().createdBy?.length) {
+        createdByMatch = data.notes[0].createdBy.toLowerCase().includes((this.searchCriteria.getRawValue().createdBy || '').toLowerCase());
+      }
+      return hashtagMatched && createdByMatch;
+    };
+    this.searchCriteria.valueChanges.pipe(tap({ next: () => this.applyFilter() })).subscribe();
+  }
+
+  searchCriteria = new FormGroup(
+    {
+      hashtags: new FormControl<string | undefined>(undefined),
+      createdBy: new FormControl<string | undefined>(undefined),
+    }, { updateOn: 'change' },
+  );
+
+  applyFilter() {
+    // this line only triggers the filter event, but the 'filter' value is not actually used in 'filterPredicate'.
+    this.dataSource.filter = this.searchCriteria.getRawValue().toString();
+  }
 }
