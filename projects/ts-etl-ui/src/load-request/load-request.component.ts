@@ -22,7 +22,7 @@ import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash';
 import {
-  catchError,
+  catchError, distinctUntilChanged,
   filter,
   map,
   of,
@@ -161,6 +161,7 @@ export class LoadRequestComponent implements AfterViewInit {
               private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
+      .pipe(distinctUntilChanged())
       .subscribe(val => {
         this.router.navigate(['load-requests'], {
           queryParamsHandling: 'merge',
