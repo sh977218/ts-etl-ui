@@ -1,5 +1,4 @@
 import { test, expect, Page, ConsoleMessage } from '@playwright/test';
-import { epic, suite } from 'allure-js-commons';
 
 import { readFileSync } from 'fs';
 
@@ -41,7 +40,6 @@ class MaterialPO {
 
 test.describe('e2e test', async () => {
   test.beforeEach(async ({ page, baseURL }) => {
-    await epic('TS ETL UI');
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
         UNEXPECTED_CONSOLE_LOG.push(consoleMessage.text());
@@ -67,8 +65,6 @@ test.describe('e2e test', async () => {
   });
 
   test('Load Request Tab', async ({ page }) => {
-    await suite('Load Request');
-
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
@@ -132,8 +128,6 @@ test.describe('e2e test', async () => {
   });
 
   test('Version QA Tab', async ({ page }) => {
-    await suite('Version QA');
-
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
@@ -178,8 +172,6 @@ test.describe('e2e test', async () => {
   });
 
   test('Code System Tab', async ({ page }) => {
-    await suite('Code System');
-
     await page.getByRole('link', { name: 'Code System' }).click();
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
   });
