@@ -1,6 +1,7 @@
 import { test, expect, Page, ConsoleMessage } from '@playwright/test';
-import { readFileSync } from 'fs';
 import { epic, suite } from 'allure-js-commons';
+
+import { readFileSync } from 'fs';
 
 const UNEXPECTED_CONSOLE_LOG: string[] = [];
 
@@ -108,7 +109,7 @@ test.describe('e2e test', async () => {
         await route.continue();
       });
 
-      await page.locator('[id="requestIdFilterInput"]').fill('149');
+      await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Regular")')).toBeVisible();
@@ -125,7 +126,7 @@ test.describe('e2e test', async () => {
       await materialPo.checkAndCloseAlert('Export downloaded.');
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
-      expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
+      expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
       expect(fileContent).toContain('"149","HPO","newly created load request","Open","Regular"');
     });
   });

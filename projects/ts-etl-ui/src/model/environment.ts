@@ -6,4 +6,5 @@ export type Environment = {
   logoutUrl: string;
   loginServiceUrl: string,
   apiServer: string
+  newApiServer: string
 }
