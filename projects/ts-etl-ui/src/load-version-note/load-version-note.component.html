@@ -1,7 +1,7 @@
 <form [formGroup]="searchCriteria">
   <fieldset>
     <legend>QA Notes</legend>
-    <table class="mat-elevation-z8 my-3" mat-table [dataSource]="dataSource" matSort>
+    <table class="mat-elevation-z8 my-3" mat-table [dataSource]="dataSource()" matSort>
     <ng-container matColumnDef="activityId">
       <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Activity ID</th>
       <td mat-cell *matCellDef="let activity">{{activity.id | date: 'YYYY-MM-dd'}}</td>

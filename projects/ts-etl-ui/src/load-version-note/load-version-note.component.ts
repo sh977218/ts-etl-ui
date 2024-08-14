@@ -26,7 +26,22 @@ import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 })
 export class LoadVersionNoteComponent implements AfterViewInit {
   loadVersion = input.required<LoadVersion>();
-  dataSource = new MatTableDataSource<LoadVersionActivity>([]);
+
+  dataSource()  {
+    const dataSource = new MatTableDataSource<LoadVersionActivity>(this.unwoundActivities());
+    dataSource.filterPredicate = (data: LoadVersionActivity) => {
+      let hashtagMatched = true;
+      if (this.searchCriteria.getRawValue().hashtags?.length) {
+        hashtagMatched = data.notes[0].hashtags.includes((this.searchCriteria.getRawValue().hashtags || ''));
+      }
+      let createdByMatch = true;
+      if (this.searchCriteria.getRawValue().createdBy?.length) {
+        createdByMatch = data.notes[0].createdBy.toLowerCase().includes((this.searchCriteria.getRawValue().createdBy || '').toLowerCase());
+      }
+      return hashtagMatched && createdByMatch;
+    };
+    return dataSource;
+  }
 
   unwoundActivities() {
     return (this.loadVersion().loadVersionActivities || []).flatMap(activity =>
@@ -49,18 +64,6 @@ export class LoadVersionNoteComponent implements AfterViewInit {
   searchRowColumns = this.notesColumns.map(c => `${c}-search`);
 
   ngAfterViewInit(): void {
-    this.dataSource = new MatTableDataSource(this.unwoundActivities());
-    this.dataSource.filterPredicate = (data: LoadVersionActivity) => {
-      let hashtagMatched = true;
-      if (this.searchCriteria.getRawValue().hashtags?.length) {
-        hashtagMatched = data.notes[0].hashtags.includes((this.searchCriteria.getRawValue().hashtags || ''));
-      }
-      let createdByMatch = true;
-      if (this.searchCriteria.getRawValue().createdBy?.length) {
-        createdByMatch = data.notes[0].createdBy.toLowerCase().includes((this.searchCriteria.getRawValue().createdBy || '').toLowerCase());
-      }
-      return hashtagMatched && createdByMatch;
-    };
     this.searchCriteria.valueChanges.pipe(tap({ next: () => this.applyFilter() })).subscribe();
   }
 
@@ -72,7 +75,6 @@ export class LoadVersionNoteComponent implements AfterViewInit {
   );
 
   applyFilter() {
-    // this line only triggers the filter event, but the 'filter' value is not actually used in 'filterPredicate'.
-    this.dataSource.filter = this.searchCriteria.getRawValue().toString();
+    this.dataSource().filter = this.searchCriteria.getRawValue().toString();
   }
 }

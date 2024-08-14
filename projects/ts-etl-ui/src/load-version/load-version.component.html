@@ -166,7 +166,7 @@
                     <div class="flex justify-between">
                       <app-load-version-acceptance-actions [loadVersion]="row" (actionOutput)="action($event,row)">
                       </app-load-version-acceptance-actions>
-                      <button mat-raised-button color="primary" (click)="openAddNoteModal(row)">Add Note</button>
+                      <button *ngIf="row.loadVersionActivities.length" mat-raised-button color="primary" (click)="openAddNoteModal(row)">Add Note</button>
                     </div>
                     <app-load-version-activity [loadVersion]="row"></app-load-version-activity>
                     <app-load-version-note [loadVersion]="row"></app-load-version-note>
