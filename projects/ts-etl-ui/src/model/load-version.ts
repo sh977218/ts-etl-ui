@@ -88,7 +88,7 @@ export type LoadVersionActivityNote = {
   createdBy: string,
   createdTime: Date,
   notes: string,
-  hashtags: string
+  hashtags: string[]
 }
 
 export type LoadVersion = {

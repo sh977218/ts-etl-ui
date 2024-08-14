@@ -37,29 +37,29 @@ function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-app.post('/api/loadRequests', async (req, res) => {
+app.post('/load-request/list', async (req, res) => {
   const apiStartTime = new Date();
   const { pagination, searchFilters, searchColumns, sortCriteria } = req.body;
   const { pageNum, pageSize } = pagination;
   const { filterRequestTime, filterRequester } = searchFilters;
   const {
-    requestId,
+    opRequestSeq,
     codeSystemName,
     requestSubject,
     requestStatus,
     requestType,
-    requestStartTime,
-    requestEndTime,
+    requestTimeFrom,
+    requestTimeTo,
     requester,
-    creationStartTime,
-    creationEndTime,
+    creationTimeFrom,
+    creationTimeTo,
   } = searchColumns;
   const { sortBy, sortDirection } = sortCriteria;
 
   const $match = {};
   // searchColumns
-  if (requestId) {
-    $match.requestId = Number.parseInt(requestId);
+  if (opRequestSeq) {
+    $match.opRequestSeq = Number.parseInt(opRequestSeq);
   }
   if (codeSystemName) {
     $match.codeSystemName = codeSystemName;
@@ -73,14 +73,14 @@ app.post('/api/loadRequests', async (req, res) => {
   if (requestType) {
     $match.requestType = requestType;
   }
-  if (requestStartTime) {
-    const dateObj = new Date(requestStartTime);
+  if (requestTimeFrom) {
+    const dateObj = new Date(requestTimeFrom);
     $match.requestTime = {
       $gte: dateObj,
     };
   }
-  if (requestEndTime) {
-    const dateObj = new Date(requestEndTime);
+  if (requestTimeTo) {
+    const dateObj = new Date(requestTimeTo);
     if (!$match.requestTime) {
       $match.requestTime = {};
     }
@@ -90,14 +90,14 @@ app.post('/api/loadRequests', async (req, res) => {
     $match.requester = new RegExp(escapeRegex(requester), 'i');
   }
 
-  if (creationStartTime) {
-    const dateObj = new Date(creationStartTime);
+  if (creationTimeFrom) {
+    const dateObj = new Date(creationTimeFrom);
     $match.creationTime = {
       $gte: dateObj,
     };
   }
-  if (creationEndTime) {
-    const dateObj = new Date(creationEndTime);
+  if (creationTimeTo) {
+    const dateObj = new Date(creationTimeTo);
     if (!$match.creationTime) {
       $match.creationTime = {};
     }
@@ -172,15 +172,15 @@ async function getNextLoadRequestSequenceId() {
   return loadRequestsCollection.countDocuments({});
 }
 
-app.delete('/api/loadRequest/:reqId', async (req, res) => {
+app.delete('/api/loadRequest/:opRequestSeq', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
 
-  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
+  const loadRequest = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be canceled');
   }
 
-  await loadRequestsCollection.deleteOne({ requestId: +req.params.reqId });
+  await loadRequestsCollection.deleteOne({ opRequestSeq: +req.params.opRequestSeq });
   res.send();
 });
 
@@ -190,22 +190,22 @@ app.post('/api/loadRequest', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   const result = await loadRequestsCollection.insertOne({
-    requestId: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
+    opRequestSeq: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
   });
 
   const newLoadRequest = await loadRequestsCollection.findOne({ _id: result.insertedId });
-  res.send({ requestId: newLoadRequest.requestId });
+  res.send({ opRequestSeq: newLoadRequest.opRequestSeq });
 });
 
-app.post('/api/loadRequest/:reqId', async (req, res) => {
+app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
   const newLoadRequest = req.body;
   const { loadRequestsCollection } = await mongoCollection();
-  const loadRequest = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
+  const loadRequest = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be edited');
   }
 
-  await loadRequestsCollection.updateOne({ requestId: +req.params.reqId }, {
+  await loadRequestsCollection.updateOne({ requestId: +req.params.opRequestSeq }, {
     $set: {
       codeSystemName: newLoadRequest.codeSystemName,
       sourceFilePath: newLoadRequest.sourceFilePath,
@@ -213,13 +213,13 @@ app.post('/api/loadRequest/:reqId', async (req, res) => {
       notificationEmail: newLoadRequest.notificationEmail,
     },
   });
-  const updatedLR = await loadRequestsCollection.findOne({ requestId: +req.params.reqId });
+  const updatedLR = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
   res.send(updatedLR);
 });
 
-app.get('/api/loadRequest/:requestId', async (req, res) => {
+app.get('/api/loadRequest/:opRequestSeq', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
-  res.send(await loadRequestsCollection.findOne({ requestId: +req.params.requestId }));
+  res.send(await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq }));
 });
 
 app.post('/api/loadVersions', async (req, res) => {
@@ -329,6 +329,9 @@ app.post('/api/loadVersionActivity', async (req, res) => {
 app.post('/api/addActivityNote', async (req, res) => {
   const { loadVersionsCollection } = await mongoCollection();
   const vQA = await loadVersionsCollection.findOne({ requestId: req.body.requestId });
+  if (typeof req.body.activityNote.hashtags === 'string') {
+    req.body.activityNote.hashtags = req.body.activityNote.hashtags.split('\n');
+  }
   if (!vQA.loadVersionActivities.length) {
     await loadVersionsCollection.updateOne({ requestId: req.body.requestId }, {
       $set: {
@@ -380,11 +383,40 @@ app.get('/api/codeSystem/:codeSystemName', async (req, res) => {
   res.send(codeSystem);
 });
 
+app.get('/api/versionStatus/:codeSystemName/:version', async (req, res) => {
+  const { codeSystemName, version } = req.params;
+  const { versionStatusCollection } = await mongoCollection();
+  const versionStatus = await versionStatusCollection.findOne({
+    'summary.Code System Name': codeSystemName,
+    'summary.Version': version,
+  });
+  res.send(versionStatus);
+});
+
+app.get('/api/versionStatusMeta/:codeSystemName', async (req, res) => {
+  const { codeSystemName } = req.params;
+  res.send({
+    codeSystemName,
+    currentVersion: 2023,
+    priorVersion: 2022,
+  });
+});
+
+app.get('/api/serverInfo', async (req, res) => {
+  const pr = getPrNumber();
+  const { db } = await mongoCollection();
+  res.send({ pr, db: db.s.namespace.db });
+});
+
+app.get('/nih-login', (req, res) => {
+  const returnURL = req.query.service;
+  res.render('nih-login', { returnURL: returnURL });
+});
+
+
+/* @todo TS's backend needs to implement the following APIs. */
 // this map simulate UTS ticket to username
 const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
-/*
-@todo TS's backend needs to implement this API.
- */
 app.get('/api/serviceValidate', async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
@@ -420,17 +452,7 @@ app.post('/api/logout', async (req, res) => {
   res.clearCookie('Bearer');
   res.send();
 });
-
-app.get('/api/serverInfo', async (req, res) => {
-  const pr = getPrNumber();
-  const { db } = await mongoCollection();
-  res.send({ pr, db: db.s.namespace.db });
-});
-
-app.get('/nih-login', (req, res) => {
-  const returnURL = req.query.service;
-  res.render('nih-login', { returnURL: returnURL });
-});
+/* @todo END  */
 
 app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });

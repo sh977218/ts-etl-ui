@@ -21,7 +21,7 @@ export type LoadRequestMessage = {
 }
 
 export type LoadRequest = {
-  requestId: string;
+  opRequestSeq: string;
   codeSystemName: string;
   requestSubject: string;
   sourceFilePath: string;
@@ -47,16 +47,16 @@ type LoadRequestPayloadSearchFilters = {
 }
 
 type LoadRequestPayloadSearchColumns = {
-  requestId: string;
+  opRequestSeq: string;
   codeSystemName: string;
   requestSubject: string;
   requestStatus: string;
   requestType: string;
-  requestStartTime: string;
-  requestEndTime: string;
+  requestTimeFrom?: Date;
+  requestTimeTo?: Date;
   requester: string;
-  creationStartTime: string;
-  creationEndTime: string;
+  creationTimeFrom?: Date;
+  creationTimeTo?: Date;
 }
 
 export type LoadRequestPayload = {
@@ -67,30 +67,30 @@ export type LoadRequestPayload = {
 }
 
 export class LoadRequestSearchCriteria {
-  requestId = undefined;
+  opRequestSeq = undefined;
   codeSystemName = '';
   requestSubject = undefined;
   requestStatus = '';
   requestType = '';
-  requestStartTime = undefined;
-  requestEndTime = undefined;
+  requestTimeFrom = undefined;
+  requestTimeTo = undefined;
   requester = undefined;
-  creationStartTime = undefined;
-  creationEndTime = undefined;
+  creationTimeFrom = undefined;
+  creationTimeTo = undefined;
   filterRequestTime = undefined;
   filterRequester = undefined;
 
   constructor(qp: LoadRequestSearchCriteria) {
-    this.requestId = qp.requestId;
+    this.opRequestSeq = qp.opRequestSeq;
     this.codeSystemName = qp.codeSystemName || '';
     this.requestSubject = qp.requestSubject;
     this.requestStatus = qp.requestStatus || '';
     this.requestType = qp.requestType || '';
-    this.requestStartTime = qp.requestStartTime;
-    this.requestEndTime = qp.requestEndTime;
+    this.requestTimeFrom = qp.requestTimeFrom;
+    this.requestTimeTo = qp.requestTimeTo;
     this.requester = qp.requester;
-    this.creationStartTime = qp.creationStartTime;
-    this.creationEndTime = qp.creationEndTime;
+    this.creationTimeFrom = qp.creationTimeFrom;
+    this.creationTimeTo = qp.creationTimeTo;
     this.filterRequestTime = qp.filterRequestTime;
     this.filterRequester = qp.filterRequester;
   }
@@ -102,16 +102,16 @@ export type FlatLoadRequestPayload = {
   pageSize: number,
 
   // searchColumns
-  requestId: string,
+  opRequestSeq: string,
   codeSystemName: string,
   requestSubject: string,
   requestStatus: string,
   requestType: string,
-  requestStartTime: string,
-  requestEndTime: string,
+  requestTimeFrom?: Date,
+  requestTimeTo?: Date,
   requester: string,
-  creationStartTime: string,
-  creationEndTime: string,
+  creationTimeFrom: string,
+  creationTimeTo: string,
 
   // searchFilters
   filterRequestTime: string,
@@ -126,16 +126,16 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
   const {
     pageNum,
     pageSize,
-    requestId,
+    opRequestSeq,
     codeSystemName,
     requestSubject,
     requestStatus,
     requestType,
-    requestStartTime,
-    requestEndTime,
+    requestTimeFrom,
+    requestTimeTo,
     requester,
-    creationStartTime,
-    creationEndTime,
+    creationTimeFrom,
+    creationTimeTo,
     sortBy,
     sortDirection,
     filterRequestTime,
@@ -152,19 +152,19 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
       filterRequester: filterRequester || '',
     },
     searchColumns: {
-      requestId: requestId || '',
+      opRequestSeq: opRequestSeq || '',
       codeSystemName: codeSystemName || '',
       requestSubject: requestSubject || '',
       requestStatus: requestStatus || '',
       requestType: requestType || '',
-      requestStartTime: requestStartTime || '',
-      requestEndTime: requestEndTime || '',
+      requestTimeFrom: requestTimeFrom ? new Date(requestTimeFrom) : undefined,
+      requestTimeTo: requestTimeTo ? new Date(requestTimeTo) : undefined,
       requester: requester || '',
-      creationStartTime: creationStartTime || '',
-      creationEndTime: creationEndTime || '',
+      creationTimeFrom: creationTimeFrom ? new Date(creationTimeFrom) : undefined,
+      creationTimeTo: creationTimeTo ? new Date(creationTimeTo) : undefined,
     },
     sortCriteria: {
-      sortBy: sortBy || 'requestId',
+      sortBy: sortBy || 'opRequestSeq',
       sortDirection: sortDirection || 'asc',
     },
 

@@ -1,6 +1,7 @@
 import { test, expect, Page, ConsoleMessage } from '@playwright/test';
-import { readFileSync } from 'fs';
 import { epic, suite } from 'allure-js-commons';
+
+import { readFileSync } from 'fs';
 
 const UNEXPECTED_CONSOLE_LOG: string[] = [];
 
@@ -108,7 +109,7 @@ test.describe('e2e test', async () => {
         await route.continue();
       });
 
-      await page.locator('[id="requestIdFilterInput"]').fill('149');
+      await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Regular")')).toBeVisible();
@@ -125,7 +126,7 @@ test.describe('e2e test', async () => {
       await materialPo.checkAndCloseAlert('Export downloaded.');
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
-      expect(fileContent).toContain('requestId, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
+      expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
       expect(fileContent).toContain('"149","HPO","newly created load request","Open","Regular"');
     });
   });
@@ -150,6 +151,20 @@ test.describe('e2e test', async () => {
       await materialPo.checkAndCloseAlert('Activity added successfully.');
       await expect(page.locator('app-load-version-activity').getByText('Accepted by me')).toBeVisible();
       await expect(page.locator('app-load-version-note').getByText('Accepted by me')).toBeVisible();
+    });
+
+    await test.step('Add note', async () => {
+      await page.getByRole('button', { name: 'Add Note' }).click();
+      for (const [index, tag] of ['Test.Hashtag1', 'Test.Hashtag2', 'New Test Note'].entries()) {
+        await page.getByPlaceholder('New Hashtag...').fill(tag);
+        await page.keyboard.press('Enter');
+        await expect(page.locator('mat-chip-row')).toHaveCount(index + 1);
+      }
+
+      await page.locator('mat-dialog-content textarea').fill('New Test Note');
+      await page.getByRole('button', { name: 'Save' }).click();
+      await materialPo.checkAndCloseAlert('Activity added successfully.');
+      await expect(page.locator('app-load-version-note').getByText('#Test.Hashtag2')).toBeVisible();
     });
 
     await test.step(`Open QA Report page`, async () => {
