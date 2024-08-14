@@ -1,4 +1,4 @@
-<h2 *ngIf="existingLoadRequest?.requestId; else newReqH2" mat-dialog-title>Edit Request</h2>
+<h2 *ngIf="existingLoadRequest?.opRequestSeq; else newReqH2" mat-dialog-title>Edit Request</h2>
 <ng-template #newReqH2>
   <h2 mat-dialog-title>Request Creation</h2>
 </ng-template>

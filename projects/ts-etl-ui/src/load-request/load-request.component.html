@@ -47,18 +47,18 @@
              [matSortDirection]="currentLoadRequestSearchCriteria.sortCriteria.sortDirection"
              (matSortChange)="handleSortEvent($event)">
 
-        <ng-container matColumnDef="requestId">
+        <ng-container matColumnDef="opRequestSeq">
           <th mat-header-cell *matHeaderCellDef style="padding:0; width: 118px">
             <div class="flex flex-col m-2">
-              <label for="requestIdFilterInput" class="m-2" mat-sort-header disableClear>Request ID</label>
+              <label for="opRequestSeqFilterInput" class="m-2" mat-sort-header disableClear>Request ID</label>
             </div>
           </th>
-          <td mat-cell *matCellDef="let row">{{row.requestId}}</td>
+          <td mat-cell *matCellDef="let row">{{row.opRequestSeq}}</td>
         </ng-container>
-        <ng-container matColumnDef="requestId-search">
+        <ng-container matColumnDef="opRequestSeq-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <input id="requestIdFilterInput" class="w-3/4" matInput formControlName="requestId"
+              <input id="opRequestSeqFilterInput" class="w-3/4" matInput formControlName="opRequestSeq"
                      placeholder="Ex. 148" size="4" type="number">
             </div>
           </th>
@@ -140,8 +140,8 @@
         <ng-container matColumnDef="requestTime">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
-              <label for="requestStartTime" class="m-2" mat-sort-header disableClear>Request Time</label>
-            </div>>
+              <label for="requestTimeFrom" class="m-2" mat-sort-header disableClear>Request Time</label>
+            </div>
           </th>
           <td mat-cell
               *matCellDef="let row">{{row.requestTime.replace(' ', '') | date:'yyyy/MM/dd hh:mma':'GMT+05:00' }}</td>
@@ -149,10 +149,10 @@
         <ng-container matColumnDef="requestTime-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <input id="requestStartTime" matInput class="w-30" formControlName="requestStartTime" type="date"
-                     [max]="searchCriteria.get('requestEndTime')?.getRawValue()">
-              <input id="requestEndTime" matInput class="w-30" formControlName="requestEndTime" type="date"
-                     [min]="searchCriteria.get('requestStartTime')?.getRawValue()">
+              <input id="requestTimeFrom" matInput class="w-30" formControlName="requestTimeFrom" type="date"
+                     [max]="searchCriteria.get('requestTimeTo')?.getRawValue()">
+              <input id="requestTimeTo" matInput class="w-30" formControlName="requestTimeTo" type="date"
+                     [min]="searchCriteria.get('requestTimeFrom')?.getRawValue()">
             </div>
           </th>
         </ng-container>
@@ -176,7 +176,7 @@
         <ng-container matColumnDef="creationTime">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
-              <label for="creationStartTime" class="m-2" mat-sort-header disableClear>Creation Time</label>
+              <label for="creationTimeFrom" class="m-2" mat-sort-header disableClear>Creation Time</label>
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.creationTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
@@ -184,10 +184,10 @@
         <ng-container matColumnDef="creationTime-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <input id="creationStartTime" matInput class="w-30" formControlName="creationStartTime" type="date"
-                     [max]="searchCriteria.get('creationEndTime')?.getRawValue()">
-              <input id="creationEndTime" matInput class="w-30" formControlName="creationEndTime" type="date"
-                     [min]="searchCriteria.get('creationStartTime')?.getRawValue()">
+              <input id="creationTimeFrom" matInput class="w-30" formControlName="creationTimeFrom" type="date"
+                     [max]="searchCriteria.get('creationTimeTo')?.getRawValue()">
+              <input id="creationTimeTo" matInput class="w-30" formControlName="creationTimeTo" type="date"
+                     [min]="searchCriteria.get('creationTimeFrom')?.getRawValue()">
             </div>
           </th>
         </ng-container>
@@ -198,7 +198,7 @@
               <div class="example-element-description" *ngIf="expandedElement === row">
                 <fieldset>
                   <legend>Load Request</legend>
-                  <ng-container *ngIf="row.requestStatus === 'Open' && user?.utsUser!.username === row.requester" >
+                  <ng-container *ngIf="row.requestStatus === 'Open' && user?.utsUser!.username === row.requester">
                     <button mat-fab extended (click)="openEditDialog(row)">
                       Edit
                     </button>

@@ -7,8 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import { environment } from '../environments/environment';
 import { User } from '../model/user';
 
-
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class UserService {
   private _user$ = new BehaviorSubject<User | null | undefined>(undefined);
 
@@ -27,11 +26,11 @@ export class UserService {
       ticket,
       app: 'angular',
     };
-    return this.http.get<User>(`${environment.ticketUrl}`, { params });
+    return this.http.get<User>(`${environment.ticketUrl}`, {params});
   }
 
   logInWithJwt() {
-    return this.http.get<User>(`${environment.loginUrl}`);
+    return this.http.get<User>(`${environment.loginUrl}`)
   }
 
   logOut() {
