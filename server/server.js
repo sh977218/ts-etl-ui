@@ -234,8 +234,8 @@ app.post('/api/loadVersions', async (req, res) => {
     loadNumber,
     loadStartTime,
     loadEndTime,
-    requestStartTime,
-    requestEndTime,
+    requestTimeFrom,
+    requestTimeTo,
   } = searchColumns;
   const { loadVersionsCollection } = await mongoCollection();
   const $match = {};
@@ -257,14 +257,14 @@ app.post('/api/loadVersions', async (req, res) => {
   if (loadNumber) {
     $match.loadNumber = new RegExp(escapeRegex(loadNumber), 'i');
   }
-  if (requestStartTime) {
-    const dateObj = new Date(requestStartTime);
+  if (requestTimeFrom) {
+    const dateObj = new Date(requestTimeFrom);
     $match.requestTime = {
       $gte: dateObj,
     };
   }
-  if (requestEndTime) {
-    const dateObj = new Date(requestEndTime);
+  if (requestTimeTo) {
+    const dateObj = new Date(requestTimeTo);
     if (!$match.requestTime) {
       $match.requestTime = {};
     }
