@@ -20,9 +20,9 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
-import { assign, isEqual } from 'lodash';
+import { assign } from 'lodash';
 import {
-  catchError, distinctUntilChanged,
+  catchError,
   filter,
   map,
   of,
@@ -43,7 +43,6 @@ import {
   generateLoadRequestPayload,
   LoadRequest,
   LoadRequestPayload,
-  LoadRequestSearchCriteria, LoadRequestSearchCriteriaQueryParameter,
   LoadRequestsResponse,
 } from '../model/load-request';
 import { User } from '../model/user';
@@ -52,6 +51,7 @@ import { CODE_SYSTEM_NAMES, LOAD_REQUEST_STATUSES, LOAD_REQUEST_TYPES } from '..
 import { DownloadService } from '../service/download-service';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
+
 
 @Component({
   standalone: true,
@@ -65,8 +65,8 @@ import { UserService } from '../service/user-service';
     MatInputModule,
     MatTableModule,
     MatButtonModule,
-    MatDatepickerModule,
     MatIconModule,
+    MatDatepickerModule,
     MatProgressSpinnerModule,
     MatDialogModule,
     MatSortModule,
@@ -110,27 +110,20 @@ export class LoadRequestComponent implements AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
-  container = new FormGroup({
-    outer: new FormGroup({
-      // inner1: new FormControl<string | undefined>(''),
-      inner2: new FormControl<number>(0),
-    }),
-  });
-
   searchCriteria = new FormGroup(
     {
-      opRequestSeq: new FormControl<number | undefined>(undefined),
-      codeSystemName: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
-      requestSubject: new FormControl<string | undefined>(undefined),
-      requestStatus: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
-      requestType: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
-      requestTimeFrom: new FormControl<string | undefined>(undefined),
-      requestTimeTo: new FormControl<string | undefined>(undefined),
-      requester: new FormControl<string | undefined>(undefined),
-      creationTimeFrom: new FormControl<Date | undefined>(undefined),
-      creationTimeTo: new FormControl<Date | undefined>(undefined),
-      filterRequestTime: new FormControl<Date | undefined>(undefined, { updateOn: 'change' }),
-      filterRequester: new FormControl<string | undefined>(undefined),
+      opRequestSeq: new FormControl(),
+      codeSystemName: new FormControl(null, { updateOn: 'change' }),
+      requestSubject: new FormControl(),
+      requestStatus: new FormControl(null, { updateOn: 'change' }),
+      requestType: new FormControl(null, { updateOn: 'change' }),
+      requestTimeFrom: new FormControl(),
+      requestTimeTo: new FormControl(),
+      requester: new FormControl(),
+      creationTimeFrom: new FormControl(),
+      creationTimeTo: new FormControl(),
+      filterRequestTime: new FormControl(null, { updateOn: 'change' }),
+      filterRequester: new FormControl(),
     }, { updateOn: 'submit' },
   );
 
@@ -167,24 +160,12 @@ export class LoadRequestComponent implements AfterViewInit {
               private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
-      .pipe(
-        distinctUntilChanged((a, b) => {
-          const result = isEqual(a, b);
-          return result;
-        }),
-        tap({
-          next: val => {
-            // @ts-expect-error ignore type
-            const searchCriteriaFromQueryParameter = new LoadRequestSearchCriteriaQueryParameter(val);
-
-            this.router.navigate(['load-requests'], {
-              queryParamsHandling: 'merge',
-              queryParams: { expand: undefined, ...searchCriteriaFromQueryParameter },
-            });
-          },
-        }),
-      )
-      .subscribe();
+      .subscribe(val => {
+        this.router.navigate(['load-requests'], {
+          queryParamsHandling: 'merge',
+          queryParams: { expand: undefined, ...val },
+        });
+      });
   }
 
   ngAfterViewInit() {
@@ -197,8 +178,8 @@ export class LoadRequestComponent implements AfterViewInit {
           map((queryParams: Params) => {
             const qp = { ...queryParams['params'] };
             // update UI from query parameters
-            const searchCriteriaFromQueryParameter = new LoadRequestSearchCriteria(qp);
-            this.searchCriteria.patchValue(searchCriteriaFromQueryParameter, { emitEvent: false, onlySelf: true });
+//            const searchCriteriaFromQueryParameter = new LoadRequestSearchCriteria(qp);
+//            this.searchCriteria.patchValue(searchCriteriaFromQueryParameter as any, { emitEvent: false });
             return qp;
           }),
           map((qp): LoadRequestPayload => {
