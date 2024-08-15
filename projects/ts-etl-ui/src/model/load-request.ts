@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import { SearchPayloadPagination, SearchPayloadSortCriteria } from './search';
 
 export type LoadRequestActivity = {
@@ -66,19 +68,19 @@ export type LoadRequestPayload = {
   sortCriteria: SearchPayloadSortCriteria,
 }
 
-export class LoadRequestSearchCriteria {
-  opRequestSeq = undefined;
-  codeSystemName = '';
-  requestSubject = undefined;
-  requestStatus = '';
-  requestType = '';
-  requestTimeFrom = undefined;
-  requestTimeTo = undefined;
-  requester = undefined;
-  creationTimeFrom = undefined;
-  creationTimeTo = undefined;
-  filterRequestTime = undefined;
-  filterRequester = undefined;
+export class LoadRequestSearchCriteriaQueryParameter {
+  opRequestSeq: number | undefined | null = undefined;
+  codeSystemName: string | undefined | null = '';
+  requestSubject: string | undefined | null = undefined;
+  requestStatus: string | undefined | null = '';
+  requestType: string | undefined | null = '';
+  requestTimeFrom: string | undefined | null = undefined;
+  requestTimeTo: string | undefined | null = undefined;
+  requester: string | undefined | null = undefined;
+  creationTimeFrom: Date | undefined | null = undefined;
+  creationTimeTo: Date | undefined | null = undefined;
+  filterRequestTime: Date | undefined | null = undefined;
+  filterRequester: string | undefined | null = undefined;
 
   constructor(qp: LoadRequestSearchCriteria) {
     this.opRequestSeq = qp.opRequestSeq;
@@ -86,8 +88,50 @@ export class LoadRequestSearchCriteria {
     this.requestSubject = qp.requestSubject;
     this.requestStatus = qp.requestStatus || '';
     this.requestType = qp.requestType || '';
-    this.requestTimeFrom = qp.requestTimeFrom;
-    this.requestTimeTo = qp.requestTimeTo;
+
+    if (qp.requestTimeFrom) {
+      const requestTimeFromDate = new Date(qp.requestTimeFrom);
+      this.requestTimeFrom = moment(requestTimeFromDate).format('YYYY-MM-DD');
+    }
+    if (qp.requestTimeTo) {
+      const requestTimeToDate = new Date(qp.requestTimeTo);
+      this.requestTimeTo = moment(requestTimeToDate).format('YYYY-MM-DD');
+    }
+    this.requester = qp.requester;
+    this.creationTimeFrom = qp.creationTimeFrom;
+    this.creationTimeTo = qp.creationTimeTo;
+    this.filterRequestTime = qp.filterRequestTime;
+    this.filterRequester = qp.filterRequester;
+  }
+}
+
+export class LoadRequestSearchCriteria {
+  opRequestSeq: number | undefined | null = undefined;
+  codeSystemName: string | undefined | null = '';
+  requestSubject: string | undefined | null = undefined;
+  requestStatus: string | undefined | null = '';
+  requestType: string | undefined | null = '';
+  requestTimeFrom: Date | undefined | null = undefined;
+  requestTimeTo: Date | undefined | null = undefined;
+  requester: string | undefined | null = undefined;
+  creationTimeFrom: Date | undefined | null = undefined;
+  creationTimeTo: Date | undefined | null = undefined;
+  filterRequestTime: Date | undefined | null = undefined;
+  filterRequester: string | undefined | null = undefined;
+
+  constructor(qp: LoadRequestSearchCriteriaQueryParameter) {
+    this.opRequestSeq = qp.opRequestSeq;
+    this.codeSystemName = qp.codeSystemName || '';
+    this.requestSubject = qp.requestSubject;
+    this.requestStatus = qp.requestStatus || '';
+    this.requestType = qp.requestType || '';
+
+    if (qp.requestTimeFrom) {
+      this.requestTimeFrom = new Date(qp.requestTimeFrom);
+    }
+    if (qp.requestTimeTo) {
+      this.requestTimeTo = new Date(qp.requestTimeTo);
+    }
     this.requester = qp.requester;
     this.creationTimeFrom = qp.creationTimeFrom;
     this.creationTimeTo = qp.creationTimeTo;
