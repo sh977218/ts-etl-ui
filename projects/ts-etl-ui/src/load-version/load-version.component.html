@@ -166,10 +166,12 @@
                     <div class="flex justify-between">
                       <app-load-version-acceptance-actions [loadVersion]="row" (actionOutput)="action($event,row)">
                       </app-load-version-acceptance-actions>
-                      <button *ngIf="row.loadVersionActivities.length" mat-raised-button color="primary" (click)="openAddNoteModal(row)">Add Note</button>
+                      <button *ngIf="row.loadVersionActivities.length" mat-raised-button color="primary"
+                              (click)="openAddNoteModal(row)">Add Note
+                      </button>
                     </div>
                     <app-load-version-activity [loadVersion]="row"></app-load-version-activity>
-                    <app-load-version-note [loadVersion]="row"></app-load-version-note>
+                    <app-load-version-note [loadVersionActivities]="row.loadVersionActivities"></app-load-version-note>
                   </div>
                 </fieldset>
               </div>
@@ -194,7 +196,8 @@
       </table>
     </div>
 
-    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50]" [pageSize]="10" [showFirstLastButtons]="true"
+    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 50]" [pageSize]="10"
+                   [showFirstLastButtons]="true"
                    aria-label="Select page of load requests"></mat-paginator>
   </div>
 </form>

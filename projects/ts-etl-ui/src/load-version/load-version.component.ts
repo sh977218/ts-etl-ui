@@ -254,6 +254,7 @@ export class LoadVersionComponent implements AfterViewInit {
       .subscribe({
         next: (activityNote: LoadVersionActivityNote) => {
           loadVersion.loadVersionActivities[0].notes.push(activityNote);
+          loadVersion.loadVersionActivities = [...loadVersion.loadVersionActivities];
           this.loadingService.hideLoading();
           this.alertService.addAlert('', 'Note added successfully.');
         }, error: () => {

@@ -2,68 +2,68 @@
   <fieldset>
     <legend>QA Notes</legend>
     <table class="mat-elevation-z8 my-3" mat-table [dataSource]="dataSource()" matSort>
-    <ng-container matColumnDef="activityId">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Activity ID</th>
-      <td mat-cell *matCellDef="let activity">{{activity.id | date: 'YYYY-MM-dd'}}</td>
-    </ng-container>
-    <ng-container matColumnDef="activityId-search">
-      <th mat-header-cell *matHeaderCellDef>
-      </th>
-    </ng-container>
+      <ng-container matColumnDef="activityId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Activity ID</th>
+        <td mat-cell *matCellDef="let activity">{{activity.id | date: 'YYYY-MM-dd'}}</td>
+      </ng-container>
+      <ng-container matColumnDef="activityId-search">
+        <th mat-header-cell *matHeaderCellDef>
+        </th>
+      </ng-container>
 
-    <ng-container matColumnDef="hashtags">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Hashtags</th>
-      <td mat-cell *matCellDef="let activity">
-        <div *ngFor="let tag of activity.notes[0].hashtags">
-          #{{tag}}
-        </div>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="hashtags-search">
-      <th mat-header-cell *matHeaderCellDef>
-        <div class="flex flex-col m-2">
-          <select id="hashtagsFilterInput" class="w-20" formControlName="hashtags">
-            <option value="">ALL</option>
-            <option *ngFor="let u of hashtagsList()">{{u}}</option>
-          </select>
-        </div>
-      </th>
-    </ng-container>
-    <ng-container matColumnDef="notes">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Note</th>
-      <td mat-cell *matCellDef="let activity">{{activity.notes[0].notes}}</td>
-    </ng-container>
-    <ng-container matColumnDef="notes-search">
-      <th mat-header-cell *matHeaderCellDef>
-      </th>
-    </ng-container>
-    <ng-container matColumnDef="createdBy">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>User</th>
-      <td mat-cell *matCellDef="let activity">{{activity.notes[0].createdBy}}</td>
-    </ng-container>
-    <ng-container matColumnDef="createdBy-search">
-      <th mat-header-cell *matHeaderCellDef>
-        <div class="flex flex-col m-2">
-          <select id="createdBySearchInput" class="w-20" formControlName="createdBy">
-            <option value="">ALL</option>
-            <option *ngFor="let u of usersList()">{{u}}</option>
-          </select>
-        </div>
-      </th>
-    </ng-container>
+      <ng-container matColumnDef="hashtags">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Hashtags</th>
+        <td mat-cell *matCellDef="let activity">
+          <div *ngFor="let tag of activity.notes[0].hashtags">
+            #{{tag}}
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="hashtags-search">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="flex flex-col m-2">
+            <select id="hashtagsFilterInput" class="w-20" formControlName="hashtags">
+              <option value="">ALL</option>
+              <option *ngFor="let u of hashtagsList()">{{u}}</option>
+            </select>
+          </div>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="notes">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Note</th>
+        <td mat-cell *matCellDef="let activity">{{activity.notes[0].notes}}</td>
+      </ng-container>
+      <ng-container matColumnDef="notes-search">
+        <th mat-header-cell *matHeaderCellDef>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="createdBy">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>User</th>
+        <td mat-cell *matCellDef="let activity">{{activity.notes[0].createdBy}}</td>
+      </ng-container>
+      <ng-container matColumnDef="createdBy-search">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="flex flex-col m-2">
+            <select id="createdBySearchInput" class="w-20" formControlName="createdBy">
+              <option value="">ALL</option>
+              <option *ngFor="let u of usersList()">{{u}}</option>
+            </select>
+          </div>
+        </th>
+      </ng-container>
 
-    <ng-container matColumnDef="createdTime">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Creation Time</th>
-      <td mat-cell *matCellDef="let activity">{{activity.notes[0].createdTime}}</td>
-    </ng-container>
-    <ng-container matColumnDef="createdTime-search">
-      <th mat-header-cell *matHeaderCellDef>
-      </th>
-    </ng-container>
+      <ng-container matColumnDef="createdTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Creation Time</th>
+        <td mat-cell *matCellDef="let activity">{{activity.notes[0].createdTime}}</td>
+      </ng-container>
+      <ng-container matColumnDef="createdTime-search">
+        <th mat-header-cell *matHeaderCellDef>
+        </th>
+      </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="notesColumns"></tr>
-    <tr mat-header-row *matHeaderRowDef="searchRowColumns"></tr>
-    <tr mat-row *matRowDef="let noteRow; columns: notesColumns"></tr>
-  </table>
+      <tr mat-header-row *matHeaderRowDef="searchRowColumns"></tr>
+      <tr mat-row *matRowDef="let noteRow; columns: notesColumns"></tr>
+    </table>
   </fieldset>
 </form>

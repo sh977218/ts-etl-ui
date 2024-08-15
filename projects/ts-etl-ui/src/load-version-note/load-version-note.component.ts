@@ -1,4 +1,4 @@
-import { DatePipe, NgForOf } from '@angular/common';
+import { DatePipe, JsonPipe, NgForOf } from '@angular/common';
 import { AfterViewInit, Component, computed, input } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -7,7 +7,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { tap } from 'rxjs';
 
-import { LoadVersion, LoadVersionActivity } from '../model/load-version';
+import { LoadVersionActivity } from '../model/load-version';
 
 @Component({
   selector: 'app-load-version-note',
@@ -20,15 +20,25 @@ import { LoadVersion, LoadVersionActivity } from '../model/load-version';
     ReactiveFormsModule,
     DatePipe,
     NgForOf,
+    JsonPipe,
   ],
   templateUrl: './load-version-note.component.html',
   styleUrl: './load-version-note.component.scss',
 })
 export class LoadVersionNoteComponent implements AfterViewInit {
 
-  loadVersion = input.required<LoadVersion>();
+  loadVersionActivities = input.required<LoadVersionActivity[]>();
 
-  dataSource = computed(() =>  {
+  unwoundActivities = computed(() => {
+    return (this.loadVersionActivities() || []).flatMap(activity =>
+      activity.notes.map(note => ({
+        ...activity,
+        notes: [note],
+      })),
+    );
+  });
+
+  dataSource = computed(() => {
     const dataSource = new MatTableDataSource<LoadVersionActivity>(this.unwoundActivities());
     dataSource.filterPredicate = (data: LoadVersionActivity) => {
       let hashtagMatched = true;
@@ -42,22 +52,16 @@ export class LoadVersionNoteComponent implements AfterViewInit {
       return hashtagMatched && createdByMatch;
     };
     return dataSource;
-  })
+  });
 
-  unwoundActivities() {
-    return (this.loadVersion().loadVersionActivities || []).flatMap(activity =>
-      activity.notes.map(note => ({
-        ...activity,
-        notes: [note]
-      }))
-    );
-  }
+
   usersList() {
     return new Set(this.unwoundActivities().map(ua => ua.notes[0].createdBy));
   }
+
   hashtagsList() {
-    return new Set(this.loadVersion().loadVersionActivities.flatMap(activity =>
-      activity.notes.flatMap(note => note.hashtags)
+    return new Set(this.loadVersionActivities().flatMap(activity =>
+      activity.notes.flatMap(note => note.hashtags),
     ));
   }
 
