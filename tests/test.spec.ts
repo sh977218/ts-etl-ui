@@ -157,7 +157,7 @@ test.describe('e2e test', async () => {
 
       await page.locator('mat-dialog-content textarea').fill('New Test Note');
       await page.getByRole('button', { name: 'Save' }).click();
-      await materialPo.checkAndCloseAlert('Activity added successfully.');
+      await materialPo.checkAndCloseAlert('Note added successfully.');
       await expect(page.locator('app-load-version-note').getByText('#Test.Hashtag2')).toBeVisible();
     });
 
