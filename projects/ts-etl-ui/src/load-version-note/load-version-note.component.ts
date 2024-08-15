@@ -1,5 +1,5 @@
 import { DatePipe, NgForOf } from '@angular/common';
-import { AfterViewInit, Component, input } from '@angular/core';
+import { AfterViewInit, Component, computed, input } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -25,9 +25,10 @@ import { LoadVersion, LoadVersionActivity } from '../model/load-version';
   styleUrl: './load-version-note.component.scss',
 })
 export class LoadVersionNoteComponent implements AfterViewInit {
+
   loadVersion = input.required<LoadVersion>();
 
-  dataSource()  {
+  dataSource = computed(() =>  {
     const dataSource = new MatTableDataSource<LoadVersionActivity>(this.unwoundActivities());
     dataSource.filterPredicate = (data: LoadVersionActivity) => {
       let hashtagMatched = true;
@@ -41,7 +42,7 @@ export class LoadVersionNoteComponent implements AfterViewInit {
       return hashtagMatched && createdByMatch;
     };
     return dataSource;
-  }
+  })
 
   unwoundActivities() {
     return (this.loadVersion().loadVersionActivities || []).flatMap(activity =>
