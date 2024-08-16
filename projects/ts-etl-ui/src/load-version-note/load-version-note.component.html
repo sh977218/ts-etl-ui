@@ -8,6 +8,7 @@
       </ng-container>
       <ng-container matColumnDef="activityId-search">
         <th mat-header-cell *matHeaderCellDef>
+          <input id="activityIdInput" class="w-20" formControlName="activityId">
         </th>
       </ng-container>
 
@@ -35,6 +36,7 @@
       </ng-container>
       <ng-container matColumnDef="notes-search">
         <th mat-header-cell *matHeaderCellDef>
+          <input id="noteInput" class="w-20" formControlName="note">
         </th>
       </ng-container>
       <ng-container matColumnDef="createdBy">
@@ -54,7 +56,7 @@
 
       <ng-container matColumnDef="createdTime">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Creation Time</th>
-        <td mat-cell *matCellDef="let activity">{{activity.notes[0].createdTime}}</td>
+        <td mat-cell *matCellDef="let activity">{{activity.notes[0].createdTime | date: 'YYYY-MM-dd HH:mm a'}}</td>
       </ng-container>
       <ng-container matColumnDef="createdTime-search">
         <th mat-header-cell *matHeaderCellDef>
