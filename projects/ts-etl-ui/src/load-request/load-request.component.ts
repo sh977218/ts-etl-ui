@@ -40,6 +40,7 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import {
+  FlatLoadRequestPayload,
   generateLoadRequestPayload,
   LoadRequest,
   LoadRequestPayload,
@@ -112,18 +113,18 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      opRequestSeq: new FormControl(),
-      codeSystemName: new FormControl(null, { updateOn: 'change' }),
-      requestSubject: new FormControl(),
-      requestStatus: new FormControl(null, { updateOn: 'change' }),
-      requestType: new FormControl(null, { updateOn: 'change' }),
-      requestTimeFrom: new FormControl(),
-      requestTimeTo: new FormControl(),
-      requester: new FormControl(),
-      creationTimeFrom: new FormControl(),
-      creationTimeTo: new FormControl(),
-      filterRequestTime: new FormControl(null, { updateOn: 'change' }),
-      filterRequester: new FormControl(),
+      opRequestSeq: new FormControl<string | null>(null),
+      codeSystemName: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestSubject: new FormControl<string | null>(null),
+      requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestType: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestTimeFrom: new FormControl<string | null>(null),
+      requestTimeTo: new FormControl<string | null>(null),
+      requester: new FormControl<string | null>(null),
+      creationTimeFrom: new FormControl<string | null>(null),
+      creationTimeTo: new FormControl<string | null>(null),
+      filterRequestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
+      filterRequester: new FormControl<string | null>(null),
     }, { updateOn: 'submit' },
   );
 
@@ -132,31 +133,21 @@ export class LoadRequestComponent implements AfterViewInit {
       pageNum: 1,
       pageSize: 10,
     },
-    searchFilters: {
-      filterRequestTime: '',
-      filterRequester: '',
-    },
-    searchColumns: {
-      opRequestSeq: '',
-      codeSystemName: '',
-      requestSubject: '',
-      requestStatus: '',
-      requestType: '',
-      requester: '',
-    },
+    searchFilters: {},
+    searchColumns: {},
     sortCriteria: {
       sortDirection: 'asc',
       sortBy: 'requestSubject',
     },
   };
 
-  constructor(public http: HttpClient,
+  constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private router: Router,
-              public dialog: MatDialog,
+              private dialog: MatDialog,
               private loadingService: LoadingService,
               private userService: UserService,
-              public alertService: AlertService,
+              private alertService: AlertService,
               private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
@@ -174,22 +165,45 @@ export class LoadRequestComponent implements AfterViewInit {
       filter(reload => !!reload),
       switchMap(() => {
         return this.activatedRoute.queryParamMap.pipe(
-          // query parameters are always string, convert to number if needed
+          tap({ next: () => this.loadingService.showLoading() }),
+          // update UI from query parameters
           map((queryParams: Params) => {
-            const qp = { ...queryParams['params'] };
-            // update UI from query parameters
-//            const searchCriteriaFromQueryParameter = new LoadRequestSearchCriteria(qp);
-//            this.searchCriteria.patchValue(searchCriteriaFromQueryParameter as any, { emitEvent: false });
-            return qp;
+            const searchCriteriaFromQueryParameter: FlatLoadRequestPayload = {
+              opRequestSeq: queryParams.get('opRequestSeq'),
+              codeSystemName: queryParams.get('codeSystemName'),
+              requestSubject: queryParams.get('requestSubject'),
+              requestStatus: queryParams.get('requestStatus'),
+              requestType: queryParams.get('requestType'),
+              requestTimeFrom: queryParams.get('requestTimeFrom'),
+              requestTimeTo: queryParams.get('requestTimeTo'),
+              requester: queryParams.get('requester'),
+              creationTimeFrom: queryParams.get('creationTimeFrom'),
+              creationTimeTo: queryParams.get('creationTimeTo'),
+              filterRequestTime: queryParams.get('filterRequestTime '),
+              filterRequester: queryParams.get('filterRequester'),
+              pageNum: queryParams.get('pageNum'),
+              pageSize: queryParams.get('pageSize'),
+              sortBy: queryParams.get('sortBy'),
+              sortDirection: queryParams.get('sortDirection'),
+            };
+
+            const searchCriteriaPatch = { ...searchCriteriaFromQueryParameter };
+            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName || '', {
+              emitEvent: false,
+            });
+            this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus || '', {
+              emitEvent: false,
+            });
+            this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType || '', {
+              emitEvent: false,
+            });
+            return searchCriteriaFromQueryParameter;
           }),
-          map((qp): LoadRequestPayload => {
+          switchMap((qp) => {
             const loadRequestPayload: LoadRequestPayload = generateLoadRequestPayload(qp);
+            // store current search/filter criteria for download
             assign(this.currentLoadRequestSearchCriteria, loadRequestPayload);
-            return this.currentLoadRequestSearchCriteria;
-          }),
-          switchMap((loadRequestPayload) => {
-            this.loadingService.showLoading();
-            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, loadRequestPayload)
+            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, this.currentLoadRequestSearchCriteria)
               .pipe(catchError(() => of(null)));
           }),
           map((res: LoadRequestsResponse | null) => {

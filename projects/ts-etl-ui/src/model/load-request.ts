@@ -42,19 +42,19 @@ export type LoadRequest = {
 
 // API request payload
 type LoadRequestPayloadSearchFilters = {
-  filterRequestTime: string;
-  filterRequester: string;
+  filterRequestTime?: string;
+  filterRequester?: string;
 }
 
 type LoadRequestPayloadSearchColumns = {
-  opRequestSeq: string;
-  codeSystemName: string;
-  requestSubject: string;
-  requestStatus: string;
-  requestType: string;
+  opRequestSeq?: string;
+  codeSystemName?: string;
+  requestSubject?: string;
+  requestStatus?: string;
+  requestType?: string;
   requestTimeFrom?: Date;
   requestTimeTo?: Date;
-  requester: string;
+  requester?: string;
   creationTimeFrom?: Date;
   creationTimeTo?: Date;
 }
@@ -66,61 +66,11 @@ export type LoadRequestPayload = {
   sortCriteria: SearchPayloadSortCriteria,
 }
 
-export class LoadRequestSearchCriteria {
-  opRequestSeq = undefined;
-  codeSystemName = '';
-  requestSubject = undefined;
-  requestStatus = '';
-  requestType = '';
-  requestTimeFrom = undefined;
-  requestTimeTo = undefined;
-  requester = undefined;
-  creationTimeFrom = undefined;
-  creationTimeTo = undefined;
-  filterRequestTime = undefined;
-  filterRequester = undefined;
-
-  constructor(qp: LoadRequestSearchCriteria) {
-    this.opRequestSeq = qp.opRequestSeq;
-    this.codeSystemName = qp.codeSystemName || '';
-    this.requestSubject = qp.requestSubject;
-    this.requestStatus = qp.requestStatus || '';
-    this.requestType = qp.requestType || '';
-    this.requestTimeFrom = qp.requestTimeFrom;
-    this.requestTimeTo = qp.requestTimeTo;
-    this.requester = qp.requester;
-    this.creationTimeFrom = qp.creationTimeFrom;
-    this.creationTimeTo = qp.creationTimeTo;
-    this.filterRequestTime = qp.filterRequestTime;
-    this.filterRequester = qp.filterRequester;
-  }
-}
-
-export type FlatLoadRequestPayload = {
-  // pagination
-  pageNum: number,
-  pageSize: number,
-
-  // searchColumns
-  opRequestSeq: string,
-  codeSystemName: string,
-  requestSubject: string,
-  requestStatus: string,
-  requestType: string,
-  requestTimeFrom?: Date,
-  requestTimeTo?: Date,
-  requester: string,
-  creationTimeFrom: string,
-  creationTimeTo: string,
-
-  // searchFilters
-  filterRequestTime: string,
-  filterRequester: string,
-
-  // sortCriteria
-  sortBy: string,
-  sortDirection: string,
-}
+export type FlatLoadRequestPayload =
+  SearchPayloadPagination
+  & LoadRequestPayloadSearchFilters
+  & LoadRequestPayloadSearchColumns
+  & SearchPayloadSortCriteria;
 
 export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadRequestPayload): LoadRequestPayload => {
   const {
