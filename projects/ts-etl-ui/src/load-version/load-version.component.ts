@@ -106,7 +106,6 @@ export class LoadVersionComponent implements AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
-
   searchCriteria = new FormGroup(
     {
       codeSystemName: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
@@ -255,11 +254,12 @@ export class LoadVersionComponent implements AfterViewInit {
       .subscribe({
         next: (activityNote: LoadVersionActivityNote) => {
           loadVersion.loadVersionActivities[0].notes.push(activityNote);
+          loadVersion.loadVersionActivities = [...loadVersion.loadVersionActivities];
           this.loadingService.hideLoading();
-          this.alertService.addAlert('', 'Activity added successfully.');
+          this.alertService.addAlert('', 'Note added successfully.');
         }, error: () => {
           this.loadingService.hideLoading();
-          this.alertService.addAlert('', 'Activity add failed.');
+          this.alertService.addAlert('', 'Note add failed.');
         },
       });
   }
