@@ -44,6 +44,7 @@ jobs:
         run: PR=${{ github.event.number }} npm run test
 
       - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
+        if: always()
         uses: actions/upload-pages-artifact@v3
         with:
           path: playwright-report

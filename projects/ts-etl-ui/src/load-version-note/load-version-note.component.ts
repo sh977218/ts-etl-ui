@@ -12,7 +12,7 @@ import { LoadVersionActivity } from '../model/load-version';
 @Component({
   selector: 'app-load-version-note',
   standalone: true,
-  providers: [provideNativeDateAdapter()],
+  providers: [provideNativeDateAdapter(), DatePipe],
   imports: [
     MatSortModule,
     MatTableModule,
@@ -26,6 +26,9 @@ import { LoadVersionActivity } from '../model/load-version';
   styleUrl: './load-version-note.component.scss',
 })
 export class LoadVersionNoteComponent implements AfterViewInit {
+
+  constructor(private datePipe: DatePipe) {
+  }
 
   loadVersionActivities = input.required<LoadVersionActivity[]>();
 
@@ -49,21 +52,30 @@ export class LoadVersionNoteComponent implements AfterViewInit {
       if (this.searchCriteria.getRawValue().createdBy?.length) {
         createdByMatch = data.notes[0].createdBy.toLowerCase().includes((this.searchCriteria.getRawValue().createdBy || '').toLowerCase());
       }
-      return hashtagMatched && createdByMatch;
+      let activityIdMatch = true;
+      if (this.searchCriteria.getRawValue().activityId?.length) {
+        const dateAsString = this.datePipe.transform(data.id, 'yyyy-MM-dd');
+        activityIdMatch = dateAsString!.toLowerCase().includes((this.searchCriteria.getRawValue().activityId || '').toLowerCase());
+      }
+      let noteMatch = true;
+      if (this.searchCriteria.getRawValue().note?.length) {
+        noteMatch = data.notes[0].notes.toLowerCase().includes((this.searchCriteria.getRawValue().note || '').toLowerCase());
+      }
+      return hashtagMatched && createdByMatch && activityIdMatch && noteMatch;
     };
     return dataSource;
   });
 
 
-  usersList() {
+  usersList = computed(() => {
     return new Set(this.unwoundActivities().map(ua => ua.notes[0].createdBy));
-  }
+  });
 
-  hashtagsList() {
+  hashtagsList = computed(() => {
     return new Set(this.loadVersionActivities().flatMap(activity =>
       activity.notes.flatMap(note => note.hashtags),
     ));
-  }
+  });
 
   notesColumns: string[] = ['activityId', 'hashtags', 'notes', 'createdBy', 'createdTime'];
   searchRowColumns = this.notesColumns.map(c => `${c}-search`);
@@ -74,6 +86,8 @@ export class LoadVersionNoteComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
+      activityId: new FormControl<string | undefined>(undefined),
+      note: new FormControl<string | undefined>(undefined),
       hashtags: new FormControl<string | undefined>(undefined),
       createdBy: new FormControl<string | undefined>(undefined),
     }, { updateOn: 'change' },
