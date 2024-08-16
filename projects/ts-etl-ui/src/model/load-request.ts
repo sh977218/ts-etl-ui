@@ -1,3 +1,8 @@
+import { default as _rollupMoment, Moment } from 'moment';
+import * as _moment from 'moment';
+
+const moment = _rollupMoment || _moment;
+
 import { SearchPayloadPagination, SearchPayloadSortCriteria } from './search';
 
 export type LoadRequestActivity = {
@@ -52,8 +57,8 @@ type LoadRequestPayloadSearchColumns = {
   requestSubject?: string;
   requestStatus?: string;
   requestType?: string;
-  requestTimeFrom?: Date;
-  requestTimeTo?: Date;
+  requestTimeFrom?: Moment;
+  requestTimeTo?: Moment;
   requester?: string;
   creationTimeFrom?: Date;
   creationTimeTo?: Date;
@@ -107,8 +112,8 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
       requestSubject: requestSubject || '',
       requestStatus: requestStatus || '',
       requestType: requestType || '',
-      requestTimeFrom: requestTimeFrom ? new Date(requestTimeFrom) : undefined,
-      requestTimeTo: requestTimeTo ? new Date(requestTimeTo) : undefined,
+      requestTimeFrom: requestTimeFrom ? moment(requestTimeFrom) : undefined,
+      requestTimeTo: requestTimeTo ? moment(requestTimeTo) : undefined,
       requester: requester || '',
       creationTimeFrom: creationTimeFrom ? new Date(creationTimeFrom) : undefined,
       creationTimeTo: creationTimeTo ? new Date(creationTimeTo) : undefined,

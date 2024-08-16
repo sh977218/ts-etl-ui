@@ -21,6 +21,8 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash';
+import { default as _rollupMoment, Moment } from 'moment';
+import * as _moment from 'moment';
 import {
   catchError,
   filter,
@@ -53,6 +55,7 @@ import { DownloadService } from '../service/download-service';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
+const moment = _rollupMoment || _moment;
 
 @Component({
   standalone: true,
@@ -118,8 +121,8 @@ export class LoadRequestComponent implements AfterViewInit {
       requestSubject: new FormControl<string | null>(null),
       requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
       requestType: new FormControl<string | null>(null, { updateOn: 'change' }),
-      requestTimeFrom: new FormControl<string | null>(null),
-      requestTimeTo: new FormControl<string | null>(null),
+      requestTimeFrom: new FormControl<Moment | string | null>(null),
+      requestTimeTo: new FormControl<Moment | string | null>(null),
       requester: new FormControl<string | null>(null),
       creationTimeFrom: new FormControl<string | null>(null),
       creationTimeTo: new FormControl<string | null>(null),
@@ -152,9 +155,18 @@ export class LoadRequestComponent implements AfterViewInit {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
       .subscribe(val => {
+        const queryParams = { expand: undefined, ...val };
+        const requestTimeFrom = val.requestTimeFrom;
+        if (requestTimeFrom) {
+          queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
+        }
+        const requestTimeTo = val.requestTimeTo;
+        if (requestTimeTo) {
+          queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
+        }
         this.router.navigate(['load-requests'], {
           queryParamsHandling: 'merge',
-          queryParams: { expand: undefined, ...val },
+          queryParams,
         });
       });
   }
@@ -187,16 +199,47 @@ export class LoadRequestComponent implements AfterViewInit {
               sortDirection: queryParams.get('sortDirection'),
             };
 
+            /*
+            @TODO find an elegant way to patch the entire form without trigger valueChanges
+             If you patch the entire reactive form, even with `emitEvent: false`, there will be many valueChange triggered, one per changes.
+             So need to patch reactive form's individual property with `emitEvent: false` so it doesn't propagate the valueChange.
+           */
             const searchCriteriaPatch = { ...searchCriteriaFromQueryParameter };
+            if (searchCriteriaPatch.opRequestSeq) {
+              this.searchCriteria.controls.opRequestSeq.patchValue(searchCriteriaPatch.opRequestSeq, {
+                emitEvent: false,
+              });
+            }
             this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName || '', {
               emitEvent: false,
             });
+            if (searchCriteriaPatch.requestSubject) {
+              this.searchCriteria.controls.requestSubject.patchValue(searchCriteriaPatch.requestSubject, {
+                emitEvent: false,
+              });
+            }
             this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus || '', {
               emitEvent: false,
             });
             this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType || '', {
               emitEvent: false,
             });
+            if (searchCriteriaPatch.requestTimeFrom) {
+              this.searchCriteria.controls.requestTimeFrom.patchValue(moment(searchCriteriaPatch.requestTimeFrom), {
+                emitEvent: false,
+              });
+            }
+            if (searchCriteriaPatch.requestTimeTo) {
+              this.searchCriteria.controls.requestTimeTo.patchValue(moment(searchCriteriaPatch.requestTimeTo), {
+                emitEvent: false,
+              });
+            }
+            if (searchCriteriaPatch.requester) {
+              this.searchCriteria.controls.requester.patchValue(searchCriteriaPatch.requester, {
+                emitEvent: false,
+              });
+            }
+
             return searchCriteriaFromQueryParameter;
           }),
           switchMap((qp) => {
