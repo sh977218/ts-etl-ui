@@ -10,7 +10,7 @@ import { TokenInterceptor } from './token-interceptor';
 
 export const MY_FORMATS = {
   parse: {
-    dateInput: 'L',
+    dateInput: 'YYYY-MM-DD',
   },
   display: {
     dateInput: 'YYYY-MM-DD',

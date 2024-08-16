@@ -202,7 +202,7 @@ export class LoadRequestComponent implements AfterViewInit {
             /*
             @TODO find an elegant way to patch the entire form without trigger valueChanges
              If you patch the entire reactive form, even with `emitEvent: false`, there will be many valueChange triggered, one per changes.
-             So need to patch reactive form's individual property with `emitEvent: false` so it doesn't propagate the valueChange.
+             I had to patch reactive form's individual property with `emitEvent: false` so it doesn't propagate the valueChange.
            */
             const searchCriteriaPatch = { ...searchCriteriaFromQueryParameter };
             if (searchCriteriaPatch.opRequestSeq) {
