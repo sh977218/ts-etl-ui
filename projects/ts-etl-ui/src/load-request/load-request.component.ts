@@ -9,6 +9,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -20,6 +21,8 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash';
+import { default as _rollupMoment, Moment } from 'moment';
+import * as _moment from 'moment';
 import {
   catchError,
   filter,
@@ -39,10 +42,10 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import {
+  FlatLoadRequestPayload,
   generateLoadRequestPayload,
   LoadRequest,
   LoadRequestPayload,
-  LoadRequestSearchCriteria,
   LoadRequestsResponse,
 } from '../model/load-request';
 import { User } from '../model/user';
@@ -52,6 +55,7 @@ import { DownloadService } from '../service/download-service';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
+const moment = _rollupMoment || _moment;
 
 @Component({
   standalone: true,
@@ -66,6 +70,7 @@ import { UserService } from '../service/user-service';
     MatTableModule,
     MatButtonModule,
     MatIconModule,
+    MatDatepickerModule,
     MatProgressSpinnerModule,
     MatDialogModule,
     MatSortModule,
@@ -111,18 +116,18 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      opRequestSeq: new FormControl<number | undefined>(undefined),
-      codeSystemName: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
-      requestSubject: new FormControl<string | undefined>(undefined),
-      requestStatus: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
-      requestType: new FormControl<string | undefined>(undefined, { updateOn: 'change' }),
-      requestTimeFrom: new FormControl<Date | undefined>(undefined),
-      requestTimeTo: new FormControl<Date | undefined>(undefined),
-      requester: new FormControl<string | undefined>(undefined),
-      creationTimeFrom: new FormControl<Date | undefined>(undefined),
-      creationTimeTo: new FormControl<Date | undefined>(undefined),
-      filterRequestTime: new FormControl<Date | undefined>(undefined, { updateOn: 'change' }),
-      filterRequester: new FormControl<Date | undefined>(undefined),
+      opRequestSeq: new FormControl<string | null>(null),
+      codeSystemName: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestSubject: new FormControl<string | null>(null),
+      requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestType: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestTimeFrom: new FormControl<Moment | string | null>(null),
+      requestTimeTo: new FormControl<Moment | string | null>(null),
+      requester: new FormControl<string | null>(null),
+      creationTimeFrom: new FormControl<string | null>(null),
+      creationTimeTo: new FormControl<string | null>(null),
+      filterRequestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
+      filterRequester: new FormControl<string | null>(null),
     }, { updateOn: 'submit' },
   );
 
@@ -131,38 +136,37 @@ export class LoadRequestComponent implements AfterViewInit {
       pageNum: 1,
       pageSize: 10,
     },
-    searchFilters: {
-      filterRequestTime: '',
-      filterRequester: '',
-    },
-    searchColumns: {
-      opRequestSeq: '',
-      codeSystemName: '',
-      requestSubject: '',
-      requestStatus: '',
-      requestType: '',
-      requester: '',
-    },
+    searchFilters: {},
+    searchColumns: {},
     sortCriteria: {
       sortDirection: 'asc',
       sortBy: 'requestSubject',
     },
   };
 
-  constructor(public http: HttpClient,
+  constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private router: Router,
-              public dialog: MatDialog,
+              private dialog: MatDialog,
               private loadingService: LoadingService,
               private userService: UserService,
-              public alertService: AlertService,
+              private alertService: AlertService,
               private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
       .subscribe(val => {
+        const queryParams = { expand: undefined, ...val };
+        const requestTimeFrom = val.requestTimeFrom;
+        if (requestTimeFrom) {
+          queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
+        }
+        const requestTimeTo = val.requestTimeTo;
+        if (requestTimeTo) {
+          queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
+        }
         this.router.navigate(['load-requests'], {
           queryParamsHandling: 'merge',
-          queryParams: { expand: undefined, ...val },
+          queryParams,
         });
       });
   }
@@ -173,22 +177,76 @@ export class LoadRequestComponent implements AfterViewInit {
       filter(reload => !!reload),
       switchMap(() => {
         return this.activatedRoute.queryParamMap.pipe(
-          // query parameters are always string, convert to number if needed
+          tap({ next: () => this.loadingService.showLoading() }),
+          // update UI from query parameters
           map((queryParams: Params) => {
-            const qp = { ...queryParams['params'] };
-            // update UI from query parameters
-            const searchCriteriaFromQueryParameter = new LoadRequestSearchCriteria(qp);
-            this.searchCriteria.patchValue(searchCriteriaFromQueryParameter, { emitEvent: false });
-            return qp;
+            const searchCriteriaFromQueryParameter: FlatLoadRequestPayload = {
+              opRequestSeq: queryParams.get('opRequestSeq'),
+              codeSystemName: queryParams.get('codeSystemName'),
+              requestSubject: queryParams.get('requestSubject'),
+              requestStatus: queryParams.get('requestStatus'),
+              requestType: queryParams.get('requestType'),
+              requestTimeFrom: queryParams.get('requestTimeFrom'),
+              requestTimeTo: queryParams.get('requestTimeTo'),
+              requester: queryParams.get('requester'),
+              creationTimeFrom: queryParams.get('creationTimeFrom'),
+              creationTimeTo: queryParams.get('creationTimeTo'),
+              filterRequestTime: queryParams.get('filterRequestTime '),
+              filterRequester: queryParams.get('filterRequester'),
+              pageNum: queryParams.get('pageNum'),
+              pageSize: queryParams.get('pageSize'),
+              sortBy: queryParams.get('sortBy'),
+              sortDirection: queryParams.get('sortDirection'),
+            };
+
+            /*
+            @TODO find an elegant way to patch the entire form without trigger valueChanges
+             If you patch the entire reactive form, even with `emitEvent: false`, there will be many valueChange triggered, one per changes.
+             I had to patch reactive form's individual property with `emitEvent: false` so it doesn't propagate the valueChange.
+           */
+            const searchCriteriaPatch = { ...searchCriteriaFromQueryParameter };
+            if (searchCriteriaPatch.opRequestSeq) {
+              this.searchCriteria.controls.opRequestSeq.patchValue(searchCriteriaPatch.opRequestSeq, {
+                emitEvent: false,
+              });
+            }
+            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName || '', {
+              emitEvent: false,
+            });
+            if (searchCriteriaPatch.requestSubject) {
+              this.searchCriteria.controls.requestSubject.patchValue(searchCriteriaPatch.requestSubject, {
+                emitEvent: false,
+              });
+            }
+            this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus || '', {
+              emitEvent: false,
+            });
+            this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType || '', {
+              emitEvent: false,
+            });
+            if (searchCriteriaPatch.requestTimeFrom) {
+              this.searchCriteria.controls.requestTimeFrom.patchValue(moment(searchCriteriaPatch.requestTimeFrom), {
+                emitEvent: false,
+              });
+            }
+            if (searchCriteriaPatch.requestTimeTo) {
+              this.searchCriteria.controls.requestTimeTo.patchValue(moment(searchCriteriaPatch.requestTimeTo), {
+                emitEvent: false,
+              });
+            }
+            if (searchCriteriaPatch.requester) {
+              this.searchCriteria.controls.requester.patchValue(searchCriteriaPatch.requester, {
+                emitEvent: false,
+              });
+            }
+
+            return searchCriteriaFromQueryParameter;
           }),
-          map((qp): LoadRequestPayload => {
+          switchMap((qp) => {
             const loadRequestPayload: LoadRequestPayload = generateLoadRequestPayload(qp);
+            // store current search/filter criteria for download
             assign(this.currentLoadRequestSearchCriteria, loadRequestPayload);
-            return this.currentLoadRequestSearchCriteria;
-          }),
-          switchMap((loadRequestPayload) => {
-            this.loadingService.showLoading();
-            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, loadRequestPayload)
+            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, this.currentLoadRequestSearchCriteria)
               .pipe(catchError(() => of(null)));
           }),
           map((res: LoadRequestsResponse | null) => {
