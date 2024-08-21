@@ -1,5 +1,5 @@
 import { DatePipe, JsonPipe, NgForOf } from '@angular/common';
-import { AfterViewInit, Component, computed, input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, input, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -36,6 +36,9 @@ type ActivityNoteSortable = {
 export class LoadVersionNoteComponent implements AfterViewInit {
 
   constructor(private datePipe: DatePipe) {
+    effect(() => {
+      this.dataSource().sort = this.sort;
+    });
   }
 
   @ViewChild(MatSort) sort: MatSort;
@@ -76,10 +79,8 @@ export class LoadVersionNoteComponent implements AfterViewInit {
       }
       return hashtagMatched && createdByMatch && activityIdMatch && noteMatch;
     };
-    dataSource.sort = this.sort;
     return dataSource;
   });
-
 
   usersList = computed(() => {
     return new Set(this.unwoundActivities().map(ua => ua.createdBy));
@@ -91,7 +92,7 @@ export class LoadVersionNoteComponent implements AfterViewInit {
     ));
   });
 
-  notesColumns: string[] = ['activityId', 'hashtags', 'notes', 'createdBy', 'createdTime'];
+  notesColumns: string[] = ['activityId', 'hashtags', 'note', 'createdBy', 'createdTime'];
   searchRowColumns = this.notesColumns.map(c => `${c}-search`);
 
   ngAfterViewInit(): void {
