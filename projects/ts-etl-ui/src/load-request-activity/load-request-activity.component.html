@@ -1,9 +1,5 @@
 <fieldset>
   <legend>Load Activities</legend>
-  <mat-form-field>
-    <mat-label>Filter Activity</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Complete" #input>
-  </mat-form-field>
   <table mat-table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="componentName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Component name</th>
@@ -48,10 +44,6 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-    <!-- Row shown when there is no matching data. -->
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-    </tr>
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of activities" [showFirstLastButtons]="true"></mat-paginator>
 </fieldset>
