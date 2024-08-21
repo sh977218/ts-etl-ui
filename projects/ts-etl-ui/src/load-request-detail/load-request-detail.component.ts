@@ -20,7 +20,7 @@ export interface RowElement {
 }
 
 const LABEL_MAPPING: Record<string, string> = {
-  requestId: 'Request ID',
+  opRequestSeq: 'Request ID',
   codeSystemName: 'Code System Name',
   requestSubject: 'Subject',
   sourceFilePath: 'Source File Path',
