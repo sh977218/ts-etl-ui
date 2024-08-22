@@ -61,17 +61,7 @@ export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
   duration(row: LoadRequestActivity) {
     const startDate = new Date(row.startTime);
     const endDate = new Date(row.endTime);
-    const durationMs = endDate.getTime() - startDate.getTime();
-
-    const seconds = Math.floor((durationMs / 1000) % 60);
-    const minutes = Math.floor((durationMs / (1000 * 60)) % 60);
-    const hours = Math.floor((durationMs / (1000 * 60 * 60)) % 24);
-
-    const hoursStr = (hours < 10) ? "0" + hours : hours;
-    const minStr = (minutes < 10) ? "0" + minutes : minutes;
-    const secStr = (seconds < 10) ? "0" + seconds : seconds;
-
-    return  `${hoursStr}:${minStr}:${secStr}`;
+    return endDate.getTime() - startDate.getTime();
   }
 
 }
