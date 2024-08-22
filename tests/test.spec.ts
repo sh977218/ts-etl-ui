@@ -100,7 +100,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly added load request', async () => {
-      await page.route('/api/loadRequests', async route => {
+      await page.route('/load-request/list', async route => {
         await page.waitForTimeout(2000);
         await route.continue();
       });
