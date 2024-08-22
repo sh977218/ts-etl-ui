@@ -152,7 +152,33 @@ app.post('/load-request/list', async (req, res) => {
   const pageNumberInt = pageNum - 1;
   const pageSizeInt = +pageSize;
 
-  const aggregation = [{ $match }, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
+  const lookup = [{
+    $lookup: {
+        from: "loadVersions",
+        localField: "loadNumber",
+        foreignField: "loadNumber",
+        as: "loadVersionData"
+      }
+    },
+    {
+      $addFields: {
+        loadComponents: {
+          $cond: {
+            if: { $eq: [{ $size: "$loadVersionData" }, 0] },
+            then: [],
+            else: { $arrayElemAt: ["$loadVersionData.loadSummary.components", 0] }
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        loadVersionData: 0
+      }
+    }
+  ];
+
+  const aggregation = [{ $match }, ...lookup, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
   const { loadRequestsCollection } = await mongoCollection();
   const loadRequests = await loadRequestsCollection.aggregate(aggregation).toArray();
   const apiEndTime = new Date();
