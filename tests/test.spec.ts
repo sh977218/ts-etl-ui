@@ -144,6 +144,9 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly edited load request', async () => {
+      await page.getByRole('button', { name: 'Reset' }).click();
+      await materialPo.waitForSpinner();
+      
       await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
