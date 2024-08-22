@@ -54,6 +54,12 @@ test.describe('e2e test', async () => {
       await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
     });
 
+    // this api interception is to make network slow, so the spinner can be verified.
+    await page.route('/load-request/list', async route => {
+      await page.waitForTimeout(2000);
+      await route.continue();
+    });
+
     await test.step('login', async () => {
       await page.getByRole('button', { name: 'Log In' }).click();
       await page.getByRole('button', { name: 'UTS' }).click();
@@ -100,11 +106,6 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly added load request', async () => {
-      await page.route('/load-request/list', async route => {
-        await page.waitForTimeout(2000);
-        await route.continue();
-      });
-
       await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
@@ -143,11 +144,6 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly edited load request', async () => {
-      await page.route('/api/loadRequests', async route => {
-        await page.waitForTimeout(2000);
-        await route.continue();
-      });
-
       await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
