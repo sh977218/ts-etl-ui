@@ -205,9 +205,10 @@ app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
     throw new UnauthorizedError('Only Open Requests can be edited');
   }
 
-  await loadRequestsCollection.updateOne({ requestId: +req.params.opRequestSeq }, {
+  await loadRequestsCollection.updateOne({ opRequestSeq: +req.params.opRequestSeq }, {
     $set: {
       codeSystemName: newLoadRequest.codeSystemName,
+      requestType: newLoadRequest.requestType,
       sourceFilePath: newLoadRequest.sourceFilePath,
       requestSubject: newLoadRequest.requestSubject,
       notificationEmail: newLoadRequest.notificationEmail,
