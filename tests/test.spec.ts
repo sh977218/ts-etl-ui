@@ -127,6 +127,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step(`edit load request`, async () => {
+      await page.getByText('newly created load request').click();
       await page.getByRole('button', { name: 'Edit' }).click();
       await matDialog.waitFor();
       await matDialog.getByRole('radio', { name: 'Emergency' }).check();
