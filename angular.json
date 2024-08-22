@@ -112,6 +112,10 @@
               "buildTarget": "ts-etl-ui:build:integration",
               "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
             },
+            "integration-local": {
+              "buildTarget": "ts-etl-ui:build:integration",
+              "proxyConfig": "projects/ts-etl-ui/src/proxy-integration-local.conf.json"
+            },
             "ci": {
               "buildTarget": "ts-etl-ui:build:ci"
             }

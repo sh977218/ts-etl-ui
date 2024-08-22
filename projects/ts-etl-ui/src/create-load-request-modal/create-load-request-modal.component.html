@@ -42,7 +42,7 @@
         <mat-radio-group aria-label-by="load-request-type-label" id="load-request-type-radio"
                          formControlName="requestType">
           <div class="ml-20">
-            <mat-radio-button *ngFor="let LOAD_REQUEST_TYPE of LOAD_REQUEST_TYPES"
+            <mat-radio-button *ngFor="let LOAD_REQUEST_TYPE of ['Emergency', 'Regular', 'Scheduled']"
                               [value]="LOAD_REQUEST_TYPE"
                               class="block">{{LOAD_REQUEST_TYPE}}</mat-radio-button>
             <ng-container *ngIf="loadRequestCreationForm.get('type')?.value === 'Scheduler'">
