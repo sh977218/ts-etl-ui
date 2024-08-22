@@ -242,7 +242,11 @@ app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
   });
   const updatedLR = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
   const updatedLV = await loadVersionsCollection.findOne({ requestId: +req.params.opRequestSeq });
-  updatedLR.loadComponents = updatedLV.loadComponents || [];
+  if (updatedLV && updatedLV.loadComponents) {
+    updatedLR.loadComponents = [updatedLV.loadComponents];
+  } else {
+    updatedLR.loadComponents = [];
+  }
   res.send(updatedLR);
 });
 
