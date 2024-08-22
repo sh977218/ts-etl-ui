@@ -1,13 +1,21 @@
 import { DatePipe, JsonPipe, NgForOf } from '@angular/common';
-import { AfterViewInit, Component, computed, input } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, input, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatSortModule } from '@angular/material/sort';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { tap } from 'rxjs';
 
 import { LoadVersionActivity } from '../model/load-version';
+
+type ActivityNoteSortable = {
+  activityId: Date;
+  createdTime: Date;
+  createdBy: string;
+  note: string;
+  hashtags: string[];
+}
 
 @Component({
   selector: 'app-load-version-note',
@@ -28,47 +36,54 @@ import { LoadVersionActivity } from '../model/load-version';
 export class LoadVersionNoteComponent implements AfterViewInit {
 
   constructor(private datePipe: DatePipe) {
+    effect(() => {
+      this.dataSource().sort = this.sort;
+    });
   }
+
+  @ViewChild(MatSort) sort: MatSort;
 
   loadVersionActivities = input.required<LoadVersionActivity[]>();
 
   unwoundActivities = computed(() => {
     return (this.loadVersionActivities() || []).flatMap(activity =>
       activity.notes.map(note => ({
-        ...activity,
-        notes: [note],
+        activityId: activity.id!,
+        note: note.notes,
+        hashtags: note.hashtags,
+        createdBy: note.createdBy,
+        createdTime: note.createdTime
       })),
     );
   });
 
   dataSource = computed(() => {
-    const dataSource = new MatTableDataSource<LoadVersionActivity>(this.unwoundActivities());
-    dataSource.filterPredicate = (data: LoadVersionActivity) => {
+    const dataSource = new MatTableDataSource<ActivityNoteSortable>(this.unwoundActivities());
+    dataSource.filterPredicate = (data: ActivityNoteSortable) => {
       let hashtagMatched = true;
       if (this.searchCriteria.getRawValue().hashtags?.length) {
-        hashtagMatched = data.notes[0].hashtags.includes((this.searchCriteria.getRawValue().hashtags || ''));
+        hashtagMatched = data.hashtags.includes((this.searchCriteria.getRawValue().hashtags || ''));
       }
       let createdByMatch = true;
       if (this.searchCriteria.getRawValue().createdBy?.length) {
-        createdByMatch = data.notes[0].createdBy.toLowerCase().includes((this.searchCriteria.getRawValue().createdBy || '').toLowerCase());
+        createdByMatch = data.createdBy.toLowerCase().includes((this.searchCriteria.getRawValue().createdBy || '').toLowerCase());
       }
       let activityIdMatch = true;
       if (this.searchCriteria.getRawValue().activityId?.length) {
-        const dateAsString = this.datePipe.transform(data.id, 'yyyy-MM-dd');
+        const dateAsString = this.datePipe.transform(data.activityId, 'yyyy-MM-dd');
         activityIdMatch = dateAsString!.toLowerCase().includes((this.searchCriteria.getRawValue().activityId || '').toLowerCase());
       }
       let noteMatch = true;
       if (this.searchCriteria.getRawValue().note?.length) {
-        noteMatch = data.notes[0].notes.toLowerCase().includes((this.searchCriteria.getRawValue().note || '').toLowerCase());
+        noteMatch = data.note.toLowerCase().includes((this.searchCriteria.getRawValue().note || '').toLowerCase());
       }
       return hashtagMatched && createdByMatch && activityIdMatch && noteMatch;
     };
     return dataSource;
   });
 
-
   usersList = computed(() => {
-    return new Set(this.unwoundActivities().map(ua => ua.notes[0].createdBy));
+    return new Set(this.unwoundActivities().map(ua => ua.createdBy));
   });
 
   hashtagsList = computed(() => {
@@ -77,7 +92,7 @@ export class LoadVersionNoteComponent implements AfterViewInit {
     ));
   });
 
-  notesColumns: string[] = ['activityId', 'hashtags', 'notes', 'createdBy', 'createdTime'];
+  notesColumns: string[] = ['activityId', 'hashtags', 'note', 'createdBy', 'createdTime'];
   searchRowColumns = this.notesColumns.map(c => `${c}-search`);
 
   ngAfterViewInit(): void {
@@ -96,4 +111,5 @@ export class LoadVersionNoteComponent implements AfterViewInit {
   applyFilter() {
     this.dataSource().filter = this.searchCriteria.getRawValue().toString();
   }
+
 }

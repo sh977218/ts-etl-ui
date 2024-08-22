@@ -1,6 +1,6 @@
 {
   "/portal-backend/api": {
-    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend/api",
+    "target": "http://localhost:3001/api",
     "secure": false,
     "pathRewrite": {
       "^/portal-backend/api": ""
@@ -8,7 +8,7 @@
     "changeOrigin": true
   },
   "/portal-backend/newApi": {
-    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend",
+    "target": "http://localhost:3001",
     "secure": false,
     "pathRewrite": {
       "^/portal-backend/newApi": ""
@@ -16,7 +16,7 @@
     "changeOrigin": true
   },
   "/ticketUrl": {
-    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend/user/serviceValidate",
+    "target": "http://localhost:3001/user/serviceValidate",
     "secure": false,
     "pathRewrite": {
       "^/ticketUrl": ""
@@ -24,7 +24,7 @@
     "changeOrigin": true
   },
   "/loginUrl": {
-    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend/user/loginUrl",
+    "target": "http://localhost:3001/user/login",
     "secure": false,
     "pathRewrite": {
       "^/loginUrl": ""
@@ -32,7 +32,7 @@
     "changeOrigin": true
   },
   "/logoutUrl": {
-    "target": "https://tsdata-dev.nlm.nih.gov/portal-backend/user/logoutUrl",
+    "target": "http://localhost:3001/user/logout",
     "secure": false,
     "pathRewrite": {
       "^/logoutUrl": ""

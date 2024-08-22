@@ -20,8 +20,7 @@ export const LOAD_REQUEST_TYPES = [
   'Emergency',
   'Regular',
   'Master Job',
-  'Test',
-  'Scheduler',
+  'Scheduled',
 ];
 
 export const VERSION_STATUSES = [
