@@ -154,28 +154,28 @@ app.post('/load-request/list', async (req, res) => {
 
   const lookup = [{
     $lookup: {
-        from: "loadVersions",
-        localField: "loadNumber",
-        foreignField: "loadNumber",
-        as: "loadVersionData"
-      }
+      from: 'loadVersions',
+      localField: 'loadNumber',
+      foreignField: 'loadNumber',
+      as: 'loadVersionData',
     },
+  },
     {
       $addFields: {
         loadComponents: {
           $cond: {
-            if: { $eq: [{ $size: "$loadVersionData" }, 0] },
+            if: { $eq: [{ $size: '$loadVersionData' }, 0] },
             then: [],
-            else: { $arrayElemAt: ["$loadVersionData.loadSummary.components", 0] }
-          }
-        }
-      }
+            else: { $arrayElemAt: ['$loadVersionData.loadSummary.components', 0] },
+          },
+        },
+      },
     },
     {
       $project: {
-        loadVersionData: 0
-      }
-    }
+        loadVersionData: 0,
+      },
+    },
   ];
 
   const aggregation = [{ $match }, ...lookup, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
@@ -225,7 +225,7 @@ app.post('/api/loadRequest', async (req, res) => {
 
 app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
   const newLoadRequest = req.body;
-  const { loadRequestsCollection } = await mongoCollection();
+  const { loadRequestsCollection, loadVersionsCollection } = await mongoCollection();
   const loadRequest = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be edited');
@@ -241,6 +241,8 @@ app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
     },
   });
   const updatedLR = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
+  const updatedLV = await loadVersionsCollection.findOne({ requestId: +req.params.opRequestSeq });
+  updatedLR.loadComponents = updatedLV.loadComponents || [];
   res.send(updatedLR);
 });
 
