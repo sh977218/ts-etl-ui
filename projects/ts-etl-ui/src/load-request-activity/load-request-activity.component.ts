@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+import { CommonModule, DatePipe, NgIf } from '@angular/common';
 import {
   AfterViewInit,
   Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit, ViewChild,
@@ -17,7 +17,9 @@ import { LoadRequestActivity } from '../model/load-request';
 @Component({
   selector: 'app-load-request-activity',
   standalone: true,
+  providers: [DatePipe],
   imports: [
+    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
@@ -42,9 +44,7 @@ export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
     'endTime',
     'duration',
     'status',
-    'messageType',
-    'message',
-    'creationTime',
+    'nbOfMessages',
   ];
 
   dataSource: MatTableDataSource<LoadRequestActivity> = new MatTableDataSource<LoadRequestActivity>([]);
@@ -56,6 +56,12 @@ export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  duration(row: LoadRequestActivity) {
+    const startDate = new Date(row.startTime);
+    const endDate = new Date(row.endTime);
+    return endDate.getTime() - startDate.getTime();
   }
 
 }

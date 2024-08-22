@@ -5,14 +5,22 @@ const moment = _rollupMoment || _moment;
 
 import { SearchPayloadPagination, SearchPayloadSortCriteria } from './search';
 
+export type Message = {
+  message: string;
+  creationTime: Date;
+  tag: string;
+  messageType: string;
+}
+
 export type LoadRequestActivity = {
   componentName: string;
   startTime: string;
   endTime: string;
   duration: string;
   status: string;
-  messageType: string;
-  message: string;
+  infos: Message[];
+  warnings: Message[];
+  errors: Message[];
   creationTime: string;
 }
 
