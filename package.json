@@ -20,6 +20,7 @@
     "test": "playwright test --project=chromium",
     "test:smoke": "playwright test --project=debug",
     "test:debug": "playwright test --project=debug --debug",
+    "test:ui": "playwright test --project=chromium --ui",
     "prepare": "husky"
   },
   "private": true,
