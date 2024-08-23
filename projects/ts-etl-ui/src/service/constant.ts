@@ -1,42 +1,23 @@
 export const CODE_SYSTEM_NAMES = [
-  'ATC'
-  ,
-  'CDT'
-  ,
-  'CPT'
-  ,
-  'DRUGBANK'
-  ,
-  'GS'
-  ,
-  'HCPCS'
-  ,
-  'HPO'
-  ,
-  'ICD10CM'
-  ,
-  'ICD10PCS'
-  ,
-  'LOINC'
-  ,
-  'MESH'
-  ,
-  'MMSL'
-  ,
-  'MTHSPL'
-  ,
-  'RXNORM'
-  ,
-  'SNOMEDCT'
-  ,
-  'SNOMEDCT_VET'
-  ,
-  'UNII'
-  ,
-  'USP'
-  ,
+  'ATC',
+  'CDT',
+  'CPT',
+  'DRUGBANK',
+  'GS',
+  'HCPCS',
+  'HPO',
+  'ICD10CM',
+  'ICD10PCS',
+  'LOINC',
+  'MESH',
+  'MMSL',
+  'MTHSPL',
+  'RXNORM',
+  'SNOMEDCT',
+  'SNOMEDCT_VET',
+  'UNII',
+  'USP',
   'VANDF',
-
 ];
 
 export const LOAD_REQUEST_STATUSES = [
