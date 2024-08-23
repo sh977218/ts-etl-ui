@@ -82,6 +82,10 @@ test.describe('e2e test', async () => {
       await page.waitForTimeout(2000);
       await route.continue();
     });
+    await page.route('/api/loadRequest/', async route => {
+      await page.waitForTimeout(2000);
+      await route.continue();
+    });
 
     await test.step('add load request', async () => {
       await page.getByRole('button', { name: 'Create Request' }).click();
