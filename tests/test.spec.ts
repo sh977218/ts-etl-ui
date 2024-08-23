@@ -169,35 +169,28 @@ test.describe('e2e test', async () => {
     });
 
     await test.step(`cancel load request`, async () => {
-      await page.getByText('newly created load request').click();
-      await page.getByRole('button', { name: 'Edit' }).click();
+      await page.getByText('newly edited load request').click();
+      await page.getByRole('button', { name: 'Cancel' }).click();
       await matDialog.waitFor();
-      await matDialog.getByRole('radio', { name: 'Emergency' }).check();
-      await matDialog.getByLabel('Code System Name').click();
-      await page.getByRole('option', { name: 'CPT' }).click();
-      await matDialog.getByLabel('Request Subject').fill('newly edited load request');
-      await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/nlmsombaserver.nlm.nih.gov/dev-ts-data-import/june-26-2024');
-      await expect(matDialog.getByLabel('Source File Path')).toHaveValue(/file:\/\/nlmsombaserver\.nlm\.nih\.gov\/dev-ts-data-import\//);
-      await matDialog.getByLabel('Notification Email').fill('playwright-edit@example.com');
-      await matDialog.getByRole('button', { name: 'Submit' }).click();
+      await matDialog.getByRole('button', { name: 'Confirm' }).click();
       await matDialog.waitFor({ state: 'hidden' });
-      await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) edited successfully/);
+      await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) deleted successfully/);
     });
 
-    await test.step('search for newly canceled load request', async () => {
+    await test.step('search for newly cancelled load request', async () => {
       await page.getByRole('button', { name: 'Reset' }).click();
       await materialPo.waitForSpinner();
 
-      await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
+      await page.locator('[id="requestStatusInput"]').selectOption('Cancelled');
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
       await expect(page.locator('td:has-text("CPT")')).toBeVisible();
-      await expect(page.getByText('newly edited load request')).toBeVisible();
+      await expect(page.locator('td:has-text("Cancelled")')).toBeVisible();
       await expect(page.getByText('newly edited load request')).toBeVisible();
     });
 
-    await test.step(`download newly canceled load request`, async () => {
+    await test.step(`download newly cancelled load request`, async () => {
       const [, downloadFile] = await Promise.all([
         page.getByRole('button', { name: 'Download' }).click(),
         page.waitForEvent('download')],
@@ -207,7 +200,7 @@ test.describe('e2e test', async () => {
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","CPT","newly edited load request","Canceled","Emergency"');
+      expect(fileContent).toContain('"149","CPT","newly edited load request","cancelled","Emergency"');
     });
 
   });
