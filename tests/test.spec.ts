@@ -82,6 +82,10 @@ test.describe('e2e test', async () => {
       await page.waitForTimeout(2000);
       await route.continue();
     });
+    await page.route('/api/loadRequest/', async route => {
+      await page.waitForTimeout(2000);
+      await route.continue();
+    });
 
     await test.step('add load request', async () => {
       await page.getByRole('button', { name: 'Create Request' }).click();
@@ -166,6 +170,37 @@ test.describe('e2e test', async () => {
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
       expect(fileContent).toContain('"149","CPT","newly edited load request","Open","Emergency"');
+    });
+
+    await test.step(`cancel load request`, async () => {
+      await page.getByText('newly edited load request').click();
+      await page.getByRole('button', { name: 'Cancel' }).click();
+      await matDialog.waitFor();
+      await matDialog.getByRole('button', { name: 'Confirm' }).click();
+      await matDialog.waitFor({ state: 'hidden' });
+      await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) deleted successfully/);
+    });
+
+    await test.step('search for newly cancelled load request', async () => {
+      await page.locator('[id="requestStatusInput"]').selectOption('Cancelled');
+      await materialPo.waitForSpinner();
+      await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
+      await expect(page.locator('td:has-text("CPT")')).toBeVisible();
+      await expect(page.locator('td:has-text("Cancelled")')).toBeVisible();
+      await expect(page.getByText('newly edited load request')).toBeVisible();
+    });
+
+    await test.step(`download newly cancelled load request`, async () => {
+      const [, downloadFile] = await Promise.all([
+        page.getByRole('button', { name: 'Download' }).click(),
+        page.waitForEvent('download')],
+      );
+
+      await materialPo.checkAndCloseAlert('Export downloaded.');
+
+      const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
+      expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
+      expect(fileContent).toContain('"149","CPT","newly edited load request","Cancelled","Emergency"');
     });
 
   });
