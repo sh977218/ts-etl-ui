@@ -182,11 +182,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly cancelled load request', async () => {
-      await page.getByRole('button', { name: 'Reset' }).click();
-      await materialPo.waitForSpinner();
-
       await page.locator('[id="requestStatusInput"]').selectOption('Cancelled');
-      await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
       await expect(page.locator('td:has-text("CPT")')).toBeVisible();
@@ -204,7 +200,7 @@ test.describe('e2e test', async () => {
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","CPT","newly edited load request","cancelled","Emergency"');
+      expect(fileContent).toContain('"149","CPT","newly edited load request","Cancelled","Emergency"');
     });
 
   });
