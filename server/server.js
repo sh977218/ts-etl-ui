@@ -436,7 +436,7 @@ app.get('/api/versionStatusMeta/:codeSystemName', async (req, res) => {
   });
 });
 
-app.get('/api/property/:propertyName', async (req, res) => {
+app.get('/property/:propertyName', async (req, res) => {
   const apiStartTime = new Date();
   const { propertyName } = req.params;
   const { propertyCollection } = await mongoCollection();
