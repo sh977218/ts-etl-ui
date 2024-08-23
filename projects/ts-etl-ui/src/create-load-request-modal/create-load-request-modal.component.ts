@@ -1,4 +1,4 @@
-import { NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Inject, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { LoadRequest } from '../model/load-request';
 import { sourceFilePathValidator } from '../service/app.validator';
-import { CODE_SYSTEM_NAMES, LOAD_REQUEST_TYPES } from '../service/constant';
+import { ConstantService } from '../service/constant-service';
 import { UserService } from '../service/user-service';
 
 @Component({
@@ -40,6 +40,7 @@ import { UserService } from '../service/user-service';
     MatDatepicker,
     MatDatepickerInput,
     MatDatepickerToggle,
+    AsyncPipe,
   ],
   templateUrl: './create-load-request-modal.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -78,6 +79,7 @@ export class CreateLoadRequestModalComponent {
 
   constructor(
     public userService: UserService,
+    public constantService: ConstantService,
     @Inject(MAT_DIALOG_DATA) public existingLoadRequest: LoadRequest) {
     userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''));
     this.loadRequestCreationForm.get('type')?.valueChanges.subscribe(value => {
@@ -110,7 +112,4 @@ export class CreateLoadRequestModalComponent {
       }
     }
   }
-
-  protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
-  protected readonly LOAD_REQUEST_TYPES = LOAD_REQUEST_TYPES;
 }

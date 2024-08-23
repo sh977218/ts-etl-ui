@@ -443,7 +443,7 @@ app.get('/api/property/:propertyName', async (req, res) => {
   const property = await propertyCollection.findOne({ propertyName });
   const list = property.value;
   const apiEndTime = new Date();
-  return {
+  res.send({
     result: {
       data: list.map(item => {
         return {
@@ -455,7 +455,7 @@ app.get('/api/property/:propertyName', async (req, res) => {
     },
     service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
     status: { success: true },
-  };
+  });
 });
 
 

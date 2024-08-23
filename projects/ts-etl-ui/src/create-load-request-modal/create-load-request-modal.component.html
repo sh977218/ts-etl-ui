@@ -9,7 +9,7 @@
         <mat-label>Code System Name</mat-label>
         <mat-select placeholder="Code System Name" formControlName="codeSystemName">
           <mat-option value="">Select Code System</mat-option>
-          <mat-option *ngFor="let CODE_SYSTEM_NAME of CODE_SYSTEM_NAMES"
+          <mat-option *ngFor="let CODE_SYSTEM_NAME of constantService.CODE_SYSTEM_NAMES"
                       [value]="CODE_SYSTEM_NAME">{{CODE_SYSTEM_NAME}}</mat-option>
         </mat-select>
       </mat-form-field>
