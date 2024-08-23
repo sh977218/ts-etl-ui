@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, input, ViewChild } from '@angular/core';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -36,7 +36,7 @@ type MessageUI = {
 })
 export class LoadRequestMessageComponent implements AfterViewInit {
 
-  @Input() loadRequestActivities: LoadRequestActivity[] = [];
+  loadRequestActivities = input<LoadRequestActivity[]>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -52,7 +52,7 @@ export class LoadRequestMessageComponent implements AfterViewInit {
 
   dataSource = computed(() => {
     const messages: MessageUI[] = [];
-    this.loadRequestActivities.forEach(m => {
+    this.loadRequestActivities().forEach(m => {
       m.infos.forEach(i => {
         messages.push({
           componentName: m.componentName,
@@ -60,8 +60,8 @@ export class LoadRequestMessageComponent implements AfterViewInit {
           messageType: i.messageType,
           message: i.message,
           tag: i.tag,
-          creationTime: i.creationTime
-        })
+          creationTime: i.creationTime,
+        });
       });
       m.warnings.forEach(i => {
         messages.push({
@@ -70,8 +70,8 @@ export class LoadRequestMessageComponent implements AfterViewInit {
           messageType: i.messageType,
           message: i.message,
           tag: i.tag,
-          creationTime: i.creationTime
-        })
+          creationTime: i.creationTime,
+        });
       });
       m.errors.forEach(i => {
         messages.push({
@@ -80,10 +80,10 @@ export class LoadRequestMessageComponent implements AfterViewInit {
           messageType: i.messageType,
           message: i.message,
           tag: i.tag,
-          creationTime: i.creationTime
-        })
+          creationTime: i.creationTime,
+        });
       });
-    })
+    });
 
     const datasource = new MatTableDataSource<MessageUI>(messages);
     return datasource;

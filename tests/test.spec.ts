@@ -77,6 +77,12 @@ test.describe('e2e test', async () => {
 
     await expect(page.getByRole('table').locator('tbody tr.example-element-row')).not.toHaveCount(0);
 
+    // this api interception is to make network slow, so the spinner can be verified.
+    await page.route('/load-request/list', async route => {
+      await page.waitForTimeout(2000);
+      await route.continue();
+    });
+
     await test.step('add load request', async () => {
       await page.getByRole('button', { name: 'Create Request' }).click();
       await matDialog.waitFor();
@@ -100,11 +106,6 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly added load request', async () => {
-      await page.route('/api/loadRequests', async route => {
-        await page.waitForTimeout(2000);
-        await route.continue();
-      });
-
       await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
@@ -113,7 +114,7 @@ test.describe('e2e test', async () => {
       await expect(page.getByText('newly created load request')).toBeVisible();
     });
 
-    await test.step(`download`, async () => {
+    await test.step(`download newly added load request`, async () => {
       const [, downloadFile] = await Promise.all([
         page.getByRole('button', { name: 'Download' }).click(),
         page.waitForEvent('download')],
@@ -125,6 +126,48 @@ test.describe('e2e test', async () => {
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
       expect(fileContent).toContain('"149","HPO","newly created load request","Open","Regular"');
     });
+
+    await test.step(`edit load request`, async () => {
+      await page.getByText('newly created load request').click();
+      await page.getByRole('button', { name: 'Edit' }).click();
+      await matDialog.waitFor();
+      await matDialog.getByRole('radio', { name: 'Emergency' }).check();
+      await matDialog.getByLabel('Code System Name').click();
+      await page.getByRole('option', { name: 'CPT' }).click();
+      await matDialog.getByLabel('Request Subject').fill('newly edited load request');
+      await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/nlmsombaserver.nlm.nih.gov/dev-ts-data-import/june-26-2024');
+      await expect(matDialog.getByLabel('Source File Path')).toHaveValue(/file:\/\/nlmsombaserver\.nlm\.nih\.gov\/dev-ts-data-import\//);
+      await matDialog.getByLabel('Notification Email').fill('playwright-edit@example.com');
+      await matDialog.getByRole('button', { name: 'Submit' }).click();
+      await matDialog.waitFor({ state: 'hidden' });
+      await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) edited successfully/);
+    });
+
+    await test.step('search for newly edited load request', async () => {
+      await page.getByRole('button', { name: 'Reset' }).click();
+      await materialPo.waitForSpinner();
+
+      await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.waitForSpinner();
+      await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
+      await expect(page.locator('td:has-text("CPT")')).toBeVisible();
+      await expect(page.getByText('newly edited load request')).toBeVisible();
+    });
+
+    await test.step(`download newly edited load request`, async () => {
+      const [, downloadFile] = await Promise.all([
+        page.getByRole('button', { name: 'Download' }).click(),
+        page.waitForEvent('download')],
+      );
+
+      await materialPo.checkAndCloseAlert('Export downloaded.');
+
+      const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
+      expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
+      expect(fileContent).toContain('"149","CPT","newly edited load request","Open","Emergency"');
+    });
+
   });
 
   test('Version QA Tab', async ({ page }) => {
