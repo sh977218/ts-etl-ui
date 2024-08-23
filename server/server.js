@@ -205,8 +205,9 @@ app.delete('/api/loadRequest/:opRequestSeq', async (req, res) => {
   if (loadRequest.requestStatus !== 'Open') {
     throw new UnauthorizedError('Only Open Requests can be canceled');
   }
-
-  await loadRequestsCollection.deleteOne({ opRequestSeq: +req.params.opRequestSeq });
+  await loadRequestsCollection.updateOne({ opRequestSeq: +req.params.opRequestSeq }, {
+    $set: { requestStatus: 'Cancelled' },
+  });
   res.send();
 });
 
