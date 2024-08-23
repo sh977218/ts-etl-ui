@@ -6,6 +6,7 @@ import DEFAULT_LOAD_VERSION_DATA from './data/loadVersions.json' assert { type: 
 import DEFAULT_CODE_SYSTEM_DATA from './data/codeSystems.json' assert { type: 'json' };
 import DEFAULT_VERSION_STATUS_DATA from './data/versionStatus.json' assert { type: 'json' };
 import DEFAULT_VALIDATION_RULE_DATA from './data/validationRules.json' assert { type: 'json' };
+import DEFAULT_PROPERTY_DATA from './data/properties.json' assert { type: 'json' };
 
 const IS_PULL_REQUEST = ['true', true, 1].includes(process.env.IS_PULL_REQUEST);
 const PR_FROM_ENV = process.env.PR || '';
@@ -73,6 +74,7 @@ export async function mongoCollection() {
     codeSystemsCollection: db.collection(`codeSystems${PR_NUMBER}`),
     versionStatusCollection: db.collection(`versionStatus${PR_NUMBER}`),
     validationRulesCollection: db.collection(`validationRules${PR_NUMBER}`),
+    propertyCollection: db.collection(`properties${PR_NUMBER}`),
   };
 }
 
@@ -135,6 +137,7 @@ async function restoreMongoCollections(db) {
   await db.collection(`codeSystems${PR_NUMBER}`).insertMany(DEFAULT_CODE_SYSTEM_DATA.data);
   await db.collection(`versionStatus${PR_NUMBER}`).insertMany(DEFAULT_VERSION_STATUS_DATA.data);
   await db.collection(`validationRules${PR_NUMBER}`).insertMany(DEFAULT_VALIDATION_RULE_DATA.data);
+  await db.collection(`properties${PR_NUMBER}`).insertMany(DEFAULT_PROPERTY_DATA.data);
 }
 
 export async function resetMongoCollection() {
