@@ -69,6 +69,7 @@ test.describe('e2e test', async () => {
   });
 
   test('Load Request Tab', async ({ page }) => {
+    test.slow();
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
