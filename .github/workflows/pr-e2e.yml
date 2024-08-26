@@ -9,6 +9,7 @@ concurrency:
 
 env:
   GH_TOKEN: ${{ secrets.GithubCliToken }}
+  IS_RUNNER_DEBUG: ${{ secrets.ACTIONS_RUNNER_DEBUG  }}
 
 jobs:
   e2e-test:
