@@ -192,7 +192,7 @@ export class LoadRequestComponent implements AfterViewInit {
               requester: queryParams.get('requester'),
               creationTimeFrom: queryParams.get('creationTimeFrom'),
               creationTimeTo: queryParams.get('creationTimeTo'),
-              filterRequestTime: queryParams.get('filterRequestTime '),
+              filterRequestTime: queryParams.get('filterRequestTime'),
               filterRequester: queryParams.get('filterRequester'),
               pageNum: queryParams.get('pageNum'),
               pageSize: queryParams.get('pageSize'),
@@ -237,6 +237,11 @@ export class LoadRequestComponent implements AfterViewInit {
             }
             if (searchCriteriaPatch.requester) {
               this.searchCriteria.controls.requester.patchValue(searchCriteriaPatch.requester, {
+                emitEvent: false,
+              });
+            }
+            if (searchCriteriaPatch.filterRequestTime) {
+              this.searchCriteria.controls.filterRequestTime.patchValue(searchCriteriaPatch.filterRequestTime, {
                 emitEvent: false,
               });
             }
