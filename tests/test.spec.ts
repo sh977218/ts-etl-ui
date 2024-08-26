@@ -29,7 +29,7 @@ class MaterialPO {
 
   async waitForSpinner() {
     await this.matSpinner().waitFor();
-    await this.matSpinner().waitFor({ state: 'hidden' });
+    await this.matSpinner().waitFor({ state: 'hidden', timeout: 10 * 1000 }); // increase the default timeout from 5 seconds to 10 seconds
   }
 
   async checkAndCloseAlert(text: string | RegExp) {
