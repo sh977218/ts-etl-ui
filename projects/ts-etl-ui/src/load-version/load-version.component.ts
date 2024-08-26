@@ -47,7 +47,7 @@ import {
   LoadVersionSearchCriteria,
 } from '../model/load-version';
 import { AlertService } from '../service/alert-service';
-import { CODE_SYSTEM_NAMES, VERSION_STATUSES } from '../service/constant';
+import { ConstantService } from '../service/constant-service';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
@@ -150,6 +150,7 @@ export class LoadVersionComponent implements AfterViewInit {
               private cd: ChangeDetectorRef,
               private loadingService: LoadingService,
               private userService: UserService,
+              public constantService: ConstantService,
               private alertService: AlertService) {
     userService.user$.subscribe(user => {
       this.username = user?.utsUser.username || '';
@@ -275,8 +276,4 @@ export class LoadVersionComponent implements AfterViewInit {
       },
     });
   }
-
-  protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
-  protected readonly VERSION_STATUSES = VERSION_STATUSES;
-
 }

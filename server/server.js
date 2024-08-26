@@ -257,7 +257,7 @@ app.get('/api/loadRequest/:opRequestSeq', async (req, res) => {
 });
 
 app.post('/api/loadVersions', async (req, res) => {
-  const { order, searchColumns, sortCriteria } = req.body;
+  const { searchColumns, sortCriteria } = req.body;
   const { sortBy, sortDirection } = sortCriteria;
   const {
     requestId,
@@ -436,6 +436,29 @@ app.get('/api/versionStatusMeta/:codeSystemName', async (req, res) => {
   });
 });
 
+app.get('/property/:propertyName', async (req, res) => {
+  const apiStartTime = new Date();
+  const { propertyName } = req.params;
+  const { propertyCollection } = await mongoCollection();
+  const property = await propertyCollection.findOne({ propertyName });
+  const list = property.value;
+  const apiEndTime = new Date();
+  res.send({
+    result: {
+      data: list.map(item => {
+        return {
+          value: item,
+        };
+      }), hasPagination: false, pagination: {
+        totalCount: list.length, page: 1, pageSize: 0,
+      },
+    },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    status: { success: true },
+  });
+});
+
+
 app.get('/api/serverInfo', async (req, res) => {
   const pr = getPrNumber();
   const { db } = await mongoCollection();
@@ -493,7 +516,7 @@ app.use((req, res) => {
   createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
 });
 
-app.use(async (err, req, res, next) => {
+app.use(async (err, req, res) => {
   if (err instanceof TSError) {
     return res.status(err.status).send(err);
   }

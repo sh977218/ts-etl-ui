@@ -3,6 +3,11 @@ import * as _moment from 'moment';
 
 const moment = _rollupMoment || _moment;
 
+import {
+  ApiResponseResultPagination,
+  ApiResponseService,
+  ApiResponseStatus,
+} from './api-response';
 import { SearchPayloadPagination, SearchPayloadSortCriteria } from './search';
 
 export type Message = {
@@ -135,31 +140,15 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
 };
 
 // API response
-type LoadRequestsResponseResultPagination = {
-  totalCount: number;
-  page: number;
-  pageSize: number;
-}
-
 type LoadRequestsResponseResult = {
   data: LoadRequest[],
   hasPagination: boolean
-  pagination: LoadRequestsResponseResultPagination
-}
-
-type LoadRequestsResponseService = {
-  url: string;
-  accessTime: Date;
-  duration: number;
-}
-
-type LoadRequestsResponseStatus = {
-  success: boolean
+  pagination: ApiResponseResultPagination
 }
 
 export type LoadRequestsResponse = {
   result: LoadRequestsResponseResult;
-  service: LoadRequestsResponseService;
-  status: LoadRequestsResponseStatus;
+  service: ApiResponseService;
+  status: ApiResponseStatus;
 }
 

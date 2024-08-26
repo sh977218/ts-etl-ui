@@ -50,7 +50,7 @@ import {
 } from '../model/load-request';
 import { User } from '../model/user';
 import { AlertService } from '../service/alert-service';
-import { CODE_SYSTEM_NAMES, LOAD_REQUEST_STATUSES, LOAD_REQUEST_TYPES } from '../service/constant';
+import { ConstantService } from '../service/constant-service';
 import { DownloadService } from '../service/download-service';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
@@ -150,6 +150,7 @@ export class LoadRequestComponent implements AfterViewInit {
               private dialog: MatDialog,
               private loadingService: LoadingService,
               private userService: UserService,
+              public constantService: ConstantService,
               private alertService: AlertService,
               private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
@@ -395,7 +396,4 @@ export class LoadRequestComponent implements AfterViewInit {
     });
   }
 
-  protected readonly CODE_SYSTEM_NAMES = CODE_SYSTEM_NAMES;
-  protected readonly LOAD_REQUEST_STATUSES = LOAD_REQUEST_STATUSES;
-  protected readonly LOAD_REQUEST_TYPES = LOAD_REQUEST_TYPES;
 }
