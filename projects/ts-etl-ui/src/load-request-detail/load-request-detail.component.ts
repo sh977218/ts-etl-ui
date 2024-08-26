@@ -36,6 +36,8 @@ const LABEL_MAPPING: Record<string, string> = {
   loadElapsedTime: 'Elapsed Time',
   notificationEmail: 'Contact Email',
   requestType: 'Request Type',
+  scheduledDate: 'Scheduled Date',
+  scheduledTime: 'Scheduled Time',
 };
 
 const LABEL_SORT_ARRAY = [

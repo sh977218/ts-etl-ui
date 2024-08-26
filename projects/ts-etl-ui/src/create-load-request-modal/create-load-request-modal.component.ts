@@ -82,13 +82,13 @@ export class CreateLoadRequestModalComponent {
     public constantService: ConstantService,
     @Inject(MAT_DIALOG_DATA) public existingLoadRequest: LoadRequest) {
     userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''));
-    this.loadRequestCreationForm.get('type')?.valueChanges.subscribe(value => {
-      if (value === 'Scheduler') {
-        this.form.addControl('scheduleDate', new FormControl<Date | undefined>(undefined, [Validators.required]));
-        this.form.addControl('scheduleTime', new FormControl<Date | undefined>(undefined, [Validators.required]));
+    this.loadRequestCreationForm.get('requestType')?.valueChanges.subscribe(value => {
+      if (value === 'Scheduled') {
+        this.form.addControl('scheduledDate', new FormControl<Date | undefined>(undefined, [Validators.required]));
+        this.form.addControl('scheduledTime', new FormControl<Date | undefined>(undefined, [Validators.required]));
       } else {
-        this.form.removeControl('scheduleDate');
-        this.form.removeControl('scheduleTime');
+        this.form.removeControl('scheduledDate');
+        this.form.removeControl('scheduledTime');
       }
     });
     if (this.existingLoadRequest) {
