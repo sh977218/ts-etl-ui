@@ -12,6 +12,7 @@ const __dirname = dirname(__filename);
 
 import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
 import { TSError, UnauthorizedError } from './errors.js';
+import moment from 'moment';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
 
@@ -106,36 +107,38 @@ app.post('/load-request/list', async (req, res) => {
 
   // searchFilters
   if (filterRequestTime) {
-    const today = new Date();
-    const startOfWeek = new Date();
-    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of the current week
-    startOfWeek.setHours(0, 0, 0, 0);
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    startOfMonth.setHours(0, 0, 0, 0);
+    const startOfToday = moment().startOf('day').toDate();
+    const endOfToday = moment().endOf('day').toDate();
+
+    const startOfThisWeek = moment().startOf('week').toDate();
+    const endOfThisWeek = moment().endOf('week').toDate();
+
+    const startOfThisMonth = moment().startOf('month').toDate();
+    const endOfThisMonth = moment().endOf('month').toDate();
+
+    const lastMonth = moment().subtract(1, 'months');
+    const startOfLastMonth = lastMonth.startOf('month').toDate();
+    const endOfLastMonth = lastMonth.endOf('month').toDate();
     if (filterRequestTime === 'today') {
       $match.requestTime = {
-        $lte: today, $gte: new Date(today.getTime() - 24 * 60 * 60 * 1000),
+        $gte: startOfToday, $lte: endOfToday,
       };
     } else if (filterRequestTime === 'thisWeek') {
       $match.requestTime = {
-        $gte: startOfWeek, $lte: today,
+        $gte: startOfThisWeek, $lte: endOfThisWeek,
       };
     } else if (filterRequestTime === 'lastWeek') {
       const startOfLastWeek = new Date();
-      startOfLastWeek.setDate(startOfWeek.getDate() - 7 - startOfWeek.getDay() + (startOfWeek.getDay() === 0 ? -6 : 1)); // Monday of last current week
-      startOfLastWeek.setHours(0, 0, 0, 0);
       $match.requestTime = {
-        $gte: startOfLastWeek, $lte: startOfWeek,
+        $gte: startOfLastWeek, $lte: startOfThisWeek,
       };
     } else if (filterRequestTime === 'thisMonth') {
       $match.requestTime = {
-        $gte: startOfMonth, $lte: today,
+        $gte: startOfThisMonth, $lte: endOfThisMonth,
       };
     } else if (filterRequestTime === 'lastMonth') {
-      const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-      startOfLastMonth.setHours(0, 0, 0, 0);
       $match.requestTime = {
-        $gte: startOfLastMonth, $lte: startOfMonth,
+        $gte: startOfLastMonth, $lte: endOfLastMonth,
       };
     }
   }

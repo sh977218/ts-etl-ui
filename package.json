@@ -17,10 +17,10 @@
     "build:prod": "ng build -c prod && node insert-commit-hash.js",
     "build:ci": "ng build -c ci && node insert-commit-hash.js",
     "watch": "ng build --watch --configuration development",
-    "test": "playwright test --project=chromium",
+    "test": "playwright test --project=ts-elt-ui",
     "test:smoke": "playwright test --project=debug",
     "test:debug": "playwright test --project=debug --debug",
-    "test:ui": "playwright test --project=chromium --ui",
+    "test:ui": "playwright test --project=ts-elt-ui --ui",
     "prepare": "husky"
   },
   "private": true,
