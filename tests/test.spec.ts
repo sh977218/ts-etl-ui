@@ -116,9 +116,9 @@ test.describe('e2e test', async () => {
     await test.step('search for newly added load request', async () => {
       await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       await page.getByPlaceholder('Any Request date').click();
-      await materialPo.matOption().filter({ hasText: `Today's` }).click();
-      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.matOption().filter({ hasText: `Today's` }).click(); // this line triggers search
       await materialPo.waitForSpinner();
+
       await expect(page.locator('td:has-text("Regular")')).toBeVisible();
       await expect(page.locator('td:has-text("HPO")')).toBeVisible();
       await expect(page.getByText('newly created load request')).toBeVisible();
@@ -160,10 +160,9 @@ test.describe('e2e test', async () => {
       await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
-      await materialPo.matOption().filter({ hasText: `This week's` }).click();
-
-      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.matOption().filter({ hasText: `This week's` }).click(); // this line triggers search
       await materialPo.waitForSpinner();
+
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
       await expect(page.locator('td:has-text("CPT")')).toBeVisible();
       await expect(page.getByText('newly edited load request')).toBeVisible();
@@ -192,7 +191,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly cancelled load request', async () => {
-      await page.locator('[id="requestStatusInput"]').selectOption('Cancelled');
+      await page.locator('[id="requestStatusInput"]').selectOption('Cancelled'); // this line triggers search
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
       await expect(page.locator('td:has-text("CPT")')).toBeVisible();
