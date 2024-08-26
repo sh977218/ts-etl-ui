@@ -20,24 +20,24 @@ export interface RowElement {
 }
 
 const LABEL_MAPPING: Record<string, string> = {
-  opRequestSeq: 'Request ID',
-  codeSystemName: 'Code System Name',
-  requestSubject: 'Subject',
-  sourceFilePath: 'Source File Path',
-  type: 'Request Type',
-  requestTime: 'Request Time',
-  requester: 'Requester',
-  creationTime: 'Creation Time',
-  requestStatus: 'Request Status',
-  numberOfMessages: '# of Messages',
-  loadNumber: 'Load Number',
-  loadStatus: 'Load Status',
-  loadStartTime: 'Load Start Time',
-  loadElapsedTime: 'Elapsed Time',
-  notificationEmail: 'Contact Email',
-  requestType: 'Request Type',
-  scheduledDate: 'Scheduled Date',
-  scheduledTime: 'Scheduled Time',
+  opRequestSeq: 'Request ID:',
+  codeSystemName: 'Code System Name:',
+  requestSubject: 'Subject:',
+  sourceFilePath: 'Source File Path:',
+  type: 'Request Type:',
+  requestTime: 'Request Time:',
+  requester: 'Requester:',
+  creationTime: 'Creation Time:',
+  requestStatus: 'Request Status:',
+  numberOfMessages: '# of Messages:',
+  loadNumber: 'Load Number:',
+  loadStatus: 'Load Status:',
+  loadStartTime: 'Load Start Time:',
+  loadElapsedTime: 'Elapsed Time:',
+  notificationEmail: 'Contact Email:',
+  requestType: 'Request Type:',
+  scheduledDate: 'Scheduled Date:',
+  scheduledTime: 'Scheduled Time:',
 };
 
 const LABEL_SORT_ARRAY = [
@@ -45,7 +45,7 @@ const LABEL_SORT_ARRAY = [
   'codeSystemName',
   'requestSubject',
   'sourceFilePath',
-  'type',
+  'requestType',
   'requestTime',
   'requester',
   'creationTime',
@@ -86,14 +86,25 @@ export class LoadRequestDetailComponent implements OnInit {
 
   dataSource: RowElement[] = [];
 
-  constructor() {
-  }
-
   ngOnInit() {
     this.dataSource = Object.keys(this.loadRequest)
-      .filter(k => !['_id', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadEndTime'].includes(k))
+      .filter(k => !['_id', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadEndTime', 'loadComponents'].includes(k))
       .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
+      .reduce<string[]>((acc, key) => {
+        acc.push(key);
+        if (['creationTime', 'numberOfMessages'].includes(key)) {
+          acc.push('spacer');
+        }
+        return acc;
+      }, [])
       .map(key => {
+        if(key === 'spacer') {
+          return {
+            label: '',
+            key: 'spacer',
+            value: '',
+          }
+        }
         return {
           label: LABEL_MAPPING[key] || `something wrong about ${key}`,
           key: key,
@@ -101,4 +112,9 @@ export class LoadRequestDetailComponent implements OnInit {
         };
       });
   }
+
+  isTime(key: string) {
+    return ['requestTime', 'scheduledDate', 'creationTime', 'loadStartTime'].includes(key);
+  }
+
 }
