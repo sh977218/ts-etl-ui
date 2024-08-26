@@ -158,7 +158,7 @@ test.describe('e2e test', async () => {
       await materialPo.waitForSpinner();
 
       await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
-      // next 2 lines might fall, if the test runs first tep on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
+      // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `This week's` }).click();
 
@@ -213,6 +213,7 @@ test.describe('e2e test', async () => {
       expect(fileContent).toContain('"149","CPT","newly edited load request","Cancelled","Emergency"');
     });
 
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
   test('Version QA Tab', async ({ page }) => {
