@@ -52,38 +52,40 @@ export class LoadRequestMessageComponent implements AfterViewInit {
 
   dataSource = computed(() => {
     const messages: MessageUI[] = [];
-    this.loadRequestActivities().forEach(m => {
-      m.infos.forEach(i => {
-        messages.push({
-          componentName: m.componentName,
-          messageGroup: 'Info',
-          messageType: i.messageType,
-          message: i.message,
-          tag: i.tag,
-          creationTime: i.creationTime,
+    if (this.loadRequestActivities()) {
+      this.loadRequestActivities().forEach(m => {
+        m.infos.forEach(i => {
+          messages.push({
+            componentName: m.componentName,
+            messageGroup: 'Info',
+            messageType: i.messageType,
+            message: i.message,
+            tag: i.tag,
+            creationTime: i.creationTime,
+          });
+        });
+        m.warnings.forEach(i => {
+          messages.push({
+            componentName: m.componentName,
+            messageGroup: 'Warning',
+            messageType: i.messageType,
+            message: i.message,
+            tag: i.tag,
+            creationTime: i.creationTime,
+          });
+        });
+        m.errors.forEach(i => {
+          messages.push({
+            componentName: m.componentName,
+            messageGroup: 'Error',
+            messageType: i.messageType,
+            message: i.message,
+            tag: i.tag,
+            creationTime: i.creationTime,
+          });
         });
       });
-      m.warnings.forEach(i => {
-        messages.push({
-          componentName: m.componentName,
-          messageGroup: 'Warning',
-          messageType: i.messageType,
-          message: i.message,
-          tag: i.tag,
-          creationTime: i.creationTime,
-        });
-      });
-      m.errors.forEach(i => {
-        messages.push({
-          componentName: m.componentName,
-          messageGroup: 'Error',
-          messageType: i.messageType,
-          message: i.message,
-          tag: i.tag,
-          creationTime: i.creationTime,
-        });
-      });
-    });
+    }
 
     const datasource = new MatTableDataSource<MessageUI>(messages);
     return datasource;
