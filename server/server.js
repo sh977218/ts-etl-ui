@@ -107,31 +107,38 @@ app.post('/load-request/list', async (req, res) => {
 
   // searchFilters
   if (filterRequestTime) {
-    const endOfToday = moment().startOf('day').toDate();
-    const endOfYesterday = moment().subtract(1, 'days').endOf('day').toDate();
-    const startOfWeek = moment().startOf('week').toDate();
+    const startOfToday = moment().startOf('day').toDate();
+    const endOfToday = moment().endOf('day').toDate();
+
+    const startOfThisWeek = moment().startOf('week').toDate();
+    const endOfThisWeek = moment().endOf('week').toDate();
+
     const startOfThisMonth = moment().startOf('month').toDate();
-    const startOfLastMonth = moment().subtract(1, 'months').startOf('month').toDate();
+    const endOfThisMonth = moment().endOf('month').toDate();
+
+    const lastMonth = moment().subtract(1, 'months');
+    const startOfLastMonth = lastMonth.startOf('month').toDate();
+    const endOfLastMonth = lastMonth.endOf('month').toDate();
     if (filterRequestTime === 'today') {
       $match.requestTime = {
-        $lte: endOfToday, $gte: endOfYesterday,
+        $gte: startOfToday, $lte: endOfToday,
       };
     } else if (filterRequestTime === 'thisWeek') {
       $match.requestTime = {
-        $gte: startOfWeek, $lte: endOfToday,
+        $gte: startOfThisWeek, $lte: endOfThisWeek,
       };
     } else if (filterRequestTime === 'lastWeek') {
       const startOfLastWeek = new Date();
       $match.requestTime = {
-        $gte: startOfLastWeek, $lte: startOfWeek,
+        $gte: startOfLastWeek, $lte: startOfThisWeek,
       };
     } else if (filterRequestTime === 'thisMonth') {
       $match.requestTime = {
-        $gte: startOfThisMonth, $lte: endOfToday,
+        $gte: startOfThisMonth, $lte: endOfThisMonth,
       };
     } else if (filterRequestTime === 'lastMonth') {
       $match.requestTime = {
-        $gte: startOfLastMonth, $lte: startOfThisMonth,
+        $gte: startOfLastMonth, $lte: endOfLastMonth,
       };
     }
   }
