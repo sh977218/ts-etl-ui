@@ -70,6 +70,7 @@ test.describe('e2e test', async () => {
 
 
   test('Load Request Tab', async ({ page }) => {
+    test.use({ video: 'on', trace: 'on' });
     const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 

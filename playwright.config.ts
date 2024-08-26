@@ -34,8 +34,6 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     headless: !!process.env['CI'],
     screenshot: 'on',
-    video: process.env['ACTIONS_RUNNER_DEBUG '] ? 'on' : 'off',
-    trace: process.env['ACTIONS_RUNNER_DEBUG '] ? 'on' : 'off',
     browserName: 'chromium',
     ignoreHTTPSErrors: true,
     baseURL: process.env['CI'] ? 'http://localhost:3000' : 'http://localhost:4200',
