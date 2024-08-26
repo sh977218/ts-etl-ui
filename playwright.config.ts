@@ -33,6 +33,9 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     headless: !!process.env['CI'],
+    launchOptions: {
+      slowMo: 500,
+    },
     screenshot: 'on',
     video: 'on',
     trace: 'on',
@@ -54,7 +57,9 @@ export default defineConfig({
     },
     {
       name: 'ts-elt-ui',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
 
   ],
