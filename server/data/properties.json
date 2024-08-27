@@ -25,6 +25,29 @@
       ]
     },
     {
+      "propertyName": "create-request-code-systems",
+      "value": [
+        "ATC",
+        "CDT",
+        "CPT",
+        "DRUGBANK",
+        "GS",
+        "HCPCS",
+        "HPO",
+        "ICD10CM",
+        "ICD10PCS",
+        "LOINC",
+        "MESH",
+        "MMSL",
+        "MTHSPL",
+        "RXNORM",
+        "SNOMEDCT",
+        "SNOMEDCT_VET",
+        "USP",
+        "VANDF"
+      ]
+    },
+    {
       "propertyName": "request-statuses",
       "value": [
         "Aborted",
