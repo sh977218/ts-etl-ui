@@ -202,7 +202,7 @@
             "development": {
               "buildTarget": "e2e-coverage:build:development"
             },
-            "playwright": {
+            "coverage": {
               "buildTarget": "e2e-coverage:build:production"
             }
           },
