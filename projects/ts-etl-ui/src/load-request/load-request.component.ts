@@ -124,8 +124,8 @@ export class LoadRequestComponent implements AfterViewInit {
       requestTimeFrom: new FormControl<Moment | string | null>(null),
       requestTimeTo: new FormControl<Moment | string | null>(null),
       requester: new FormControl<string | null>(null),
-      creationTimeFrom: new FormControl<string | null>(null),
-      creationTimeTo: new FormControl<string | null>(null),
+      creationTimeFrom: new FormControl<Moment | string | null>(null),
+      creationTimeTo: new FormControl<Moment | string | null>(null),
       filterRequestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
       filterRequester: new FormControl<string | null>(null),
     }, { updateOn: 'submit' },
@@ -237,6 +237,16 @@ export class LoadRequestComponent implements AfterViewInit {
             }
             if (searchCriteriaPatch.requester) {
               this.searchCriteria.controls.requester.patchValue(searchCriteriaPatch.requester, {
+                emitEvent: false,
+              });
+            }
+            if (searchCriteriaPatch.creationTimeFrom) {
+              this.searchCriteria.controls.creationTimeFrom.patchValue(moment(searchCriteriaPatch.creationTimeFrom), {
+                emitEvent: false,
+              });
+            }
+            if (searchCriteriaPatch.creationTimeTo) {
+              this.searchCriteria.controls.creationTimeTo.patchValue(moment(searchCriteriaPatch.creationTimeTo), {
                 emitEvent: false,
               });
             }
