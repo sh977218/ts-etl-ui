@@ -1,4 +1,6 @@
 export class TSError extends Error {
+  status = 200;
+
   constructor() {
     super();
     Error.captureStackTrace(this, this.constructor);
@@ -17,7 +19,7 @@ export class NotFoundError extends TSError {
 }
 
 export class UnauthorizedError extends TSError {
-  constructor(message) {
+  constructor(message: string) {
     super();
     this.message = message || '401 - Not Authorized';
     this.status = 401;

@@ -19,7 +19,7 @@ const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
 let MONGO_CLIENT;
 
-export function getPrNumber() {
+export const getPrNumber = () => {
 
   if (PR_FROM_ENV) {
     return PR_FROM_ENV;
@@ -35,7 +35,7 @@ export function getPrNumber() {
     }
   }
   return '';
-}
+};
 
 function getCollections() {
   const PR_NUMBER = getPrNumber();
@@ -63,7 +63,7 @@ async function mongoDb() {
   }
 }
 
-export async function mongoCollection() {
+export const mongoCollection = async () => {
   const db = await mongoDb();
   const PR_NUMBER = getPrNumber();
   return {
@@ -76,7 +76,7 @@ export async function mongoCollection() {
     validationRulesCollection: db.collection(`validationRules${PR_NUMBER}`),
     propertyCollection: db.collection(`properties${PR_NUMBER}`),
   };
-}
+};
 
 export async function createMongoCollections(db) {
   for (const collection of getCollections()) {
@@ -140,7 +140,7 @@ async function restoreMongoCollections(db) {
   await db.collection(`properties${PR_NUMBER}`).insertMany(DEFAULT_PROPERTY_DATA.data);
 }
 
-export async function resetMongoCollection() {
+export const resetMongoCollection = async () => {
   const client = mongoClient();
   await client.connect().catch(reason => {
     console.error(`Mongo connect failed in resetMongoCollection(): ${reason.toString()}`);
@@ -152,7 +152,7 @@ export async function resetMongoCollection() {
   await createMongoCollections(db, PR_NUMBER);
   await restoreMongoCollections(db, PR_NUMBER);
   await client.close();
-}
+};
 
 function randomDate(start, end) {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));

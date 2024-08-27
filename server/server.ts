@@ -1,18 +1,28 @@
 import express from 'express';
+import errorhandler from 'errorhandler';
+
 import { readFileSync, createReadStream } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import jwt from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 
 import cookieParser from 'cookie-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
-import { TSError, UnauthorizedError } from './errors.js';
+import { getPrNumber, mongoCollection, resetMongoCollection } from './db';
+import { TSError, UnauthorizedError } from './errors';
 import moment from 'moment';
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      RESET_DB: string;
+    }
+  }
+}
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
 
@@ -34,7 +44,7 @@ app.use(express.static('dist/ts-etl-ui/browser'));
 app.set('view engine', 'ejs');
 app.set('views', join(__dirname, 'views'));
 
-function escapeRegex(input) {
+function escapeRegex(input: string) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
@@ -57,7 +67,7 @@ app.post('/load-request/list', async (req, res) => {
   } = searchColumns;
   const { sortBy, sortDirection } = sortCriteria;
 
-  const $match = {};
+  const $match: any = {};
   // searchColumns
   if (opRequestSeq) {
     $match.opRequestSeq = Number.parseInt(opRequestSeq);
@@ -148,7 +158,7 @@ app.post('/load-request/list', async (req, res) => {
   }
 
   // sortCriteria
-  const $sort = {};
+  const $sort: any = {};
   $sort[sortBy] = sortDirection === 'asc' ? 1 : -1;
 
   // pagination
@@ -191,7 +201,7 @@ app.post('/load-request/list', async (req, res) => {
         totalCount: await loadRequestsCollection.countDocuments($match), page: pageNumberInt, pageSize: pageSize,
       },
     },
-    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime.getTime() - apiStartTime.getTime() },
     status: { success: true },
   });
 });
@@ -220,7 +230,7 @@ app.post('/api/loadRequest', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   const result = await loadRequestsCollection.insertOne({
-    opRequestSeq: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
+    opRequestSeq: (await getNextLoadRequestSequenceId()) + 1, requestStatus: 'Open', ...loadRequest,
   });
 
   const newLoadRequest = await loadRequestsCollection.findOne({ _id: result.insertedId });
@@ -275,7 +285,7 @@ app.post('/api/loadVersions', async (req, res) => {
     requestTimeTo,
   } = searchColumns;
   const { loadVersionsCollection } = await mongoCollection();
-  const $match = {};
+  const $match: any = {};
   if (requestId) {
     $match.requestId = Number.parseInt(requestId);
   }
@@ -321,7 +331,7 @@ app.post('/api/loadVersions', async (req, res) => {
     $match.loadStartTime['$lte'] = dateObj;
   }
 
-  const $sort = {};
+  const $sort: any = {};
   $sort[sortBy] = sortDirection === 'asc' ? 1 : -1;
   const aggregation = [{ $match }, { $sort }];
   const loadVersions = await loadVersionsCollection.aggregate(aggregation).toArray();
@@ -347,7 +357,7 @@ app.post('/api/loadVersionActivity', async (req, res) => {
   const { loadVersionsCollection } = await mongoCollection();
   req.body.loadVersionActivity.id = new Date();
   const vQA = await loadVersionsCollection.findOne({ requestId: req.body.requestId });
-  let versionStatus = { vQA };
+  let { versionStatus } = vQA;
   if (req.body.loadVersionActivity.activity === 'Accept') {
     versionStatus = 'Accepted';
   } else if (req.body.loadVersionActivity.activity === 'Reject') {
@@ -444,7 +454,7 @@ app.get('/property/:propertyName', async (req, res) => {
   const { propertyName } = req.params;
   const { propertyCollection } = await mongoCollection();
   const property = await propertyCollection.findOne({ propertyName });
-  const list = property.value;
+  const list: string[] = property.value;
   const apiEndTime = new Date();
   res.send({
     result: {
@@ -456,7 +466,7 @@ app.get('/property/:propertyName', async (req, res) => {
         totalCount: list.length, page: 1, pageSize: 0,
       },
     },
-    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime.getTime() - apiStartTime.getTime() },
     status: { success: true },
   });
 });
@@ -477,8 +487,9 @@ app.get('/nih-login', (req, res) => {
 /* @todo TS's backend needs to implement the following APIs. */
 // this map simulate UTS ticket to username
 const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
+// @ts-ignore
 app.get('/api/serviceValidate', async (req, res) => {
-  const ticket = req.query.ticket;
+  const ticket = req.query.ticket as string;
   const service = req.query.service;
   const app = req.query.app;
   // UTS expect those 3 parameters
@@ -489,7 +500,7 @@ app.get('/api/serviceValidate', async (req, res) => {
   const utsUsername = ticketMap.get(ticket);
   const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
   if (user.utsUser) {
-    const jwtToken = jwt.sign({ data: user.utsUser.username }, SECRET_TOKEN);
+    const jwtToken = sign({ data: user.utsUser.username }, SECRET_TOKEN);
     res.cookie('Bearer', `${jwtToken}`, {
       expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
     });
@@ -499,11 +510,13 @@ app.get('/api/serviceValidate', async (req, res) => {
   }
 });
 
+// @ts-ignore
 app.get('/api/login', async (req, res) => {
   const jwtToken = req.cookies['Bearer'];
   if (!jwtToken) return res.status(401).send();
-  const payload = jwt.verify(jwtToken, SECRET_TOKEN);
+  const payload = verify(jwtToken, SECRET_TOKEN);
   const { usersCollection } = await mongoCollection();
+  // @ts-ignore
   const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
   res.send(user);
 });
@@ -519,12 +532,7 @@ app.use((req, res) => {
   createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
 });
 
-app.use(async (err, req, res) => {
-  if (err instanceof TSError) {
-    return res.status(err.status).send(err);
-  }
-  return res.status(500).send({ name: 'Unexpected Error', message: 'Something broke!', status: 500 });
-});
+app.use(errorhandler);
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
