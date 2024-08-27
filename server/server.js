@@ -201,7 +201,7 @@ async function getNextLoadRequestSequenceId() {
   return loadRequestsCollection.countDocuments({});
 }
 
-app.delete('/api/loadRequest/:opRequestSeq', async (req, res) => {
+app.post('/loadRequest/:opRequestSeq', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
 
   const loadRequest = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
@@ -214,7 +214,7 @@ app.delete('/api/loadRequest/:opRequestSeq', async (req, res) => {
   res.send();
 });
 
-app.post('/api/loadRequest', async (req, res) => {
+app.post('/loadRequest', async (req, res) => {
   const loadRequest = req.body;
 
   const { loadRequestsCollection } = await mongoCollection();

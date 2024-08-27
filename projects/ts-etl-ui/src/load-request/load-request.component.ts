@@ -296,7 +296,7 @@ export class LoadRequestComponent implements AfterViewInit {
         filter(newLoadRequest => !!newLoadRequest),
         switchMap(newLoadRequest => this.http.post<{
           opRequestSeq: string
-        }>(`${environment.apiServer}/loadRequest`, newLoadRequest as LoadRequest)),
+        }>(`${environment.newApiServer}/loadRequest`, newLoadRequest as LoadRequest)),
       )
       .subscribe({
         next: ({ opRequestSeq }) => {
@@ -314,7 +314,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .afterClosed()
       .pipe(
         filter((dialogResult: boolean) => dialogResult),
-        switchMap(() => this.http.delete(`${environment.apiServer}/loadRequest/${reqId}`)),
+        switchMap(() => this.http.post(`${environment.newApiServer}/loadRequest/${reqId}`, {})),
       )
       .subscribe({
         next: () => {
