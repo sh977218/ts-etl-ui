@@ -18,7 +18,7 @@ export class ConstantService {
 
   propertyMapper = (res: PropertyResponse) => res.result.data.map(d => d.value);
 
-  private CODE_SYSTEM_NAMES$ = this.http.get<PropertyResponse>(`${environment.newApiServer}/property/code-systems`)
+  private CODE_SYSTEM_NAMES$ = this.http.get<PropertyResponse>(`${environment.newApiServer}/property/request-code-systems`)
     .pipe(map(this.propertyMapper), tap(res => this.CODE_SYSTEM_NAMES = res));
 
   private LOAD_REQUEST_STATUSES$ = this.http.get<PropertyResponse>(`${environment.newApiServer}/property/request-statuses`)
