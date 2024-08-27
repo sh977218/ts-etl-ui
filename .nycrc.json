@@ -1,0 +1,14 @@
+{
+  "check-coverage": true,
+  "reportDir": "coverage-e2e",
+  "temp-dir": "e2e_nyc_output",
+  "reporter": [
+    "lcov",
+    "json",
+    "text-summary"
+  ],
+  "statements": 45,
+  "branches": 100,
+  "functions": 28,
+  "lines": 42
+}

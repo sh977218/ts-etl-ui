@@ -49,3 +49,6 @@ Thumbs.db
 /allure-report
 /allure-results
 /all-report
+
+# coverage file
+e2e_nyc_output

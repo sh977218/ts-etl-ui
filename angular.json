@@ -132,6 +132,83 @@
           }
         }
       }
+    },
+    "e2e-coverage": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "projects/ts-etl-ui",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "customWebpackConfig": {
+              "path": "coverage.webpack.js"
+            },
+            "optimization": false,
+            "extractLicenses": false,
+            "sourceMap": true,
+            "outputPath": "dist/e2e-coverage",
+            "index": "projects/ts-etl-ui/src/index.html",
+            "main": "projects/ts-etl-ui/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "file-saver",
+              "lodash"
+            ],
+            "tsConfig": "projects/ts-etl-ui/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/ts-etl-ui/public"
+            ],
+            "styles": [
+              "projects/ts-etl-ui/src/styles.scss"
+            ],
+            "scripts": [],
+            "progress": false,
+            "aot": false,
+            "vendorChunk": true,
+            "buildOptimizer": false,
+            "namedChunks": true
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
+                  "with": "projects/ts-etl-ui/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "buildTarget": "e2e-coverage:build"
+          },
+          "configurations": {
+            "development": {
+              "buildTarget": "e2e-coverage:build:development"
+            },
+            "playwright": {
+              "buildTarget": "e2e-coverage:build:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
     }
   },
   "cli": {

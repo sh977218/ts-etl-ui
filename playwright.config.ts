@@ -1,7 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import * as os from 'os';
-
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -14,6 +12,7 @@ import * as os from 'os';
 export default defineConfig({
   testDir: './tests',
   testMatch: ['*.spec.ts'],
+  globalSetup: require.resolve('./global-setup'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
