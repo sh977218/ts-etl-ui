@@ -1,7 +1,7 @@
 {
   "data": [
     {
-      "propertyName": "code-systems",
+      "propertyName": "request-code-systems",
       "value": [
         "ATC",
         "CDT",
