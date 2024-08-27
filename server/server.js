@@ -7,9 +7,6 @@ import jwt from 'jsonwebtoken';
 
 import cookieParser from 'cookie-parser';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
 import { TSError, UnauthorizedError } from './errors.js';
 import moment from 'moment';

@@ -1,9 +1,9 @@
 import { test, expect, Page, ConsoleMessage, TestInfo } from '@playwright/test';
 
 import { randomBytes } from 'crypto';
-import { readFileSync } from 'fs';
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 
 const PROJECT_ROOT_FOLDER = join(__dirname, '..');
@@ -16,7 +16,7 @@ async function codeCoverage(page: Page, testInfo: TestInfo) {
   if (coverage) {
     const name = randomBytes(32).toString('hex');
     const nycOutput = join(NYC_OUTPUT_FOLDER, `${name}`);
-    await fs.writeFile(nycOutput, coverage);
+    await writeFileSync(nycOutput, coverage);
   } else {
     throw new Error(`No coverage found for ${testInfo.testId}`);
   }
@@ -281,7 +281,7 @@ test.describe('e2e test', async () => {
     await page.getByRole('link', { name: 'Code System' }).click();
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
   });
-  
+
   test.afterEach(async ({ page }, testInfo) => {
     await codeCoverage(page, testInfo);
   });
