@@ -165,6 +165,14 @@ export class LoadRequestComponent implements AfterViewInit {
         if (requestTimeTo) {
           queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
         }
+        const creationTimeFrom = val.creationTimeFrom;
+        if (creationTimeFrom) {
+          queryParams.creationTimeFrom = (creationTimeFrom as Moment).toISOString();
+        }
+        const creationTimeTo = val.creationTimeTo;
+        if (creationTimeTo) {
+          queryParams.creationTimeTo = (creationTimeTo as Moment).toISOString();
+        }
         this.router.navigate(['load-requests'], {
           queryParamsHandling: 'merge',
           queryParams,
