@@ -449,7 +449,7 @@ app.get('/property/code-system/list', async (req, res) => {
     result: {
       data: list.map(item => {
         return {
-          value: item,
+          codeSystemName: item,
         };
       }), hasPagination: false, pagination: {
         totalCount: list.length, page: 1, pageSize: 0,
