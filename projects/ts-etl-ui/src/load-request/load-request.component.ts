@@ -313,7 +313,7 @@ export class LoadRequestComponent implements AfterViewInit {
         filter(newLoadRequest => !!newLoadRequest),
         switchMap(newLoadRequest => this.http.post<{
           opRequestSeq: string
-        }>(`${environment.newApiServer}/loadRequest`, newLoadRequest as LoadRequest)),
+        }>(`${environment.newApiServer}/load-request`, newLoadRequest as LoadRequest)),
       )
       .subscribe({
         next: ({ opRequestSeq }) => {
