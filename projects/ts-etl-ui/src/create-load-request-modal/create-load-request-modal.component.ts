@@ -95,7 +95,7 @@ export class CreateLoadRequestModalComponent {
   }
 
   onFileSelected(event: Event) {
-    const DEFAULT_FOLDER = `file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/`;
+    const DEFAULT_FOLDER = `file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/`;
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
