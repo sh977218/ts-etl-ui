@@ -6,7 +6,7 @@ export interface Property {
 
 // API response
 type PropertyResponseResult = {
-  data: Property[],
+  data: Property[] & string[],
   hasPagination: boolean
   pagination: ApiResponseResultPagination
 }
