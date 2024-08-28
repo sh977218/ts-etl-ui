@@ -6,7 +6,7 @@
   "overrides": [
     {
       "files": [
-        "*.ts"
+        "projects/**/*.ts"
       ],
       "extends": [
         "eslint:recommended",
@@ -56,6 +56,15 @@
       "extends": [
         "plugin:@angular-eslint/template/recommended",
         "plugin:@angular-eslint/template/accessibility"
+      ],
+      "rules": {}
+    },
+    {
+      "files": [
+        "server/**/*.js"
+      ],
+      "extends": [
+        "eslint:recommended"
       ],
       "rules": {}
     }
