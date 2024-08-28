@@ -68,6 +68,126 @@
         "Regular",
         "Scheduled"
       ]
+    },
+    {
+      "propertyName": "data-files",
+      "value": {
+        "ATC": [
+          "/^([0-9]{4}) ATC .+\\.xlsx"
+        ],
+        "CDT": [
+          "/CDT(.*?)\\.txt"
+        ],
+        "CPT": [
+          "\\CPT_Link_XX\\CPT Link\\tab/Property_DTK_tab.txt",
+          "\\CPT_Link_XX\\CPT Link\\tab/RelationshipGroup_DTK_tab.txt",
+          "\\CPT_Link_XX\\CPT Link\\tab/Type_DTK_tab.txt",
+          "\\CPT_Link_XX\\CPT Link\\edits/Days.txt",
+          "\\CPT_Link_XX\\CPT Link\\edits/Exclude.txt",
+          "\\CPT_Link_XX\\CPT Link\\edits/ReportWith.txt",
+          "\\CPT Data Files\\Clinician Descriptors/ClinicianDescriptor.txt",
+          "\\CPT Data Files\\Consumer Friendly Descriptors/ConsumerDescriptor.txt"
+        ],
+        "DRUGBANK": [
+          "/drugs.json"
+        ],
+        "GS": [
+          "/AMP_[0-9].+\\.csv",
+          "/AMP_Identifiers_.+\\.csv",
+          "/Ingredient_.+\\.csv"
+        ],
+        "HCPCS": [
+          "/HCPC(.*?)_CONTR\\.txt"
+        ],
+        "HPO": [
+          "/([0-9]{4})_([0-9]{2})_([0-9]{2})_hp\\.obo\\.txt"
+        ],
+        "ICD10CM": [
+          "/Table and Index/icd10cm_tabular_([0-9]{4})\\.xml",
+          "/Code Descriptions/icd10cm_order_([0-9]{4})\\.txt"
+        ],
+        "ICD10PCS": [
+          "/icd10pcs_tables_([0-9]{4})\\.xml",
+          "/icd10pcs_order_([0-9]{4})\\.txt"
+        ],
+        "LOINC": [
+          "/AccessoryFiles/PanelsAndForms/Loinc.csv",
+          "/LoincTable/MapTo.csv",
+          "/AccessoryFiles/ComponentHierarchyBySystem/ComponentHierarchyBySystem.csv",
+          "/AccessoryFiles/GroupFile/Group.csv",
+          "/AccessoryFiles/GroupFile/ParentGroup.csv",
+          "/AccessoryFiles/LoincRsnaRadiologyPlaybook/LoincRsnaRadiologyPlaybook.csv",
+          "/AccessoryFiles/PartFile/LoincPartLink_Primary.csv",
+          "/AccessoryFiles/PartFile/LoincPartLink_Supplementary.csv",
+          "/AccessoryFiles/AnswerFile/AnswerList.csv",
+          "/AccessoryFiles/GroupFile/GroupAttributes.csv",
+          "/AccessoryFiles/GroupFile/ParentGroupAttributes.csv",
+          "/AccessoryFiles/PanelsAndForms/PanelsAndForms.csv",
+          "/AccessoryFiles/PartFile/Part.csv",
+          "/AccessoryFiles/GroupFile/GroupLoincTerms.csv",
+          "/AccessoryFiles/LoincUniversalLabOrdersValueSet/LoincUniversalLabOrdersValueSet.csv",
+          "/AccessoryFiles/DocumentOntology/DocumentOntology.csv",
+          "/AccessoryFiles/ImagingDocuments/ImagingDocumentCodes.csv",
+          "/AccessoryFiles/ConsumerName/ConsumerName.csv",
+          "/AccessoryFiles/LoincIeeeMedicalDeviceCodeMappingTable/LoincIeeeMedicalDeviceCodeMappingTable.csv",
+          "/AccessoryFiles/AnswerFile/LoincAnswerListLink.csv",
+          "/Loinc_[\\.\\d]*_Abbreviations\\.csv"
+        ],
+        "MESH": [
+          "/[\\w]*qual20([0-9]{2})\\.xml",
+          "/[\\w]*desc20([0-9]{2})\\.xml",
+          "/[\\w]*supp20([0-9]{2})\\.xml"
+        ],
+        "MMSL": [
+          "/^drug_ms_mlt.accdb"
+        ],
+        "MTHSPL": [
+          "/mthspl_rx_attributes.csv",
+          "/mthspl_rx_drugnames.csv",
+          "/mthspl_rx_inactive.csv"
+        ],
+        "RXNORM": [
+          "/rrf/RXNSTY.RRF",
+          "/rrf/RXNCONSO.RRF",
+          "/rrf/RXNDOC.RRF",
+          "/rrf/RXNCUI.RRF",
+          "/rrf/RXNATOMARCHIVE.RRF",
+          "/rrf/RXNSAT.RRF",
+          "/rrf/RXNREL.RRF",
+          "/rrf/RXNSAB.RRF"
+        ],
+        "SNOMEDCT": [
+          "/Snapshot/Terminology/sct2_Relationship_Snapshot\\w*\\.txt",
+          "/Snapshot/Refset/Language/der2_cRefset_LanguageSnapshot-en\\w*\\.txt",
+          "/Snapshot/Terminology/sct2_Description_Snapshot-en\\w*\\.txt",
+          "/Snapshot/Terminology/sct2_TextDefinition_Snapshot-en\\w*\\.txt",
+          "/Snapshot/Refset/Content/der2_Refset_SimpleSnapshot\\w*\\.txt",
+          "/Snapshot/Refset/Metadata/der2_cciRefset_RefsetDescriptorSnapshot\\w*\\.txt",
+          "/Snapshot/Refset/Metadata/der2_ciRefset_DescriptionTypeSnapshot\\w*\\.txt",
+          "/Snapshot/Terminology/sct2_RelationshipConcreteValues_Snapshot\\w*\\.txt",
+          "/Snapshot/Refset/Map/der2_iisssccRefset_ExtendedMapSnapshot\\w*\\.txt",
+          "/Snapshot/Refset/Content/der2_cRefset_AttributeValueSnapshot\\w*\\.txt",
+          "/Snapshot/Refset/Map/der2_sRefset_SimpleMapSnapshot\\w*\\.txt",
+          "/Snapshot/Terminology/sct2_Concept_Snapshot\\w*\\.txt",
+          "/Snapshot/Refset/Content/der2_cRefset_AssociationSnapshot\\w*\\.txt",
+          "/Snapshot/Refset/Metadata/der2_ssRefset_ModuleDependencySnapshot\\w*\\.txt"
+        ],
+        "SNOMEDCT_VET": [
+          "/Snapshot/Terminology/sct2_Relationship_Snapshot_VTS_([0-9]{8})\\.txt",
+          "/Snapshot/Refset/Language/der2_cRefset_LanguageSnapshot_en_VTS_([0-9]{8})\\.txt",
+          "/Snapshot/Refset/Content/der2_Refset_simpleSnapshot_VTS_([0-9]{8})\\.txt",
+          "/Snapshot/Terminology/sct2_Description_Snapshot_en_VTS_([0-9]{8})\\.txt",
+          "/Snapshot/Refset/Content/der2_cRefset_AttributeValueSnapshot_VTS_([0-9]{8})\\.txt",
+          "/Snapshot/Terminology/sct2_Concept_Snapshot_VTS_([0-9]{8})\\.txt",
+          "/Snapshot/Refset/Content/der2_cRefset_AssociationReferenceSnapshot_VTS_([0-9]{8})\\.txt"
+        ],
+        "USP": [
+          "/^usp-monograph-titles-nlm-current\\.xlsx"
+        ],
+        "VANDF": [
+          "/^VANDF_([0-9]{3})_([0-9]{8})_NLM\\.accdb"
+        ]
+      }
     }
   ]
 }

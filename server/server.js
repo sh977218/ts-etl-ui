@@ -459,6 +459,26 @@ app.get('/property/code-system/list', async (req, res) => {
     status: { success: true },
   });
 });
+
+app.get('/property/data-files/:codeSystemName', async (req, res) => {
+  const apiStartTime = new Date();
+  const { codeSystemName } = req.params;
+  const { propertyCollection } = await mongoCollection();
+  const property = await propertyCollection.findOne({ propertyName: 'data-files' });
+  const dataFileMap = property.value;
+  const list = dataFileMap[codeSystemName] || [];
+  const apiEndTime = new Date();
+  res.send({
+    result: {
+      data: list, hasPagination: false, pagination: {
+        totalCount: list.length, page: 1, pageSize: 0,
+      },
+    },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    status: { success: true },
+  });
+});
+
 app.get('/property/:propertyName', async (req, res) => {
   const apiStartTime = new Date();
   const { propertyName } = req.params;
@@ -480,7 +500,6 @@ app.get('/property/:propertyName', async (req, res) => {
     status: { success: true },
   });
 });
-
 
 app.get('/api/serverInfo', async (req, res) => {
   const pr = getPrNumber();
