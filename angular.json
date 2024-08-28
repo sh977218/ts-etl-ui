@@ -37,7 +37,8 @@
             ],
             "allowedCommonJsDependencies": [
               "file-saver",
-              "lodash"
+              "lodash",
+              "moment"
             ],
             "tsConfig": "projects/ts-etl-ui/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
