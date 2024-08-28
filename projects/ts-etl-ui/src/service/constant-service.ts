@@ -44,7 +44,6 @@ export class ConstantService {
   LOAD_REQUEST_STATUSES: string[] = [];
   LOAD_REQUEST_TYPES: string[] = [];
   VERSION_STATUSES: string[] = [];
-
-
+  CODE_SYSTEM_REQUIRED_SOURCE_FILE: Map<string, string[]> = new Map();
 }
 
