@@ -1,8 +1,14 @@
 import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA,
-  signal, ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NO_ERRORS_SCHEMA,
+  signal,
+  ViewChild,
+  ViewEncapsulation,
   WritableSignal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -21,18 +27,9 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash';
-import { default as _rollupMoment, Moment } from 'moment';
 import * as _moment from 'moment';
-import {
-  catchError,
-  filter,
-  map,
-  of,
-  startWith,
-  Subject,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { default as _rollupMoment, Moment } from 'moment';
+import { catchError, filter, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { triggerExpandTableAnimation } from '../animations';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -83,8 +80,10 @@ const moment = _rollupMoment || _moment;
     LoadRequestMessageComponent,
   ],
   templateUrl: './load-request.component.html',
+  styleUrls: ['./load-request.component.scss'],
   animations: [triggerExpandTableAnimation],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
+  encapsulation: ViewEncapsulation.None,
   providers: [DatePipe],
 })
 export class LoadRequestComponent implements AfterViewInit {
