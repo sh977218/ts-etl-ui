@@ -214,7 +214,7 @@ app.post('/loadRequest/:opRequestSeq', async (req, res) => {
   res.send();
 });
 
-app.post('/loadRequest', async (req, res) => {
+app.post('/load-request', async (req, res) => {
   const loadRequest = req.body;
 
   const { loadRequestsCollection } = await mongoCollection();
