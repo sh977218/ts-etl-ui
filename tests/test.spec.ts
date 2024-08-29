@@ -106,8 +106,7 @@ test.describe('e2e test', async () => {
        */
       await page.getByRole('option', { name: 'HPO' }).click();
       await matDialog.getByLabel('Request Subject').fill('newly created load request');
-      await matDialog.locator('[id="sourcePathFile"]').setInputFiles('./tests/nlmsambaserver.nlm.nih.gov/dev-ts-data-import/june-26-2024');
-      await expect(matDialog.getByLabel('Source File Path')).toHaveValue(/file:\/\/nlmsambaserver\.nlm\.nih\.gov\/dev-ts-data-import\//);
+      await matDialog.locator('[id="sourcePathFile"]').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
       await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
