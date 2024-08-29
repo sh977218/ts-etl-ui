@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, input, ViewChild } from '@angular/core';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -7,6 +7,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 import { LoadRequestActivity } from '../model/load-request';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 type MessageUI = {
   componentName: string;
@@ -20,9 +21,9 @@ type MessageUI = {
 @Component({
   selector: 'app-load-request-message',
   standalone: true,
-  providers: [DatePipe],
   imports: [
     CommonModule,
+    EasternTimePipe,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,

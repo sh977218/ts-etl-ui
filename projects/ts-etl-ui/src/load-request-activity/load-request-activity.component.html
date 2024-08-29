@@ -8,12 +8,12 @@
 
     <ng-container matColumnDef="startTime">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Start time</th>
-      <td mat-cell *matCellDef="let element"> {{element.startTime | date:'yyyy/MM/dd hh:mma'}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.startTime | easternTime}} </td>
     </ng-container>
 
     <ng-container matColumnDef="endTime">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> End Time</th>
-      <td mat-cell *matCellDef="let element"> {{element.endTime | date:'yyyy/MM/dd hh:mma'}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.endTime | easternTime}} </td>
     </ng-container>
 
     <ng-container matColumnDef="duration">

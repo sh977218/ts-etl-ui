@@ -146,8 +146,7 @@
               <label for="requestTimeRange" class="m-2" mat-sort-header disableClear>Request Time</label>
             </div>
           </th>
-          <td mat-cell
-              *matCellDef="let row">{{row.requestTime.replace(' ', '') | date:'yyyy/MM/dd hh:mma':'GMT+05:00' }}</td>
+          <td mat-cell *matCellDef="let row">{{row.requestTime.replace(' ', '') | easternTime }}</td>
         </ng-container>
         <ng-container matColumnDef="requestTime-search">
           <th mat-header-cell *matHeaderCellDef>
@@ -187,7 +186,7 @@
               <label for="creationTimeRange" class="m-2" mat-sort-header disableClear>Creation Time</label>
             </div>
           </th>
-          <td mat-cell *matCellDef="let row">{{row.creationTime | date:'yyyy/MM/dd hh:mma':'GMT+05:00'}}</td>
+          <td mat-cell *matCellDef="let row">{{row.creationTime | easternTime}} EST</td>
         </ng-container>
         <ng-container matColumnDef="creationTime-search">
           <th mat-header-cell *matHeaderCellDef>

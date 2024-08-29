@@ -15,11 +15,11 @@
             <a routerLink="/load-versions" [queryParams]="{loadNumber:element.value, expand:0}">{{element.value}}</a>
           </ng-container>
           <ng-container *ngSwitchCase="'loadElapsedTime'">
-            {{element.value | date:'hh:mm:ss'}}
+            {{element.value | easternTime:'hh:mm:ss'}}
           </ng-container>
           <ng-container *ngSwitchDefault>
             <ng-container *ngIf="isTime(element.key); else regularField">
-              {{element.value | date:'yyyy/MM/dd hh:mma'}}
+              {{element.value | easternTime}}
             </ng-container>
             <ng-template #regularField>
               {{element.value}}
