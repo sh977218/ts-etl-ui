@@ -8,6 +8,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { tap } from 'rxjs';
 
 import { LoadVersionActivity } from '../model/load-version';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 type ActivityNoteSortable = {
   activityId: Date;
@@ -29,6 +30,7 @@ type ActivityNoteSortable = {
     DatePipe,
     NgForOf,
     JsonPipe,
+    EasternTimePipe,
   ],
   templateUrl: './load-version-note.component.html',
   styleUrl: './load-version-note.component.scss',

@@ -14,6 +14,7 @@ import {
   LoadVersionSourceDataFileModalComponent,
 } from '../load-version-source-data-file-modal/load-version-source-data-file-modal.component';
 import type { LoadVersion, LoadVersionActivity } from '../model/load-version';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 export interface RowElement {
   key: string;
@@ -27,6 +28,7 @@ export interface RowElement {
   animations: [triggerExpandTableAnimation],
   imports: [
     CommonModule,
+    EasternTimePipe,
     NgIf,
     NgSwitch,
     NgSwitchCase,

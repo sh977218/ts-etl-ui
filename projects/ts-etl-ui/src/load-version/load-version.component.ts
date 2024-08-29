@@ -48,6 +48,7 @@ import {
 } from '../model/load-version';
 import { AlertService } from '../service/alert-service';
 import { ConstantService } from '../service/constant-service';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
@@ -58,6 +59,7 @@ import { UserService } from '../service/user-service';
     JsonPipe,
     RouterLink,
     CommonModule,
+    EasternTimePipe,
     ReactiveFormsModule,
     MatInputModule,
     MatTableModule,
