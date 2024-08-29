@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
+import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit,
@@ -49,6 +49,7 @@ import { User } from '../model/user';
 import { AlertService } from '../service/alert-service';
 import { ConstantService } from '../service/constant-service';
 import { DownloadService } from '../service/download-service';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
@@ -62,6 +63,7 @@ const moment = _rollupMoment || _moment;
     AsyncPipe,
     RouterModule,
     CommonModule,
+    EasternTimePipe,
     ReactiveFormsModule,
     MatInputModule,
     MatTableModule,
@@ -84,7 +86,6 @@ const moment = _rollupMoment || _moment;
   animations: [triggerExpandTableAnimation],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   encapsulation: ViewEncapsulation.None,
-  providers: [DatePipe],
 })
 export class LoadRequestComponent implements AfterViewInit {
   reloadAllRequests$ = new Subject();

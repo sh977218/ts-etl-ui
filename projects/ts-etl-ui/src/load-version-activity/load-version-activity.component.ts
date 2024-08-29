@@ -26,6 +26,7 @@ import { LoadVersionNoteComponent } from '../load-version-note/load-version-note
 import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 import { AlertService } from '../service/alert-service';
 import { DownloadService } from '../service/download-service';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 @Component({
   selector: 'app-load-version-activity',
@@ -42,6 +43,7 @@ import { DownloadService } from '../service/download-service';
     NgIf,
     MatIcon,
     DatePipe,
+    EasternTimePipe,
     FormsModule,
     ReactiveFormsModule,
   ],
