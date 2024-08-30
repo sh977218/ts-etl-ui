@@ -320,7 +320,7 @@ export class LoadRequestComponent implements AfterViewInit {
             this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
             this.reloadAllRequests$.next(true);
           },
-          error: () => this.alertService.addAlert('danger', 'Error create load request.'),
+          error: () => this.alertService.addAlert('danger', 'Error creating load request.'),
         }),
       )
       .subscribe();
