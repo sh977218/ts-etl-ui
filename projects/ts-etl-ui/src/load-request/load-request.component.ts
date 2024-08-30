@@ -39,6 +39,7 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import {
+  CreateLoadRequestsResponse,
   FlatLoadRequestPayload,
   generateLoadRequestPayload,
   LoadRequest,
@@ -312,17 +313,17 @@ export class LoadRequestComponent implements AfterViewInit {
       .afterClosed()
       .pipe(
         filter(newLoadRequest => !!newLoadRequest),
-        switchMap(newLoadRequest => this.http.post<{
-          opRequestSeq: string
-        }>(`${environment.newApiServer}/load-request`, newLoadRequest as LoadRequest)),
+        switchMap(newLoadRequest => this.http.post<CreateLoadRequestsResponse>(`${environment.newApiServer}/load-request`, newLoadRequest as LoadRequest)),
+        map(res => res.result.data),
+        tap({
+          next: (opRequestSeq) => {
+            this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
+            this.reloadAllRequests$.next(true);
+          },
+          error: () => this.alertService.addAlert('danger', 'Error creating load request.'),
+        }),
       )
-      .subscribe({
-        next: ({ opRequestSeq }) => {
-          this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
-          this.reloadAllRequests$.next(true);
-        },
-        error: () => this.alertService.addAlert('danger', 'Error create load request.'),
-      });
+      .subscribe();
   }
 
   openCancelDialog(reqId: number) {

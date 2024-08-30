@@ -152,3 +152,8 @@ export type LoadRequestsResponse = {
   status: ApiResponseStatus;
 }
 
+export type CreateLoadRequestsResponse = {
+  result: { data: number, hasPagination: boolean };
+  service: ApiResponseService;
+  status: ApiResponseStatus;
+}

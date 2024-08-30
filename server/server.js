@@ -215,6 +215,7 @@ app.post('/loadRequest/:opRequestSeq', async (req, res) => {
 });
 
 app.post('/load-request', async (req, res) => {
+  const apiStartTime = new Date();
   const loadRequest = req.body;
 
   const { loadRequestsCollection } = await mongoCollection();
@@ -224,7 +225,14 @@ app.post('/load-request', async (req, res) => {
   });
 
   const newLoadRequest = await loadRequestsCollection.findOne({ _id: result.insertedId });
-  res.send({ opRequestSeq: newLoadRequest.opRequestSeq });
+  const apiEndTime = new Date();
+  res.send({
+    result: {
+      data: newLoadRequest.opRequestSeq, hasPagination: false,
+    },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    status: { success: true },
+  });
 });
 
 app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
