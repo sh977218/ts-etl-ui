@@ -94,19 +94,6 @@ export class CreateLoadRequestModalComponent {
     return this.loadRequestCreationForm as FormGroup;
   }
 
-  onFileSelected(event: Event) {
-    const DEFAULT_FOLDER = `file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/`;
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      if (file) {
-        const webkitRelativePathArray = file.webkitRelativePath.split('/');
-        const folder = webkitRelativePathArray[0];
-        this.loadRequestCreationForm.get('sourceFilePath')?.setValue(`${DEFAULT_FOLDER}${folder}`);
-      }
-    }
-  }
-
   onCodeSystemNameSelectChange(event: MatSelectChange) {
     const codeSystemName = event.value;
     if (!this.constantService.CODE_SYSTEM_REQUIRED_SOURCE_FILE.get(codeSystemName)) {

@@ -30,10 +30,9 @@
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label for="sourcePathFile">Source File Path</mat-label>
-        <input matInput formControlName="sourceFilePath">
-        <mat-icon matSuffix (click)="fileUpload.click()" color="primary">attach_file</mat-icon>
-        <input type="file" #fileUpload class="hidden" (change)="onFileSelected($event)" id="sourcePathFile"
-               webkitdirectory directory>
+        <input matInput placeholder="file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/"
+               formControlName="sourceFilePath">
+        <mat-hint>Copy and paste source file path from File Explorer</mat-hint>
         <mat-error *ngIf="loadRequestCreationForm.get('sourceFilePath')?.hasError('sourceFilePathError')">
           Please select source file from NLM server
         </mat-error>
