@@ -30,7 +30,7 @@ const SECRET_TOKEN = 'some-secret'; // should be from process.env
 app.use(express.json());
 app.use(cookieParser());
 if (['coverage'].includes(process.env.ENV_NAME)) {
-  app.use(express.static('../dist/ts-etl-ui'));
+  app.use(express.static('../dist/e2e-coverage'));
 } else {
   app.use(express.static('../dist/ts-etl-ui/browser'));
 }
@@ -559,7 +559,7 @@ app.post('/api/logout', async (req, res) => {
 app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
   if (['coverage'].includes(process.env.ENV_NAME)) {
-    createReadStream('../dist/ts-etl-ui/index.html').pipe(res);
+    createReadStream('../dist/e2e-coverage/index.html').pipe(res);
   } else {
     createReadStream('../dist/ts-etl-ui/browser/index.html').pipe(res);
   }
