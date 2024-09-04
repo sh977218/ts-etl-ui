@@ -9,7 +9,7 @@ export function sourceFilePathValidator(): ValidatorFn {
       return null;
     }
 
-    const regex = new RegExp(`^file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/`);
+    const regex = new RegExp(`^file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/`);
 
     const isNlmServer = regex.test(value);
 

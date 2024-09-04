@@ -4,7 +4,7 @@
     <table class="mat-elevation-z8 my-3" mat-table [dataSource]="dataSource()" matSort>
       <ng-container matColumnDef="activityId">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Activity ID</th>
-        <td mat-cell *matCellDef="let activity">{{activity.activityId | date: 'YYYY-MM-dd'}}</td>
+        <td mat-cell *matCellDef="let activity">{{activity.activityId | easternTime: 'YYYY-MM-dd z'}}</td>
       </ng-container>
       <ng-container matColumnDef="activityId-search">
         <th mat-header-cell *matHeaderCellDef>
@@ -56,7 +56,7 @@
 
       <ng-container matColumnDef="createdTime">
         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Creation Time</th>
-        <td mat-cell *matCellDef="let activity">{{activity.createdTime | date: 'YYYY-MM-dd HH:mm a'}}</td>
+        <td mat-cell *matCellDef="let activity">{{activity.createdTime | easternTime}}</td>
       </ng-container>
       <ng-container matColumnDef="createdTime-search">
         <th mat-header-cell *matHeaderCellDef>

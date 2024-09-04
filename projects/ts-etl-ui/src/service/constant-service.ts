@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin, map, of, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
-import { PropertyResponse } from '../model/property';
+import { CreateRequestCodeSystemListProperty, Property, PropertyResponse } from '../model/property';
 
 const VERSION_STATUSES = [
   'Pending QA',
@@ -16,10 +16,14 @@ const VERSION_STATUSES = [
 @Injectable({ providedIn: 'root' })
 export class ConstantService {
 
-  propertyMapper = (res: PropertyResponse) => res.result.data.map(d => d.value);
+  propertyMapper = (res: PropertyResponse) => res.result.data.map((d: Property) => d.value);
+  createRequestCodeSystemListPropertyMapper = (res: PropertyResponse) => res.result.data.map((d: CreateRequestCodeSystemListProperty) => d.codeSystemName);
 
   private CODE_SYSTEM_NAMES$ = this.http.get<PropertyResponse>(`${environment.newApiServer}/property/request-code-systems`)
     .pipe(map(this.propertyMapper), tap(res => this.CODE_SYSTEM_NAMES = res));
+
+  private CREATE_REQUEST_CODE_SYSTEM_NAMES$ = this.http.get<PropertyResponse>(`${environment.newApiServer}/property/code-system/list`)
+    .pipe(map(this.createRequestCodeSystemListPropertyMapper), tap(res => this.CREATE_REQUEST_CODE_SYSTEM_NAMES = res));
 
   private LOAD_REQUEST_STATUSES$ = this.http.get<PropertyResponse>(`${environment.newApiServer}/property/request-statuses`)
     .pipe(map(this.propertyMapper), tap(res => this.LOAD_REQUEST_STATUSES = res));
@@ -33,6 +37,7 @@ export class ConstantService {
   constructor(private http: HttpClient) {
     forkJoin([
         this.CODE_SYSTEM_NAMES$,
+        this.CREATE_REQUEST_CODE_SYSTEM_NAMES$,
         this.LOAD_REQUEST_STATUSES$,
         this.LOAD_REQUEST_TYPES$,
         this.VERSION_STATUSES$,
@@ -41,10 +46,10 @@ export class ConstantService {
   }
 
   CODE_SYSTEM_NAMES: string[] = [];
+  CREATE_REQUEST_CODE_SYSTEM_NAMES: string[] = [];
   LOAD_REQUEST_STATUSES: string[] = [];
   LOAD_REQUEST_TYPES: string[] = [];
   VERSION_STATUSES: string[] = [];
-
-
+  CODE_SYSTEM_REQUIRED_SOURCE_FILE: Map<string, string[]> = new Map();
 }
 

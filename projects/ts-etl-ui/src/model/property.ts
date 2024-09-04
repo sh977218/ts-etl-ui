@@ -4,9 +4,13 @@ export interface Property {
   value: string;
 }
 
+export interface CreateRequestCodeSystemListProperty {
+  codeSystemName: string;
+}
+
 // API response
 type PropertyResponseResult = {
-  data: Property[],
+  data: Property[] & CreateRequestCodeSystemListProperty[] & string[],
   hasPagination: boolean
   pagination: ApiResponseResultPagination
 }

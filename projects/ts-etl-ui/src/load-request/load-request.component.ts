@@ -1,8 +1,14 @@
-import { AsyncPipe, CommonModule, DatePipe, NgIf } from '@angular/common';
+import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA,
-  signal, ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NO_ERRORS_SCHEMA,
+  signal,
+  ViewChild,
+  ViewEncapsulation,
   WritableSignal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -21,18 +27,9 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash';
-import { default as _rollupMoment, Moment } from 'moment';
 import * as _moment from 'moment';
-import {
-  catchError,
-  filter,
-  map,
-  of,
-  startWith,
-  Subject,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { default as _rollupMoment, Moment } from 'moment';
+import { catchError, filter, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { triggerExpandTableAnimation } from '../animations';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -42,6 +39,7 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import {
+  CreateLoadRequestsResponse,
   FlatLoadRequestPayload,
   generateLoadRequestPayload,
   LoadRequest,
@@ -52,6 +50,7 @@ import { User } from '../model/user';
 import { AlertService } from '../service/alert-service';
 import { ConstantService } from '../service/constant-service';
 import { DownloadService } from '../service/download-service';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
@@ -65,6 +64,7 @@ const moment = _rollupMoment || _moment;
     AsyncPipe,
     RouterModule,
     CommonModule,
+    EasternTimePipe,
     ReactiveFormsModule,
     MatInputModule,
     MatTableModule,
@@ -83,9 +83,10 @@ const moment = _rollupMoment || _moment;
     LoadRequestMessageComponent,
   ],
   templateUrl: './load-request.component.html',
+  styleUrls: ['./load-request.component.scss'],
   animations: [triggerExpandTableAnimation],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
-  providers: [DatePipe],
+  encapsulation: ViewEncapsulation.None,
 })
 export class LoadRequestComponent implements AfterViewInit {
   reloadAllRequests$ = new Subject();
@@ -124,8 +125,8 @@ export class LoadRequestComponent implements AfterViewInit {
       requestTimeFrom: new FormControl<Moment | string | null>(null),
       requestTimeTo: new FormControl<Moment | string | null>(null),
       requester: new FormControl<string | null>(null),
-      creationTimeFrom: new FormControl<string | null>(null),
-      creationTimeTo: new FormControl<string | null>(null),
+      creationTimeFrom: new FormControl<Moment | string | null>(null),
+      creationTimeTo: new FormControl<Moment | string | null>(null),
       filterRequestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
       filterRequester: new FormControl<string | null>(null),
     }, { updateOn: 'submit' },
@@ -164,6 +165,14 @@ export class LoadRequestComponent implements AfterViewInit {
         const requestTimeTo = val.requestTimeTo;
         if (requestTimeTo) {
           queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
+        }
+        const creationTimeFrom = val.creationTimeFrom;
+        if (creationTimeFrom) {
+          queryParams.creationTimeFrom = (creationTimeFrom as Moment).toISOString();
+        }
+        const creationTimeTo = val.creationTimeTo;
+        if (creationTimeTo) {
+          queryParams.creationTimeTo = (creationTimeTo as Moment).toISOString();
         }
         this.router.navigate(['load-requests'], {
           queryParamsHandling: 'merge',
@@ -240,6 +249,16 @@ export class LoadRequestComponent implements AfterViewInit {
                 emitEvent: false,
               });
             }
+            if (searchCriteriaPatch.creationTimeFrom) {
+              this.searchCriteria.controls.creationTimeFrom.patchValue(moment(searchCriteriaPatch.creationTimeFrom), {
+                emitEvent: false,
+              });
+            }
+            if (searchCriteriaPatch.creationTimeTo) {
+              this.searchCriteria.controls.creationTimeTo.patchValue(moment(searchCriteriaPatch.creationTimeTo), {
+                emitEvent: false,
+              });
+            }
             if (searchCriteriaPatch.filterRequestTime) {
               this.searchCriteria.controls.filterRequestTime.patchValue(searchCriteriaPatch.filterRequestTime, {
                 emitEvent: false,
@@ -294,17 +313,17 @@ export class LoadRequestComponent implements AfterViewInit {
       .afterClosed()
       .pipe(
         filter(newLoadRequest => !!newLoadRequest),
-        switchMap(newLoadRequest => this.http.post<{
-          opRequestSeq: string
-        }>(`${environment.apiServer}/loadRequest`, newLoadRequest as LoadRequest)),
+        switchMap(newLoadRequest => this.http.post<CreateLoadRequestsResponse>(`${environment.newApiServer}/load-request`, newLoadRequest as LoadRequest)),
+        map(res => res.result.data),
+        tap({
+          next: (opRequestSeq) => {
+            this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
+            this.reloadAllRequests$.next(true);
+          },
+          error: () => this.alertService.addAlert('danger', 'Error creating load request.'),
+        }),
       )
-      .subscribe({
-        next: ({ opRequestSeq }) => {
-          this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
-          this.reloadAllRequests$.next(true);
-        },
-        error: () => this.alertService.addAlert('danger', 'Error create load request.'),
-      });
+      .subscribe();
   }
 
   openCancelDialog(reqId: number) {
@@ -314,7 +333,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .afterClosed()
       .pipe(
         filter((dialogResult: boolean) => dialogResult),
-        switchMap(() => this.http.delete(`${environment.apiServer}/loadRequest/${reqId}`)),
+        switchMap(() => this.http.post(`${environment.newApiServer}/loadRequest/${reqId}`, {})),
       )
       .subscribe({
         next: () => {

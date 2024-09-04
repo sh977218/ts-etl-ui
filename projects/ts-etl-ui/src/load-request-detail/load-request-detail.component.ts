@@ -1,4 +1,4 @@
-import { DatePipe, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -8,10 +8,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
+
 import {
   LoadVersionReviewModalComponent,
 } from '../load-version-review-modal/load-version-review-modal.component';
 import { LoadRequest, LoadRequestActivity, LoadRequestMessage } from '../model/load-request';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 export interface RowElement {
   label: string;
@@ -73,7 +75,7 @@ const LABEL_SORT_ARRAY = [
     MatIcon,
     NgIf,
     RouterLink,
-    DatePipe,
+    EasternTimePipe,
   ],
   templateUrl: './load-request-detail.component.html',
   styleUrl: './load-request-detail.component.scss',

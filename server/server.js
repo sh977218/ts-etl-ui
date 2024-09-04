@@ -7,6 +7,9 @@ import jwt from 'jsonwebtoken';
 
 import cookieParser from 'cookie-parser';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
 import { TSError, UnauthorizedError } from './errors.js';
 import moment from 'moment';
@@ -26,7 +29,7 @@ const SECRET_TOKEN = 'some-secret'; // should be from process.env
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static('dist/ts-etl-ui/browser'));
+app.use(express.static('../dist/ts-etl-ui/browser'));
 
 app.set('view engine', 'ejs');
 app.set('views', join(__dirname, 'views'));
@@ -198,7 +201,7 @@ async function getNextLoadRequestSequenceId() {
   return loadRequestsCollection.countDocuments({});
 }
 
-app.delete('/api/loadRequest/:opRequestSeq', async (req, res) => {
+app.post('/loadRequest/:opRequestSeq', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
 
   const loadRequest = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
@@ -211,7 +214,8 @@ app.delete('/api/loadRequest/:opRequestSeq', async (req, res) => {
   res.send();
 });
 
-app.post('/api/loadRequest', async (req, res) => {
+app.post('/load-request', async (req, res) => {
+  const apiStartTime = new Date();
   const loadRequest = req.body;
 
   const { loadRequestsCollection } = await mongoCollection();
@@ -221,7 +225,14 @@ app.post('/api/loadRequest', async (req, res) => {
   });
 
   const newLoadRequest = await loadRequestsCollection.findOne({ _id: result.insertedId });
-  res.send({ opRequestSeq: newLoadRequest.opRequestSeq });
+  const apiEndTime = new Date();
+  res.send({
+    result: {
+      data: newLoadRequest.opRequestSeq, hasPagination: false,
+    },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    status: { success: true },
+  });
 });
 
 app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
@@ -436,6 +447,46 @@ app.get('/api/versionStatusMeta/:codeSystemName', async (req, res) => {
   });
 });
 
+app.get('/property/code-system/list', async (req, res) => {
+  const apiStartTime = new Date();
+  const { propertyCollection } = await mongoCollection();
+  const property = await propertyCollection.findOne({ propertyName: 'create-request-code-systems' });
+  const list = property.value;
+  const apiEndTime = new Date();
+  res.send({
+    result: {
+      data: list.map(item => {
+        return {
+          codeSystemName: item,
+        };
+      }), hasPagination: false, pagination: {
+        totalCount: list.length, page: 1, pageSize: 0,
+      },
+    },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    status: { success: true },
+  });
+});
+
+app.get('/property/data-files/:codeSystemName', async (req, res) => {
+  const apiStartTime = new Date();
+  const { codeSystemName } = req.params;
+  const { propertyCollection } = await mongoCollection();
+  const property = await propertyCollection.findOne({ propertyName: 'data-files' });
+  const dataFileMap = property.value;
+  const list = dataFileMap[codeSystemName] || [];
+  const apiEndTime = new Date();
+  res.send({
+    result: {
+      data: list, hasPagination: false, pagination: {
+        totalCount: list.length, page: 1, pageSize: 0,
+      },
+    },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    status: { success: true },
+  });
+});
+
 app.get('/property/:propertyName', async (req, res) => {
   const apiStartTime = new Date();
   const { propertyName } = req.params;
@@ -457,7 +508,6 @@ app.get('/property/:propertyName', async (req, res) => {
     status: { success: true },
   });
 });
-
 
 app.get('/api/serverInfo', async (req, res) => {
   const pr = getPrNumber();
@@ -513,7 +563,7 @@ app.post('/api/logout', async (req, res) => {
 
 app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
-  createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
+  createReadStream('../dist/ts-etl-ui/browser/index.html').pipe(res);
 });
 
 app.use(async (err, req, res) => {

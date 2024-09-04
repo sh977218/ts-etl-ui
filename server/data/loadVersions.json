@@ -6,7 +6,7 @@
       "loadStartTime": "2023-10-12T08:00:01+05:00",
       "loadEndTime": "2023-10-12T08:01:04+05:00",
       "codeSystemName": "CDT",
-      "sourceFilePath": "file://nlmsombaserver.nlm.nih.gov/dev-ts-data-import/HPO100923",
+      "sourceFilePath": "file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/HPO100923",
       "versionStatus": "Accepted",
       "version": "2023",
       "effectiveDate": "2020-1-1",
@@ -23,7 +23,10 @@
               "notes": "Testing the Notes feature",
               "createdTime": "2023-07-02T11:07:23.546Z",
               "createdBy": "peterhuangnih",
-              "hashtags": ["Verification", "TestTag"]
+              "hashtags": [
+                "Verification",
+                "TestTag"
+              ]
             }
           ]
         }
@@ -37,10 +40,10 @@
             "endTime": "2023-12-17T07:54:22+05:00",
             "errors": [
               {
-              "messageType": "SOURCE",
-              "tag": "MISSING_DATA_FILE",
-              "message": "Error while extracting ...",
-              "creationTime": "2023-12-17T08:21:56+05:00"
+                "messageType": "SOURCE",
+                "tag": "MISSING_DATA_FILE",
+                "message": "Error while extracting ...",
+                "creationTime": "2023-12-17T08:21:56+05:00"
               }
             ],
             "warnings": [],

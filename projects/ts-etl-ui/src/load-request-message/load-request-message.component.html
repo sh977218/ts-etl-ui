@@ -32,7 +32,7 @@
 
     <ng-container matColumnDef="creationTime">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Creation Time</th>
-      <td mat-cell *matCellDef="let element"> {{element.creationTime | date:'yyyy/MM/dd hh:mma'}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.creationTime | easternTime}} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

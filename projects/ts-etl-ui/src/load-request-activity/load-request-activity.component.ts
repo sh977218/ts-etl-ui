@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe, NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import {
   AfterViewInit,
   Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit, ViewChild,
@@ -13,13 +13,14 @@ import {
 } from '@angular/material/table';
 
 import { LoadRequestActivity } from '../model/load-request';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 @Component({
   selector: 'app-load-request-activity',
   standalone: true,
-  providers: [DatePipe],
   imports: [
     CommonModule,
+    EasternTimePipe,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,

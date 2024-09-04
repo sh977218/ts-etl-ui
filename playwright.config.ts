@@ -55,7 +55,7 @@ export default defineConfig({
       },
     },
     {
-      name: 'ts-elt-ui',
+      name: 'ts-etl-ui',
       use: {
         ...devices['Desktop Chrome'],
       },
