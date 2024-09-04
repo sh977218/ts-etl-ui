@@ -38,7 +38,7 @@ jobs:
         run: npm run build:ci
 
       - name: Reset MongoDb
-        run: PR=${{ github.event.number }} node --env-file .ci.env reset-mongo-db.js
+        run: PR=${{ github.event.number }} node --env-file .ci.env server/reset-mongo-db.js
 
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npm run test
