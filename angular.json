@@ -162,7 +162,8 @@
             ],
             "allowedCommonJsDependencies": [
               "file-saver",
-              "lodash"
+              "lodash",
+              "moment"
             ],
             "tsConfig": "projects/ts-etl-ui/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -180,34 +181,29 @@
             "namedChunks": true
           },
           "configurations": {
-            "production": {
+            "coverage": {
               "fileReplacements": [
                 {
                   "replace": "projects/ts-etl-ui/src/environments/environment.ts",
-                  "with": "projects/ts-etl-ui/src/environments/environment.prod.ts"
+                  "with": "projects/ts-etl-ui/src/environments/environment.ci.ts"
                 }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
+              ]
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "coverage"
         },
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
+            "proxyConfig": "projects/ts-etl-ui/src/proxy.conf.json",
             "buildTarget": "e2e-coverage:build"
           },
           "configurations": {
-            "development": {
-              "buildTarget": "e2e-coverage:build:development"
-            },
             "coverage": {
-              "buildTarget": "e2e-coverage:build:production"
+              "buildTarget": "e2e-coverage:build:coverage"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "coverage"
         }
       }
     }
