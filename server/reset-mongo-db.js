@@ -1,4 +1,4 @@
-import { resetMongoCollection } from './server/db.js';
+import { resetMongoCollection } from 'server/db.js';
 
 resetMongoCollection()
   .then(() => console.log('Reset DB successfully from reset-mongo-db.js'))

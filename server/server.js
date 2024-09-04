@@ -29,7 +29,7 @@ const SECRET_TOKEN = 'some-secret'; // should be from process.env
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static('dist/ts-etl-ui/browser'));
+app.use(express.static('../dist/ts-etl-ui/browser'));
 
 app.set('view engine', 'ejs');
 app.set('views', join(__dirname, 'views'));
@@ -563,7 +563,7 @@ app.post('/api/logout', async (req, res) => {
 
 app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
-  createReadStream('dist/ts-etl-ui/browser/index.html').pipe(res);
+  createReadStream('../dist/ts-etl-ui/browser/index.html').pipe(res);
 });
 
 app.use(async (err, req, res) => {
@@ -575,10 +575,10 @@ app.use(async (err, req, res) => {
 
 app.listen(port, () => {
   console.log(`TS ELT UI mock server listening on port ${port}`);
-  if (RESET_DB) {
+  // if (RESET_DB) {
     resetMongoCollection()
       .then(() => console.log('Reset DB successfully from server.js'))
       .catch(() => console.log('Reset DB failed from server.js'))
       .finally(() => console.log('Reset DB final callback from server.js'));
-  }
+  // }
 });
