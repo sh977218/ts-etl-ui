@@ -15,10 +15,10 @@
     "build": "ng build ts-etl-ui -c render && node server/insert-commit-hash.js",
     "build:prod": "ng build ts-etl-ui -c prod && node server/insert-commit-hash.js",
     "build:ci": "ng build ts-etl-ui -c ci && node server/insert-commit-hash.js",
-    "test": "playwright test --project=ts-elt-ui",
+    "test": "playwright test --project=ts-etl-ui",
     "test:smoke": "playwright test --project=debug",
     "test:debug": "playwright test --project=debug --debug",
-    "test:ui": "playwright test --project=ts-elt-ui --ui",
+    "test:ui": "playwright test --project=ts-etl-ui --ui",
     "prepare": "husky"
   },
   "private": true,
