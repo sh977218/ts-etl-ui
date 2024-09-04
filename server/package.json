@@ -1,5 +1,5 @@
 {
-  "name": "ts-etl-ui",
+  "name": "ts-etl-mock-server",
   "version": "0.0.0",
   "type": "module",
   "main": "server.js",
