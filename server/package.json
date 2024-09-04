@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node --env-file .prod.env server.js",
     "start:ci": "node --env-file .ci.env server.js",
+    "start:coverage": "node --env-file .coverage.env server.js",
     "prepare": "husky"
   },
   "private": true,

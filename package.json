@@ -13,6 +13,7 @@
     "serve:integration-local": "ng serve ts-etl-ui -c integration-local",
     "start": "npm run start --prefix server",
     "start:ci": "npm run start:ci --prefix server",
+    "start:coverage": "npm run start:coverage --prefix server",
     "build": "ng build ts-etl-ui -c render && node server/insert-commit-hash.js",
     "build:prod": "ng build ts-etl-ui -c prod && node server/insert-commit-hash.js",
     "build:ci": "ng build ts-etl-ui -c ci && node server/insert-commit-hash.js",

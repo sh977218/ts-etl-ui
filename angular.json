@@ -154,7 +154,7 @@
             "optimization": false,
             "extractLicenses": false,
             "sourceMap": true,
-            "outputPath": "dist/e2e-coverage",
+            "outputPath": "dist/ts-etl-ui",
             "index": "projects/ts-etl-ui/src/index.html",
             "main": "projects/ts-etl-ui/src/main.ts",
             "polyfills": [

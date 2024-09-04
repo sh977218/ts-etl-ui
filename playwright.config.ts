@@ -65,7 +65,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: process.env['CI'] ? 'npm run start:ci' : 'npm run serve',
+    command: process.env['CI'] ? 'npm run start:coverage' : 'npm run serve',
     reuseExistingServer: true,
   },
 });

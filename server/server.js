@@ -29,7 +29,11 @@ const SECRET_TOKEN = 'some-secret'; // should be from process.env
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static('../dist/ts-etl-ui/browser'));
+if (['coverage'].includes(process.env.ENV_NAME)) {
+  app.use(express.static('../dist/ts-etl-ui'));
+} else {
+  app.use(express.static('../dist/ts-etl-ui/browser'));
+}
 
 app.set('view engine', 'ejs');
 app.set('views', join(__dirname, 'views'));
@@ -157,29 +161,23 @@ app.post('/load-request/list', async (req, res) => {
 
   const lookup = [{
     $lookup: {
-      from: 'loadVersions',
-      localField: 'loadNumber',
-      foreignField: 'loadNumber',
-      as: 'loadVersionData',
+      from: 'loadVersions', localField: 'loadNumber', foreignField: 'loadNumber', as: 'loadVersionData',
     },
-  },
-    {
-      $addFields: {
-        loadComponents: {
-          $cond: {
-            if: { $eq: [{ $size: '$loadVersionData' }, 0] },
-            then: [],
-            else: { $arrayElemAt: ['$loadVersionData.loadSummary.components', 0] },
-          },
+  }, {
+    $addFields: {
+      loadComponents: {
+        $cond: {
+          if: { $eq: [{ $size: '$loadVersionData' }, 0] },
+          then: [],
+          else: { $arrayElemAt: ['$loadVersionData.loadSummary.components', 0] },
         },
       },
     },
-    {
-      $project: {
-        loadVersionData: 0,
-      },
+  }, {
+    $project: {
+      loadVersionData: 0,
     },
-  ];
+  }];
 
   const aggregation = [{ $match }, ...lookup, { $sort }, { $skip: pageNumberInt * pageSizeInt }, { $limit: pageSizeInt }];
   const { loadRequestsCollection } = await mongoCollection();
@@ -432,8 +430,7 @@ app.get('/api/versionStatus/:codeSystemName/:version', async (req, res) => {
   const { codeSystemName, version } = req.params;
   const { versionStatusCollection } = await mongoCollection();
   const versionStatus = await versionStatusCollection.findOne({
-    'summary.Code System Name': codeSystemName,
-    'summary.Version': version,
+    'summary.Code System Name': codeSystemName, 'summary.Version': version,
   });
   res.send(versionStatus);
 });
@@ -441,9 +438,7 @@ app.get('/api/versionStatus/:codeSystemName/:version', async (req, res) => {
 app.get('/api/versionStatusMeta/:codeSystemName', async (req, res) => {
   const { codeSystemName } = req.params;
   res.send({
-    codeSystemName,
-    currentVersion: 2023,
-    priorVersion: 2022,
+    codeSystemName, currentVersion: 2023, priorVersion: 2022,
   });
 });
 
@@ -563,7 +558,11 @@ app.post('/api/logout', async (req, res) => {
 
 app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
-  createReadStream('../dist/ts-etl-ui/browser/index.html').pipe(res);
+  if (['coverage'].includes(process.env.ENV_NAME)) {
+    createReadStream('../dist/ts-etl-ui/index.html').pipe(res);
+  } else {
+    createReadStream('../dist/ts-etl-ui/browser/index.html').pipe(res);
+  }
 });
 
 app.use(async (err, req, res) => {
