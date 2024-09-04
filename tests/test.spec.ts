@@ -3,8 +3,6 @@ import { test, expect, Page, ConsoleMessage, TestInfo } from '@playwright/test';
 import { randomBytes } from 'crypto';
 import { readFileSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
 
 const PROJECT_ROOT_FOLDER = join(__dirname, '..');
 const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
@@ -22,7 +20,8 @@ async function codeCoverage(page: Page, testInfo: TestInfo) {
   }
 }
 
-const UNEXPECTED_CONSOLE_LOG: string[] = [];
+const EXPECTED_CONSOLE_LOGS: string[] = ['[webpack-dev-server]'];
+const UNEXPECTED_CONSOLE_LOGS: string[] = [];
 
 class MaterialPO {
   private readonly page: Page;
@@ -66,7 +65,7 @@ test.describe('e2e test', async () => {
   test.beforeEach(async ({ page, baseURL }) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
-        UNEXPECTED_CONSOLE_LOG.push(consoleMessage.text());
+        UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
       }
     });
 
@@ -275,7 +274,7 @@ test.describe('e2e test', async () => {
     });
   });
 
-  test('Code System Tab', async ({ page }) => {
+  test('Code System Tab @smoke', async ({ page }) => {
     await page.getByRole('link', { name: 'Code System' }).click();
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
   });
@@ -285,8 +284,11 @@ test.describe('e2e test', async () => {
   });
 
   test.afterAll(async () => {
-    if (UNEXPECTED_CONSOLE_LOG.length) {
-      throw new Error(`Unexpected console message: ${UNEXPECTED_CONSOLE_LOG.join('\n*****************\n')}`);
+    const unexpected_console_logs = UNEXPECTED_CONSOLE_LOGS.filter(UNEXPECTED_CONSOLE_LOG => {
+      return EXPECTED_CONSOLE_LOGS.filter(EXPECTED_CONSOLE_LOG => EXPECTED_CONSOLE_LOG.indexOf(UNEXPECTED_CONSOLE_LOG) > -1);
+    });
+    if (unexpected_console_logs.length) {
+      throw new Error(`Unexpected console message: ${unexpected_console_logs.join('\n*****************\n')}`);
     }
   });
 });

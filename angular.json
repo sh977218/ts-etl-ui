@@ -149,7 +149,7 @@
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
             "customWebpackConfig": {
-              "path": "coverage.webpack.js"
+              "path": "./coverage.webpack.js"
             },
             "optimization": false,
             "extractLicenses": false,
@@ -185,7 +185,7 @@
               "fileReplacements": [
                 {
                   "replace": "projects/ts-etl-ui/src/environments/environment.ts",
-                  "with": "projects/ts-etl-ui/src/environments/environment.ci.ts"
+                  "with": "projects/ts-etl-ui/src/environments/environment.coverage.ts"
                 }
               ]
             }

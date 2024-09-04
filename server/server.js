@@ -3,6 +3,8 @@ import { readFileSync, createReadStream } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import cors from 'cors';
+
 import jwt from 'jsonwebtoken';
 
 import cookieParser from 'cookie-parser';
@@ -29,6 +31,8 @@ const SECRET_TOKEN = 'some-secret'; // should be from process.env
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
+
 if (['coverage'].includes(process.env.ENV_NAME)) {
   app.use(express.static('../dist/e2e-coverage'));
 } else {
@@ -519,7 +523,7 @@ app.get('/nih-login', (req, res) => {
 /* @todo TS's backend needs to implement the following APIs. */
 // this map simulate UTS ticket to username
 const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
-app.get('/api/serviceValidate', async (req, res) => {
+app.get('/api/serviceValidate', cors(), async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
   const app = req.query.app;
