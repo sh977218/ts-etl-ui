@@ -55,40 +55,11 @@ export default defineConfig({
       },
     },
     {
-      name: 'load-request',
-      testMatch: ['load-request.spec.ts'],
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-    },
-    {
-      name: 'load-version',
-      testMatch: ['load-version.spec.ts'],
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-    },
-    {
-      name: 'code-system',
-      testMatch: ['code-system.spec.ts'],
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-    },
-    {
-      name: 'ts-etl-ui',
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-      dependencies: ['load-request', 'load-version', 'code-system'],
-    },
-    {
       name: 'ts-etl-ui',
       use: {
         ...devices['Desktop Chrome'],
       },
     },
-
   ],
 
   /* Run your local dev server before starting the tests */
