@@ -44,9 +44,11 @@ jobs:
         run: PR=${{ github.event.number }} npm run test
 
       - name: Generate coverage report
+        if: always()
         run: npm run coverage-report
 
       - name: Merge both playwright & coverage report
+        if: always()
         run: mv playwright-report coverage-e2e all-report
 
       - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
