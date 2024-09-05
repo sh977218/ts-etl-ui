@@ -2,7 +2,7 @@ import test from './baseFixture';
 import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
 
-test.describe('e2e test @smoke', async () => {
+test.describe('e2e test', async () => {
   test('Load Request Tab', async ({ page, materialPo }) => {
     test.slow();
     const matDialog = materialPo.matDialog();
