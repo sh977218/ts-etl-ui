@@ -13,18 +13,18 @@
           <mat-option *ngFor="let CODE_SYSTEM_NAME of constantService.CREATE_REQUEST_CODE_SYSTEM_NAMES"
                       [value]="CODE_SYSTEM_NAME">{{CODE_SYSTEM_NAME}}</mat-option>
         </mat-select>
-      </mat-form-field>
-      <ng-container *ngIf="loadRequestCreationForm.get('codeSystemName')?.getRawValue() as codeSystemName">
-        <ng-container *ngIf="CODE_SYSTEM_REQUIRED_SOURCE_FILE as requiredFiles">
-          <mat-list role="list" class="border-gray-50 border-2 border-solid mb-3" *ngIf="requiredFiles.length">
-            <strong mat-subheader>Required Source files of {{codeSystemName}}</strong>
-            <mat-list-item role="listitem" *ngFor="let requiredFile of requiredFiles">
-              <div matListItemTitle>{{requiredFile}}</div>
-            </mat-list-item>
-          </mat-list>
+        <ng-container *ngIf="loadRequestCreationForm.get('codeSystemName')?.getRawValue() as codeSystemName">
+          <ng-container *ngIf="CODE_SYSTEM_REQUIRED_SOURCE_FILE as requiredFiles">
+            <mat-list role="list" class="border-gray-50 border-2 border-solid mb-3" *ngIf="requiredFiles.length">
+              <strong mat-subheader>Required Source Files of {{codeSystemName}}</strong>
+              <mat-list-item role="listitem" *ngFor="let requiredFile of requiredFiles">
+                <div matListItemTitle>{{requiredFile}}</div>
+              </mat-list-item>
+            </mat-list>
+          </ng-container>
         </ng-container>
-      </ng-container>
-      <mat-form-field appearance="fill">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
         <mat-label>Request Subject</mat-label>
         <input matInput placeholder="Request Subject" formControlName="requestSubject">
       </mat-form-field>
@@ -112,15 +112,15 @@
           </div>
         </mat-radio-group>
       </div>
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <mat-label>Notification Email</mat-label>
         <input matInput placeholder="contact@nlm.nih.gov" formControlName="notificationEmail">
       </mat-form-field>
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <mat-label>Requester</mat-label>
         <input matInput placeholder="Requester" type="email" formControlName="requester">
       </mat-form-field>
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <mat-label>Request Date</mat-label>
         <input matInput placeholder="Request Date" formControlName="requestTime">
       </mat-form-field>
