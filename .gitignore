@@ -11,6 +11,8 @@
 /server/node_modules
 npm-debug.log
 yarn-error.log
+package-lock.json
+/server/package-lock.json
 
 # IDEs and editors
 .idea/
@@ -49,4 +51,8 @@ Thumbs.db
 /playwright/.cache/
 /allure-report
 /allure-results
-/all-report
+
+# coverage file
+e2e_nyc_output
+coverage-e2e
+all-report/coverage-e2e

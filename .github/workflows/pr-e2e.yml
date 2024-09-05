@@ -43,11 +43,17 @@ jobs:
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npm run test
 
+      - name: Generate coverage report
+        run: npm run coverage-report
+
+      - name: Merge both playwright & coverage report
+        run: mv playwright-report coverage-e2e all-report
+
       - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
         if: always()
         uses: actions/upload-pages-artifact@v3
         with:
-          path: playwright-report
+          path: all-report
 
       - name: Deploy playwright report to Github Pages
         if: always()

@@ -1,8 +1,27 @@
-import { test, expect, Page, ConsoleMessage } from '@playwright/test';
+import { test, expect, Page, ConsoleMessage, TestInfo } from '@playwright/test';
 
-import { readFileSync } from 'fs';
+import { randomBytes } from 'crypto';
+import { readFileSync, writeFileSync } from 'fs';
+import { join, dirname } from 'path';
 
-const UNEXPECTED_CONSOLE_LOG: string[] = [];
+const PROJECT_ROOT_FOLDER = join(__dirname, '..');
+const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
+
+async function codeCoverage(page: Page, testInfo: TestInfo) {
+  const coverage: string = await page.evaluate(
+    'JSON.stringify(window.__coverage__);',
+  );
+  if (coverage) {
+    const name = randomBytes(32).toString('hex');
+    const nycOutput = join(NYC_OUTPUT_FOLDER, `${name}`);
+    await writeFileSync(nycOutput, coverage);
+  } else {
+    throw new Error(`No coverage found for ${testInfo.testId}`);
+  }
+}
+
+const EXPECTED_CONSOLE_LOGS: string[] = ['[webpack-dev-server]'];
+const UNEXPECTED_CONSOLE_LOGS: string[] = [];
 
 class MaterialPO {
   private readonly page: Page;
@@ -46,7 +65,7 @@ test.describe('e2e test', async () => {
   test.beforeEach(async ({ page, baseURL }) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
-        UNEXPECTED_CONSOLE_LOG.push(consoleMessage.text());
+        UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
       }
     });
 
@@ -260,9 +279,18 @@ test.describe('e2e test', async () => {
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
   });
 
+  test.afterEach(async ({ page }, testInfo) => {
+    await codeCoverage(page, testInfo);
+  });
+
   test.afterAll(async () => {
-    if (UNEXPECTED_CONSOLE_LOG.length) {
-      throw new Error(`Unexpected console message: ${UNEXPECTED_CONSOLE_LOG.join('\n*****************\n')}`);
+    const unexpected_console_logs = UNEXPECTED_CONSOLE_LOGS.filter(UNEXPECTED_CONSOLE_LOG => {
+      const expectedConsoleLogs = EXPECTED_CONSOLE_LOGS.filter(EXPECTED_CONSOLE_LOG => EXPECTED_CONSOLE_LOG.indexOf(UNEXPECTED_CONSOLE_LOG) > -1);
+      const isExpected = expectedConsoleLogs.length;
+      return isExpected;
+    });
+    if (unexpected_console_logs.length) {
+      throw new Error(`Unexpected console message: ${unexpected_console_logs.join('\n*****************\n')}`);
     }
   });
 });

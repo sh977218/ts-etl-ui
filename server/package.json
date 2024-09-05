@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node --env-file .prod.env server.js",
     "start:ci": "node --env-file .ci.env server.js",
+    "start:coverage": "node --env-file .coverage.env server.js",
     "prepare": "husky"
   },
   "private": true,
@@ -15,6 +16,7 @@
   },
   "dependencies": {
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",

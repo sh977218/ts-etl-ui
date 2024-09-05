@@ -15,6 +15,9 @@
       "plugins": [
         "import"
       ],
+      "parserOptions": {
+        "sourceType": "module"
+      },
       "rules": {
         "@angular-eslint/component-selector": [
           "error",
@@ -47,9 +50,6 @@
       }
     },
     {
-      "parserOptions": {
-        "sourceType": "module"
-      },
       "files": [
         "projects/**/*.html"
       ],
@@ -61,7 +61,7 @@
     },
     {
       "files": [
-        "server/**/*.js"
+        "server/*.js"
       ],
       "extends": [
         "eslint:recommended"
