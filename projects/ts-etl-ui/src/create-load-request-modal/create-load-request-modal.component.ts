@@ -110,4 +110,6 @@ export class CreateLoadRequestModalComponent {
       this.CODE_SYSTEM_REQUIRED_SOURCE_FILE = this.constantService.CODE_SYSTEM_REQUIRED_SOURCE_FILE.get(codeSystemName) || [];
     }
   }
+
+  protected readonly navigator = navigator;
 }
