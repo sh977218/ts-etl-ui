@@ -29,25 +29,33 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: npm ci
+        run: npm i
 
       - name: Grant git permission
         run: git config --global --add safe.directory /__w/ts-etl-ui/ts-etl-ui
 
       - name: Build Angular
-        run: npm run build:ci
+        run: npm run build:coverage
 
       - name: Reset MongoDb
-        run: PR=${{ github.event.number }} node --env-file server/.ci.env server/reset-mongo-db.js
+        run: PR=${{ github.event.number }} node --env-file server/.coverage.env server/reset-mongo-db.js
 
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npm run test
+
+      - name: Generate coverage report
+        if: always()
+        run: npm run coverage-report
+
+      - name: Merge both playwright & coverage report
+        if: always()
+        run: mv playwright-report coverage-e2e all-report
 
       - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
         if: always()
         uses: actions/upload-pages-artifact@v3
         with:
-          path: playwright-report
+          path: all-report
 
       - name: Deploy playwright report to Github Pages
         if: always()

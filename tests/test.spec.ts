@@ -1,76 +1,10 @@
-import { test, expect, Page, ConsoleMessage } from '@playwright/test';
-
+import test from './baseFixture';
+import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
 
-const UNEXPECTED_CONSOLE_LOG: string[] = [];
-
-class MaterialPO {
-  private readonly page: Page;
-
-  constructor(page: Page) {
-    this.page = page;
-  }
-
-  matOverlay() {
-    return this.page.locator('.cdk-overlay-container');
-  }
-
-  matDialog() {
-    return this.page.locator('mat-dialog-container');
-  }
-
-  matSpinner() {
-    return this.page.locator('mat-spinner');
-  }
-
-  matOption() {
-    return this.page.locator('mat-option');
-  }
-
-  async waitForSpinner() {
-    await this.matSpinner().waitFor();
-    await this.matSpinner().waitFor({ state: 'hidden' });
-  }
-
-  async checkAndCloseAlert(text: string | RegExp) {
-    const snackBarContainer = this.page.locator('mat-snack-bar-container');
-    const snackBarLabel = this.page.locator('.mat-mdc-snack-bar-label.mdc-snackbar__label');
-    await snackBarContainer.waitFor();
-    await expect(snackBarLabel).toHaveText(text);
-    await snackBarContainer.getByRole('button').click();
-  }
-
-}
-
 test.describe('e2e test', async () => {
-  test.beforeEach(async ({ page, baseURL }) => {
-    page.on('console', (consoleMessage: ConsoleMessage) => {
-      if (consoleMessage) {
-        UNEXPECTED_CONSOLE_LOG.push(consoleMessage.text());
-      }
-    });
-
-    await page.goto('/');
-    await test.step('has title', async () => {
-      await expect(page).toHaveTitle('Please Log In');
-    });
-    await test.step('has login required message', async () => {
-      await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
-    });
-
-    await test.step('login', async () => {
-      await page.getByRole('button', { name: 'Log In' }).click();
-      await page.getByRole('button', { name: 'UTS' }).click();
-      await page.getByRole('button', { name: 'Sign in' }).click();
-      await page.locator('[name="ticket"]').selectOption('Peter');
-      await page.getByRole('button', { name: 'Ok' }).click();
-      await page.waitForURL(`${baseURL}/load-requests` || '');
-    });
-  });
-
-  test('Load Request Tab', async ({ page }) => {
+  test('Load Request Tab', async ({ page, materialPo }) => {
     test.slow();
-    const materialPo = new MaterialPO(page);
     const matDialog = materialPo.matDialog();
 
     await expect(page.getByRole('link', { name: 'Load Request' })).toBeVisible();
@@ -211,8 +145,7 @@ test.describe('e2e test', async () => {
     await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
-  test('Version QA Tab', async ({ page }) => {
-    const materialPo = new MaterialPO(page);
+  test('Version QA Tab', async ({ page, materialPo }) => {
     const matDialog = materialPo.matDialog();
 
     await page.getByRole('link', { name: 'Version QA' }).click();
@@ -258,11 +191,5 @@ test.describe('e2e test', async () => {
   test('Code System Tab', async ({ page }) => {
     await page.getByRole('link', { name: 'Code System' }).click();
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
-  });
-
-  test.afterAll(async () => {
-    if (UNEXPECTED_CONSOLE_LOG.length) {
-      throw new Error(`Unexpected console message: ${UNEXPECTED_CONSOLE_LOG.join('\n*****************\n')}`);
-    }
   });
 });
