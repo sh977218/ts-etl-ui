@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -75,7 +74,6 @@ const moment = _rollupMoment || _moment;
     MatDialogModule,
     MatSortModule,
     MatPaginatorModule,
-    MatCheckboxModule,
     MatOptionModule,
     MatSelectModule,
     LoadRequestActivityComponent,
@@ -118,7 +116,7 @@ export class LoadRequestComponent implements AfterViewInit {
   searchCriteria = new FormGroup(
     {
       opRequestSeq: new FormControl<string | null>(null),
-      codeSystemName: new FormControl<string | null>(null, { updateOn: 'change' }),
+      codeSystemName: new FormControl<string[] | null>(null),
       requestSubject: new FormControl<string | null>(null),
       requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
       requestType: new FormControl<string | null>(null, { updateOn: 'change' }),
@@ -127,7 +125,7 @@ export class LoadRequestComponent implements AfterViewInit {
       requester: new FormControl<string | null>(null),
       creationTimeFrom: new FormControl<Moment | string | null>(null),
       creationTimeTo: new FormControl<Moment | string | null>(null),
-      filterRequestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
+      filterRequestTime: new FormControl<string | null>(null),
       filterRequester: new FormControl<string | null>(null),
     }, { updateOn: 'submit' },
   );
@@ -192,7 +190,7 @@ export class LoadRequestComponent implements AfterViewInit {
           map((queryParams: Params) => {
             const searchCriteriaFromQueryParameter: FlatLoadRequestPayload = {
               opRequestSeq: queryParams.get('opRequestSeq'),
-              codeSystemName: queryParams.get('codeSystemName'),
+              codeSystemName: queryParams.getAll('codeSystemName'),
               requestSubject: queryParams.get('requestSubject'),
               requestStatus: queryParams.get('requestStatus'),
               requestType: queryParams.get('requestType'),
@@ -220,7 +218,7 @@ export class LoadRequestComponent implements AfterViewInit {
                 emitEvent: false,
               });
             }
-            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName || '', {
+            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName || [''], {
               emitEvent: false,
             });
             if (searchCriteriaPatch.requestSubject) {
