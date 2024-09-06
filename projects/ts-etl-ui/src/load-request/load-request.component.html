@@ -75,9 +75,9 @@
         <ng-container matColumnDef="codeSystemName-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <mat-form-field>
+              <mat-form-field appearance="outline" id="codeSystemSearch">
                 <mat-label>Code System Name</mat-label>
-                <mat-select id="codeSystemSearch" formControlName="codeSystemName" multiple>
+                <mat-select formControlName="codeSystemName" multiple>
                   <ng-container *ngFor="let CODE_SYSTEM_NAME of constantService.CODE_SYSTEM_NAMES">
                     <mat-option [value]="CODE_SYSTEM_NAME">{{CODE_SYSTEM_NAME}}</mat-option>
                   </ng-container>
