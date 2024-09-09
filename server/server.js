@@ -524,7 +524,7 @@ app.get('/nih-login', (req, res) => {
 
 /* @todo TS's backend needs to implement the following APIs. */
 // this map simulate UTS ticket to username
-const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
+const ticketMap = new Map([['peter-ticket', 'peterhuanguts'], ['christophe-ticket', 'ludetc']]);
 app.get('/api/serviceValidate', cors(), async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
@@ -533,9 +533,7 @@ app.get('/api/serviceValidate', cors(), async (req, res) => {
   if (app !== 'angular' || !service || !ticket) {
     return res.status(400).send();
   }
-  const { usersCollection } = await mongoCollection();
-  const utsUsername = ticketMap.get(ticket);
-  const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
+  const user = await loginWithUts(ticket);
   if (user.utsUser) {
     const jwtToken = jwt.sign({ data: user.utsUser.username }, SECRET_TOKEN);
     res.cookie('Bearer', `${jwtToken}`, {
@@ -546,6 +544,13 @@ app.get('/api/serviceValidate', cors(), async (req, res) => {
     return res.status(401).send();
   }
 });
+
+async function loginWithUts(ticket) {
+  const { usersCollection } = await mongoCollection();
+  const utsUsername = ticketMap.get(ticket);
+  const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
+  return user;
+}
 
 app.get('/api/login', async (req, res) => {
   const jwtToken = req.cookies['Bearer'];
