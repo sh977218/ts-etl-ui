@@ -22,10 +22,8 @@ import {
 } from 'rxjs';
 
 import { environment } from '../environments/environment';
-import { LoadRequestDataSource } from '../load-request/load-request-data-source';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
-import { LoadVersionDataSource } from '../load-version/load-version-data-source';
 import {
   LoadVersionReportIdentificationComponent,
 } from '../load-version-identification/load-version-report-identification.component';
@@ -87,8 +85,6 @@ import { LoadingService } from '../service/loading-service';
 })
 export class LoadVersionReportComponent {
 
-  loadVersionDatabase: LoadVersionDataSource = new LoadVersionDataSource(this.http);
-  loadRequestDatabase: LoadRequestDataSource = new LoadRequestDataSource(this.http);
   loadVersion$ = this.activatedRoute.paramMap
     .pipe(
       tap({ next: () => this.loadingService.showLoading() }),
@@ -97,7 +93,7 @@ export class LoadVersionReportComponent {
       }),
       distinctUntilChanged(),
       switchMap(requestId => {
-        return this.loadVersionDatabase.getLoadVersion(requestId)
+        return this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${requestId}`)
           .pipe(
             tap({
               next: () => this.loadingService.hideLoading(),
@@ -114,7 +110,7 @@ export class LoadVersionReportComponent {
         return params['params']['requestId'];
       }),
       switchMap(requestId => {
-        return this.loadRequestDatabase.getLoadRequest(requestId)
+        return this.http.get<LoadRequest>(`${environment.apiServer}/loadRequest/${requestId}`)
           .pipe(
             tap({
               next: () => this.loadingService.hideLoading(),
