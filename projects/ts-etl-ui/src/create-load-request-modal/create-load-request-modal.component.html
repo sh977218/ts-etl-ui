@@ -32,7 +32,10 @@
         <mat-label for="sourcePathFile">Source File Path</mat-label>
         <input matInput placeholder="file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/"
                formControlName="sourceFilePath">
-        <mat-icon matSuffix (click)="navigator.clipboard.writeText('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/')">content_copy</mat-icon>
+        <mat-icon matSuffix
+                  arial-label="Copy folder location to clipboard"
+                  [cdkCopyToClipboard]="'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/'"
+        >content_copy</mat-icon>
         <mat-hint>Copy and paste source file path from File Explorer</mat-hint>
         <mat-error *ngIf="loadRequestCreationForm.get('sourceFilePath')?.hasError('sourceFilePathError')">
           Please select source file from NLM server
