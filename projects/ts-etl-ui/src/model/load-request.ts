@@ -121,7 +121,7 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
     },
     searchColumns: {
       opRequestSeq: opRequestSeq || '',
-      codeSystemName: codeSystemName || [''],
+      codeSystemName: codeSystemName || [],
       requestSubject: requestSubject || '',
       requestStatus: requestStatus || '',
       requestType: requestType || '',
