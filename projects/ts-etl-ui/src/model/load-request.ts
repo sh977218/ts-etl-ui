@@ -132,8 +132,8 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
       creationTimeTo: creationTimeTo ? moment(creationTimeTo) : undefined,
     },
     sortCriteria: {
-      sortBy: sortBy || 'opRequestSeq',
-      sortDirection: sortDirection || 'asc',
+      sortBy: sortBy || 'creationTime',
+      sortDirection: sortDirection || 'desc',
     },
 
   } as LoadRequestPayload;

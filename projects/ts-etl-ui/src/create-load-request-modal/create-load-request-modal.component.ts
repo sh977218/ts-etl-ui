@@ -1,3 +1,4 @@
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Inject, NO_ERRORS_SCHEMA } from '@angular/core';
@@ -45,6 +46,7 @@ import { UserService } from '../service/user-service';
     MatDatepickerInput,
     MatDatepickerToggle,
     AsyncPipe,
+    CdkCopyToClipboard,
   ],
   templateUrl: './create-load-request-modal.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
