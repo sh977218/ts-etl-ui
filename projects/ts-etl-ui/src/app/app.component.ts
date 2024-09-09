@@ -11,7 +11,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
-import { EMPTY, tap } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
+import { EMPTY } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { LogInModalComponent } from '../log-in-modal/log-in-modal.component';
@@ -48,17 +49,17 @@ export class AppComponent {
   constructor(private router: Router,
               public http: HttpClient,
               public dialog: MatDialog,
+              public cookieService: CookieService,
               public loadingService: LoadingService,
               public userService: UserService,
               public navigationService: NavigationService,
   ) {
-    userService.logInWithJwt()
-      .pipe(
-        tap({
-          error: () => this.router.navigate(['./please-log-in']),
-        }),
-      )
-      .subscribe();
+    const jwtTokenInCookie = cookieService.get('Bearer');
+    if (jwtTokenInCookie) {
+      userService.logInWithJwt().subscribe();
+    } else {
+      this.router.navigate(['./please-log-in']);
+    }
   }
 
   openLoginModal() {

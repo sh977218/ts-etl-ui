@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { isEmpty } from 'lodash';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, EMPTY, tap } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 
 import { AlertService } from './alert-service';
 
@@ -50,32 +50,27 @@ export class UserService {
   }
 
   logInWithJwt() {
-    const jwtTokenInCookie = this.cookieService.get('Bearer');
-    if (jwtTokenInCookie) {
-      return this.http.get<User>(`${environment.loginUrl}`)
-        .pipe(
-          tap({
-            next: (res) => {
-              if (isEmpty(res)) {
-                this.cookieService.delete('Bearer');
-                this.user$.next(null);
-                this._user = null;
-              } else {
-                this.user$.next(res);
-                this._user = res;
-              }
-            },
-            error: () => {
+    return this.http.get<User>(`${environment.loginUrl}`)
+      .pipe(
+        tap({
+          next: (res) => {
+            if (isEmpty(res)) {
+              this.cookieService.delete('Bearer');
               this.user$.next(null);
               this._user = null;
-              this.alertService.addAlert('danger', `error log in`);
-              this.cookieService.delete('Bearer');
-            },
-          }),
-        );
-    } else {
-      return EMPTY;
-    }
+            } else {
+              this.user$.next(res);
+              this._user = res;
+            }
+          },
+          error: () => {
+            this.user$.next(null);
+            this._user = null;
+            this.alertService.addAlert('danger', `error log in`);
+            this.cookieService.delete('Bearer');
+          },
+        }),
+      );
   }
 
   logOut() {
