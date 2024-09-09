@@ -57,6 +57,8 @@ export class AppComponent {
     const jwtTokenInCookie = cookieService.get('Bearer');
     if (jwtTokenInCookie) {
       userService.logInWithJwt().subscribe();
+    } else {
+      userService.user$.next(null);
     }
   }
 
