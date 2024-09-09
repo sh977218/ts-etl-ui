@@ -22,7 +22,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     container:
-      image: mcr.microsoft.com/playwright:v1.46.0-jammy
+      image: mcr.microsoft.com/playwright:v1.47.0-jammy
 
     steps:
       - name: Checkout repository
