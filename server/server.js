@@ -70,8 +70,10 @@ app.post('/load-request/list', async (req, res) => {
   if (opRequestSeq) {
     $match.opRequestSeq = Number.parseInt(opRequestSeq);
   }
-  if (codeSystemName) {
-    $match.codeSystemName = codeSystemName;
+  if (codeSystemName && codeSystemName.length) {
+    $match.codeSystemName = {
+      $in: codeSystemName,
+    };
   }
   if (requestSubject) {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');

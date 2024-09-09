@@ -66,7 +66,7 @@ type LoadRequestPayloadSearchFilters = {
 
 type LoadRequestPayloadSearchColumns = {
   opRequestSeq?: string;
-  codeSystemName?: string;
+  codeSystemName?: string[];
   requestSubject?: string;
   requestStatus?: string;
   requestType?: string;
@@ -121,7 +121,7 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
     },
     searchColumns: {
       opRequestSeq: opRequestSeq || '',
-      codeSystemName: codeSystemName || '',
+      codeSystemName: codeSystemName || [],
       requestSubject: requestSubject || '',
       requestStatus: requestStatus || '',
       requestType: requestType || '',
