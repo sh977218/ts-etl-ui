@@ -218,7 +218,7 @@ export class LoadRequestComponent implements AfterViewInit {
                 emitEvent: false,
               });
             }
-            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName || [''], {
+            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName || [], {
               emitEvent: false,
             });
             if (searchCriteriaPatch.requestSubject) {
