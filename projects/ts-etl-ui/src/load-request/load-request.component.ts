@@ -157,7 +157,7 @@ export class LoadRequestComponent implements AfterViewInit {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
       .subscribe(val => {
-        const queryParams = { expand: undefined, ...val };
+        const queryParams = { pageNum: 1, expand: undefined, ...val };
         const requestTimeFrom = val.requestTimeFrom;
         if (requestTimeFrom) {
           queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
