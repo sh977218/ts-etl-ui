@@ -24,8 +24,6 @@ import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { assign } from 'lodash';
 import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
 
-import { LoadVersionDataSource } from './load-version-data-source';
-
 import { triggerExpandTableAnimation } from '../animations';
 import { environment } from '../environments/environment';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
@@ -97,7 +95,6 @@ export class LoadVersionComponent implements AfterViewInit {
   ];
   searchRowColumns = this.displayedColumns.map(c => `${c}-search`);
 
-  loadVersionDatabase: LoadVersionDataSource | undefined;
   data: LoadVersion[] = [];
 
   resultsLength = 0;
@@ -167,8 +164,6 @@ export class LoadVersionComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.loadVersionDatabase = new LoadVersionDataSource(this.http);
-
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
@@ -188,7 +183,7 @@ export class LoadVersionComponent implements AfterViewInit {
           return this.currentLoadVersionSearchCriteria;
         }),
         switchMap((loadVersionPayload) => {
-          return this.loadVersionDatabase!.getLoadVersions(loadVersionPayload)
+          return this.http.post<LoadVersionsApiResponse>(`${environment.apiServer}/loadVersions`, loadVersionPayload)
             .pipe(catchError(() => of(null)));
         }),
         map((data: LoadVersionsApiResponse | null) => {

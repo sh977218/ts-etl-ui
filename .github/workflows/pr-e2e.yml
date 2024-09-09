@@ -30,6 +30,8 @@ jobs:
 
       - name: Install dependencies
         run: npm i
+      - name: Output Node & NPM info
+        run: node --version && npm --version
 
       - name: Grant git permission
         run: git config --global --add safe.directory /__w/ts-etl-ui/ts-etl-ui
