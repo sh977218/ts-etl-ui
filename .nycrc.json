@@ -7,8 +7,8 @@
     "json",
     "text-summary"
   ],
-  "statements": 61.26,
-  "branches": 45.7,
-  "functions": 51.54,
-  "lines": 61.89
+  "statements": 61,
+  "branches": 45,
+  "functions": 51,
+  "lines": 62
 }
