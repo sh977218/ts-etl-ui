@@ -11,13 +11,10 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
-import { isEmpty } from 'lodash';
-import { CookieService } from 'ngx-cookie-service';
-import { EMPTY } from 'rxjs';
+import { EMPTY, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { LogInModalComponent } from '../log-in-modal/log-in-modal.component';
-import { AlertService } from '../service/alert-service';
 import { LoadingService } from '../service/loading-service';
 import { NavigationService } from '../service/navigation-service';
 import { UserService } from '../service/user-service';
@@ -54,30 +51,14 @@ export class AppComponent {
               public loadingService: LoadingService,
               public userService: UserService,
               public navigationService: NavigationService,
-              private alertService: AlertService,
-              private cookieService: CookieService,
   ) {
-    const jwtTokenInCookie = cookieService.get('Bearer');
-    if (jwtTokenInCookie) {
-      userService.logInWithJwt()
-        .subscribe({
-          next: (res) => {
-            if (isEmpty(res)) {
-              cookieService.delete('Bearer');
-            } else {
-              userService.user$.next(res);
-            }
-          },
-          error: () => {
-            alertService.addAlert('danger', `error log in`);
-            userService.user$.next(null);
-            cookieService.delete('Bearer');
-            router.navigate(['./please-log-in']);
-          },
-        });
-    } else {
-      userService.user$.next(null);
-    }
+    userService.logInWithJwt()
+      .pipe(
+        tap({
+          error: () => this.router.navigate(['./please-log-in']),
+        }),
+      )
+      .subscribe();
   }
 
   openLoginModal() {
