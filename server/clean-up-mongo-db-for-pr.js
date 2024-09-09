@@ -1,4 +1,4 @@
-import { dropMongoCollection } from 'server/db.js';
+import { dropMongoCollection } from './db.js';
 
 const pr = process.env.PR || '';
 

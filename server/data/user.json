@@ -1,7 +1,7 @@
 {
   "data": [
     {
-      "userID": "peterhuangnih@gmail.com",
+      "userID": "peterhuanguts@gmail.com",
       "credentialType": "PrincipalBearingCredential",
       "firstName": "",
       "authenticationDate": "2024-05-10T17:39:13.421236Z",
@@ -9,13 +9,13 @@
       "authenticationMethod": "NIHSITE",
       "successfulAuthenticationHandlers": "NIHSITE",
       "longTermAuthenticationRequestTokenUsed": "false",
-      "email": "peterhuangnih@gmail.com",
+      "email": "peterhuanguts@gmail.com",
       "lastName": "",
       "idpUserOrg": "google",
       "success": true,
       "userStatus": "ACTIVE",
       "utsUser": {
-        "username": "peterhuangnih",
+        "username": "peterhuanguts",
         "apiKey": "2468df67-8884-4ee7-83ed-5860406d200b",
         "idpUserOrg": "google",
         "firstName": "Peter",

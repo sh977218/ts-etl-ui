@@ -15,14 +15,14 @@
       "loadVersionActivities": [
         {
           "id": "2023-07-02T04:00:00.000Z",
-          "createdBy": "peterhuangnih",
+          "createdBy": "peterhuanguts",
           "activity": "Accept",
           "availableDate": "2023-07-03T04:00:00.000Z",
           "notes": [
             {
               "notes": "Testing the Notes feature",
               "createdTime": "2023-07-02T11:07:23.546Z",
-              "createdBy": "peterhuangnih",
+              "createdBy": "peterhuanguts",
               "hashtags": [
                 "Verification",
                 "TestTag"
