@@ -522,7 +522,7 @@ app.get('/nih-login', (req, res) => {
 
 /* @todo TS's backend needs to implement the following APIs. */
 // this map simulate UTS ticket to username
-const ticketMap = new Map([['peter-ticket', 'peterhuangnih'], ['christophe-ticket', 'ludetc']]);
+const ticketMap = new Map([['peter-ticket', 'peterhuanguts'], ['christophe-ticket', 'ludetc']]);
 app.get('/api/serviceValidate', cors(), async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
