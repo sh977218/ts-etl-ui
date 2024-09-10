@@ -9,8 +9,6 @@ import { AlertService } from '../service/alert-service';
 import { UserService } from '../service/user-service';
 
 
-
-
 @Component({
   standalone: true,
   imports: [RouterModule],
@@ -37,13 +35,11 @@ export class LoginCbComponent {
           }
         }),
         tap({
-          next: (res) => {
-            this.userService.user$.next(res);
+          next: () => {
             router.navigate(['/']);
           },
           error: (e) => {
             this.alertService.addAlert('danger', `error log in ${e}`);
-            this.userService.user$.next(null);
             cookieService.delete('Bearer');
             router.navigate(['/please-log-in']);
           },

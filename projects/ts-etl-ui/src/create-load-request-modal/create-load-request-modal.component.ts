@@ -1,7 +1,7 @@
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Inject, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, Inject, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -52,6 +52,8 @@ import { UserService } from '../service/user-service';
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class CreateLoadRequestModalComponent {
+  userService: UserService = inject(UserService);
+
   CODE_SYSTEM_REQUIRED_SOURCE_FILE: string[] = [];
   loadRequestCreationForm = new FormGroup(
     {
@@ -59,8 +61,8 @@ export class CreateLoadRequestModalComponent {
       codeSystemName: new FormControl<string>('', [Validators.required]),
       sourceFilePath: new FormControl<string>('', [Validators.required, sourceFilePathValidator()]),
       requestSubject: new FormControl<string>('', [Validators.required]),
-      notificationEmail: new FormControl('', [Validators.required, Validators.email]),
-      requester: new FormControl<string>({ value: '', disabled: true }),
+      notificationEmail: new FormControl(this.userService.user?.email, [Validators.required, Validators.email]),
+      requester: new FormControl<string>({ value: this.userService.user?.utsUser.username || '', disabled: true }),
       requestTime: new FormControl<Date>({ value: new Date(), disabled: true }),
     },
   );
@@ -74,10 +76,8 @@ export class CreateLoadRequestModalComponent {
   constructor(
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public existingLoadRequest: LoadRequest,
-    public userService: UserService,
     public constantService: ConstantService,
   ) {
-    userService.user$.subscribe(user => this.loadRequestCreationForm.get('requester')?.setValue(user?.utsUser.username || ''));
     this.loadRequestCreationForm.get('requestType')?.valueChanges.subscribe(value => {
       if (value === 'Scheduled') {
         this.form.addControl('scheduledDate', new FormControl<Date | undefined>(undefined, [Validators.required]));
