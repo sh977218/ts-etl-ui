@@ -1,41 +1,69 @@
-<div class="mat-elevation-z8 my-3">
-  <table mat-table [dataSource]="dataSource">
-    <!-- Key Column -->
-    <ng-container matColumnDef="key">
-      <th mat-header-cell *matHeaderCellDef>Key</th>
-      <td mat-cell *matCellDef="let element" class="text-end">{{element.label}}</td>
+<ng-container *ngIf="(loadRequest$ | async) as loadRequest">
+  <fieldset>
+    <legend>Load Request</legend>
+    <ng-container *ngIf="loadRequest.requestStatus === 'Open' && user?.utsUser!.username === loadRequest.requester">
+      <button mat-fab extended (click)="openEditDialog(loadRequest)">
+        Edit
+      </button>
+      <button mat-fab extended (click)="openCancelDialog(loadRequest.opRequestSeq)">
+        Cancel
+      </button>
     </ng-container>
 
-    <!-- Value Column -->
-    <ng-container matColumnDef="value">
-      <th mat-header-cell *matHeaderCellDef>Value</th>
-      <td mat-cell *matCellDef="let element">
-        <ng-container [ngSwitch]="element.key">
-          <ng-container *ngSwitchCase="'loadNumber'">
-            <a routerLink="/load-versions" [queryParams]="{loadNumber:element.value, expand:0}">{{element.value}}</a>
-          </ng-container>
-          <ng-container *ngSwitchCase="'loadElapsedTime'">
-            {{element.value | easternTime:'hh:mm:ss'}}
-          </ng-container>
-          <ng-container *ngSwitchDefault>
-            <ng-container *ngIf="isTime(element.key); else regularField">
-              {{element.value | easternTime}}
-            </ng-container>
-            <ng-template #regularField>
-              {{element.value}}
-            </ng-template>
-          </ng-container>
+    <div class="mat-elevation-z8 my-3">
+      <table mat-table [dataSource]="dataSource">
+        <!-- Key Column -->
+        <ng-container matColumnDef="key">
+          <th mat-header-cell *matHeaderCellDef>Key</th>
+          <td mat-cell *matCellDef="let element" class="text-end">{{element.label}}</td>
         </ng-container>
-      </td>
+
+        <!-- Value Column -->
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef>Value</th>
+          <td mat-cell *matCellDef="let element">
+            <ng-container [ngSwitch]="element.key">
+              <ng-container *ngSwitchCase="'loadNumber'">
+                <a routerLink="/load-versions"
+                   [queryParams]="{loadNumber:element.value, expand:0}">{{element.value}}</a>
+              </ng-container>
+              <ng-container *ngSwitchCase="'loadElapsedTime'">
+                {{element.value | easternTime:'hh:mm:ss'}}
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                <ng-container *ngIf="isTime(element.key); else regularField">
+                  {{element.value | easternTime}}
+                </ng-container>
+                <ng-template #regularField>
+                  {{element.value}}
+                </ng-template>
+              </ng-container>
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr *matNoDataRow>
+          <td class="mat-cell" colspan="9">
+            No results found.
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <ng-container *ngIf="(loadVersion$ | async) as loadVersion">
+
+      {{loadVersion.codeSystemName}}
+
+      <app-load-request-activity
+        [loadVersion]="loadVersion"></app-load-request-activity>
+      <app-load-request-message
+        [loadVersion]="loadVersion"></app-load-request-message>
     </ng-container>
+  </fieldset>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</ng-container>
 
-    <tr *matNoDataRow>
-      <td class="mat-cell" colspan="9">
-        No results found.
-      </td>
-    </tr>
-  </table>
-</div>
+

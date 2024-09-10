@@ -5,14 +5,21 @@ export type LoadVersionsApiResponse = {
   items: LoadVersion[]
 }
 
+export type Message = {
+  message: string;
+  creationTime: Date;
+  tag: string;
+  messageType: string;
+}
+
 export type LoadComponent = {
   componentName: string;
   status: string;
   startTime: Date;
-  duration: number;
-  errors: string[];
-  warnings: string[];
-  infos: string[];
+  endTime: Date;
+  errors: Message[];
+  warnings: Message[];
+  infos: Message[];
 }
 
 export type LoadRule = {

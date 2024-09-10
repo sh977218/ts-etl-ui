@@ -6,7 +6,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
-import { LoadRequestActivity } from '../model/load-request';
+import { LoadVersion } from '../model/load-version';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 type MessageUI = {
@@ -37,7 +37,7 @@ type MessageUI = {
 })
 export class LoadRequestMessageComponent implements AfterViewInit {
 
-  loadRequestActivities = input<LoadRequestActivity[]>([]);
+  loadVersion = input<LoadVersion>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -53,8 +53,8 @@ export class LoadRequestMessageComponent implements AfterViewInit {
 
   dataSource = computed(() => {
     const messages: MessageUI[] = [];
-    if (this.loadRequestActivities()) {
-      this.loadRequestActivities().forEach(m => {
+    if (this.loadVersion()) {
+      this.loadVersion()?.loadSummary.components?.forEach(m => {
         m.infos.forEach(i => {
           messages.push({
             componentName: m.componentName,
