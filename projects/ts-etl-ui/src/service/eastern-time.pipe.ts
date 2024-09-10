@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import moment from 'moment-timezone';
+import { format } from 'date-fns-tz';
 
 @Pipe({
   name: 'easternTime',
@@ -7,7 +7,7 @@ import moment from 'moment-timezone';
 })
 export class EasternTimePipe implements PipeTransform {
 
-  transform(value: Date | string, dateFormat: string = 'YYYY-MM-DD z'): string {
-    return moment(value).tz('America/New_York').format(dateFormat);
+  transform(value: Date | string, dateFormat: string = 'yyyy-MM-dd hh:mma z', timeZone = 'America/New_York'): string {
+    return format(value, dateFormat, { timeZone });
   }
 }
