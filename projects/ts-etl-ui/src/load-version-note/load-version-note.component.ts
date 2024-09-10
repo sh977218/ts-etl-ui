@@ -54,7 +54,7 @@ export class LoadVersionNoteComponent implements AfterViewInit {
         note: note.notes,
         hashtags: note.hashtags,
         createdBy: note.createdBy,
-        createdTime: note.createdTime
+        createdTime: note.createdTime,
       })),
     );
   });
@@ -72,7 +72,7 @@ export class LoadVersionNoteComponent implements AfterViewInit {
       }
       let activityIdMatch = true;
       if (this.searchCriteria.getRawValue().activityId?.length) {
-        const dateAsString = this.datePipe.transform(data.activityId, 'yyyy-MM-dd');
+        const dateAsString = this.datePipe.transform(data.activityId);
         activityIdMatch = dateAsString!.toLowerCase().includes((this.searchCriteria.getRawValue().activityId || '').toLowerCase());
       }
       let noteMatch = true;
