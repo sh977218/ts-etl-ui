@@ -18,7 +18,7 @@ test.describe('e2e test', async () => {
 
     // this api interception is to make network slow, so the spinner can be verified.
     await page.route('/load-request/list', async route => {
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(4000);
       await route.continue();
     });
     await page.route('/api/loadRequest/', async route => {
