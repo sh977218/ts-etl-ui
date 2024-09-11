@@ -9,5 +9,5 @@ export const environment: Environment = {
   logoutUrl: 'http://localhost:3000/api/logout',
   loginServiceUrl: 'http://localhost:3000/nih-login',
   apiServer: 'http://localhost:3000/api',
-  newApiServer: 'http://localhost:3000/',
+  newApiServer: 'http://localhost:3000',
 };
