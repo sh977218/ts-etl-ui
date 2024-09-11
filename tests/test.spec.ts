@@ -4,7 +4,6 @@ import { readFileSync } from 'fs';
 
 test.describe('e2e test', async () => {
   test('Load Request Tab', async ({ page, materialPo }) => {
-    test.slow();
     const matDialog = materialPo.matDialog();
 
     await expect(page.getByRole('link', { name: 'Load Request' })).toBeVisible();
@@ -17,11 +16,11 @@ test.describe('e2e test', async () => {
     await expect(page.getByRole('table').locator('tbody tr.example-element-row')).not.toHaveCount(0);
 
     // this api interception is to make network slow, so the spinner can be verified.
-    await page.route('/load-request/list', async route => {
-      await page.waitForTimeout(4000);
+    await page.route('**/load-request/list', async route => {
+      await page.waitForTimeout(2000);
       await route.continue();
     });
-    await page.route('/api/loadRequest/', async route => {
+    await page.route('/loadRequest/', async route => {
       await page.waitForTimeout(2000);
       await route.continue();
     });
@@ -88,6 +87,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly edited load request', async () => {
+      await page.getByRole('link', { name: 'Load Request' }).click();
       await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
@@ -114,7 +114,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step(`cancel load request`, async () => {
-      await page.getByText('newly edited load request').click();
+      await page.getByText('149').click();
       await page.getByRole('button', { name: 'Cancel' }).click();
       await matDialog.waitFor();
       await matDialog.getByRole('button', { name: 'Confirm' }).click();
@@ -123,6 +123,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly cancelled load request', async () => {
+      await page.getByRole('link', { name: 'Load Request' }).click();
       await page.locator('[id="requestStatusInput"]').selectOption('Cancelled'); // this line triggers search
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
