@@ -8,7 +8,7 @@
     <th mat-header-cell *matHeaderCellDef>Value</th>
     <td mat-cell *matCellDef="let element">
       <ng-container *ngIf="element.type === 'date'; else defaultCell">
-        {{element.value | easternTime}}
+        {{element.value | easternTime:'yyyy-MM-dd z'}}
       </ng-container>
       <ng-template #defaultCell>
         {{element.value}}

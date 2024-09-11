@@ -5,7 +5,7 @@
       <dd>
         <ng-container [ngSwitch]="item.key">
           <ng-container *ngSwitchCase="'Elapsed Time'">
-            {{item.value | date:'hh:mm:ss'}}
+            {{item.value | easternTime:'hh:mm:ss'}}
           </ng-container>
           <ng-container *ngSwitchDefault>
             {{item.value}}

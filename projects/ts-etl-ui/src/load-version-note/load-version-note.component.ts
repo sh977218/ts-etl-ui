@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe, NgForOf } from '@angular/common';
+import { JsonPipe, NgForOf } from '@angular/common';
 import { AfterViewInit, Component, computed, effect, input, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -21,13 +21,12 @@ type ActivityNoteSortable = {
 @Component({
   selector: 'app-load-version-note',
   standalone: true,
-  providers: [provideNativeDateAdapter(), DatePipe],
+  providers: [provideNativeDateAdapter(), EasternTimePipe],
   imports: [
     MatSortModule,
     MatTableModule,
     MatButton,
     ReactiveFormsModule,
-    DatePipe,
     NgForOf,
     JsonPipe,
     EasternTimePipe,
@@ -37,7 +36,7 @@ type ActivityNoteSortable = {
 })
 export class LoadVersionNoteComponent implements AfterViewInit {
 
-  constructor(private datePipe: DatePipe) {
+  constructor(private easternTimePipe: EasternTimePipe) {
     effect(() => {
       this.dataSource().sort = this.sort;
     });
@@ -72,7 +71,7 @@ export class LoadVersionNoteComponent implements AfterViewInit {
       }
       let activityIdMatch = true;
       if (this.searchCriteria.getRawValue().activityId?.length) {
-        const dateAsString = this.datePipe.transform(data.activityId);
+        const dateAsString = this.easternTimePipe.transform(data.activityId, 'yyyy-MM-dd');
         activityIdMatch = dateAsString!.toLowerCase().includes((this.searchCriteria.getRawValue().activityId || '').toLowerCase());
       }
       let noteMatch = true;

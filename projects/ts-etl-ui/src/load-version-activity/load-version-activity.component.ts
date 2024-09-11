@@ -1,4 +1,4 @@
-import { DatePipe, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit,
@@ -42,7 +42,6 @@ import { EasternTimePipe } from '../service/eastern-time.pipe';
     LoadVersionNoteComponent,
     NgIf,
     MatIcon,
-    DatePipe,
     EasternTimePipe,
     FormsModule,
     ReactiveFormsModule,
