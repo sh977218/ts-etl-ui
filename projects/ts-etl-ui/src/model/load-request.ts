@@ -10,25 +10,6 @@ import {
 } from './api-response';
 import { SearchPayloadPagination, SearchPayloadSortCriteria } from './search';
 
-export type Message = {
-  message: string;
-  creationTime: Date;
-  tag: string;
-  messageType: string;
-}
-
-export type LoadRequestActivity = {
-  componentName: string;
-  startTime: string;
-  endTime: string;
-  duration: string;
-  status: string;
-  infos: Message[];
-  warnings: Message[];
-  errors: Message[];
-  creationTime: string;
-}
-
 export type LoadRequestMessage = {
   componentName: string;
   messageGroup: string;
@@ -39,7 +20,7 @@ export type LoadRequestMessage = {
 }
 
 export type LoadRequest = {
-  opRequestSeq: string;
+  opRequestSeq: number;
   codeSystemName: string;
   requestSubject: string;
   sourceFilePath: string;
@@ -54,7 +35,6 @@ export type LoadRequest = {
   loadStartTime: Date;
   loadEndTime: Date;
   duration: Date;
-  loadRequestActivities: LoadRequestActivity[]
   loadRequestMessages: LoadRequestMessage[]
 }
 

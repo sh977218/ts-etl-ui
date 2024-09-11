@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { logInGuard } from './app.guard';
 import { CodeSystemComponent } from './code-system/code-system.component';
 import { LoadRequestComponent } from './load-request/load-request.component';
+import { LoadRequestDetailComponent } from './load-request-detail/load-request-detail.component';
 import { LoadVersionComponent } from './load-version/load-version.component';
 import { LoadVersionReportComponent } from './load-version-report/load-version-report.component';
 import { LoginCbComponent } from './login-cb/login-cb.component';
@@ -12,6 +13,10 @@ export const routes: Routes = [
   { path: '', redirectTo: '/load-requests', pathMatch: 'full' },
   {
     path: 'load-requests', component: LoadRequestComponent, title: 'Load Requests',
+    canActivate: [logInGuard],
+  },
+  {
+    path: 'load-request/:requestId', component: LoadRequestDetailComponent, title: 'Load Request',
     canActivate: [logInGuard],
   },
   {

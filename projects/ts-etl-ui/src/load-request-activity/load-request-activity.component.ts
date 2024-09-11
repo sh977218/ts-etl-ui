@@ -12,7 +12,7 @@ import {
   MatTableDataSource, MatTableModule,
 } from '@angular/material/table';
 
-import { LoadRequestActivity } from '../model/load-request';
+import { LoadComponent, LoadVersion } from '../model/load-version';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 @Component({
@@ -33,8 +33,7 @@ import { EasternTimePipe } from '../service/eastern-time.pipe';
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
-  @Input() loadRequestActivities: LoadRequestActivity[] = [];
-  @Input() requestId: number | null = null;
+  @Input() loadVersion: LoadVersion;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -48,10 +47,10 @@ export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
     'nbOfMessages',
   ];
 
-  dataSource: MatTableDataSource<LoadRequestActivity> = new MatTableDataSource<LoadRequestActivity>([]);
+  dataSource: MatTableDataSource<LoadComponent> = new MatTableDataSource<LoadComponent>([]);
 
   ngOnInit(): void {
-    this.dataSource = new MatTableDataSource(this.loadRequestActivities);
+    this.dataSource = new MatTableDataSource(this.loadVersion.loadSummary.components);
   }
 
   ngAfterViewInit() {
@@ -59,7 +58,7 @@ export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  duration(row: LoadRequestActivity) {
+  duration(row: LoadComponent) {
     const startDate = new Date(row.startTime);
     const endDate = new Date(row.endTime);
     return endDate.getTime() - startDate.getTime();
