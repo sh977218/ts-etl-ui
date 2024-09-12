@@ -221,5 +221,38 @@ test.describe('e2e test', async () => {
     await expect(page.locator(row)).toContainText('Raw counts are not present');
   });
 
+  test('Note Filters', async ({ page }) => {
+    await page.goto('/load-versions');
+    await page.locator('tbody tr td .fake-link', {hasText: '20231012080001'}).click();
 
+    const tbody = 'app-load-version-note tbody';
+
+    await expect(page.locator(tbody)).toContainText('TestTag');
+    await expect(page.locator(tbody)).toContainText('Tag.3');
+
+    await page.locator('#hashtagsFilterInput').selectOption('Tag2');
+    await expect(page.locator(tbody)).toContainText('Note2');
+    await expect(page.locator(tbody)).not.toContainText('TestTag');
+    await expect(page.locator(tbody)).not.toContainText('Tag.3');
+
+    await page.locator('#hashtagsFilterInput').selectOption('ALL');
+    await expect(page.locator(tbody)).toContainText('TestTag');
+    await expect(page.locator(tbody)).toContainText('Tag.3');
+
+    await page.locator('#noteInput').fill('Second');
+    await expect(page.locator(tbody)).toContainText('Note2');
+    await expect(page.locator(tbody)).not.toContainText('TestTag');
+    await expect(page.locator(tbody)).not.toContainText('Tag.3');
+
+    await page.locator('#noteInput').clear();
+    await page.locator('#createdBySearchInput').selectOption('ludetc');
+    await expect(page.locator(tbody)).toContainText('Note2');
+    await expect(page.locator(tbody)).not.toContainText('TestTag');
+    await expect(page.locator(tbody)).not.toContainText('Tag.3');
+
+    await page.locator('#createdBySearchInput').selectOption('ALL');
+    await expect(page.locator(tbody)).toContainText('TestTag');
+    await expect(page.locator(tbody)).toContainText('Tag.3');
+
+  });
 });
