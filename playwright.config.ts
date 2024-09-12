@@ -45,7 +45,7 @@ export default defineConfig({
     trace: 'on',
     browserName: 'chromium',
     ignoreHTTPSErrors: true,
-    baseURL: process.env['TS_UI_URL'] ?? 'http://localhost:3000',
+    baseURL: process.env['CI'] ? 'http://localhost:3000' : 'http://localhost:4200',
   },
 
   /* Configure projects for major browsers */
