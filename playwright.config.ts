@@ -75,11 +75,11 @@ export default defineConfig({
       command: `node --env-file server/.coverage.env server/reset-mongo-db.js`,
     },
     {
-      command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
+      command: process.env['COVERAGE'] ? `npm run start:coverage` : `npm run start`,
       port: 3000,
     },
     {
-      command: process.env['CI'] ? `npm run serve:coverage` : `npm run serve`,
+      command: process.env['COVERAGE'] ? `npm run serve:coverage` : `npm run serve`,
       port: process.env['CI'] ? 3000 : 4200,
       reuseExistingServer: true,
     },

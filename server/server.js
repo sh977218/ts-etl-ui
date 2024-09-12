@@ -17,6 +17,7 @@ import { TSError, UnauthorizedError } from './errors.js';
 import moment from 'moment';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
+const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
 const DEFAULT_FILE_FOLDER = 'server/data/';
 
@@ -596,7 +597,7 @@ app.use(async (err, req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`TS ELT UI mock server listening on port ${port}`);
+  console.log(`TS ELT UI mock server listening on port ${port}, using DB: ${MONGO_DBNAME}`);
   if (RESET_DB) {
     resetMongoCollection()
       .then(() => console.log('Reset DB successfully from server.js'))
