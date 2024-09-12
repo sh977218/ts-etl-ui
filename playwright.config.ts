@@ -13,12 +13,9 @@ export default defineConfig({
   testDir: './tests',
   testMatch: ['*.spec.ts'],
   globalSetup: require.resolve('./global-setup'),
+  globalTeardown: require.resolve('./global-teardown'),
   /* Run tests in files in parallel */
   fullyParallel: true,
-  timeout: 90000,
-  expect: {
-    timeout: 5000
-  },
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -31,7 +28,6 @@ export default defineConfig({
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    actionTimeout: 5000,
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 
@@ -61,16 +57,30 @@ export default defineConfig({
     },
     {
       name: 'ts-etl-ui',
+      timeout: 90000,
+      expect: {
+        timeout: 5000,
+      },
       use: {
         ...devices['Desktop Chrome'],
+        actionTimeout: 5000,
       },
     },
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: process.env['CI'] ? 'npm run start:coverage' : 'npm run serve:coverage',
-    port: process.env['CI'] ? 3000 : 4200,
-    reuseExistingServer: true,
-  },
+  webServer: [
+    {
+      command: `node --env-file server/.coverage.env server/reset-mongo-db.js`,
+    },
+    {
+      command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
+      port: 3000,
+    },
+    {
+      command: 'npm run serve:coverage',
+      port: process.env['CI'] ? 3000 : 4200,
+      reuseExistingServer: true,
+    },
+  ],
 });

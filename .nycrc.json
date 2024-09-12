@@ -1,7 +1,7 @@
 {
   "check-coverage": false,
   "reportDir": "coverage-e2e",
-  "temp-dir": "e2e_nyc_output",
+  "temp-dir": ".nyc_output",
   "reporter": [
     "lcov",
     "json",
