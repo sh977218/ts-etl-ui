@@ -16,7 +16,7 @@ test.describe('e2e test', async () => {
     await expect(page.getByRole('table').locator('tbody tr.example-element-row')).not.toHaveCount(0);
 
     // this api interception is to make network slow, so the spinner can be verified.
-    await page.route('**/load-request/list', async route => {
+    await page.route('/load-request/list', async route => {
       await page.waitForTimeout(2000);
       await route.continue();
     });
