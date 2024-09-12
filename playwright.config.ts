@@ -71,6 +71,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: [
     {
+      // this is not async, no guarantee that test will start after reset DB
       command: `node --env-file server/.coverage.env server/reset-mongo-db.js`,
     },
     {
@@ -78,7 +79,7 @@ export default defineConfig({
       port: 3000,
     },
     {
-      command: 'npm run serve:coverage',
+      command: process.env['CI'] ? `npm run serve:coverage` : `npm run serve`,
       port: process.env['CI'] ? 3000 : 4200,
       reuseExistingServer: true,
     },
