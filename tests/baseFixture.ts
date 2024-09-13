@@ -67,18 +67,12 @@ const test = baseTest.extend<{
   materialPo: async ({ page }, use) => {
     await use(new MaterialPO(page));
   },
-  page: async ({ page }, use, testInfo) => {
+  page: async ({ page }, use) => {
     await use(page);
   },
 });
 
 test.beforeEach(async ({ page, baseURL }) => {
-  // this api interception is to make network slow, so the spinner can be verified.
-  await page.route('**/*', async route => {
-    await page.waitForTimeout(2000);
-    await route.continue();
-  });
-
   page.on('console', (consoleMessage: ConsoleMessage) => {
     if (consoleMessage) {
       UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
