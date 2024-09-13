@@ -13,6 +13,7 @@ export default defineConfig({
   testDir: './tests',
   testMatch: ['*.spec.ts'],
   globalSetup: require.resolve('./global-setup'),
+  globalTeardown: require.resolve('./global-teardown'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   timeout: 90000,
@@ -34,7 +35,7 @@ export default defineConfig({
     actionTimeout: 5000,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    headless: !!process.env['CI'],
+    headless: false,
     launchOptions: {
       slowMo: 500,
     },
