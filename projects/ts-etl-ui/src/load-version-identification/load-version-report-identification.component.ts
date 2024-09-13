@@ -1,6 +1,5 @@
 import {
   AsyncPipe,
-  DatePipe,
   KeyValue,
   KeyValuePipe,
   NgForOf,
@@ -15,9 +14,7 @@ import { map, Observable } from 'rxjs';
 
 import { LoadRequest } from '../model/load-request';
 import { LoadVersion } from '../model/load-version';
-
-
-
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 @Component({
   selector: 'app-load-version-report-identification',
@@ -27,11 +24,11 @@ import { LoadVersion } from '../model/load-version';
     KeyValuePipe,
     NgForOf,
     NgIf,
-    DatePipe,
     NgSwitchCase,
     RouterLink,
     NgSwitch,
     NgSwitchDefault,
+    EasternTimePipe,
   ],
   templateUrl: './load-version-report-identification.component.html',
   styleUrl: './load-version-report-identification.component.scss',

@@ -26,12 +26,9 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash';
-import * as _moment from 'moment';
 import { default as _rollupMoment, Moment } from 'moment';
 import { catchError, filter, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
-import { triggerExpandTableAnimation } from '../animations';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { environment } from '../environments/environment';
 import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
@@ -53,7 +50,7 @@ import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
-const moment = _rollupMoment || _moment;
+const moment = _rollupMoment;
 
 @Component({
   standalone: true,
@@ -82,7 +79,6 @@ const moment = _rollupMoment || _moment;
   ],
   templateUrl: './load-request.component.html',
   styleUrls: ['./load-request.component.scss'],
-  animations: [triggerExpandTableAnimation],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   encapsulation: ViewEncapsulation.None,
 })
@@ -100,11 +96,10 @@ export class LoadRequestComponent implements AfterViewInit {
   ];
   searchRowColumns = this.displayedColumns.map(c => `${c}-search`);
 
-  columnsToDisplayWithExpand: WritableSignal<string[]> = signal([...this.displayedColumns]);
+  columnsToDisplay: WritableSignal<string[]> = signal([...this.displayedColumns]);
 
   data: WritableSignal<LoadRequest[]> = signal([]);
 
-  expandedElement: LoadRequest | null | undefined = null;
   user: User | null | undefined = undefined;
 
   resultsLength = 0;
@@ -155,7 +150,7 @@ export class LoadRequestComponent implements AfterViewInit {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
       .subscribe(val => {
-        const queryParams = { pageNum: 1, expand: undefined, ...val };
+        const queryParams = { pageNum: 1, ...val };
         const requestTimeFrom = val.requestTimeFrom;
         if (requestTimeFrom) {
           queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
@@ -287,10 +282,6 @@ export class LoadRequestComponent implements AfterViewInit {
           tap({
             next: data => {
               this.data.set(data);
-              const expand = this.activatedRoute.snapshot.queryParams['expand'];
-              if (expand) {
-                this.expandedElement = this.data().at(Number.parseInt(expand) || 0);
-              }
               this.loadingService.hideLoading();
             },
             error: () => this.loadingService.hideLoading(),
@@ -298,10 +289,6 @@ export class LoadRequestComponent implements AfterViewInit {
         );
       }))
       .subscribe();
-  }
-
-  expandRow(row: LoadRequest | null | undefined) {
-    this.expandedElement = this.expandedElement === row ? null : row;
   }
 
   openCreateLoadRequestModal() {
@@ -324,52 +311,6 @@ export class LoadRequestComponent implements AfterViewInit {
       .subscribe();
   }
 
-  openCancelDialog(reqId: number) {
-    this.dialog.open(ConfirmDialogComponent, {
-      width: '300px',
-    })
-      .afterClosed()
-      .pipe(
-        filter((dialogResult: boolean) => dialogResult),
-        switchMap(() => this.http.post(`${environment.newApiServer}/loadRequest/${reqId}`, {})),
-      )
-      .subscribe({
-        next: () => {
-          this.alertService.addAlert('info', `Request (ID: ${reqId}) deleted successfully`);
-          this.reloadAllRequests$.next(true);
-        },
-      });
-  }
-
-  openEditDialog(loadRequest: LoadRequest) {
-    this.dialog.open(CreateLoadRequestModalComponent, {
-      width: '700px',
-      data: loadRequest,
-    })
-      .afterClosed()
-      .pipe(
-        filter(newLoadRequest => !!newLoadRequest),
-        switchMap(newLoadRequest => this.http.post<LoadRequest>
-        (`${environment.apiServer}/loadRequest/${loadRequest.opRequestSeq}`, newLoadRequest as LoadRequest)),
-      )
-      .subscribe({
-        next: (newLR) => {
-          this.alertService.addAlert('info', `Request (ID: ${newLR.opRequestSeq}) edited successfully`);
-          // this.reloadAllRequests$.next(true);
-          const currentData = this.data();
-          const index = currentData.findIndex((lr: LoadRequest) => lr.opRequestSeq === newLR.opRequestSeq);
-          const updatedData = [
-            ...currentData.slice(0, index),
-            newLR,
-            ...currentData.slice(index + 1),
-          ];
-          this.data.set(updatedData);
-          this.expandedElement = this.data().at(index);
-        },
-        error: () => this.alertService.addAlert('danger', 'Error editing load request.'),
-      });
-  }
-
   download() {
     this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`,
       Object.assign(this.currentLoadRequestSearchCriteria, {
@@ -381,7 +322,7 @@ export class LoadRequestComponent implements AfterViewInit {
       ))
       .pipe(
         map(data => {
-          const headerList = [...this.columnsToDisplayWithExpand()];
+          const headerList = [...this.columnsToDisplay()];
           return this.downloadService.generateBlob(headerList, data.result.data);
         }),
         tap({

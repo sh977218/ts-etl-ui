@@ -50,8 +50,7 @@
       <ng-container *ngIf="loadVersion$ | async as loadVersion">
         <ng-container *ngIf="loadRequest$ | async as loadRequest">
           <app-load-summary [loadSummary]="loadVersion.loadSummary"></app-load-summary>
-          <app-load-request-message
-            [loadRequestActivities]="loadRequest.loadRequestActivities"></app-load-request-message>
+          <app-load-request-message [loadVersion]="loadVersion"></app-load-request-message>
         </ng-container>
       </ng-container>
 

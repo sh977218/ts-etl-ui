@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -14,7 +13,6 @@ import { EasternTimePipe } from '../service/eastern-time.pipe';
     MatSortModule,
     MatTableModule,
     LoadVersionRulesComponent,
-    DatePipe,
     EasternTimePipe,
   ],
   templateUrl: './load-summary.component.html',

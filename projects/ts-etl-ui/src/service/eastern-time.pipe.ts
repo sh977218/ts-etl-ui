@@ -7,7 +7,7 @@ import { format } from 'date-fns-tz';
 })
 export class EasternTimePipe implements PipeTransform {
 
-  transform(value: Date | string, dateFormat: string = 'MM-dd-yyyy hh:mma z', timeZone = 'America/New_York'): string {
-    return format(value, dateFormat, { timeZone });
+  transform(value: Date | string | number, dateFormat: string = 'yyyy-MM-dd hh:mm a z', timeZone = 'America/New_York'): string {
+    return value ? format(value, dateFormat, { timeZone }) : '';
   }
 }

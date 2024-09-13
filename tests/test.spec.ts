@@ -4,7 +4,6 @@ import { readFileSync } from 'fs';
 
 test.describe('e2e test', async () => {
   test('Load Request Tab', async ({ page, materialPo }) => {
-    test.slow();
     const matDialog = materialPo.matDialog();
 
     await expect(page.getByRole('link', { name: 'Load Request' })).toBeVisible();
@@ -17,11 +16,11 @@ test.describe('e2e test', async () => {
     await expect(page.getByRole('table').locator('tbody tr.example-element-row')).not.toHaveCount(0);
 
     // this api interception is to make network slow, so the spinner can be verified.
-    await page.route('/load-request/list', async route => {
+    await page.route('**/load-request/list', async route => {
       await page.waitForTimeout(2000);
       await route.continue();
     });
-    await page.route('/api/loadRequest/', async route => {
+    await page.route('**/loadRequest/', async route => {
       await page.waitForTimeout(2000);
       await route.continue();
     });
@@ -73,7 +72,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step(`edit load request`, async () => {
-      await page.getByText('newly created load request').click();
+      await page.getByText('149').click();
       await page.getByRole('button', { name: 'Edit' }).click();
       await matDialog.waitFor();
       await matDialog.getByRole('radio', { name: 'Emergency' }).check();
@@ -88,6 +87,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly edited load request', async () => {
+      await page.getByRole('link', { name: 'Load Request' }).click();
       await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
       // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
@@ -114,7 +114,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step(`cancel load request`, async () => {
-      await page.getByText('newly edited load request').click();
+      await page.getByText('149').click();
       await page.getByRole('button', { name: 'Cancel' }).click();
       await matDialog.waitFor();
       await matDialog.getByRole('button', { name: 'Confirm' }).click();
@@ -123,6 +123,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly cancelled load request', async () => {
+      await page.getByRole('link', { name: 'Load Request' }).click();
       await page.locator('[id="requestStatusInput"]').selectOption('Cancelled'); // this line triggers search
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
@@ -193,5 +194,128 @@ test.describe('e2e test', async () => {
   test('Code System Tab', async ({ page }) => {
     await page.getByRole('link', { name: 'Code System' }).click();
     await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
+  });
+
+  test('Rule Message', async ({ page }) => {
+    await page.goto('/load-version-report/0');
+    const firstRow = 'app-load-version-report-rule-message tbody tr:first-of-type';
+    await expect(page.locator(firstRow)).toContainText('Code.Hierarchy.OrphanCode');
+    await expect(page.locator(firstRow)).toContainText('Error');
+    await expect(page.locator(firstRow)).toContainText('Code D90012 is not mapped to a term');
+
+    await page.locator('#messageGroupSearch').selectOption('Warning');
+    await expect(page.locator(firstRow)).not.toContainText('Code D90012 is not mapped to a term');
+  });
+
+  test('QA Rules', async ({ page }) => {
+    await page.goto('/load-version-report/0');
+    const row = 'app-load-version-report-rule tbody tr:nth-of-type(2)';
+    await expect(page.locator(row)).toContainText('Code.DuplicateCode');
+    await expect(page.locator(row)).toContainText('No duplicate codes in cs_code table');
+    await expect(page.locator(`${row} td:nth-of-type(4)`)).toContainText('5');
+
+    await page.locator('app-load-version-report-rule #nameFilterInput').fill('QaCount');
+    await page.keyboard.press('Enter');
+
+    await expect(page.locator(row)).not.toContainText('No duplicate codes in cs_code table');
+    await expect(page.locator(row)).toContainText('Raw counts are not present');
+  });
+
+  test('Note Filters', async ({ page }) => {
+    await page.goto('/load-versions');
+    await page.locator('tbody tr td .fake-link', {hasText: '20231012080001'}).click();
+
+    const tbody = 'app-load-version-note tbody';
+
+    await expect(page.locator(tbody)).toContainText('TestTag');
+    await expect(page.locator(tbody)).toContainText('Tag.3');
+
+    await page.locator('#hashtagsFilterInput').selectOption('Tag2');
+    await expect(page.locator(tbody)).toContainText('Note2');
+    await expect(page.locator(tbody)).not.toContainText('TestTag');
+    await expect(page.locator(tbody)).not.toContainText('Tag.3');
+
+    await page.locator('#hashtagsFilterInput').selectOption('ALL');
+    await expect(page.locator(tbody)).toContainText('TestTag');
+    await expect(page.locator(tbody)).toContainText('Tag.3');
+
+    await page.locator('#noteInput').fill('Second');
+    await expect(page.locator(tbody)).toContainText('Note2');
+    await expect(page.locator(tbody)).not.toContainText('TestTag');
+    await expect(page.locator(tbody)).not.toContainText('Tag.3');
+
+    await page.locator('#noteInput').clear();
+    await page.locator('#createdBySearchInput').selectOption('ludetc');
+    await expect(page.locator(tbody)).toContainText('Note2');
+    await expect(page.locator(tbody)).not.toContainText('TestTag');
+    await expect(page.locator(tbody)).not.toContainText('Tag.3');
+
+    await page.locator('#createdBySearchInput').selectOption('ALL');
+    await expect(page.locator(tbody)).toContainText('TestTag');
+    await expect(page.locator(tbody)).toContainText('Tag.3');
+  });
+
+  test('Code System Filter', async ({ page }) => {
+    await page.goto('/code-systems');
+    await expect(page.locator('#codeSystemsListTable > tbody')).toContainText('LOINC');
+
+    await page.locator('#codeSystemSearchInput').fill('ICD');
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#codeSystemsListTable > tbody')).not.toContainText('LOINC');
+  });
+
+  const firstCell = 'table tbody tr:first-of-type td:first-of-type';
+  test('LR - URL Search Request Time From', async ({ page }) => {
+    await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=desc');
+    await expect(page.locator(firstCell)).toHaveText('149');
+  });
+
+  test('LR - URL Search Request Time To', async ({ page }) => {
+    await page.goto('/load-requests?requestTimeFrom=2017-11-01&requestTimeTo=2017-11-30&sortBy=requestTime&sortDirection=desc');
+    await expect(page.locator(firstCell)).toHaveText('59');
+  });
+
+  test('LR - URL Search Creation Time From', async ({ page }) => {
+    await page.goto('/load-requests?creationTimeFrom=2010-01-01&sortBy=creationTime&sortDirection=desc');
+    await expect(page.locator(firstCell)).toHaveText('1');
+  });
+
+  test('LR - URL Search Creation Time To', async ({ page }) => {
+    await page.goto('/load-requests?creationTimeFrom=2010-01-01&creationTimeTo=2013-01-01&sortBy=creationTime&sortDirection=desc');
+    await expect(page.locator(firstCell)).toHaveText('27');
+  });
+
+  test('LR - URL Subject Filter', async ({ page }) => {
+    await page.goto('/load-requests');
+    await page.locator('#subjectInput').fill('Great Subject');
+    await page.keyboard.press('Enter');
+    await expect(page.locator(firstCell)).toHaveText('29');
+  });
+
+  test('LR - URL Status Filter', async ({ page }) => {
+    await page.goto('/load-requests');
+    await page.locator('#requestStatusInput').selectOption('Stopped');
+    await expect(page.locator(firstCell)).toHaveText('30');
+  });
+
+  test('LR - URL Type Filter', async ({ page }) => {
+    await page.goto('/load-requests');
+    await page.locator('#requestStatusInput').selectOption('Open');
+    await expect(page.locator(firstCell)).toHaveText('4');
+    await page.locator('#requestTypeInput').selectOption('Scheduled');
+    await expect(page.locator(firstCell)).toHaveText('5');
+  });
+
+  test('LR - URL User Filter', async ({ page }) => {
+    await page.goto('/load-requests');
+    await page.locator('#requesterInput').fill('bernicevega');
+    await page.keyboard.press('Enter');
+    await expect(page.locator(firstCell)).toHaveText('6');
+  });
+
+  test('LR - Search Page Size', async ({ page }) => {
+    await page.goto('/load-requests?pageSize=15');
+    const rows = await page.locator('table tbody tr');
+    await expect(rows).toHaveCount(15);
   });
 });

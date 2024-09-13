@@ -1,5 +1,5 @@
 import { NgForOf, NgIf } from '@angular/common';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,13 +10,12 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, tap, throwError } from 'rxjs';
+import { tap } from 'rxjs';
 
 import { triggerExpandTableAnimation } from '../animations';
 import { CodeSystemVersionComponent } from '../code-system-version/code-system-version.component';
 import { environment } from '../environments/environment';
 import { CodeSystem } from '../model/code-system';
-
 
 @Component({
   selector: 'app-code-system',
@@ -48,13 +47,6 @@ export class CodeSystemComponent {
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
         },
-      }),
-      catchError((err: HttpErrorResponse) => {
-        if (err.status === 404) {
-          return [];
-        } else {
-          return throwError(() => err);
-        }
       }),
     ).subscribe();
   }
