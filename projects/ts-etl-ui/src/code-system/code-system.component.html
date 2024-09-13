@@ -1,10 +1,10 @@
 <div class="mat-elevation-z8 ">
     <mat-form-field>
         <mat-label>Filter</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. LOINC" #input>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. LOINC" #input id="codeSystemSearchInput">
     </mat-form-field>
     <div class="example-table-container">
-        <table [dataSource]="dataSource" mat-table matSort multiTemplateDataRows>
+        <table [dataSource]="dataSource" mat-table matSort multiTemplateDataRows id="codeSystemsListTable">
 
             <ng-container matColumnDef="codeSystemName">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Code System</th>

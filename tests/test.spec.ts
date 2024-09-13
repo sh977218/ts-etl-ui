@@ -16,11 +16,11 @@ test.describe('e2e test', async () => {
     await expect(page.getByRole('table').locator('tbody tr.example-element-row')).not.toHaveCount(0);
 
     // this api interception is to make network slow, so the spinner can be verified.
-    await page.route('/load-request/list', async route => {
+    await page.route('**/load-request/list', async route => {
       await page.waitForTimeout(2000);
       await route.continue();
     });
-    await page.route('/loadRequest/', async route => {
+    await page.route('**/loadRequest/', async route => {
       await page.waitForTimeout(2000);
       await route.continue();
     });
@@ -253,6 +253,69 @@ test.describe('e2e test', async () => {
     await page.locator('#createdBySearchInput').selectOption('ALL');
     await expect(page.locator(tbody)).toContainText('TestTag');
     await expect(page.locator(tbody)).toContainText('Tag.3');
+  });
 
+  test('Code System Filter', async ({ page }) => {
+    await page.goto('/code-systems');
+    await expect(page.locator('#codeSystemsListTable > tbody')).toContainText('LOINC');
+
+    await page.locator('#codeSystemSearchInput').fill('ICD');
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#codeSystemsListTable > tbody')).not.toContainText('LOINC');
+  });
+
+  const firstCell = 'table tbody tr:first-of-type td:first-of-type';
+  test('LR - URL Search Request Time From', async ({ page }) => {
+    await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=desc');
+    await expect(page.locator(firstCell)).toHaveText('149');
+  });
+
+  test('LR - URL Search Request Time To', async ({ page }) => {
+    await page.goto('/load-requests?requestTimeFrom=2017-11-01&requestTimeTo=2017-11-30&sortBy=requestTime&sortDirection=desc');
+    await expect(page.locator(firstCell)).toHaveText('59');
+  });
+
+  test('LR - URL Search Creation Time From', async ({ page }) => {
+    await page.goto('/load-requests?creationTimeFrom=2010-01-01&sortBy=creationTime&sortDirection=desc');
+    await expect(page.locator(firstCell)).toHaveText('1');
+  });
+
+  test('LR - URL Search Creation Time To', async ({ page }) => {
+    await page.goto('/load-requests?creationTimeFrom=2010-01-01&creationTimeTo=2013-01-01&sortBy=creationTime&sortDirection=desc');
+    await expect(page.locator(firstCell)).toHaveText('27');
+  });
+
+  test('LR - URL Subject Filter', async ({ page }) => {
+    await page.goto('/load-requests');
+    await page.locator('#subjectInput').fill('Great Subject');
+    await page.keyboard.press('Enter');
+    await expect(page.locator(firstCell)).toHaveText('29');
+  });
+
+  test('LR - URL Status Filter', async ({ page }) => {
+    await page.goto('/load-requests');
+    await page.locator('#requestStatusInput').selectOption('Stopped');
+    await expect(page.locator(firstCell)).toHaveText('30');
+  });
+
+  test('LR - URL Type Filter', async ({ page }) => {
+    await page.goto('/load-requests');
+    await page.locator('#requestStatusInput').selectOption('Open');
+    await expect(page.locator(firstCell)).toHaveText('4');
+    await page.locator('#requestTypeInput').selectOption('Scheduled');
+    await expect(page.locator(firstCell)).toHaveText('5');
+  });
+
+  test('LR - URL User Filter', async ({ page }) => {
+    await page.goto('/load-requests');
+    await page.locator('#requesterInput').fill('bernicevega');
+    await page.keyboard.press('Enter');
+    await expect(page.locator(firstCell)).toHaveText('6');
+  });
+
+  test('LR - Search Page Size', async ({ page }) => {
+    await page.goto('/load-requests?pageSize=15');
+    const rows = await page.locator('table tbody tr');
+    await expect(rows).toHaveCount(15);
   });
 });

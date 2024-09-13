@@ -26,7 +26,6 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash';
-import * as _moment from 'moment';
 import { default as _rollupMoment, Moment } from 'moment';
 import { catchError, filter, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
@@ -51,7 +50,7 @@ import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
-const moment = _rollupMoment || _moment;
+const moment = _rollupMoment;
 
 @Component({
   standalone: true,
