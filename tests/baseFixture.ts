@@ -68,9 +68,9 @@ const test = baseTest.extend<{
     await use(new MaterialPO(page));
   },
   page: async ({ page }, use, testInfo) => {
+    const newPage = await page.waitForEvent('popup');
     await use(page);
     await codeCoverage(page, testInfo);
-    const newPage = await page.waitForEvent('popup');
     await codeCoverage(newPage, testInfo);
   },
 });
@@ -81,7 +81,7 @@ test.beforeEach(async ({ browser, page, baseURL }) => {
     await page.waitForTimeout(2000);
     await route.continue();
   });
-  
+
   page.on('console', (consoleMessage: ConsoleMessage) => {
     if (consoleMessage) {
       UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
