@@ -4,10 +4,10 @@ export const environment: Environment = {
   /* eslint-disable */
   environmentName: 'development',
   production: false,
-  ticketUrl: '/api/serviceValidate',
+  ticketUrl: '/ticketUrl',
   loginUrl: '/api/login',
   logoutUrl: '/api/logout',
-  loginServiceUrl: '/nih-login',
+  loginServiceUrl: 'http://localhost:3000/nih-login',
   apiServer: '/api',
   newApiServer: '/newApi',
 };
