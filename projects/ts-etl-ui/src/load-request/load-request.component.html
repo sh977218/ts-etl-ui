@@ -19,23 +19,11 @@
           <mat-option [value]="user?.utsUser!.username">My Requests</mat-option>
         </mat-select>
       </mat-form-field>
-      <button mat-fab extended color="primary" type="submit">
-        <mat-icon fontIcon="search"></mat-icon>
-        Search
-      </button>
-      <button mat-fab extended routerLink="/load-requests" type="reset">
-        <mat-icon fontIcon="clear"></mat-icon>
-        Reset
-      </button>
     </div>
     <div class="flex align-middle">
       <button mat-fab extended color="primary" (click)="openCreateLoadRequestModal()">
         <mat-icon fontIcon="add"></mat-icon>
         Create Request
-      </button>
-      <button mat-fab extended color="primary" (click)="download()">
-        <mat-icon fontIcon="file_download"></mat-icon>
-        Download
       </button>
     </div>
   </div>
@@ -46,6 +34,23 @@
              matSort [matSortActive]="currentLoadRequestSearchCriteria.sortCriteria.sortBy" matSortDisableClear
              [matSortDirection]="currentLoadRequestSearchCriteria.sortCriteria.sortDirection"
              (matSortChange)="handleSortEvent($event)">
+
+        <ng-container matColumnDef="actionBar">
+          <th mat-header-cell colspan="3" *matHeaderCellDef>
+            <button mat-fab color="primary" type="submit">
+              <mat-icon fontIcon="search"></mat-icon>
+              Search
+            </button>
+            <button mat-fab routerLink="/load-requests" type="reset">
+              <mat-icon fontIcon="clear"></mat-icon>
+              Reset
+            </button>
+            <button mat-fab color="primary" (click)="download()">
+              <mat-icon fontIcon="file_download"></mat-icon>
+              Download
+            </button>
+          </th>
+        </ng-container>
 
         <ng-container matColumnDef="opRequestSeq">
           <th mat-header-cell *matHeaderCellDef style="padding:0; width: 118px">
@@ -209,6 +214,7 @@
           </th>
         </ng-container>
 
+        <tr mat-header-row *matHeaderRowDef="['actionBar']"></tr>
         <tr mat-header-row *matHeaderRowDef="columnsToDisplay()"></tr>
         <tr mat-header-row *matHeaderRowDef="searchRowColumns"></tr>
 
