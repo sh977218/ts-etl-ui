@@ -183,6 +183,12 @@
           },
           "configurations": {
             "coverage": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
+                  "with": "projects/ts-etl-ui/src/environments/environment.coverage.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "coverage"

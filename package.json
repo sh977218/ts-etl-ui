@@ -12,7 +12,6 @@
     "serve:integration-local": "ng serve ts-etl-ui -c integration-local",
     "start": "npm run start --prefix server",
     "start:coverage": "npm run start:coverage --prefix server",
-    "startStatic": "npm run startStatic --prefix server",
     "build": "ng build ts-etl-ui -c render && node server/insert-commit-hash.js",
     "build:prod": "ng build ts-etl-ui -c prod && node server/insert-commit-hash.js",
     "build:coverage": "ng build e2e-coverage -c coverage && node server/insert-commit-hash.js",
@@ -20,7 +19,6 @@
     "test:smoke": "playwright test --project=debug",
     "test:debug": "playwright test --project=debug --debug",
     "test:ui": "playwright test --project=ts-etl-ui --ui",
-    "test:coverage": "cross-env COVERAGE=true playwright test --project=ts-etl-ui",
     "coverage-report": "npx nyc report",
     "prepare": "husky"
   },
