@@ -138,55 +138,6 @@ test.describe('e2e test', async () => {
     await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
-  test('QA Rules', async ({ page }) => {
-    await page.goto('/load-version-report/0');
-    const row = 'app-load-version-report-rule tbody tr:nth-of-type(2)';
-    await expect(page.locator(row)).toContainText('Code.DuplicateCode');
-    await expect(page.locator(row)).toContainText('No duplicate codes in cs_code table');
-    await expect(page.locator(`${row} td:nth-of-type(4)`)).toContainText('5');
-
-    await page.locator('app-load-version-report-rule #nameFilterInput').fill('QaCount');
-    await page.keyboard.press('Enter');
-
-    await expect(page.locator(row)).not.toContainText('No duplicate codes in cs_code table');
-    await expect(page.locator(row)).toContainText('Raw counts are not present');
-  });
-
-  test('Note Filters', async ({ page }) => {
-    await page.goto('/load-versions');
-    await page.locator('tbody tr td .fake-link', { hasText: '20231012080001' }).click();
-
-    const tbody = 'app-load-version-note tbody';
-
-    await expect(page.locator(tbody)).toContainText('TestTag');
-    await expect(page.locator(tbody)).toContainText('Tag.3');
-
-    await page.locator('#hashtagsFilterInput').selectOption('Tag2');
-    await expect(page.locator(tbody)).toContainText('Note2');
-    await expect(page.locator(tbody)).not.toContainText('TestTag');
-    await expect(page.locator(tbody)).not.toContainText('Tag.3');
-
-    await page.locator('#hashtagsFilterInput').selectOption('ALL');
-    await expect(page.locator(tbody)).toContainText('TestTag');
-    await expect(page.locator(tbody)).toContainText('Tag.3');
-
-    await page.locator('#noteInput').fill('Second');
-    await expect(page.locator(tbody)).toContainText('Note2');
-    await expect(page.locator(tbody)).not.toContainText('TestTag');
-    await expect(page.locator(tbody)).not.toContainText('Tag.3');
-
-    await page.locator('#noteInput').clear();
-    await page.locator('#createdBySearchInput').selectOption('ludetc');
-    await expect(page.locator(tbody)).toContainText('Note2');
-    await expect(page.locator(tbody)).not.toContainText('TestTag');
-    await expect(page.locator(tbody)).not.toContainText('Tag.3');
-
-    await page.locator('#createdBySearchInput').selectOption('ALL');
-    await expect(page.locator(tbody)).toContainText('TestTag');
-    await expect(page.locator(tbody)).toContainText('Tag.3');
-
-  });
-
   test('Version QA Tab', async ({ page, materialPo }) => {
     const matDialog = materialPo.matDialog();
 
@@ -246,8 +197,6 @@ test.describe('e2e test', async () => {
     await expect(page.locator(firstRow)).not.toContainText('Code D90012 is not mapped to a term');
   });
 
-<<<<<<< HEAD
-=======
   test('QA Rules', async ({ page }) => {
     await page.goto('/load-version-report/0');
     const row = 'app-load-version-report-rule tbody tr:nth-of-type(2)';
@@ -264,7 +213,7 @@ test.describe('e2e test', async () => {
 
   test('Note Filters', async ({ page }) => {
     await page.goto('/load-versions');
-    await page.locator('tbody tr td .fake-link', {hasText: '20231012080001'}).click();
+    await page.locator('tbody tr td .fake-link', { hasText: '20231012080001' }).click();
 
     const tbody = 'app-load-version-note tbody';
 
@@ -359,5 +308,4 @@ test.describe('e2e test', async () => {
     const rows = await page.locator('table tbody tr');
     await expect(rows).toHaveCount(15);
   });
->>>>>>> 3ff710975952d498ccd68da93c124afbf81261b1
 });
