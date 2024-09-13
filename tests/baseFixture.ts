@@ -68,14 +68,11 @@ const test = baseTest.extend<{
     await use(new MaterialPO(page));
   },
   page: async ({ page }, use, testInfo) => {
-    const newPage = await page.waitForEvent('popup');
     await use(page);
-    await codeCoverage(page, testInfo);
-    await codeCoverage(newPage, testInfo);
   },
 });
 
-test.beforeEach(async ({ browser, page, baseURL }) => {
+test.beforeEach(async ({ page, baseURL }) => {
   // this api interception is to make network slow, so the spinner can be verified.
   await page.route('**/*', async route => {
     await page.waitForTimeout(2000);
@@ -104,6 +101,10 @@ test.beforeEach(async ({ browser, page, baseURL }) => {
     await page.getByRole('button', { name: 'Ok' }).click();
     await page.waitForURL(`${baseURL}/load-requests` || '');
   });
+});
+
+test.afterEach(async ({ page }, testInfo) => {
+  await codeCoverage(page, testInfo);
 });
 
 test.afterAll(async () => {
