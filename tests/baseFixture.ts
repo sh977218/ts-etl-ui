@@ -67,12 +67,21 @@ const test = baseTest.extend<{
   materialPo: async ({ page }, use) => {
     await use(new MaterialPO(page));
   },
-  page: async ({ page }, use) => {
+  page: async ({ page }, use, testInfo) => {
     await use(page);
+    await codeCoverage(page, testInfo);
+    const newPage = await page.waitForEvent('popup');
+    await codeCoverage(newPage, testInfo);
   },
 });
 
-test.beforeEach(async ({ page, baseURL }) => {
+test.beforeEach(async ({ browser, page, baseURL }) => {
+  // this api interception is to make network slow, so the spinner can be verified.
+  await page.route('**/*', async route => {
+    await page.waitForTimeout(2000);
+    await route.continue();
+  });
+  
   page.on('console', (consoleMessage: ConsoleMessage) => {
     if (consoleMessage) {
       UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
@@ -95,10 +104,6 @@ test.beforeEach(async ({ page, baseURL }) => {
     await page.getByRole('button', { name: 'Ok' }).click();
     await page.waitForURL(`${baseURL}/load-requests` || '');
   });
-});
-
-test.afterEach(async ({ page }, testInfo) => {
-  await codeCoverage(page, testInfo);
 });
 
 test.afterAll(async () => {

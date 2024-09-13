@@ -537,6 +537,7 @@ app.get('/api/serviceValidate', cors(), async (req, res) => {
   if (user.utsUser) {
     const jwtToken = jwt.sign({ data: user.utsUser.username }, SECRET_TOKEN);
     res.cookie('Bearer', `${jwtToken}`, {
+      path: '/',
       expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
     });
     res.send(user);

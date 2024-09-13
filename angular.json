@@ -96,6 +96,9 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
+            "options": {
+              "proxyConfig": "projects/ts-etl-ui/src/proxy.conf.json"
+            },
             "prod": {
               "buildTarget": "ts-etl-ui:build:prod",
               "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
