@@ -1,5 +1,5 @@
 {
-  "check-coverage": false,
+  "check-coverage": true,
   "reportDir": "coverage-e2e",
   "temp-dir": ".nyc_output",
   "reporter": [
@@ -7,8 +7,8 @@
     "json",
     "text-summary"
   ],
-  "statements": 61,
-  "branches": 45,
-  "functions": 51,
-  "lines": 62
+  "statements": 84.5,
+  "branches": 70,
+  "functions": 81,
+  "lines": 84
 }
