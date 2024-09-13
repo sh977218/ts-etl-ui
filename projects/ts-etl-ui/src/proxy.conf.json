@@ -1,0 +1,23 @@
+{
+  "/api": {
+    "target": "http://localhost:3000/"
+  },
+  "/newApi": {
+    "target": "http://localhost:3000/",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/newApi": ""
+    },
+    "loglevel": "debug"
+  },
+  "/ticketUrl": {
+    "target": "http://localhost:3000/api/serviceValidate",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/ticketUrl": ""
+    },
+    "loglevel": "debug"
+  }
+}
