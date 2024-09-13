@@ -69,7 +69,7 @@ export default defineConfig({
   webServer: [
     {
       // this is not async, no guarantee that test will start after reset DB
-      command: `node --env-file server/.coverage.env server/reset-mongo-db.js`,
+      command: `npm run reset-db`,
     },
     {
       command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
