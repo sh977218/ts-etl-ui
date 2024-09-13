@@ -36,16 +36,16 @@
              (matSortChange)="handleSortEvent($event)">
 
         <ng-container matColumnDef="actionBar">
-          <th mat-header-cell colspan="3" *matHeaderCellDef>
-            <button mat-fab color="primary" type="submit">
+          <th mat-header-cell colspan="3" *matHeaderCellDef class="py-2">
+            <button mat-raised-button type="submit" class="me-2">
               <mat-icon fontIcon="search"></mat-icon>
               Search
             </button>
-            <button mat-fab routerLink="/load-requests" type="reset">
+            <button mat-raised-button routerLink="/load-requests" type="reset" class="mx-1">
               <mat-icon fontIcon="clear"></mat-icon>
               Reset
             </button>
-            <button mat-fab color="primary" (click)="download()">
+            <button mat-raised-button (click)="download()" class="ms-2">
               <mat-icon fontIcon="file_download"></mat-icon>
               Download
             </button>
