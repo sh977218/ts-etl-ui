@@ -223,7 +223,7 @@ test.describe('e2e test', async () => {
 
   test('Note Filters', async ({ page }) => {
     await page.goto('/load-versions');
-    await page.locator('tbody tr td .fake-link', {hasText: '20231012080001'}).click();
+    await page.locator('tbody tr td .fake-link', { hasText: '20231012080001' }).click();
 
     const tbody = 'app-load-version-note tbody';
 
