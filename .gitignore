@@ -57,4 +57,4 @@ coverage-e2e
 all-report/coverage-e2e
 all-report/playwright-report
 
-.husky
+.husky/_
