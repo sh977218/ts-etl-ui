@@ -61,4 +61,4 @@ jobs:
 
       - name: update job summary
         if: always()
-        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to-github-page.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to-github-loggedInPage.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY

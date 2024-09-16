@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -38,7 +38,11 @@ export class LoginCbComponent {
           next: () => {
             router.navigate(['/']);
           },
-          error: (e) => {
+          error: (e: HttpErrorResponse) => {
+            if (e.status === 404) {
+              this.alertService.addAlert('danger', `${e.error}`);
+              return;
+            }
             this.alertService.addAlert('danger', `error log in ${e}`);
             cookieService.delete('Bearer');
             router.navigate(['/please-log-in']);
