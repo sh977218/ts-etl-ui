@@ -101,8 +101,6 @@ const test = baseTest.extend<{
       await page.waitForURL(`${baseURL}/load-requests` || '');
     });
     await use(page);
-    await codeCoverage(page, testInfo);
-
   },
   emptyUserPage: async ({ page }, use, testInfo) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
@@ -128,12 +126,11 @@ const test = baseTest.extend<{
     });
 
     await use(page);
-    await codeCoverage(page, testInfo);
   },
 });
 
-test.afterEach(async ({ page, emptyUserPage, loggedInPage }, testInfo) => {
-  await codeCoverage(emptyUserPage, testInfo);
+test.afterEach(async ({ page }, testInfo) => {
+  await codeCoverage(page, testInfo);
 });
 
 test.afterAll(async () => {
