@@ -14,6 +14,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { format, eachHourOfInterval, endOfDay } from 'date-fns';
+import { roundToNearestMinutes } from 'date-fns/roundToNearestMinutes';
 import { map, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
@@ -66,6 +68,20 @@ export class CreateLoadRequestModalComponent {
       requestTime: new FormControl<Date>({ value: new Date(), disabled: true }),
     },
   );
+
+  scheduledTimeOptions = () => {
+    const start = roundToNearestMinutes(new Date(), { nearestTo: 30, roundingMethod: 'ceil' });
+    const end = endOfDay(new Date());
+
+    const scheduledTimeOptionsInDate = eachHourOfInterval({
+      start,
+      end,
+    }, { step: 0.5 });
+
+    return scheduledTimeOptionsInDate.map(date => {
+      return format(date, 'hh:mm a');
+    });
+  };
 
   futureDateFilter = (d: Date | null): boolean => {
     const today = new Date();
