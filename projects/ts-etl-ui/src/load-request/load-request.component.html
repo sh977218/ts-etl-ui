@@ -74,7 +74,7 @@
         <ng-container matColumnDef="codeSystemName">
           <th mat-header-cell *matHeaderCellDef disableClear style="padding:0; width: 174px">
             <div class="flex flex-col m-2">
-              <label for="codeSystemSearch" class="m-2" mat-sort-header disableClear>Code System Name</label>
+              <label for="codeSystemSelect" class="m-2" mat-sort-header disableClear>Code System Name</label>
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
@@ -82,7 +82,7 @@
         <ng-container matColumnDef="codeSystemName-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <mat-form-field appearance="outline" id="codeSystemSearch">
+              <mat-form-field appearance="outline" id="codeSystemSelect">
                 <mat-label>Code System Name</mat-label>
                 <mat-select formControlName="codeSystemName" multiple>
                   <ng-container *ngFor="let CODE_SYSTEM_NAME of constantService.CODE_SYSTEM_NAMES">
@@ -113,7 +113,7 @@
         <ng-container matColumnDef="requestStatus">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
-              <label for="requestStatusSearch" class="m-2" mat-sort-header disableClear>Status</label>
+              <label for="requestStatusSelect" class="m-2" mat-sort-header disableClear>Status</label>
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestStatus}}</td>
@@ -121,7 +121,7 @@
         <ng-container matColumnDef="requestStatus-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <mat-form-field appearance="outline" id="requestStatusSearch">
+              <mat-form-field appearance="outline" id="requestStatusSelect">
                 <mat-label>Request Status</mat-label>
                 <mat-select formControlName="requestStatus" multiple>
                   <ng-container *ngFor="let LOAD_REQUEST_STATUS of constantService.LOAD_REQUEST_STATUSES">
@@ -136,7 +136,7 @@
         <ng-container matColumnDef="requestType">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
-              <label for="requestTypeSearch" class="m-2" mat-sort-header disableClear>Request Type</label>
+              <label for="requestTypeSelect" class="m-2" mat-sort-header disableClear>Request Type</label>
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestType}}</td>
@@ -144,7 +144,7 @@
         <ng-container matColumnDef="requestType-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <mat-form-field appearance="outline" id="requestTypeSearch">
+              <mat-form-field appearance="outline" id="requestTypeSelect">
                 <mat-label>Request Status</mat-label>
                 <mat-select formControlName="requestType" multiple>
                   <ng-container *ngFor="let LOAD_REQUEST_TYPE of constantService.LOAD_REQUEST_TYPES">
