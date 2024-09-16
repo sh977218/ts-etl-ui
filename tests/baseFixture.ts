@@ -77,7 +77,7 @@ const test = baseTest.extend<{
   materialPo: async ({ page }, use) => {
     await use(new MaterialPO(page));
   },
-  loggedInPage: async ({ page, baseURL }, use) => {
+  loggedInPage: async ({ page, baseURL }, use, testInfo) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
         UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
@@ -101,8 +101,10 @@ const test = baseTest.extend<{
       await page.waitForURL(`${baseURL}/load-requests` || '');
     });
     await use(page);
+    await codeCoverage(page, testInfo);
+
   },
-  emptyUserPage: async ({ page }, use) => {
+  emptyUserPage: async ({ page }, use, testInfo) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
         UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
@@ -126,11 +128,12 @@ const test = baseTest.extend<{
     });
 
     await use(page);
+    await codeCoverage(page, testInfo);
   },
 });
 
-test.afterEach(async ({ page }, testInfo) => {
-  await codeCoverage(page, testInfo);
+test.afterEach(async ({ page, emptyUserPage, loggedInPage }, testInfo) => {
+  await codeCoverage(emptyUserPage, testInfo);
 });
 
 test.afterAll(async () => {
