@@ -69,22 +69,6 @@ class MaterialPO {
   }
 }
 
-class EmptyUserPage {
-  private readonly page: Page;
-
-  constructor(page: Page) {
-    this.page = page;
-  }
-}
-
-class LoggedInPage {
-  private readonly page: Page;
-
-  constructor(page: Page) {
-    this.page = page;
-  }
-}
-
 const test = baseTest.extend<{
   materialPo: MaterialPO,
   loggedInPage: Page,

@@ -2,7 +2,6 @@ import test from './baseFixture';
 import { expect } from '@playwright/test';
 
 test.describe('CS - ', async () => {
-
   test('Code System Table', async ({ loggedInPage }) => {
     await loggedInPage.getByRole('link', { name: 'Code System' }).click();
     await expect(loggedInPage.getByRole('table').locator('tbody tr')).not.toHaveCount(0);

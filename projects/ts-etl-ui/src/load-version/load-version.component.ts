@@ -164,7 +164,7 @@ export class LoadVersionComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // If the user changes the sort order, reset back to the first loggedInPage.
+    // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
     this.activatedRoute.queryParamMap
