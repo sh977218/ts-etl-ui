@@ -75,6 +75,7 @@ export default defineConfig({
     {
       command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
       port: 3000,
+      reuseExistingServer: true,
     },
     ...process.env['CI'] ? [] : [{
       command: 'npm run serve:coverage',

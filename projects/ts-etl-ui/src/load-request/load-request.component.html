@@ -145,7 +145,7 @@
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
               <mat-form-field appearance="outline" id="requestTypeSelect">
-                <mat-label>Request Status</mat-label>
+                <mat-label>Request Type</mat-label>
                 <mat-select formControlName="requestType" multiple>
                   <ng-container *ngFor="let LOAD_REQUEST_TYPE of constantService.LOAD_REQUEST_TYPES">
                     <mat-option [value]="LOAD_REQUEST_TYPE">{{LOAD_REQUEST_TYPE}}</mat-option>
