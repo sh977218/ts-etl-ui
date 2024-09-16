@@ -14,7 +14,7 @@ async function globalTeardown() {
     try {
       execSync('npm run coverage-report').toString().trim();
     } catch (e) {
-      throw new Error(`nyc coverage check failed: ${e}`);
+      throw new Error(`nyc coverage check failed: ${JSON.stringify(e)}`);
     }
   }
 }

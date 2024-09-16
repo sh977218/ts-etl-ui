@@ -11,8 +11,16 @@ test.describe('CS - ', async () => {
     await page.goto('/code-systems');
     await expect(page.locator('#codeSystemsListTable > tbody')).toContainText('LOINC');
 
-    await page.locator('#codeSystemSearchInput').fill('ICD');
+    await page.locator('#codeSystemSearchInput').fill('ICD10CM');
     await page.keyboard.press('Enter');
     await expect(page.locator('#codeSystemsListTable > tbody')).not.toContainText('LOINC');
+    await page.locator('table tbody tr:first-of-type').first().click();
+    await page.getByLabel('Ex. Draft').fill('HPO2021_10_10');
+    await page.keyboard.press('Enter');
+    await expect(page.getByText('Rejected')).not.toHaveCount(0);
+
+    await page.getByLabel('Ex. PT').fill('1007412');
+    await page.keyboard.press('Enter');
+    await expect(page.getByText('ambroxol / doxycycline')).not.toHaveCount(0);
   });
 });
