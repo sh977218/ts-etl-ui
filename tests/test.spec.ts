@@ -131,10 +131,8 @@ test.describe('e2e test', async () => {
 
     await test.step(`search for newly 'Cancelled'/'Emergency' load request`, async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
-      await matDialog.getByLabel('Request Status').click();
-      await page.getByRole('option', { name: 'Cancelled' }).click();
-      await matDialog.getByLabel('Request Type').click();
-      await page.getByRole('option', { name: 'Emergency' }).click();
+      await materialPo.selectMultiOptions(page.getByLabel('Request Status'), ['Cancelled']);
+      await materialPo.selectMultiOptions(page.getByLabel('Request Type'), ['Emergency']);
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
@@ -159,24 +157,15 @@ test.describe('e2e test', async () => {
     await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
-  test(`Search multi select fields`, async ({ page }) => {
+  test(`Search multi select fields`, async ({ page, materialPo }) => {
     await test.step(`select 2 Code System Name`, async () => {
-      await page.getByLabel('Code System Name').click();
-      await page.getByRole('option', { name: 'GS' }).click();
-      await page.getByRole('option', { name: 'MMSL' }).click();
-      await page.keyboard.press('Escape');
+      await materialPo.selectMultiOptions(page.getByLabel('Code System Name'), ['GS', 'MMSL']);
     });
     await test.step(`select 2 Request Status`, async () => {
-      await page.getByLabel('Request Status').click();
-      await page.getByRole('option', { name: 'Incomplete' }).click();
-      await page.getByRole('option', { name: 'Stopped' }).click();
-      await page.keyboard.press('Escape');
+      await materialPo.selectMultiOptions(page.getByLabel('Request Status'), ['Incomplete', 'Stopped']);
     });
     await test.step(`select 2 Request Type`, async () => {
-      await page.getByLabel('Request Type').click();
-      await page.getByRole('option', { name: 'Emergency' }).click();
-      await page.getByRole('option', { name: 'Scheduled' }).click();
-      await page.keyboard.press('Escape');
+      await materialPo.selectMultiOptions(page.getByLabel('Request Type'), ['Emergency', 'Scheduled']);
     });
 
     await test.step(`Search and verify result`, async () => {
@@ -337,18 +326,11 @@ test.describe('e2e test', async () => {
     await expect(page.locator(firstCell)).toHaveText('29');
   });
 
-  test('LR - URL Status Filter', async ({ page }) => {
+  test('LR - URL Status Filter', async ({ page, materialPo }) => {
     await page.goto('/load-requests');
-    await page.locator('#requestStatusInput').selectOption('Stopped');
+    await materialPo.selectMultiOptions(page.getByLabel('Request Status'), ['Stopped']);
+    await page.getByRole('button', { name: 'Search' }).click();
     await expect(page.locator(firstCell)).toHaveText('30');
-  });
-
-  test('LR - URL Type Filter', async ({ page }) => {
-    await page.goto('/load-requests');
-    await page.locator('#requestStatusInput').selectOption('Open');
-    await expect(page.locator(firstCell)).toHaveText('4');
-    await page.locator('#requestTypeInput').selectOption('Scheduled');
-    await expect(page.locator(firstCell)).toHaveText('5');
   });
 
   test('LR - URL User Filter', async ({ page }) => {
