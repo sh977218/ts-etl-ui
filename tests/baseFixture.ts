@@ -100,7 +100,9 @@ const test = baseTest.extend<{
       await page.waitForURL(`${baseURL}/load-requests` || '');
     });
     await use(page);
-    await codeCoverage(page, testInfo);
+    if (!!process.env['CI'] || process.env['COVERAGE']) {
+      await codeCoverage(page, testInfo);
+    }
   },
 });
 

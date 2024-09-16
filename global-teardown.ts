@@ -1,17 +1,21 @@
-import NYC from 'nyc';
 import { execSync } from 'child_process';
-
-const nycConfig = require('./.nycrc.json');
+import { readdirSync } from 'fs';
+import { join } from 'path';
 
 const PROJECT_ROOT_FOLDER = __dirname;
+const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, '.nyc_output');
 
 async function globalTeardown() {
-  try {
-    const generateNycReportCmdReturn = execSync('npm run coverage-report').toString().trim();
-    console.log(`${generateNycReportCmdReturn}`);
-  } catch (e) {
-    // NYC doesn't throw error when coverage is not met. bug
-    throw new Error(`nyc coverage check failed: ${e}`);
+  if (!!process.env['CI'] || process.env['COVERAGE']) {
+    const coverageRowData = readdirSync(NYC_OUTPUT_FOLDER);
+    if (!coverageRowData.length) {
+      throw new Error(`no nyc coverage found. Coverage does not work.`);
+    }
+    try {
+      execSync('npm run coverage-report').toString().trim();
+    } catch (e) {
+      throw new Error(`nyc coverage check failed: ${e}`);
+    }
   }
 }
 
