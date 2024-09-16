@@ -48,8 +48,8 @@ type LoadRequestPayloadSearchColumns = {
   opRequestSeq?: string;
   codeSystemName?: string[];
   requestSubject?: string;
-  requestStatus?: string;
-  requestType?: string;
+  requestStatus?: string[];
+  requestType?: string[];
   requestTimeFrom?: Moment;
   requestTimeTo?: Moment;
   requester?: string;
@@ -103,8 +103,8 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
       opRequestSeq: opRequestSeq || '',
       codeSystemName: codeSystemName || [],
       requestSubject: requestSubject || '',
-      requestStatus: requestStatus || '',
-      requestType: requestType || '',
+      requestStatus: requestStatus || [],
+      requestType: requestType || [],
       requestTimeFrom: requestTimeFrom ? moment(requestTimeFrom) : undefined,
       requestTimeTo: requestTimeTo ? moment(requestTimeTo) : undefined,
       requester: requester || '',

@@ -85,11 +85,15 @@ app.post('/load-request/list', async (req, res) => {
   if (requestSubject) {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
-  if (requestStatus) {
-    $match.requestStatus = requestStatus;
+  if (requestStatus && requestStatus.length) {
+    $match.requestStatus = {
+      $in: requestStatus,
+    };
   }
-  if (requestType) {
-    $match.requestType = requestType;
+  if (requestType && requestType.length) {
+    $match.requestType = {
+      $in: requestType,
+    };
   }
   if (requestTimeFrom) {
     const dateObj = new Date(requestTimeFrom);

@@ -113,7 +113,7 @@
         <ng-container matColumnDef="requestStatus">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
-              <label for="requestStatusInput" class="m-2" mat-sort-header disableClear>Status</label>
+              <label for="requestStatusSearch" class="m-2" mat-sort-header disableClear>Status</label>
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestStatus}}</td>
@@ -121,11 +121,14 @@
         <ng-container matColumnDef="requestStatus-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <select id="requestStatusInput" class="w-20" formControlName="requestStatus">
-                <option value="">ALL</option>
-                <option
-                  *ngFor="let LOAD_REQUEST_STATUS of constantService.LOAD_REQUEST_STATUSES">{{LOAD_REQUEST_STATUS}}</option>
-              </select>
+              <mat-form-field appearance="outline" id="requestStatusSearch">
+                <mat-label>Request Status</mat-label>
+                <mat-select formControlName="requestStatus" multiple>
+                  <ng-container *ngFor="let LOAD_REQUEST_STATUS of constantService.LOAD_REQUEST_STATUSES">
+                    <mat-option [value]="LOAD_REQUEST_STATUS">{{LOAD_REQUEST_STATUS}}</mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
             </div>
           </th>
         </ng-container>
@@ -133,7 +136,7 @@
         <ng-container matColumnDef="requestType">
           <th mat-header-cell *matHeaderCellDef disableClear>
             <div class="flex flex-col m-2">
-              <label for="requestTypeInput" class="m-2" mat-sort-header disableClear>Request Type</label>
+              <label for="requestTypeSearch" class="m-2" mat-sort-header disableClear>Request Type</label>
             </div>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestType}}</td>
@@ -141,11 +144,14 @@
         <ng-container matColumnDef="requestType-search">
           <th mat-header-cell *matHeaderCellDef>
             <div class="flex flex-col m-2">
-              <select id="requestTypeInput" class="w-20" formControlName="requestType">
-                <option value="">ALL</option>
-                <option
-                  *ngFor="let LOAD_REQUEST_TYPE of constantService.LOAD_REQUEST_TYPES">{{LOAD_REQUEST_TYPE}}</option>
-              </select>
+              <mat-form-field appearance="outline" id="requestTypeSearch">
+                <mat-label>Request Status</mat-label>
+                <mat-select formControlName="requestType" multiple>
+                  <ng-container *ngFor="let LOAD_REQUEST_TYPE of constantService.LOAD_REQUEST_TYPES">
+                    <mat-option [value]="LOAD_REQUEST_TYPE">{{LOAD_REQUEST_TYPE}}</mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
             </div>
           </th>
         </ng-container>
