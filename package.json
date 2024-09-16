@@ -19,6 +19,7 @@
     "test:smoke": "playwright test --project=debug",
     "test:debug": "playwright test --project=debug --debug",
     "test:ui": "playwright test --project=ts-etl-ui --ui",
+    "reset-db": "node --env-file server/.coverage.env server/reset-mongo-db.js",
     "coverage-report": "npx nyc report",
     "prepare": "husky"
   },

@@ -1,5 +1,5 @@
 import express from 'express';
-import { readFileSync, createReadStream } from 'fs';
+import { readFileSync, createReadStream, existsSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -17,6 +17,7 @@ import { TSError, UnauthorizedError } from './errors.js';
 import moment from 'moment';
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
+const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 
 const DEFAULT_FILE_FOLDER = 'server/data/';
 
@@ -34,8 +35,14 @@ app.use(cookieParser());
 app.use(cors());
 
 if (['coverage'].includes(process.env.ENV_NAME)) {
+  if (!existsSync('../dist/e2e-coverage')) {
+    throw new Error(`e2e-coverage in dist not exist, try run 'npm run build:coverage'`);
+  }
   app.use(express.static('../dist/e2e-coverage'));
 } else {
+  if (!existsSync('../dist/ts-etl-ui/browser')) {
+    throw new Error(`ts-etl-ui/browser in dist not exist, try run 'npm run build'`);
+  }
   app.use(express.static('../dist/ts-etl-ui/browser'));
 }
 
@@ -570,8 +577,14 @@ app.post('/api/logout', async (req, res) => {
 app.use((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' });
   if (['coverage'].includes(process.env.ENV_NAME)) {
+    if (!existsSync('../dist/e2e-coverage')) {
+      throw new Error(`e2e-coverage in dist not exist, try run 'npm run build:coverage'`);
+    }
     createReadStream('../dist/e2e-coverage/index.html').pipe(res);
   } else {
+    if (!existsSync('../dist/ts-etl-ui/browser')) {
+      throw new Error(`ts-etl-ui/browser in dist not exist, try run 'npm run build'`);
+    }
     createReadStream('../dist/ts-etl-ui/browser/index.html').pipe(res);
   }
 });
@@ -584,7 +597,7 @@ app.use(async (err, req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`TS ELT UI mock server listening on port ${port}`);
+  console.log(`TS ELT UI mock server listening on port ${port}, using DB: ${MONGO_DBNAME}`);
   if (RESET_DB) {
     resetMongoCollection()
       .then(() => console.log('Reset DB successfully from server.js'))

@@ -13,11 +13,12 @@ export default defineConfig({
   testDir: './tests',
   testMatch: ['*.spec.ts'],
   globalSetup: require.resolve('./global-setup'),
+  globalTeardown: require.resolve('./global-teardown'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   timeout: 90000,
   expect: {
-    timeout: 5000
+    timeout: 5000,
   },
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
@@ -66,9 +67,19 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: process.env['CI'] ? 'npm run start:coverage' : 'npm run serve:coverage',
-    port: process.env['CI'] ? 3000 : 4200,
-    reuseExistingServer: true,
-  },
+  webServer: [
+    {
+      // this is not async, no guarantee that test will start after reset DB
+      command: `npm run reset-db`,
+    },
+    {
+      command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
+      port: 3000,
+    },
+    ...process.env['CI'] ? [] : [{
+      command: 'npm run serve:coverage',
+      port: 4200,
+      reuseExistingServer: true,
+    }],
+  ],
 });
