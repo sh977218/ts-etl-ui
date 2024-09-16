@@ -32,7 +32,13 @@ test.describe('e2e test', async () => {
        * note: We can use `await page.getByRole('radio', {name: 'Regular'}).check();`
        * but using `matDialog` instead of `page` is it ensures those fields are inside a dialog modal
        */
-      await matDialog.getByRole('radio', { name: 'Regular' }).check();
+      await matDialog.getByRole('radio', { name: 'Scheduled' }).check();
+      await matDialog.getByRole('button', { name: 'Open calendar' }).click();
+      await page.locator(`mat-calendar`).waitFor();
+      await page.locator('.mat-calendar-body-cell.mat-calendar-body-active').click();
+      await page.locator(`mat-calendar`).waitFor({ state: 'hidden' });
+      await matDialog.getByRole('combobox', { name: 'Scheduled time' }).click();
+      await page.getByRole('option', { name: '11:30 PM' }).click();
       await matDialog.getByLabel('Code System Name').click();
       /**
        * mat-option is not attached to modal, it appends to end of app root tag, so using page instead of `matDialog`.
@@ -53,7 +59,7 @@ test.describe('e2e test', async () => {
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
 
-      await expect(page.locator('td:has-text("Regular")')).toBeVisible();
+      await expect(page.locator('td:has-text("Scheduled")')).toBeVisible();
       await expect(page.locator('td:has-text("HPO")')).toBeVisible();
       await expect(page.getByText('newly created load request')).toBeVisible();
     });
@@ -68,7 +74,7 @@ test.describe('e2e test', async () => {
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","HPO","newly created load request","Open","Regular"');
+      expect(fileContent).toContain('"149","HPO","newly created load request","Open","Scheduled"');
     });
 
     await test.step(`edit load request`, async () => {
