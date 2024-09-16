@@ -75,7 +75,7 @@ const test = baseTest.extend<{
   materialPo: async ({ page, baseURL }, use) => {
     await use(new MaterialPO(page));
   },
-  page: async ({ page }, use, testInfo) => {
+  page: async ({ page, baseURL }, use, testInfo) => {
 
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
