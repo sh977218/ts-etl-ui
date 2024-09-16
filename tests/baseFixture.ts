@@ -72,41 +72,39 @@ class MaterialPO {
 const test = baseTest.extend<{
   materialPo: MaterialPO,
 }>({
-  materialPo: async ({ page }, use) => {
+  materialPo: async ({ page, baseURL }, use) => {
     await use(new MaterialPO(page));
   },
-  page: async ({ page }, use) => {
+  page: async ({ page, baseURL }, use, testInfo) => {
+
+    page.on('console', (consoleMessage: ConsoleMessage) => {
+      if (consoleMessage) {
+        UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
+      }
+    });
+
+    await page.goto('/');
+    await test.step('has title', async () => {
+      await expect(page).toHaveTitle('Please Log In');
+    });
+    await test.step('has login required message', async () => {
+      await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
+    });
+
+    await test.step('login', async () => {
+      await page.getByRole('button', { name: 'Log In' }).click();
+      await page.getByRole('button', { name: 'UTS' }).click();
+      await page.getByRole('button', { name: 'Sign in' }).click();
+      await page.locator('[name="ticket"]').selectOption('Peter');
+      await page.getByRole('button', { name: 'Ok' }).click();
+      await page.waitForURL(`${baseURL}/load-requests` || '');
+    });
     await use(page);
+    await codeCoverage(page, testInfo);
   },
-});
-
-test.beforeEach(async ({ page, baseURL }) => {
-  page.on('console', (consoleMessage: ConsoleMessage) => {
-    if (consoleMessage) {
-      UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
-    }
-  });
-
-  await page.goto('/');
-  await test.step('has title', async () => {
-    await expect(page).toHaveTitle('Please Log In');
-  });
-  await test.step('has login required message', async () => {
-    await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
-  });
-
-  await test.step('login', async () => {
-    await page.getByRole('button', { name: 'Log In' }).click();
-    await page.getByRole('button', { name: 'UTS' }).click();
-    await page.getByRole('button', { name: 'Sign in' }).click();
-    await page.locator('[name="ticket"]').selectOption('Peter');
-    await page.getByRole('button', { name: 'Ok' }).click();
-    await page.waitForURL(`${baseURL}/load-requests` || '');
-  });
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  await codeCoverage(page, testInfo);
 });
 
 test.afterAll(async () => {
