@@ -1,4 +1,4 @@
-import { test as baseTest, expect, Page, ConsoleMessage, TestInfo } from '@playwright/test';
+import { test as baseTest, expect, Page, ConsoleMessage, TestInfo, Locator } from '@playwright/test';
 
 import { randomBytes } from 'crypto';
 import { writeFileSync } from 'fs';
@@ -45,6 +45,14 @@ class MaterialPO {
 
   matOption() {
     return this.page.locator('mat-option');
+  }
+
+  async selectMultiOptions(selectLocator: Locator, options: string[]) {
+    await selectLocator.click();
+    for (const option of options) {
+      await this.page.getByRole('option', { name: option }).click();
+    }
+    await this.page.keyboard.press('Escape');
   }
 
   async waitForSpinner() {
