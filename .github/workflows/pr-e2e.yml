@@ -78,10 +78,10 @@ jobs:
           name: playwright-report
           path: playwright-report
 
-      #      - name: Azure Login
-      #        uses: azure/login@v2
-      #        with:
-      #          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          #      - name: Azure Login
+          #        uses: azure/login@v2
+          #        with:
+          #          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Upload Playwright HTML report to Azure
         shell: bash
