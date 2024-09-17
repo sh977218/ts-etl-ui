@@ -113,8 +113,8 @@ export class LoadRequestComponent implements AfterViewInit {
       opRequestSeq: new FormControl<string | null>(null),
       codeSystemName: new FormControl<string[] | null>(null),
       requestSubject: new FormControl<string | null>(null),
-      requestStatus: new FormControl<string | null>(null, { updateOn: 'change' }),
-      requestType: new FormControl<string | null>(null, { updateOn: 'change' }),
+      requestStatus: new FormControl<string[] | null>(null),
+      requestType: new FormControl<string[] | null>(null),
       requestTimeFrom: new FormControl<Moment | string | null>(null),
       requestTimeTo: new FormControl<Moment | string | null>(null),
       requester: new FormControl<string | null>(null),
@@ -187,8 +187,8 @@ export class LoadRequestComponent implements AfterViewInit {
               opRequestSeq: queryParams.get('opRequestSeq'),
               codeSystemName: queryParams.getAll('codeSystemName'),
               requestSubject: queryParams.get('requestSubject'),
-              requestStatus: queryParams.get('requestStatus'),
-              requestType: queryParams.get('requestType'),
+              requestStatus: queryParams.getAll('requestStatus'),
+              requestType: queryParams.getAll('requestType'),
               requestTimeFrom: queryParams.get('requestTimeFrom'),
               requestTimeTo: queryParams.get('requestTimeTo'),
               requester: queryParams.get('requester'),
@@ -222,10 +222,10 @@ export class LoadRequestComponent implements AfterViewInit {
                 emitEvent: false,
               });
             }
-            this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus || '', {
+            this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus || [], {
               emitEvent: false,
             });
-            this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType || '', {
+            this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType || [], {
               emitEvent: false,
             });
             if (searchCriteriaPatch.requestTimeFrom) {

@@ -1,4 +1,4 @@
-import { test as baseTest, expect, Page, ConsoleMessage, TestInfo } from '@playwright/test';
+import { test as baseTest, expect, Page, ConsoleMessage, TestInfo, Locator } from '@playwright/test';
 
 import { randomBytes } from 'crypto';
 import { writeFileSync } from 'fs';
@@ -47,6 +47,14 @@ class MaterialPO {
     return this.page.locator('mat-option');
   }
 
+  async selectMultiOptions(selectLocator: Locator, options: string[]) {
+    await selectLocator.click();
+    for (const option of options) {
+      await this.page.getByRole('option', { name: option }).click();
+    }
+    await this.page.keyboard.press('Escape');
+  }
+
   async waitForSpinner() {
     await this.matSpinner().waitFor();
     await this.matSpinner().waitFor({ state: 'hidden' });
@@ -64,41 +72,41 @@ class MaterialPO {
 const test = baseTest.extend<{
   materialPo: MaterialPO,
 }>({
-  materialPo: async ({ page }, use) => {
+  materialPo: async ({ page, baseURL }, use) => {
     await use(new MaterialPO(page));
   },
-  page: async ({ page }, use) => {
+  page: async ({ page, baseURL }, use, testInfo) => {
+
+    page.on('console', (consoleMessage: ConsoleMessage) => {
+      if (consoleMessage) {
+        UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
+      }
+    });
+
+    await page.goto('/');
+    await test.step('has title', async () => {
+      await expect(page).toHaveTitle('Please Log In');
+    });
+    await test.step('has login required message', async () => {
+      await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
+    });
+
+    await test.step('login', async () => {
+      await page.getByRole('button', { name: 'Log In' }).click();
+      await page.getByRole('button', { name: 'UTS' }).click();
+      await page.getByRole('button', { name: 'Sign in' }).click();
+      await page.locator('[name="ticket"]').selectOption('Peter');
+      await page.getByRole('button', { name: 'Ok' }).click();
+      await page.waitForURL(`${baseURL}/load-requests` || '');
+    });
     await use(page);
-  },
-});
-
-test.beforeEach(async ({ page, baseURL }) => {
-  page.on('console', (consoleMessage: ConsoleMessage) => {
-    if (consoleMessage) {
-      UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
+    if (!!process.env['CI'] || process.env['COVERAGE']) {
+      await codeCoverage(page, testInfo);
     }
-  });
-
-  await page.goto('/');
-  await test.step('has title', async () => {
-    await expect(page).toHaveTitle('Please Log In');
-  });
-  await test.step('has login required message', async () => {
-    await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
-  });
-
-  await test.step('login', async () => {
-    await page.getByRole('button', { name: 'Log In' }).click();
-    await page.getByRole('button', { name: 'UTS' }).click();
-    await page.getByRole('button', { name: 'Sign in' }).click();
-    await page.locator('[name="ticket"]').selectOption('Peter');
-    await page.getByRole('button', { name: 'Ok' }).click();
-    await page.waitForURL(`${baseURL}/load-requests` || '');
-  });
+  },
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  await codeCoverage(page, testInfo);
 });
 
 test.afterAll(async () => {

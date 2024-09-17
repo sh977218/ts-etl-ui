@@ -83,11 +83,15 @@ app.post('/load-request/list', async (req, res) => {
   if (requestSubject) {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
-  if (requestStatus) {
-    $match.requestStatus = requestStatus;
+  if (requestStatus && requestStatus.length) {
+    $match.requestStatus = {
+      $in: requestStatus,
+    };
   }
-  if (requestType) {
-    $match.requestType = requestType;
+  if (requestType && requestType.length) {
+    $match.requestType = {
+      $in: requestType,
+    };
   }
   if (requestTimeFrom) {
     const dateObj = new Date(requestTimeFrom);
@@ -528,8 +532,8 @@ app.get('/nih-login', (req, res) => {
 
 
 /* @todo TS's backend needs to implement the following APIs. */
-// this map simulate UTS ticket to username
-const ticketMap = new Map([['peter-ticket', 'peterhuanguts'], ['christophe-ticket', 'ludetc']]);
+// this map simulate UTS ticket to username, NOTE: user `ghost` exist in UTS DB but not in TS DB (Do not add user 'ghost' in data/user.json).
+const ticketMap = new Map([['peter-ticket', 'peterhuanguts'], ['christophe-ticket', 'ludetc'], ['ghost-ticket', 'ghost']]);
 app.get('/api/serviceValidate', cors(), async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
@@ -548,6 +552,14 @@ app.get('/api/serviceValidate', cors(), async (req, res) => {
   } else {
     return res.status(401).send();
   }
+  if (!user.utsUser) {
+    return res.status(500).send();
+  }
+  const jwtToken = jwt.sign({ data: user.utsUser.username }, SECRET_TOKEN);
+  res.cookie('Bearer', `${jwtToken}`, {
+    expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
+  });
+  res.send(user);
 });
 
 async function loginWithUts(ticket) {

@@ -8,7 +8,6 @@ import { switchMap, tap } from 'rxjs';
 import { AlertService } from '../service/alert-service';
 import { UserService } from '../service/user-service';
 
-
 @Component({
   standalone: true,
   imports: [RouterModule],
