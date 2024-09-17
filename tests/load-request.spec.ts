@@ -44,7 +44,6 @@ test.describe('e2e test', async () => {
     await expect(page.locator('body')).toContainText('This application requires you to log in');
   });
 
-test.describe('LR - ', async () => {
   test('Load Request table', async ({ page, materialPo }) => {
     const matDialog = materialPo.matDialog();
 

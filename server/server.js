@@ -548,7 +548,7 @@ app.get('/api/serviceValidate', cors(), async (req, res) => {
     res.cookie('Bearer', `${jwtToken}`, {
       expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
     });
-    res.send(user);
+    return res.send(user);
   } else {
     return res.status(401).send();
   }
