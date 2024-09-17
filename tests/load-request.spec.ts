@@ -6,8 +6,8 @@ test.describe('e2e test', async () => {
 
   test('Not Logged in', async ({ page }) => {
     await page.goto('/load-requests');
-    await page.locator('#userMenu').click();
-    await page.locator('#logout').click();
+    await page.getByLabel('user menu').click();
+    await page.getByRole('button', {name: 'Log Out'}).click();
     await expect(page.locator('body')).toContainText('This application requires you to log in');
     await page.goto('/load-requests');
     await expect(page.locator('body')).toContainText('This application requires you to log in');
@@ -19,8 +19,8 @@ test.describe('e2e test', async () => {
 
   test('Invalid User', async ({ page, materialPo }) => {
     await page.goto('/load-requests');
-    await page.locator('#userMenu').click();
-    await page.locator('#logout').click();
+    await page.getByLabel('user menu').click();
+    await page.getByRole('button', {name: 'Log Out'}).click();
     await expect(page.locator('body')).toContainText('This application requires you to log in');
     await page.goto('/login-cb?ticket=bogusTicket');
     await materialPo.checkAndCloseAlert('Unable to log in');
