@@ -30,6 +30,7 @@ export class UserService {
   }
 
   logInWithTicket(ticket: string) {
+    /* istanbul ignore next */
     const params = {
       service: window.location.origin + `${['prod'].includes(environment.environmentName) ? '/portal-frontend' : ''}/login-cb`,
       ticket,

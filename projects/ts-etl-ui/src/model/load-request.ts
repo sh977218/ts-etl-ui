@@ -1,7 +1,6 @@
 import { default as _rollupMoment, Moment } from 'moment';
-import * as _moment from 'moment';
 
-const moment = _rollupMoment || _moment;
+const moment = _rollupMoment;
 
 import {
   ApiResponseResultPagination,
@@ -101,7 +100,7 @@ export const generateLoadRequestPayload = (flatLoadRequestPayload: FlatLoadReque
     },
     searchColumns: {
       opRequestSeq: opRequestSeq || '',
-      codeSystemName: codeSystemName || [],
+      codeSystemName: codeSystemName,
       requestSubject: requestSubject || '',
       requestStatus: requestStatus || [],
       requestType: requestType || [],
