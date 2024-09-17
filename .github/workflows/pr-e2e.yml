@@ -7,9 +7,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  GH_TOKEN: ${{ secrets.GithubCliToken }}
-
 jobs:
   e2e-test:
     name: e2e-test
@@ -18,9 +15,6 @@ jobs:
       contents: read
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     container:
       image: mcr.microsoft.com/playwright:v1.47.0-jammy
 
