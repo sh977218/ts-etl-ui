@@ -27,7 +27,7 @@ export class LoginCbComponent {
     activatedRoute.queryParamMap
       .pipe(
         switchMap(qp => {
-          const ticket = qp.get('ticket') || '';
+          const ticket = qp.get('ticket');
           if (ticket) {
             return userService.logInWithTicket(ticket);
           } else {
@@ -38,8 +38,8 @@ export class LoginCbComponent {
           next: () => {
             router.navigate(['/']);
           },
-          error: (e) => {
-            this.alertService.addAlert('danger', `error log in ${e}`);
+          error: () => {
+            this.alertService.addAlert('danger', `Unable to log in`);
             cookieService.delete('Bearer');
             router.navigate(['/please-log-in']);
           },

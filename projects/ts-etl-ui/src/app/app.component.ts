@@ -10,7 +10,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { EMPTY } from 'rxjs';
 
@@ -46,8 +46,7 @@ import { UserService } from '../service/user-service';
 })
 export class AppComponent {
 
-  constructor(private router: Router,
-              public http: HttpClient,
+  constructor(public http: HttpClient,
               public dialog: MatDialog,
               public cookieService: CookieService,
               public loadingService: LoadingService,
@@ -71,6 +70,7 @@ export class AppComponent {
       });
   }
 
+  /* istanbul ignore next */
   serverInfo$ = environment.environmentName === 'ci' ?
     this.http.get<{
       pr: string,

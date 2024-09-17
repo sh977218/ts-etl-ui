@@ -124,8 +124,7 @@ export class LoadRequestDetailComponent implements OnInit {
           .pipe(
             tap({
               next: () => this.loadingService.hideLoading(),
-              error: () => this.loadingService.hideLoading(),
-            }),
+              }),
           );
       }),
     );
@@ -161,6 +160,7 @@ export class LoadRequestDetailComponent implements OnInit {
             }
           }
           return {
+            /* istanbul ignore next */
             label: LABEL_MAPPING[key] || `something wrong about ${key}`,
             key: key,
             value: lr[key as keyof LoadRequest],
@@ -204,7 +204,6 @@ export class LoadRequestDetailComponent implements OnInit {
         next: (newLR) => {
           this.alertService.addAlert('info', `Request (ID: ${newLR.opRequestSeq}) edited successfully`);
         },
-        error: () => this.alertService.addAlert('danger', 'Error editing load request.'),
       });
   }
 

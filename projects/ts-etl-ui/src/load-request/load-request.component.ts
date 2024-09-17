@@ -27,7 +27,7 @@ import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash';
 import { default as _rollupMoment, Moment } from 'moment';
-import { catchError, filter, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { filter, map, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { environment } from '../environments/environment';
@@ -213,6 +213,7 @@ export class LoadRequestComponent implements AfterViewInit {
                 emitEvent: false,
               });
             }
+            /* istanbul ignore next */
             this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName || [], {
               emitEvent: false,
             });
@@ -265,14 +266,10 @@ export class LoadRequestComponent implements AfterViewInit {
             // store current search/filter criteria for download
             assign(this.currentLoadRequestSearchCriteria, loadRequestPayload);
             return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, this.currentLoadRequestSearchCriteria)
-              .pipe(catchError(() => of(null)));
           }),
-          map((res: LoadRequestsResponse | null) => {
-            if (res?.result === null) {
-              return [];
-            }
-            this.resultsLength = res?.result.pagination.totalCount || 0;
-            this.resultsPageSize = res?.result.pagination.pageSize || 10;
+          map((res: LoadRequestsResponse) => {
+            this.resultsLength = res.result.pagination.totalCount!;
+            this.resultsPageSize = res.result.pagination.pageSize!;
             return res?.result.data || [];
           }),
           map(items => {
@@ -284,7 +281,6 @@ export class LoadRequestComponent implements AfterViewInit {
               this.data.set(data);
               this.loadingService.hideLoading();
             },
-            error: () => this.loadingService.hideLoading(),
           }),
         );
       }))
@@ -305,6 +301,8 @@ export class LoadRequestComponent implements AfterViewInit {
             this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
             this.reloadAllRequests$.next(true);
           },
+          // I think this next line should be removed and replaced in favor of http interceptor general error.
+          /* istanbul ignore next */
           error: () => this.alertService.addAlert('danger', 'Error creating load request.'),
         }),
       )

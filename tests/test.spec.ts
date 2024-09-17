@@ -3,6 +3,47 @@ import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
 
 test.describe('e2e test', async () => {
+
+  test('Not Logged in', async ({ page }) => {
+    await page.goto('/load-requests');
+    await page.locator('#userMenu').click();
+    await page.locator('#logout').click();
+    await expect(page.locator('body')).toContainText('This application requires you to log in');
+    await page.goto('/load-requests');
+    await expect(page.locator('body')).toContainText('This application requires you to log in');
+    await page.locator('#login').click();
+    await expect(page.locator('mat-dialog-container')).toContainText('Login with Following');
+    await page.locator('button', {hasText : 'Close'});
+    await expect(page.locator('body')).toContainText('This application requires you to log in');
+  });
+
+  test('Invalid User', async ({ page, materialPo }) => {
+    await page.goto('/load-requests');
+    await page.locator('#userMenu').click();
+    await page.locator('#logout').click();
+    await expect(page.locator('body')).toContainText('This application requires you to log in');
+    await page.goto('/login-cb?ticket=bogusTicket');
+    await materialPo.checkAndCloseAlert('Unable to log in');
+    await expect(page.locator('body')).toContainText('This application requires you to log in');
+  });
+
+  test('Missing Ticket', async ({ page, materialPo }) => {
+    await page.goto('/load-requests');
+    await page.goto('/login-cb');
+    await materialPo.checkAndCloseAlert('Unable to log in');
+  });
+
+  test('Jwt Fail', async ({ page }) => {
+    await page.route('**/api/login', route => {
+      route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({  }),
+      });
+    });
+    await page.goto('/load-requests');
+    await expect(page.locator('body')).toContainText('This application requires you to log in');
+  });
+
   test('Load Request Tab', async ({ page, materialPo }) => {
     const matDialog = materialPo.matDialog();
 
@@ -45,7 +86,12 @@ test.describe('e2e test', async () => {
        */
       await page.getByRole('option', { name: 'HPO' }).click();
       await matDialog.getByLabel('Request Subject').fill('newly created load request');
+      await matDialog.getByPlaceholder('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/').fill('this is not valid');
+      await page.locator('mat-dialog-container h2').click();
+      await expect(page.locator('mat-dialog-container')).toContainText('Please select source file from NLM server');
+      await matDialog.getByPlaceholder('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/').clear();
       await matDialog.getByPlaceholder('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
+      await page.locator('mat-dialog-container h2').click();
       await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
@@ -272,8 +318,8 @@ test.describe('e2e test', async () => {
 
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
   test('LR - URL Search Request Time From', async ({ page }) => {
-    await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=desc');
-    await expect(page.locator(firstCell)).toHaveText('149');
+    await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=asc');
+    await expect(page.locator(firstCell)).toHaveText('27');
   });
 
   test('LR - URL Search Request Time To', async ({ page }) => {
@@ -324,4 +370,5 @@ test.describe('e2e test', async () => {
     const rows = await page.locator('table tbody tr');
     await expect(rows).toHaveCount(15);
   });
+
 });

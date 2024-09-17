@@ -11,16 +11,16 @@
     </ng-container>
   </span>
   <ng-container *ngIf="(userService.user$ | async) as user;  else logInTemplate">
-    <button mat-button [matMenuTriggerFor]="userMenu">{{user.utsUser.username}}</button>
+    <button mat-button [matMenuTriggerFor]="userMenu" id="userMenu">{{user.utsUser.username}}</button>
   </ng-container>
   <mat-menu #userMenu="matMenu">
-    <button mat-menu-item (click)="userService.logOut()">Log Out</button>
+    <button mat-menu-item (click)="userService.logOut()" id="logout">Log Out</button>
   </mat-menu>
   <ng-template #logInTemplate>
     <button mat-raised-button>
       Sign Up
     </button>
-    <button mat-raised-button (click)="openLoginModal()">
+    <button mat-raised-button (click)="openLoginModal()" id="login">
       Log In
     </button>
   </ng-template>

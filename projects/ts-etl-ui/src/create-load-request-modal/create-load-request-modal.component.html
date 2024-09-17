@@ -7,8 +7,7 @@
     <div class="flex flex-col">
       <mat-form-field appearance="outline">
         <mat-label>Code System Name</mat-label>
-        <mat-select placeholder="Code System Name" formControlName="codeSystemName"
-                    (selectionChange)="onCodeSystemNameSelectChange($event)">
+        <mat-select formControlName="codeSystemName" (selectionChange)="onCodeSystemNameSelectChange($event)">
           <mat-option value="">Select Code System</mat-option>
           <mat-option *ngFor="let CODE_SYSTEM_NAME of constantService.CREATE_REQUEST_CODE_SYSTEM_NAMES"
                       [value]="CODE_SYSTEM_NAME">{{CODE_SYSTEM_NAME}}</mat-option>
