@@ -67,18 +67,6 @@ jobs:
       #        if: always()
       #        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to-github-page.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
 
-  publish-playwright-html-report:
-    needs: [ e2e-test ]
-    name: publish-playwright-html-report
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download playwright blob report from Previous job(s)
-        uses: actions/download-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report
-
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -89,8 +77,19 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob  upload-batch -s ./playwright-report --account-name tsetlui -d ts-etl-ui --destination-path ${{github.event.pull_request.number}}
+            az storage blob upload-batch --account-name tsetlui -s ./playwright-report -d ts-etl-ui --destination-path playwright-${{github.event.pull_request.number}}
+
+
+      - name: Upload coverage report to Azure
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az storage blob upload-batch --account-name tsetlui -s ./playwright-report -d ts-etl-ui --destination-path coverage-${{github.event.pull_request.number}}
 
       - name: update job summary
         if: always()
-        run: echo "# Deployed playwright report to https://tsetlui.blob.core.windows.net/ts-etl-ui/${{github.event.pull_request.number}}/index.html" >> $GITHUB_STEP_SUMMARY
+        run: |
+          echo "# Deployed playwright report to https://tsetlui.blob.core.windows.net/ts-etl-ui/playwright-${{github.event.pull_request.number}}/index.html" >> $GITHUB_STEP_SUMMARY
+          echo "# Deployed coverage report to https://tsetlui.blob.core.windows.net/ts-etl-ui/coverage-${{github.event.pull_request.number}}/index.html" >> $GITHUB_STEP_SUMMARY
+
