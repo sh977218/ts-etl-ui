@@ -17,6 +17,7 @@ jobs:
       id-token: write
     container:
       image: mcr.microsoft.com/playwright:v1.47.0-jammy
+      options: --user root
 
     steps:
       - name: Checkout repository
@@ -43,6 +44,22 @@ jobs:
           name: playwright-report
           path: playwright-report
           retention-days: 30
+
+      - name: Install azure-cli
+        run: sudo apt-get install azure-cli
+
+      - name: Upload Playwright HTML report to Azure
+        shell: bash
+        id: deploy-playwright-report
+        run: |
+          REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-playwright-report'
+          ./azcopy cp --recursive "./playwright-report/*" "https://tsetlui.blob.core.windows.net/\$web/$REPORT_DIR"
+          echo "::notice title=HTML report url::https://tsetlui.z1.web.core.windows.net/$REPORT_DIR/index.html"
+        env:
+          AZCOPY_AUTO_LOGIN_TYPE: SPN
+          AZCOPY_SPA_APPLICATION_ID: '${{ secrets.AZCOPY_SPA_APPLICATION_ID }}'
+          AZCOPY_SPA_CLIENT_SECRET: '${{ secrets.AZCOPY_SPA_CLIENT_SECRET }}'
+          AZCOPY_TENANT_ID: '${{ secrets.AZCOPY_TENANT_ID }}'
 
       #
       #      - name: Merge both playwright & coverage report
