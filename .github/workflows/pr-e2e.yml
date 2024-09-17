@@ -42,22 +42,34 @@ jobs:
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npm run test
 
-      - name: Merge both playwright & coverage report
-        if: always()
-        run: mv playwright-report coverage-e2e all-report
-
-      - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
-        if: always()
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: all-report
-
-      - name: Deploy playwright report to Github Pages
-        if: always()
-        id: deploy-playwright-report-to-github-page
-        uses: actions/deploy-pages@v4
-        with:
-          preview: true
+      - name: Upload Playwright HTML report to Azure
+        shell: bash
+        run: |
+          REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-playwright-report'
+          azcopy cp --recursive "./playwright-report/*" "https://<STORAGE_ACCOUNT_NAME>.blob.core.windows.net/\$web/$REPORT_DIR"
+          echo "::notice title=HTML report url::https://<STORAGE_ACCOUNT_NAME>.z1.web.core.windows.net/$REPORT_DIR/index.html"
+        env:
+          AZCOPY_AUTO_LOGIN_TYPE: SPN
+          AZCOPY_SPA_APPLICATION_ID: '${{ secrets.AZCOPY_SPA_APPLICATION_ID }}'
+          AZCOPY_SPA_CLIENT_SECRET: '${{ secrets.AZCOPY_SPA_CLIENT_SECRET }}'
+          AZCOPY_TENANT_ID: '${{ secrets.AZCOPY_TENANT_ID }}'
+      #
+      #      - name: Merge both playwright & coverage report
+      #        if: always()
+      #        run: mv playwright-report coverage-e2e all-report
+      #
+      #      - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
+      #        if: always()
+      #        uses: actions/upload-pages-artifact@v3
+      #        with:
+      #          path: all-report
+      #
+      #      - name: Deploy playwright report to Github Pages
+      #        if: always()
+      #        id: deploy-playwright-report-to-github-page
+      #        uses: actions/deploy-pages@v4
+      #        with:
+      #          preview: true
 
       - name: update job summary
         if: always()
