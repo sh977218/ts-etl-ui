@@ -44,7 +44,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
+          name: all-report
           path: all-report
+          retention-days: 30
 
       # this code is commented for now, but in case Azure is unavailable, we revert this code
       #      - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
