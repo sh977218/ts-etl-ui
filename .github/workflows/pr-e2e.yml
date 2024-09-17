@@ -44,10 +44,11 @@ jobs:
 
       - name: Upload Playwright HTML report to Azure
         shell: bash
+        id: deploy-playwright-report
         run: |
           REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-playwright-report'
-          azcopy cp --recursive "./playwright-report/*" "https://<STORAGE_ACCOUNT_NAME>.blob.core.windows.net/\$web/$REPORT_DIR"
-          echo "::notice title=HTML report url::https://<STORAGE_ACCOUNT_NAME>.z1.web.core.windows.net/$REPORT_DIR/index.html"
+          azcopy cp --recursive "./playwright-report/*" "https://tsetlui.blob.core.windows.net/\$web/$REPORT_DIR"
+          echo "::notice title=HTML report url::https://tsetlui.z1.web.core.windows.net/$REPORT_DIR/index.html"
         env:
           AZCOPY_AUTO_LOGIN_TYPE: SPN
           AZCOPY_SPA_APPLICATION_ID: '${{ secrets.AZCOPY_SPA_APPLICATION_ID }}'
@@ -64,13 +65,17 @@ jobs:
       #        with:
       #          path: all-report
       #
-      #      - name: Deploy playwright report to Github Pages
+      #      - name: Deploy playwright report to GitHub Pages
       #        if: always()
       #        id: deploy-playwright-report-to-github-page
       #        uses: actions/deploy-pages@v4
       #        with:
       #          preview: true
+      #
+      #      - name: update job summary
+      #        if: always()
+      #        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to-github-page.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
 
       - name: update job summary
         if: always()
-        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to-github-page.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
