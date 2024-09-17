@@ -7,7 +7,7 @@ test.describe('e2e test', async () => {
   test('Not Logged in', async ({ page }) => {
     await page.goto('/load-requests');
     await page.getByLabel('user menu').click();
-    await page.getByRole('button', {name: 'Log Out'}).click();
+    await page.getByRole('menuitem', {name: 'Log Out'}).click();
     await expect(page.locator('body')).toContainText('This application requires you to log in');
     await page.goto('/load-requests');
     await expect(page.locator('body')).toContainText('This application requires you to log in');
@@ -20,7 +20,7 @@ test.describe('e2e test', async () => {
   test('Invalid User', async ({ page, materialPo }) => {
     await page.goto('/load-requests');
     await page.getByLabel('user menu').click();
-    await page.getByRole('button', {name: 'Log Out'}).click();
+    await page.getByRole('menuitem', {name: 'Log Out'}).click();
     await expect(page.locator('body')).toContainText('This application requires you to log in');
     await page.goto('/login-cb?ticket=bogusTicket');
     await materialPo.checkAndCloseAlert('Unable to log in');
@@ -251,7 +251,7 @@ test.describe('e2e test', async () => {
 
   test('URL Subject Filter', async ({ page }) => {
     await page.goto('/load-requests');
-    await page.locator('#subjectInput').fill('Great Subject');
+    await page.getByPlaceholder('subject...').fill('Great Subject');
     await page.keyboard.press('Enter');
     await expect(page.locator(firstCell)).toHaveText('29');
   });
@@ -265,7 +265,7 @@ test.describe('e2e test', async () => {
 
   test('URL User Filter', async ({ page }) => {
     await page.goto('/load-requests');
-    await page.locator('#requesterInput').fill('bernicevega');
+    await page.getByPlaceholder('requester...').fill('bernicevega');
     await page.keyboard.press('Enter');
     await expect(page.locator(firstCell)).toHaveText('6');
   });
