@@ -229,8 +229,11 @@ test.describe('e2e test', async () => {
   });
 
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
-  test('LR - URL Search Request Time From', async ({ page }) => {
+  const firstRow = 'table tbody tr:first-of-type';
+  test('URL Search Request Time From', async ({ page, materialPo }) => {
     await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=asc');
+    await expect(materialPo.matDialog()).toBeHidden();
+    await expect(page.locator(firstRow)).toHaveCount(1);
     await expect(page.locator(firstCell)).toHaveText('27');
   });
 
