@@ -72,6 +72,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install azure-cli
+        uses: apt-get azure-cli
+
       - name: Download playwright blob report from Previous job(s)
         uses: actions/download-artifact@v4
         with:
