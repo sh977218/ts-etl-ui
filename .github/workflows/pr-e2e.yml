@@ -11,10 +11,6 @@ jobs:
   e2e-test:
     name: e2e-test
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
     container:
       image: mcr.microsoft.com/playwright:v1.47.0-jammy
 
