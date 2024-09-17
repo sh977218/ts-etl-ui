@@ -11,7 +11,7 @@ test.describe('e2e test', async () => {
     await expect(page.locator('body')).toContainText('This application requires you to log in');
     await page.goto('/load-requests');
     await expect(page.locator('body')).toContainText('This application requires you to log in');
-    await page.locator('#login').click();
+    await page.getByRole('button', {name: 'Log In'}).click();
     await expect(page.locator('mat-dialog-container')).toContainText('Login with Following');
     await page.locator('button', {hasText : 'Close'});
     await expect(page.locator('body')).toContainText('This application requires you to log in');
