@@ -17,7 +17,6 @@ jobs:
       id-token: write
     container:
       image: mcr.microsoft.com/playwright:v1.47.0-jammy
-      options: --user root
 
     steps:
       - name: Checkout repository
@@ -45,11 +44,17 @@ jobs:
           path: playwright-report
           retention-days: 30
 
+      - name: Merge both playwright & coverage report
+        if: always()
+        run: mv playwright-report coverage-e2e all-report
+
+      - name: Upload all-report to artifactory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          path: all-report
+
       # this code is commented for now, but in case Azure is unavailable, we revert this code
-      #      - name: Merge both playwright & coverage report
-      #        if: always()
-      #        run: mv playwright-report coverage-e2e all-report
-      #
       #      - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
       #        if: always()
       #        uses: actions/upload-pages-artifact@v3
@@ -67,29 +72,31 @@ jobs:
       #        if: always()
       #        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to-github-page.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
 
+  publish-playwright-html-report:
+    needs: [ e2e-test ]
+    name: publish-report
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Upload Playwright HTML report to Azure
+      - name: Download all report from Previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: all-report
+          path: all-report
+
+      - name: Upload all-report to Azure
         uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob upload-batch --account-name tsetlui -s ./playwright-report -d ts-etl-ui --destination-path playwright-${{github.event.pull_request.number}}
-
-
-      - name: Upload coverage report to Azure
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az storage blob upload-batch --account-name tsetlui -s ./playwright-report -d ts-etl-ui --destination-path coverage-${{github.event.pull_request.number}}
+            az storage blob upload-batch --account-name tsetlui -s ./all-report -d ts-etl-ui --destination-path ${{github.event.pull_request.number}} --overwrite
 
       - name: update job summary
         if: always()
         run: |
-          echo "# Deployed playwright report to https://tsetlui.blob.core.windows.net/ts-etl-ui/playwright-${{github.event.pull_request.number}}/index.html" >> $GITHUB_STEP_SUMMARY
-          echo "# Deployed coverage report to https://tsetlui.blob.core.windows.net/ts-etl-ui/coverage-${{github.event.pull_request.number}}/index.html" >> $GITHUB_STEP_SUMMARY
-
+          echo "# Deployed all report to https://tsetlui.blob.core.windows.net/ts-etl-ui/${{github.event.pull_request.number}}/index.html" >> $GITHUB_STEP_SUMMARY

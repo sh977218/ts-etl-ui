@@ -29,17 +29,11 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Remove Playwright HTML report from Azure
+      - name: Remove all-report from Azure
         uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob delete-batch --account-name tsetlui -s ts-etl-ui --pattern playwright-${{github.event.pull_request.number}}/* 
+            az storage blob delete-batch --account-name tsetlui -s ts-etl-ui --pattern ^${{github.event.pull_request.number}}$
 
-      - name: Remove coverage report from Azure
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az storage blob delete-batch --account-name tsetlui -s ts-etl-ui --pattern coverage-${{github.event.pull_request.number}}/* 
 
