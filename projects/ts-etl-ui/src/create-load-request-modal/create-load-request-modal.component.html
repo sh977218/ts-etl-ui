@@ -29,8 +29,7 @@
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label for="sourcePathFile">Source File Path</mat-label>
-        <input matInput placeholder="file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/"
-               formControlName="sourceFilePath">
+        <input matInput formControlName="sourceFilePath">
         <mat-icon matSuffix
                   arial-label="Copy folder location to clipboard"
                   [cdkCopyToClipboard]="'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/'"
