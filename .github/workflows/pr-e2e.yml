@@ -45,7 +45,7 @@ jobs:
           path: playwright-report
           retention-days: 30
 
-      #
+      # this code is commented for now, but in case Azure is unavailable, we revert this code
       #      - name: Merge both playwright & coverage report
       #        if: always()
       #        run: mv playwright-report coverage-e2e all-report
@@ -73,9 +73,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install azure-cli
-        run: apt-get install azure-cli
-
       - name: Download playwright blob report from Previous job(s)
         uses: actions/download-artifact@v4
         with:
@@ -88,8 +85,11 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Upload Playwright HTML report to Azure
-        shell: bash
-        run: az storage blob  upload-batch -s ./playwright-report --account-name tsetlui -d ts-etl-ui --destination-path ${{github.event.pull_request.number}}
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az storage blob  upload-batch -s ./playwright-report --account-name tsetlui -d ts-etl-ui --destination-path ${{github.event.pull_request.number}}
 
       - name: update job summary
         if: always()
