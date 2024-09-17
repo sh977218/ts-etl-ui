@@ -46,7 +46,7 @@ jobs:
           retention-days: 30
 
       - name: Install azure-cli
-        run: sudo apt-get install azure-cli
+        run: apt-get install azure-cli
 
       - name: Upload Playwright HTML report to Azure
         shell: bash
