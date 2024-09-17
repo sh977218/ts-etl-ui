@@ -45,22 +45,6 @@ jobs:
           path: playwright-report
           retention-days: 30
 
-      - name: Install azure-cli
-        run: apt-get install azure-cli
-
-      - name: Upload Playwright HTML report to Azure
-        shell: bash
-        id: deploy-playwright-report
-        run: |
-          REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-playwright-report'
-          ./azcopy cp --recursive "./playwright-report/*" "https://tsetlui.blob.core.windows.net/\$web/$REPORT_DIR"
-          echo "::notice title=HTML report url::https://tsetlui.z1.web.core.windows.net/$REPORT_DIR/index.html"
-        env:
-          AZCOPY_AUTO_LOGIN_TYPE: SPN
-          AZCOPY_SPA_APPLICATION_ID: '${{ secrets.AZCOPY_SPA_APPLICATION_ID }}'
-          AZCOPY_SPA_CLIENT_SECRET: '${{ secrets.AZCOPY_SPA_CLIENT_SECRET }}'
-          AZCOPY_TENANT_ID: '${{ secrets.AZCOPY_TENANT_ID }}'
-
       #
       #      - name: Merge both playwright & coverage report
       #        if: always()
@@ -98,24 +82,15 @@ jobs:
           name: playwright-report
           path: playwright-report
 
-          #      - name: Azure Login
-          #        uses: azure/login@v2
-          #        with:
-          #          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Upload Playwright HTML report to Azure
         shell: bash
-        id: deploy-playwright-report
-        run: |
-          REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-playwright-report'
-          ./azcopy cp --recursive "./playwright-report/*" "https://tsetlui.blob.core.windows.net/\$web/$REPORT_DIR"
-          echo "::notice title=HTML report url::https://tsetlui.z1.web.core.windows.net/$REPORT_DIR/index.html"
-        env:
-          AZCOPY_AUTO_LOGIN_TYPE: SPN
-          AZCOPY_SPA_APPLICATION_ID: '${{ secrets.AZCOPY_SPA_APPLICATION_ID }}'
-          AZCOPY_SPA_CLIENT_SECRET: '${{ secrets.AZCOPY_SPA_CLIENT_SECRET }}'
-          AZCOPY_TENANT_ID: '${{ secrets.AZCOPY_TENANT_ID }}'
+        run: az storage blob  upload-batch -s ./playwright-report --account-name tsetlui -d ts-etl-ui --destination-path ${{github.event.pull_request.number}}
 
       - name: update job summary
         if: always()
-        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+        run: echo "# Deployed playwright report to https://tsetlui.blob.core.windows.net/ts-etl-ui/${{github.event.pull_request.number}}/index.html" >> $GITHUB_STEP_SUMMARY
