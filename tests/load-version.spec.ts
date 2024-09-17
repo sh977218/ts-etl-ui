@@ -24,11 +24,18 @@ test.describe('LV - ', async () => {
 
     await test.step('Add note', async () => {
       await page.getByRole('button', { name: 'Add Note' }).click();
-      for (const [index, tag] of ['Test.Hashtag1', 'Test.Hashtag2', 'New Test Note'].entries()) {
+      for (const [index, tag] of ['Test.Hashtag1', 'Test.Hashtag2', 'New Test Note', 'This tag should be removed'].entries()) {
         await page.getByPlaceholder('New Hashtag...').fill(tag);
         await page.keyboard.press('Enter');
         await expect(page.locator('mat-chip-row')).toHaveCount(index + 1);
       }
+
+      await test.step('Remove one tag', async () => {
+        await matDialog.locator('mat-chip-row')
+          .filter({ hasText: 'This tag should be removed' })
+          .getByRole('button')
+          .click();
+      });
 
       await page.locator('mat-dialog-content textarea').fill('New Test Note');
       await page.getByRole('button', { name: 'Save' }).click();
@@ -57,7 +64,7 @@ test.describe('LV - ', async () => {
     await expect(page.locator(firstRow)).not.toContainText('Code D90012 is not mapped to a term');
   });
 
-  test('QA Rules', async ({ page }) => {
+  test('QA Rules', async ({ page, materialPo }) => {
     await page.goto('/load-version-report/0');
     const row = 'app-load-version-report-rule tbody tr:nth-of-type(2)';
     await expect(page.locator(row)).toContainText('Code.DuplicateCode');
@@ -66,6 +73,15 @@ test.describe('LV - ', async () => {
 
     await page.locator('app-load-version-report-rule #nameFilterInput').fill('QaCount');
     await page.keyboard.press('Enter');
+
+    await test.step(`log view modal`, async () => {
+      const row1 = 'app-load-version-report-rule tbody tr:nth-of-type(1)';
+      await page.locator(row1).locator('mat-icon', { hasText: 'announcement' }).click();
+      await materialPo.matDialog().waitFor();
+      await expect(materialPo.matDialog().getByText('The difference of TERM between expected and actual number is')).toBeVisible();
+      await materialPo.matDialog().getByRole('button', { name: 'Close' }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
+    });
 
     await expect(page.locator(row)).not.toContainText('No duplicate codes in cs_code table');
     await expect(page.locator(row)).toContainText('Raw counts are not present');

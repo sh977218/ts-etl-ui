@@ -1,25 +1,21 @@
-import NYC from 'nyc';
-
-const nycConfig = require('./.nycrc.json');
+import { execSync } from 'child_process';
+import { readdirSync } from 'fs';
+import { join } from 'path';
 
 const PROJECT_ROOT_FOLDER = __dirname;
+const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, '.nyc_output');
 
 async function globalTeardown() {
-  try {
-    const nycInstance = new NYC({
-      cwd: PROJECT_ROOT_FOLDER,
-      reportDir: `coverage-e2e`,
-      reporter: ['lcov', 'json', 'text-summary'],
-    });
-    await nycInstance.checkCoverage({
-      statements: nycConfig.statements,
-      branches: nycConfig.branches,
-      functions: nycConfig.functions,
-      lines: nycConfig.lines,
-    });
-    await nycInstance.report();
-  } catch (e) {
-    throw new Error(`nyc coverage check failed: ${e}`);
+  if (!!process.env['CI'] || process.env['COVERAGE']) {
+    const coverageRowData = readdirSync(NYC_OUTPUT_FOLDER);
+    if (!coverageRowData.length) {
+      throw new Error(`no nyc coverage found. Coverage does not work.`);
+    }
+    try {
+      execSync('npm run coverage-report').toString().trim();
+    } catch (e) {
+      throw new Error(`nyc coverage check failed: \n\n\n ${e.stderr}`);
+    }
   }
 }
 
