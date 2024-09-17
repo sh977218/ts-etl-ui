@@ -1,20 +1,18 @@
 import express from 'express';
-import { readFileSync, createReadStream, existsSync } from 'fs';
-import { join } from 'path';
+import { createReadStream, existsSync, readFileSync } from 'fs';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import cors from 'cors';
 
 import jwt from 'jsonwebtoken';
 
 import cookieParser from 'cookie-parser';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 import { getPrNumber, mongoCollection, resetMongoCollection } from './db.js';
 import { TSError, UnauthorizedError } from './errors.js';
 import moment from 'moment';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const RESET_DB = ['true', true, 1].includes(process.env.RESET_DB);
 const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
@@ -545,8 +543,14 @@ app.get('/api/serviceValidate', cors(), async (req, res) => {
     return res.status(400).send();
   }
   const user = await loginWithUts(ticket);
-  if (!user) {
-    return res.status(404).send('User does not exists.');
+  if (user?.utsUser) {
+    const jwtToken = jwt.sign({ data: user.utsUser.username }, SECRET_TOKEN);
+    res.cookie('Bearer', `${jwtToken}`, {
+      expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
+    });
+    return res.send(user);
+  } else {
+    return res.status(401).send();
   }
   if (!user.utsUser) {
     return res.status(500).send();
@@ -561,8 +565,7 @@ app.get('/api/serviceValidate', cors(), async (req, res) => {
 async function loginWithUts(ticket) {
   const { usersCollection } = await mongoCollection();
   const utsUsername = ticketMap.get(ticket);
-  const user = await usersCollection.findOne({ 'utsUser.username': utsUsername });
-  return user;
+  return await usersCollection.findOne({'utsUser.username': utsUsername});
 }
 
 app.get('/api/login', async (req, res) => {

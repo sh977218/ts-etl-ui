@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -7,7 +7,6 @@ import { switchMap, tap } from 'rxjs';
 
 import { AlertService } from '../service/alert-service';
 import { UserService } from '../service/user-service';
-
 
 @Component({
   standalone: true,
@@ -27,7 +26,7 @@ export class LoginCbComponent {
     activatedRoute.queryParamMap
       .pipe(
         switchMap(qp => {
-          const ticket = qp.get('ticket') || '';
+          const ticket = qp.get('ticket');
           if (ticket) {
             return userService.logInWithTicket(ticket);
           } else {
@@ -38,12 +37,8 @@ export class LoginCbComponent {
           next: () => {
             router.navigate(['/']);
           },
-          error: (e: HttpErrorResponse) => {
-            if (e.status === 404) {
-              this.alertService.addAlert('danger', `${e.error}`);
-              return;
-            }
-            this.alertService.addAlert('danger', `error log in ${e}`);
+          error: () => {
+            this.alertService.addAlert('danger', `Unable to log in`);
             cookieService.delete('Bearer');
             router.navigate(['/please-log-in']);
           },
