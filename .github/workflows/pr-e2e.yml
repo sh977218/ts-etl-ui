@@ -78,17 +78,17 @@ jobs:
           name: playwright-report
           path: playwright-report
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      #      - name: Azure Login
+      #        uses: azure/login@v2
+      #        with:
+      #          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Upload Playwright HTML report to Azure
         shell: bash
         id: deploy-playwright-report
         run: |
           REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-playwright-report'
-          azcopy cp --recursive "./playwright-report/*" "https://tsetlui.blob.core.windows.net/\$web/$REPORT_DIR"
+          ./azcopy cp --recursive "./playwright-report/*" "https://tsetlui.blob.core.windows.net/\$web/$REPORT_DIR"
           echo "::notice title=HTML report url::https://tsetlui.z1.web.core.windows.net/$REPORT_DIR/index.html"
         env:
           AZCOPY_AUTO_LOGIN_TYPE: SPN
