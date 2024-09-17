@@ -7,9 +7,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  GH_TOKEN: ${{ secrets.GithubCliToken }}
-
 jobs:
   e2e-test:
     name: e2e-test
@@ -18,9 +15,6 @@ jobs:
       contents: read
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     container:
       image: mcr.microsoft.com/playwright:v1.47.0-jammy
 
@@ -46,19 +40,57 @@ jobs:
         if: always()
         run: mv playwright-report coverage-e2e all-report
 
-      - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
+      - name: Upload all-report to artifactory
         if: always()
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: all-report
+          path: all-report
+          retention-days: 30
+
+  publish-report:
+    needs: [ e2e-test ]
+    name: publish-report
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all report from Previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: all-report
           path: all-report
 
-      - name: Deploy playwright report to Github Pages
-        if: always()
-        id: deploy-playwright-report-to-github-page
-        uses: actions/deploy-pages@v4
+      # this code is commented for now, but in case Azure is unavailable, we revert this code
+      #      - name: Upload playwright report to artifact named github-pages # the next step's action expect this exactly artifact name
+      #        if: always()
+      #        uses: actions/upload-pages-artifact@v3
+      #        with:
+      #          path: all-report
+      #
+      #      - name: Deploy playwright report to GitHub Pages
+      #        if: always()
+      #        id: deploy-playwright-report-to-github-page
+      #        uses: actions/deploy-pages@v4
+      #        with:
+      #          preview: true
+      #
+      #      - name: update job summary
+      #        if: always()
+      #        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to-github-page.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Azure Login
+        uses: azure/login@v2
         with:
-          preview: true
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Upload all-report to Azure
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az storage blob upload-batch --account-name tsetlui -s ./all-report -d ts-etl-ui --destination-path ${{github.event.pull_request.number}} --overwrite
 
       - name: update job summary
         if: always()
-        run: echo "# Deployed playwright report to ${{ steps.deploy-playwright-report-to-github-page.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+        run: |
+          echo "# Deployed all report to https://tsetlui.blob.core.windows.net/ts-etl-ui/${{github.event.pull_request.number}}/index.html" >> $GITHUB_STEP_SUMMARY
