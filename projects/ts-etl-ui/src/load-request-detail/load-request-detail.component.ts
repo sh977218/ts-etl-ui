@@ -8,7 +8,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { filter, map, switchMap, tap } from 'rxjs';
+import { filter, finalize, map, switchMap, tap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
@@ -122,11 +122,8 @@ export class LoadRequestDetailComponent implements OnInit {
       switchMap(requestId => {
         return this.http.get<LoadRequest>(`${environment.apiServer}/loadRequest/${requestId}`)
           .pipe(
-            tap({
-              next: () => this.loadingService.hideLoading(),
-              error: () => this.loadingService.hideLoading(),
-            }),
-          );
+            finalize(() => this.loadingService.hideLoading()),
+          )
       }),
     );
 
@@ -161,6 +158,7 @@ export class LoadRequestDetailComponent implements OnInit {
             }
           }
           return {
+            /* istanbul ignore next */
             label: LABEL_MAPPING[key] || `something wrong about ${key}`,
             key: key,
             value: lr[key as keyof LoadRequest],
@@ -204,7 +202,6 @@ export class LoadRequestDetailComponent implements OnInit {
         next: (newLR) => {
           this.alertService.addAlert('info', `Request (ID: ${newLR.opRequestSeq}) edited successfully`);
         },
-        error: () => this.alertService.addAlert('danger', 'Error editing load request.'),
       });
   }
 

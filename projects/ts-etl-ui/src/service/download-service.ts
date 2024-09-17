@@ -8,12 +8,8 @@ type DownloadData = LoadRequest | LoadVersionActivity
 @Injectable({ providedIn: 'root' })
 export class DownloadService {
 
-  generateBlob(header: string[], data: DownloadData[], type = 'csv') {
-    if (type === 'csv') {
-      return this.generateBlobCsv(header, data);
-    } else {
-      throw new Error(`${type} is not supported yet.`);
-    }
+  generateBlob(header: string[], data: DownloadData[]) {
+    return this.generateBlobCsv(header, data);
   }
 
   private generateBlobCsv(headerList: string[], data: DownloadData[]) {
