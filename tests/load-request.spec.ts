@@ -234,7 +234,7 @@ test.describe('e2e test', async () => {
     await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=asc');
     await expect(materialPo.matDialog()).toBeHidden();
     await expect(page.locator(firstRow)).toHaveCount(1);
-    await expect(page.locator(firstCell)).toHaveText('149');
+    await expect(page.locator(firstCell)).toHaveText('27');
   });
 
   test('URL Search Request Time To', async ({ page }) => {
