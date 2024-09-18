@@ -25,7 +25,7 @@ const port = process.env.PORT || 3000;
 /*
 @Todo those can be from config
 */
-const COOKIE_EXPIRATION_IN_MS = 60 * 1000 * 60 * 2; // 2 hours
+const COOKIE_EXPIRATION_IN_MS = ['prod'].includes(process.env.ENV_NAME) ? 60 * 1000 * 60 * 2 : 60 * 1000 * 60 * 8; // 2 hours on prod, 8 hours on dev
 const SECRET_TOKEN = 'some-secret'; // should be from process.env
 
 app.use(express.json());
@@ -566,7 +566,7 @@ app.get('/api/serviceValidate', cors(), async (req, res) => {
 async function loginWithUts(ticket) {
   const { usersCollection } = await mongoCollection();
   const utsUsername = ticketMap.get(ticket);
-  return await usersCollection.findOne({'utsUser.username': utsUsername});
+  return await usersCollection.findOne({ 'utsUser.username': utsUsername });
 }
 
 app.get('/api/login', async (req, res) => {

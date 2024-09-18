@@ -7,15 +7,27 @@
 $my-primary: mat.define-palette(mat.$indigo-palette, 500);
 $my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
+$my-compact-typography-level: mat.define-typography-level(
+        $font-size: 16px,
+        $font-weight: 300,
+        $letter-spacing: -0.05em
+);
+
+$my-compact-typography: mat.define-typography-config(
+        $body-2: $my-compact-typography-level,
+);
+
 $my-theme: mat.define-light-theme((
         color: (
                 primary: $my-primary,
                 accent: $my-accent,
         ),
-        typography: mat.define-typography-config(),
+        typography: $my-compact-typography,
   // this value is set to -10 just to get the minimal value.
         density: -10,
 ));
 
 @include mat.all-component-themes($my-theme);
+
 @include mat.strong-focus-indicators-theme(blue);
+
