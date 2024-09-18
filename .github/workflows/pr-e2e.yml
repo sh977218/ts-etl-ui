@@ -46,6 +46,7 @@ jobs:
 
   publish-report:
     needs: [ e2e-test ]
+    if: always()
     name: publish-report
     runs-on: ubuntu-latest
 
