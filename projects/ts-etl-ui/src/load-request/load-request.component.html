@@ -54,7 +54,7 @@
 
         <ng-container matColumnDef="opRequestSeq">
           <th mat-header-cell *matHeaderCellDef style="padding:0; width: 118px">
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <label for="opRequestSeqFilterInput" class="m-2" mat-sort-header disableClear>Request ID</label>
             </div>
           </th>
@@ -64,16 +64,18 @@
         </ng-container>
         <ng-container matColumnDef="opRequestSeq-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col m-2">
-              <input id="opRequestSeqFilterInput" class="w-3/4" matInput formControlName="opRequestSeq"
-                     placeholder="Ex. 148" size="4" type="number">
+            <div class="flex flex-col">
+              <mat-form-field appearance="outline" id="opRequestSeqFilterInput">
+                <input class="w-3/4" matInput formControlName="opRequestSeq"
+                       placeholder="Ex. 148" size="4" type="number">
+              </mat-form-field>
             </div>
           </th>
         </ng-container>
 
         <ng-container matColumnDef="codeSystemName">
           <th mat-header-cell *matHeaderCellDef disableClear style="padding:0; width: 174px">
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <label for="codeSystemSelect" class="m-2" mat-sort-header disableClear>Code System Name</label>
             </div>
           </th>
@@ -81,9 +83,8 @@
         </ng-container>
         <ng-container matColumnDef="codeSystemName-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <mat-form-field appearance="outline" id="codeSystemSelect">
-                <mat-label>Code System Name</mat-label>
                 <mat-select formControlName="codeSystemName" multiple>
                   <ng-container *ngFor="let CODE_SYSTEM_NAME of constantService.CODE_SYSTEM_NAMES">
                     <mat-option [value]="CODE_SYSTEM_NAME">{{CODE_SYSTEM_NAME}}</mat-option>
@@ -96,7 +97,7 @@
 
         <ng-container matColumnDef="requestSubject">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <label for="subjectInput" class="m-2" mat-sort-header disableClear>Subject</label>
             </div>
           </th>
@@ -104,15 +105,18 @@
         </ng-container>
         <ng-container matColumnDef="requestSubject-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col m-2">
-              <input id="subjectInput" matInput class="w-40" formControlName="requestSubject" placeholder="subject...">
+            <div class="flex flex-col">
+              <mat-form-field appearance="outline" id="subjectInput">
+                <input matInput class="w-40" formControlName="requestSubject"
+                       placeholder="subject...">
+              </mat-form-field>
             </div>
           </th>
         </ng-container>
 
         <ng-container matColumnDef="requestStatus">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <label for="requestStatusSelect" class="m-2" mat-sort-header disableClear>Status</label>
             </div>
           </th>
@@ -120,9 +124,8 @@
         </ng-container>
         <ng-container matColumnDef="requestStatus-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <mat-form-field appearance="outline" id="requestStatusSelect">
-                <mat-label>Request Status</mat-label>
                 <mat-select formControlName="requestStatus" multiple>
                   <ng-container *ngFor="let LOAD_REQUEST_STATUS of constantService.LOAD_REQUEST_STATUSES">
                     <mat-option [value]="LOAD_REQUEST_STATUS">{{LOAD_REQUEST_STATUS}}</mat-option>
@@ -135,7 +138,7 @@
 
         <ng-container matColumnDef="requestType">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <label for="requestTypeSelect" class="m-2" mat-sort-header disableClear>Request Type</label>
             </div>
           </th>
@@ -143,9 +146,8 @@
         </ng-container>
         <ng-container matColumnDef="requestType-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <mat-form-field appearance="outline" id="requestTypeSelect">
-                <mat-label>Request Type</mat-label>
                 <mat-select formControlName="requestType" multiple>
                   <ng-container *ngFor="let LOAD_REQUEST_TYPE of constantService.LOAD_REQUEST_TYPES">
                     <mat-option [value]="LOAD_REQUEST_TYPE">{{LOAD_REQUEST_TYPE}}</mat-option>
@@ -158,7 +160,7 @@
 
         <ng-container matColumnDef="requestTime">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <label for="requestTimeRange" class="m-2" mat-sort-header disableClear>Request Time</label>
             </div>
           </th>
@@ -166,9 +168,8 @@
         </ng-container>
         <ng-container matColumnDef="requestTime-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="mt-2">
+            <div class="flex flex-col">
               <mat-form-field appearance="outline" id="requestTimeRange">
-                <mat-label>Enter a date range</mat-label>
                 <mat-date-range-input [rangePicker]="requestRangePicker">
                   <input matStartDate formControlName="requestTimeFrom" placeholder="Start date">
                   <input matEndDate formControlName="requestTimeTo" placeholder="End date">
@@ -182,7 +183,7 @@
 
         <ng-container matColumnDef="requester">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <label for="requesterInput" class="m-2" mat-sort-header disableClear>Requester</label>
             </div>
           </th>
@@ -190,15 +191,17 @@
         </ng-container>
         <ng-container matColumnDef="requester-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col m-2">
-              <input id="requesterInput" matInput class="w-40" formControlName="requester" placeholder="requester...">
+            <div class="flex flex-col">
+              <mat-form-field appearance="outline" id="requesterInput">
+                <input matInput class="w-40" formControlName="requester" placeholder="requester...">
+              </mat-form-field>
             </div>
           </th>
         </ng-container>
 
         <ng-container matColumnDef="creationTime">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col m-2">
+            <div class="flex flex-col">
               <label for="creationTimeRange" class="m-2" mat-sort-header disableClear>Creation Time</label>
             </div>
           </th>
@@ -206,9 +209,8 @@
         </ng-container>
         <ng-container matColumnDef="creationTime-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="mt-2">
+            <div class="flex flex-col">
               <mat-form-field appearance="outline" id="creationTimeRange">
-                <mat-label>Enter a date range</mat-label>
                 <mat-date-range-input [rangePicker]="createRangePicker">
                   <input matStartDate formControlName="creationTimeFrom" placeholder="Start date">
                   <input matEndDate formControlName="creationTimeTo" placeholder="End date">
