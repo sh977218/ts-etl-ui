@@ -143,7 +143,7 @@ test.describe('LR - ', async () => {
 
     await test.step('search for newly edited load request', async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
-      await page.getByPlaceholder('Ex. 148]').fill('149');
+      await page.getByPlaceholder('Req. ID').fill('149');
       // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `This week's` }).click();
