@@ -233,6 +233,7 @@ app.post('/load-request', async (req, res) => {
 
   const { loadRequestsCollection } = await mongoCollection();
   loadRequest.requestTime = new Date(loadRequest.requestTime);
+  loadRequest.creationTime = new Date();
   const result = await loadRequestsCollection.insertOne({
     opRequestSeq: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
   });
