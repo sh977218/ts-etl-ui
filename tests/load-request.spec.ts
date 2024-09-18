@@ -87,11 +87,12 @@ test.describe('e2e test', async () => {
        */
       await page.getByRole('option', { name: 'HPO' }).click();
       await matDialog.getByLabel('Request Subject').fill('newly created load request');
-      await matDialog.getByPlaceholder('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/').fill('this is not valid');
+      await matDialog.getByLabel('Source File Path').clear();
+      await matDialog.getByLabel('Source File Path').fill('this is not valid');
       await page.locator('mat-dialog-container h2').click();
       await expect(page.locator('mat-dialog-container')).toContainText('Please select source file from NLM server');
-      await matDialog.getByPlaceholder('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/').clear();
-      await matDialog.getByPlaceholder('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
+      await matDialog.getByLabel('Source File Path').clear();
+      await matDialog.getByLabel('Source File Path').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
       await page.locator('mat-dialog-container h2').click();
       await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
@@ -132,7 +133,8 @@ test.describe('e2e test', async () => {
       await matDialog.getByLabel('Code System Name').click();
       await page.getByRole('option', { name: 'CPT' }).click();
       await matDialog.getByLabel('Request Subject').fill('newly edited load request');
-      await matDialog.getByPlaceholder('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/june-26-2024');
+      await matDialog.getByLabel('Source File Path').clear();
+      await matDialog.getByLabel('Source File Path').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/june-26-2024');
       await matDialog.getByLabel('Notification Email').fill('playwright-edit@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
@@ -243,8 +245,8 @@ test.describe('e2e test', async () => {
   });
 
   test('URL Search Creation Time From', async ({ page }) => {
-    await page.goto('/load-requests?creationTimeFrom=2010-01-01&sortBy=creationTime&sortDirection=desc');
-    await expect(page.locator(firstCell)).toHaveText('1');
+    await page.goto('/load-requests?creationTimeFrom=2010-01-01&sortBy=creationTime&sortDirection=asc');
+    await expect(page.locator(firstCell)).toHaveText('27');
   });
 
   test('URL Search Creation Time To', async ({ page }) => {
