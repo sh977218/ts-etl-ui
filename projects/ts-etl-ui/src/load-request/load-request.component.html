@@ -54,9 +54,8 @@
 
         <ng-container matColumnDef="opRequestSeq">
           <th mat-header-cell *matHeaderCellDef style="padding:0; width: 118px">
-            <div class="flex flex-col">
-              <label for="opRequestSeqFilterInput" class="m-2" mat-sort-header disableClear>Request ID</label>
-            </div>
+            <label for="opRequestSeqFilterInput" class="flex flex-col m-2" mat-sort-header disableClear>
+              Request ID</label>
           </th>
           <td mat-cell *matCellDef="let row">
             <a [routerLink]="['/load-request', row.opRequestSeq]">{{row.opRequestSeq}}</a>
@@ -64,61 +63,50 @@
         </ng-container>
         <ng-container matColumnDef="opRequestSeq-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col">
-              <mat-form-field appearance="outline" id="opRequestSeqFilterInput">
-                <input matInput formControlName="opRequestSeq"
-                       placeholder="Ex. 148" size="4" type="number">
-              </mat-form-field>
-            </div>
+            <mat-form-field appearance="outline" id="opRequestSeqFilterInput">
+              <input matInput formControlName="opRequestSeq"
+                     placeholder="Ex. 148" size="4" type="number">
+            </mat-form-field>
           </th>
         </ng-container>
 
         <ng-container matColumnDef="codeSystemName">
           <th mat-header-cell *matHeaderCellDef disableClear style="padding:0; width: 174px">
-            <div class="flex flex-col">
-              <label for="codeSystemSelect" class="m-2" mat-sort-header disableClear>Code System Name</label>
-            </div>
+            <label for="codeSystemSelect" class="flex flex-col m-2" mat-sort-header disableClear>
+              Code System Name</label>
           </th>
           <td mat-cell *matCellDef="let row">{{row.codeSystemName}}</td>
         </ng-container>
         <ng-container matColumnDef="codeSystemName-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col">
-              <mat-form-field appearance="outline" id="codeSystemSelect">
-                <mat-select formControlName="codeSystemName" multiple>
-                  <ng-container *ngFor="let CODE_SYSTEM_NAME of constantService.CODE_SYSTEM_NAMES">
-                    <mat-option [value]="CODE_SYSTEM_NAME">{{CODE_SYSTEM_NAME}}</mat-option>
-                  </ng-container>
-                </mat-select>
-              </mat-form-field>
-            </div>
+            <mat-form-field appearance="outline" id="codeSystemSelect">
+              <mat-select formControlName="codeSystemName" multiple>
+                <ng-container *ngFor="let CODE_SYSTEM_NAME of constantService.CODE_SYSTEM_NAMES">
+                  <mat-option [value]="CODE_SYSTEM_NAME">{{CODE_SYSTEM_NAME}}</mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
           </th>
         </ng-container>
 
         <ng-container matColumnDef="requestSubject">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col">
-              <label for="subjectFilterInput" class="m-2" mat-sort-header disableClear>Subject</label>
-            </div>
+            <label for="subjectFilterInput" class="flex flex-col m-2" mat-sort-header disableClear>Subject</label>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestSubject}}</td>
         </ng-container>
         <ng-container matColumnDef="requestSubject-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col">
-              <mat-form-field appearance="outline" id="subjectFilterInput">
-                <input matInput formControlName="requestSubject"
-                       placeholder="subject...">
-              </mat-form-field>
-            </div>
+            <mat-form-field appearance="outline" id="subjectFilterInput">
+              <input matInput formControlName="requestSubject"
+                     placeholder="subject...">
+            </mat-form-field>
           </th>
         </ng-container>
 
         <ng-container matColumnDef="requestStatus">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col">
-              <label for="requestStatusFilterSelect" class="m-2" mat-sort-header disableClear>Status</label>
-            </div>
+            <label for="requestStatusFilterSelect" class="flex flex-col m-2" mat-sort-header disableClear>Status</label>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestStatus}}</td>
         </ng-container>
@@ -138,31 +126,26 @@
 
         <ng-container matColumnDef="requestType">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col">
-              <label for="requestTypeFilterSelect" class="m-2" mat-sort-header disableClear>Request Type</label>
-            </div>
+            <label for="requestTypeFilterSelect" class="flex flex-col m-2" mat-sort-header disableClear>
+              Request Type</label>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestType}}</td>
         </ng-container>
         <ng-container matColumnDef="requestType-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col">
-              <mat-form-field appearance="outline" id="requestTypeFilterSelect">
-                <mat-select formControlName="requestType" multiple>
-                  <ng-container *ngFor="let LOAD_REQUEST_TYPE of constantService.LOAD_REQUEST_TYPES">
-                    <mat-option [value]="LOAD_REQUEST_TYPE">{{LOAD_REQUEST_TYPE}}</mat-option>
-                  </ng-container>
-                </mat-select>
-              </mat-form-field>
-            </div>
+            <mat-form-field appearance="outline" id="requestTypeFilterSelect">
+              <mat-select formControlName="requestType" multiple>
+                <ng-container *ngFor="let LOAD_REQUEST_TYPE of constantService.LOAD_REQUEST_TYPES">
+                  <mat-option [value]="LOAD_REQUEST_TYPE">{{LOAD_REQUEST_TYPE}}</mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
           </th>
         </ng-container>
 
         <ng-container matColumnDef="requestTime">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col">
-              <label for="requestTimeRange" class="m-2" mat-sort-header disableClear>Request Time</label>
-            </div>
+            <label for="requestTimeRange" class="flex flex-col m-2" mat-sort-header disableClear>Request Time</label>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requestTime.replace(' ', '') | easternTime }}</td>
         </ng-container>
@@ -183,42 +166,34 @@
 
         <ng-container matColumnDef="requester">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col">
-              <label for="requesterFilterInput" class="m-2" mat-sort-header disableClear>Requester</label>
-            </div>
+            <label for="requesterFilterInput" class="flex flex-col m-2" mat-sort-header disableClear>Requester</label>
           </th>
           <td mat-cell *matCellDef="let row">{{row.requester}}</td>
         </ng-container>
         <ng-container matColumnDef="requester-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col">
-              <mat-form-field appearance="outline" id="requesterFilterInput">
-                <input matInput formControlName="requester" placeholder="requester...">
-              </mat-form-field>
-            </div>
+            <mat-form-field appearance="outline" id="requesterFilterInput">
+              <input matInput formControlName="requester" placeholder="requester...">
+            </mat-form-field>
           </th>
         </ng-container>
 
         <ng-container matColumnDef="creationTime">
           <th mat-header-cell *matHeaderCellDef disableClear>
-            <div class="flex flex-col">
-              <label for="creationTimeRange" class="m-2" mat-sort-header disableClear>Creation Time</label>
-            </div>
+            <label for="creationTimeRange" class="flex flex-col m-2" mat-sort-header disableClear>Creation Time</label>
           </th>
           <td mat-cell *matCellDef="let row">{{row.creationTime | easternTime}}</td>
         </ng-container>
         <ng-container matColumnDef="creationTime-search">
           <th mat-header-cell *matHeaderCellDef>
-            <div class="flex flex-col">
-              <mat-form-field appearance="outline" id="creationTimeRange">
-                <mat-date-range-input [rangePicker]="createRangePicker">
-                  <input matStartDate formControlName="creationTimeFrom" placeholder="Start date">
-                  <input matEndDate formControlName="creationTimeTo" placeholder="End date">
-                </mat-date-range-input>
-                <mat-datepicker-toggle matIconSuffix [for]="createRangePicker"></mat-datepicker-toggle>
-                <mat-date-range-picker #createRangePicker></mat-date-range-picker>
-              </mat-form-field>
-            </div>
+            <mat-form-field appearance="outline" id="creationTimeRange">
+              <mat-date-range-input [rangePicker]="createRangePicker">
+                <input matStartDate formControlName="creationTimeFrom" placeholder="Start date">
+                <input matEndDate formControlName="creationTimeTo" placeholder="End date">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matIconSuffix [for]="createRangePicker"></mat-datepicker-toggle>
+              <mat-date-range-picker #createRangePicker></mat-date-range-picker>
+            </mat-form-field>
           </th>
         </ng-container>
 
