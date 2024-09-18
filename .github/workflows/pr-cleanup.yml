@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: Remove Mongo Collection on PR
+    name: Clean up on PR close
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -23,3 +23,17 @@ jobs:
 
       - name: Remove Mongo DB collections for pr ${{ github.event.number }}
         run: PR=${{ github.event.number }} node --env-file server/.coverage.env server/clean-up-mongo-db-for-pr.js
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Remove all-report from Azure
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az storage blob delete-batch --account-name tsetlui -s ts-etl-ui --pattern ${{github.event.pull_request.number}}*
+
+
