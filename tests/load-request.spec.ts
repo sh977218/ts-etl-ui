@@ -2,7 +2,7 @@ import test from './baseFixture';
 import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
 
-test.describe('e2e test', async () => {
+test.describe('LR - ', async () => {
 
   test('Not Logged in', async ({ page }) => {
     await page.goto('/load-requests');
@@ -101,7 +101,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly added load request', async () => {
-      await page.getByPlaceholder('Ex. 148').fill('149');
+      await page.getByPlaceholder('Req. ID').fill('149');
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `Today's` }).click();
       await page.getByRole('button', { name: 'Search' }).click();
@@ -179,8 +179,8 @@ test.describe('e2e test', async () => {
 
     await test.step(`search for newly 'Cancelled'/'Emergency' load request`, async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
-      await materialPo.selectMultiOptions(page.getByLabel('Request Status'), ['Cancelled']);
-      await materialPo.selectMultiOptions(page.getByLabel('Request Type'), ['Emergency']);
+      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Cancelled']);
+      await materialPo.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency']);
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
@@ -263,7 +263,7 @@ test.describe('e2e test', async () => {
 
   test('URL Status Filter', async ({ page, materialPo }) => {
     await page.goto('/load-requests');
-    await materialPo.selectMultiOptions(page.getByLabel('Request Status'), ['Stopped']);
+    await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped']);
     await page.getByRole('button', { name: 'Search' }).click();
     await expect(page.locator(firstCell)).toHaveText('30');
   });
