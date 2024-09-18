@@ -1,3 +1,12 @@
-.mat-mdc-form-field-subscript-wrapper.mat-mdc-form-field-bottom-align {
-  height: 0;
+#opRequestSeqFilterInput,
+#codeSystemSelect,
+#subjectFilterInput,
+#requestStatusFilterSelect,
+#requestTypeFilterSelect,
+#requestTimeRange,
+#creationTimeRange,
+#requesterFilterInput {
+  .mat-mdc-form-field-subscript-wrapper.mat-mdc-form-field-bottom-align {
+    display: none;
+  }
 }
