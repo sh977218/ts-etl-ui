@@ -28,6 +28,7 @@ export type LoadRequest = {
   requester: string;
   creationTime: Date;
   requestStatus: string;
+  // This should be removed later. It doesn't belong here and should be calculated from LV
   numberOfMessages: number;
   loadNumber: string;
   loadStatus: string;

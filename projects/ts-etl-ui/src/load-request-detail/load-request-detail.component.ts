@@ -8,7 +8,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { filter, finalize, map, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, finalize, forkJoin, map, switchMap, tap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
@@ -43,6 +43,7 @@ const LABEL_MAPPING: Record<string, string> = {
   creationTime: 'Creation Time:',
   requestStatus: 'Request Status:',
   numberOfMessages: '# of Messages:',
+  messageList: ' ',
   loadNumber: 'Load Number:',
   loadStatus: 'Load Status:',
   loadStartTime: 'Load Start Time:',
@@ -64,6 +65,7 @@ const LABEL_SORT_ARRAY = [
   'creationTime',
   'requestStatus',
   'numberOfMessages',
+  'messageList',
   'loadNumber',
   'loadStatus',
   'loadStartTime',
@@ -138,13 +140,13 @@ export class LoadRequestDetailComponent implements OnInit {
     );
 
   ngOnInit() {
-    this.loadRequest$.subscribe(lr => {
-      this.dataSource = Object.keys(lr)
+    combineLatest([this.loadRequest$, this.loadVersion$]).subscribe(([lr, lv]) => {
+      this.dataSource = [...Object.keys(lr), 'numberOfMessages', 'messageList']
         .filter(k => !['_id', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadEndTime', 'loadComponents'].includes(k))
         .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
         .reduce<string[]>((acc, key) => {
           acc.push(key);
-          if (['creationTime', 'numberOfMessages'].includes(key)) {
+          if (['creationTime', 'messageList'].includes(key)) {
             acc.push('spacer');
           }
           return acc;
