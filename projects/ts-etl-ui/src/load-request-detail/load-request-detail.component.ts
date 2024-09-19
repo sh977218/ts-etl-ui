@@ -1,4 +1,4 @@
-import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { AsyncPipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
@@ -95,7 +95,6 @@ const LABEL_SORT_ARRAY = [
     LoadRequestMessageComponent,
     NgForOf,
     CdkVirtualScrollViewport,
-    ScrollingModule,
   ],
   templateUrl: './load-request-detail.component.html',
   styleUrl: './load-request-detail.component.scss',
