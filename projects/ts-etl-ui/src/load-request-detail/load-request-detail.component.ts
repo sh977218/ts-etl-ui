@@ -23,7 +23,6 @@ import { LoadVersion, LoadVersionActivity } from '../model/load-version';
 import { User } from '../model/user';
 import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
-import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
 export interface RowElement {
@@ -108,22 +107,17 @@ export class LoadRequestDetailComponent implements OnInit {
               private activatedRoute: ActivatedRoute,
               private alertService: AlertService,
               private userService: UserService,
-              private loadingService: LoadingService,
   ) {
     userService.user$.subscribe(user => this.user = user);
   }
 
   loadRequest$ = this.activatedRoute.paramMap
     .pipe(
-      tap({ next: () => this.loadingService.showLoading() }),
       map((params: Params) => {
         return params['params']['requestId'];
       }),
       switchMap(requestId => {
-        return this.http.get<LoadRequest>(`${environment.apiServer}/loadRequest/${requestId}`)
-          .pipe(
-            finalize(() => this.loadingService.hideLoading()),
-          )
+        return this.http.get<LoadRequest>(`${environment.apiServer}/loadRequest/${requestId}`);
       }),
     );
 
@@ -133,7 +127,7 @@ export class LoadRequestDetailComponent implements OnInit {
         return params['params']['requestId'];
       }),
       switchMap(requestId => {
-        return this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${requestId}`)
+        return this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${requestId}`);
       }),
     );
 
@@ -150,12 +144,12 @@ export class LoadRequestDetailComponent implements OnInit {
           return acc;
         }, [])
         .map(key => {
-          if(key === 'spacer') {
+          if (key === 'spacer') {
             return {
               label: '',
               key: 'spacer',
               value: '',
-            }
+            };
           }
           return {
             /* istanbul ignore next */
@@ -164,7 +158,7 @@ export class LoadRequestDetailComponent implements OnInit {
             value: lr[key as keyof LoadRequest],
           };
         });
-    })
+    });
   }
 
   isTime(key: string) {
