@@ -2,25 +2,25 @@ import test from './baseFixture';
 import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
 
-test.describe('e2e test', async () => {
+test.describe('LR - ', async () => {
 
   test('Not Logged in', async ({ page }) => {
     await page.goto('/load-requests');
     await page.getByLabel('user menu').click();
-    await page.getByRole('menuitem', {name: 'Log Out'}).click();
+    await page.getByRole('menuitem', { name: 'Log Out' }).click();
     await expect(page.locator('body')).toContainText('This application requires you to log in');
     await page.goto('/load-requests');
     await expect(page.locator('body')).toContainText('This application requires you to log in');
-    await page.getByRole('button', {name: 'Log In'}).click();
+    await page.getByRole('button', { name: 'Log In' }).click();
     await expect(page.locator('mat-dialog-container')).toContainText('Login with Following');
-    await page.locator('button', {hasText : 'Close'});
+    await page.locator('button', { hasText: 'Close' });
     await expect(page.locator('body')).toContainText('This application requires you to log in');
   });
 
   test('Invalid User', async ({ page, materialPo }) => {
     await page.goto('/load-requests');
     await page.getByLabel('user menu').click();
-    await page.getByRole('menuitem', {name: 'Log Out'}).click();
+    await page.getByRole('menuitem', { name: 'Log Out' }).click();
     await expect(page.locator('body')).toContainText('This application requires you to log in');
     await page.goto('/login-cb?ticket=bogusTicket');
     await materialPo.checkAndCloseAlert('Unable to log in');
@@ -37,7 +37,7 @@ test.describe('e2e test', async () => {
     await page.route('**/api/login', route => {
       route.fulfill({
         contentType: 'application/json',
-        body: JSON.stringify({  }),
+        body: JSON.stringify({}),
       });
     });
     await page.goto('/load-requests');
@@ -101,7 +101,7 @@ test.describe('e2e test', async () => {
     });
 
     await test.step('search for newly added load request', async () => {
-      await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
+      await page.getByPlaceholder('Req. ID').fill('149');
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `Today's` }).click();
       await page.getByRole('button', { name: 'Search' }).click();
@@ -143,7 +143,7 @@ test.describe('e2e test', async () => {
 
     await test.step('search for newly edited load request', async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
-      await page.locator('[id="opRequestSeqFilterInput"]').fill('149');
+      await page.getByPlaceholder('Req. ID').fill('149');
       // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `This week's` }).click();
@@ -179,8 +179,8 @@ test.describe('e2e test', async () => {
 
     await test.step(`search for newly 'Cancelled'/'Emergency' load request`, async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
-      await materialPo.selectMultiOptions(page.getByLabel('Request Status'), ['Cancelled']);
-      await materialPo.selectMultiOptions(page.getByLabel('Request Type'), ['Emergency']);
+      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Cancelled']);
+      await materialPo.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency']);
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
@@ -207,13 +207,13 @@ test.describe('e2e test', async () => {
 
   test(`Search multi select fields`, async ({ page, materialPo }) => {
     await test.step(`select 2 Code System Name`, async () => {
-      await materialPo.selectMultiOptions(page.getByLabel('Code System Name'), ['GS', 'MMSL']);
+      await materialPo.selectMultiOptions(page.locator(`[id="codeSystemSelect"]`), ['GS', 'MMSL']);
     });
     await test.step(`select 2 Request Status`, async () => {
-      await materialPo.selectMultiOptions(page.getByLabel('Request Status'), ['Incomplete', 'Stopped']);
+      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Incomplete', 'Stopped']);
     });
     await test.step(`select 2 Request Type`, async () => {
-      await materialPo.selectMultiOptions(page.getByLabel('Request Type'), ['Emergency', 'Scheduled']);
+      await materialPo.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency', 'Scheduled']);
     });
 
     await test.step(`Search and verify result`, async () => {
@@ -263,7 +263,7 @@ test.describe('e2e test', async () => {
 
   test('URL Status Filter', async ({ page, materialPo }) => {
     await page.goto('/load-requests');
-    await materialPo.selectMultiOptions(page.getByLabel('Request Status'), ['Stopped']);
+    await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped']);
     await page.getByRole('button', { name: 'Search' }).click();
     await expect(page.locator(firstCell)).toHaveText('30');
   });
