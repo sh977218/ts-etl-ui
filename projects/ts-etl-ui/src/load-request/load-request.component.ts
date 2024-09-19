@@ -265,7 +265,7 @@ export class LoadRequestComponent implements AfterViewInit {
             const loadRequestPayload: LoadRequestPayload = generateLoadRequestPayload(qp);
             // store current search/filter criteria for download
             assign(this.currentLoadRequestSearchCriteria, loadRequestPayload);
-            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, this.currentLoadRequestSearchCriteria)
+            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, this.currentLoadRequestSearchCriteria);
           }),
           map((res: LoadRequestsResponse) => {
             this.resultsLength = res.result.pagination.totalCount!;
@@ -301,9 +301,6 @@ export class LoadRequestComponent implements AfterViewInit {
             this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
             this.reloadAllRequests$.next(true);
           },
-          // I think this next line should be removed and replaced in favor of http interceptor general error.
-          /* istanbul ignore next */
-          error: () => this.alertService.addAlert('danger', 'Error creating load request.'),
         }),
       )
       .subscribe();

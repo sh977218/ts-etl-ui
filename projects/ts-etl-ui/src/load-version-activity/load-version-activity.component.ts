@@ -105,7 +105,6 @@ export class LoadVersionActivityComponent implements AfterViewInit {
           this.activitiesTable.renderRows();
           this.cd.detectChanges();
         },
-        error: () => this.alertService.addAlert('danger', 'Unexpected Error'),
       }),
     ).subscribe();
   }

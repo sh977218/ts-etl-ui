@@ -38,7 +38,6 @@ export class LoginCbComponent {
             router.navigate(['/']);
           },
           error: () => {
-            this.alertService.addAlert('danger', `Unable to log in`);
             cookieService.delete('Bearer');
             router.navigate(['/please-log-in']);
           },

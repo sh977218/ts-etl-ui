@@ -1,6 +1,8 @@
 // Setup Theme
 @use '@angular/material' as mat;
 
+mat.$theme-ignore-duplication-warnings: true;
+
 @include mat.core();
 @include mat.strong-focus-indicators();
 
