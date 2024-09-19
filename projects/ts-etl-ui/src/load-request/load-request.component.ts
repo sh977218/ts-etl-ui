@@ -272,10 +272,6 @@ export class LoadRequestComponent implements AfterViewInit {
             this.resultsPageSize = res.result.pagination.pageSize!;
             return res?.result.data || [];
           }),
-          map(items => {
-            items.forEach(item => item.numberOfMessages = item.loadRequestMessages ? item.loadRequestMessages.length : 0);
-            return items;
-          }),
           tap({
             next: data => {
               this.data.set(data);

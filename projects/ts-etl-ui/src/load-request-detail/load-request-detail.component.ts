@@ -1,4 +1,5 @@
-import { AsyncPipe, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import { AsyncPipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +9,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { combineLatest, filter, finalize, forkJoin, map, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, finalize, map, switchMap, tap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
@@ -18,8 +19,8 @@ import { LoadRequestMessageComponent } from '../load-request-message/load-reques
 import {
   LoadVersionReviewModalComponent,
 } from '../load-version-review-modal/load-version-review-modal.component';
-import { LoadRequest, LoadRequestMessage } from '../model/load-request';
-import { LoadVersion, LoadVersionActivity } from '../model/load-version';
+import { LoadRequest } from '../model/load-request';
+import { LoadVersion, LoadVersionActivity, Message } from '../model/load-version';
 import { User } from '../model/user';
 import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
@@ -29,7 +30,7 @@ import { UserService } from '../service/user-service';
 export interface RowElement {
   label: string;
   key: string;
-  value: string | number | Date | LoadVersionActivity[] | LoadRequestMessage[];
+  value: string | number | Date | LoadVersionActivity[] | Message[];
 }
 
 const LABEL_MAPPING: Record<string, string> = {
@@ -92,6 +93,9 @@ const LABEL_SORT_ARRAY = [
     EasternTimePipe,
     LoadRequestActivityComponent,
     LoadRequestMessageComponent,
+    NgForOf,
+    CdkVirtualScrollViewport,
+    ScrollingModule,
   ],
   templateUrl: './load-request-detail.component.html',
   styleUrl: './load-request-detail.component.scss',
@@ -152,6 +156,13 @@ export class LoadRequestDetailComponent implements OnInit {
           return acc;
         }, [])
         .map(key => {
+          const result: RowElement = {
+            /* istanbul ignore next */
+            label: LABEL_MAPPING[key] || `something wrong about ${key}`,
+            key,
+            value:lr[key as keyof LoadRequest]
+          }
+
           if(key === 'spacer') {
             return {
               label: '',
@@ -159,12 +170,21 @@ export class LoadRequestDetailComponent implements OnInit {
               value: '',
             }
           }
-          return {
-            /* istanbul ignore next */
-            label: LABEL_MAPPING[key] || `something wrong about ${key}`,
-            key: key,
-            value: lr[key as keyof LoadRequest],
-          };
+
+          const messages: Message[] = [];
+          if(['messageList', 'numberOfMessages'].includes(key)) {
+            lv.loadSummary.components.forEach(c => {
+              [...c.errors, ...c.infos, ...c.warnings].forEach(m => {
+                messages.push(m);
+              })
+            });
+            if (key === 'messageList') {
+              result.value = messages;
+            } else {
+              result.value = messages.length;
+            }
+          }
+          return result;
         });
     })
   }

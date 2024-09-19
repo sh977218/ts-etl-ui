@@ -30,6 +30,26 @@
               <ng-container *ngSwitchCase="'loadElapsedTime'">
                 {{element.value | easternTime:'hh:mm:ss'}}
               </ng-container>
+              <ng-container *ngSwitchCase="'messageList'">
+                <table class="message-table">
+                  <thead>
+                  <tr>
+                    <td>Message Type</td>
+                    <td>Tag</td>
+                    <td>Message</td>
+                    <td>Creation Time</td>
+                  </tr>
+                  </thead>
+                  <tbody >
+                    <tr *ngFor="let m of element.value">
+                      <td>{{m.messageType}}</td>
+                      <td>{{m.tag}}</td>
+                      <td>{{m.message}}</td>
+                      <td>{{m.creationTime | easternTime}}</td>
+                    </tr>
+                  </tbody>
+              </table>
+              </ng-container>
               <ng-container *ngSwitchDefault>
                 <ng-container *ngIf="isTime(element.key); else regularField">
                   {{element.value | easternTime}}
