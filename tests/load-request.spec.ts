@@ -281,4 +281,10 @@ test.describe('LR - ', async () => {
     await expect(rows).toHaveCount(15);
   });
 
+  test('LR View Messages', async ({page}) => {
+    await page.goto('/load-request/0');
+    await expect(page. getByRole('row', { name: '# of Messages:' })).toContainText('4');
+    await page.locator('td:has-text("Error while extracting")');
+  });
+
 });

@@ -1,4 +1,5 @@
-import { AsyncPipe, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { AsyncPipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +9,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { filter, finalize, map, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, map, switchMap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
@@ -18,8 +19,8 @@ import { LoadRequestMessageComponent } from '../load-request-message/load-reques
 import {
   LoadVersionReviewModalComponent,
 } from '../load-version-review-modal/load-version-review-modal.component';
-import { LoadRequest, LoadRequestMessage } from '../model/load-request';
-import { LoadVersion, LoadVersionActivity } from '../model/load-version';
+import { LoadRequest } from '../model/load-request';
+import { LoadVersion, LoadVersionActivity, Message } from '../model/load-version';
 import { User } from '../model/user';
 import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
@@ -28,7 +29,7 @@ import { UserService } from '../service/user-service';
 export interface RowElement {
   label: string;
   key: string;
-  value: string | number | Date | LoadVersionActivity[] | LoadRequestMessage[];
+  value: string | number | Date | LoadVersionActivity[] | Message[];
 }
 
 const LABEL_MAPPING: Record<string, string> = {
@@ -42,6 +43,7 @@ const LABEL_MAPPING: Record<string, string> = {
   creationTime: 'Creation Time:',
   requestStatus: 'Request Status:',
   numberOfMessages: '# of Messages:',
+  messageList: ' ',
   loadNumber: 'Load Number:',
   loadStatus: 'Load Status:',
   loadStartTime: 'Load Start Time:',
@@ -63,6 +65,7 @@ const LABEL_SORT_ARRAY = [
   'creationTime',
   'requestStatus',
   'numberOfMessages',
+  'messageList',
   'loadNumber',
   'loadStatus',
   'loadStartTime',
@@ -89,6 +92,8 @@ const LABEL_SORT_ARRAY = [
     EasternTimePipe,
     LoadRequestActivityComponent,
     LoadRequestMessageComponent,
+    NgForOf,
+    CdkVirtualScrollViewport,
   ],
   templateUrl: './load-request-detail.component.html',
   styleUrl: './load-request-detail.component.scss',
@@ -97,6 +102,7 @@ const LABEL_SORT_ARRAY = [
 export class LoadRequestDetailComponent implements OnInit {
 
   displayedColumns: string[] = ['key', 'value'];
+  messageColumns = ['type', 'tag', 'message', 'time'];
 
   user: User | null | undefined = undefined;
 
@@ -132,18 +138,25 @@ export class LoadRequestDetailComponent implements OnInit {
     );
 
   ngOnInit() {
-    this.loadRequest$.subscribe(lr => {
-      this.dataSource = Object.keys(lr)
+    combineLatest([this.loadRequest$, this.loadVersion$]).subscribe(([lr, lv]) => {
+      this.dataSource = [...Object.keys(lr), 'numberOfMessages', 'messageList']
         .filter(k => !['_id', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadEndTime', 'loadComponents'].includes(k))
         .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
         .reduce<string[]>((acc, key) => {
           acc.push(key);
-          if (['creationTime', 'numberOfMessages'].includes(key)) {
+          if (['creationTime'].includes(key)) {
             acc.push('spacer');
           }
           return acc;
         }, [])
         .map(key => {
+          const result: RowElement = {
+            /* istanbul ignore next */
+            label: LABEL_MAPPING[key] || `something wrong about ${key}`,
+            key,
+            value: lr[key as keyof LoadRequest],
+          };
+
           if (key === 'spacer') {
             return {
               label: '',
@@ -151,12 +164,21 @@ export class LoadRequestDetailComponent implements OnInit {
               value: '',
             };
           }
-          return {
-            /* istanbul ignore next */
-            label: LABEL_MAPPING[key] || `something wrong about ${key}`,
-            key: key,
-            value: lr[key as keyof LoadRequest],
-          };
+
+          const messages: Message[] = [];
+          if (['messageList', 'numberOfMessages'].includes(key)) {
+            lv.loadSummary.components.forEach(c => {
+              [...c.errors, ...c.infos, ...c.warnings].forEach(m => {
+                messages.push(m);
+              });
+            });
+            if (key === 'messageList') {
+              result.value = messages;
+            } else {
+              result.value = messages.length;
+            }
+          }
+          return result;
         });
     });
   }
