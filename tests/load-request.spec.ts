@@ -299,4 +299,9 @@ test.describe('LR - ', async () => {
     await page.getByRole('link', {name: 'Load Request'}).focus();
     await expect(page.locator('app-load-request-message')).not.toContainText('RAW_TABLE_COUNT');
   });
+
+  test('LR with no LV', async ({page}) => {
+    await page.goto('/load-request/8');
+    await expect(page.locator('body')).toContainText('bensonmcgowan@zilphur.com');
+  });
 });

@@ -182,10 +182,7 @@ export class LoadVersionComponent implements AfterViewInit {
         switchMap((loadVersionPayload) => {
           return this.http.post<LoadVersionsApiResponse>(`${environment.apiServer}/loadVersions`, loadVersionPayload);
         }),
-        map((data: LoadVersionsApiResponse | null) => {
-          if (data === null) {
-            return [];
-          }
+        map((data: LoadVersionsApiResponse) => {
           this.resultsLength = data.total_count;
           return data.items;
         }),
