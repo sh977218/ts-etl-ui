@@ -3,7 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/co
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { switchMap, tap } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs';
 
 import { AlertService } from '../service/alert-service';
 import { UserService } from '../service/user-service';
@@ -41,6 +41,10 @@ export class LoginCbComponent {
             cookieService.delete('Bearer');
             router.navigate(['/please-log-in']);
           },
+        }),
+        catchError((e) => {
+          this.alertService.addAlert('danger', `Unable to log in`);
+          throw new Error(e);
         }),
       ).subscribe();
   }
