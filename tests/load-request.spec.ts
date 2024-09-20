@@ -281,10 +281,22 @@ test.describe('LR - ', async () => {
     await expect(rows).toHaveCount(15);
   });
 
+  test('Search Returns empty', async ({ page }) => {
+    await page.goto('/load-requests?requestStatus=notaStatus');
+    await expect(page.locator('tbody')).toContainText('No results found');
+  });
+
   test('LR View Messages', async ({page}) => {
     await page.goto('/load-request/0');
-    await expect(page. getByRole('row', { name: '# of Messages:' })).toContainText('4');
+    await expect(page.getByRole('row', { name: '# of Messages:' })).toContainText('4');
     await page.locator('td:has-text("Error while extracting")');
   });
 
+  test('LR Message Filter', async ({page}) => {
+    await page.goto('/load-request/0');
+    await expect(page.locator('app-load-request-message')).toContainText('RAW_TABLE_COUNT');
+    await page.getByPlaceholder('Ex. INFO').pressSequentially('inject');
+    await page.getByRole('link', {name: 'Load Request'}).focus();
+    await expect(page.locator('app-load-request-message')).not.toContainText('RAW_TABLE_COUNT');
+  });
 });

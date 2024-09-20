@@ -37,7 +37,7 @@ type MessageUI = {
 })
 export class LoadRequestMessageComponent implements AfterViewInit {
 
-  loadVersion = input<LoadVersion>();
+  loadVersion = input.required<LoadVersion>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -53,43 +53,40 @@ export class LoadRequestMessageComponent implements AfterViewInit {
 
   dataSource = computed(() => {
     const messages: MessageUI[] = [];
-    if (this.loadVersion()) {
-      this.loadVersion()?.loadSummary.components?.forEach(m => {
-        m.infos.forEach(i => {
-          messages.push({
-            componentName: m.componentName,
-            messageGroup: 'Info',
-            messageType: i.messageType,
-            message: i.message,
-            tag: i.tag,
-            creationTime: i.creationTime,
-          });
-        });
-        m.warnings.forEach(i => {
-          messages.push({
-            componentName: m.componentName,
-            messageGroup: 'Warning',
-            messageType: i.messageType,
-            message: i.message,
-            tag: i.tag,
-            creationTime: i.creationTime,
-          });
-        });
-        m.errors.forEach(i => {
-          messages.push({
-            componentName: m.componentName,
-            messageGroup: 'Error',
-            messageType: i.messageType,
-            message: i.message,
-            tag: i.tag,
-            creationTime: i.creationTime,
-          });
+    this.loadVersion()?.loadSummary.components?.forEach(m => {
+      m.infos.forEach(i => {
+        messages.push({
+          componentName: m.componentName,
+          messageGroup: 'Info',
+          messageType: i.messageType,
+          message: i.message,
+          tag: i.tag,
+          creationTime: i.creationTime,
         });
       });
-    }
+      m.warnings.forEach(i => {
+        messages.push({
+          componentName: m.componentName,
+          messageGroup: 'Warning',
+          messageType: i.messageType,
+          message: i.message,
+          tag: i.tag,
+          creationTime: i.creationTime,
+        });
+      });
+      m.errors.forEach(i => {
+        messages.push({
+          componentName: m.componentName,
+          messageGroup: 'Error',
+          messageType: i.messageType,
+          message: i.message,
+          tag: i.tag,
+          creationTime: i.creationTime,
+        });
+      });
+    });
 
-    const datasource = new MatTableDataSource<MessageUI>(messages);
-    return datasource;
+    return new MatTableDataSource<MessageUI>(messages);
   });
 
   ngAfterViewInit() {
@@ -100,11 +97,7 @@ export class LoadRequestMessageComponent implements AfterViewInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource().filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource().paginator) {
-      this.dataSource().paginator!.firstPage();
-    }
+    this.dataSource().paginator!.firstPage();
   }
-
 
 }

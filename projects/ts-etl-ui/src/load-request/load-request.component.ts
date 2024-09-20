@@ -113,8 +113,8 @@ export class LoadRequestComponent implements AfterViewInit {
       opRequestSeq: new FormControl<string | null>(null),
       codeSystemName: new FormControl<string[] | null>(null),
       requestSubject: new FormControl<string | null>(null),
-      requestStatus: new FormControl<string[] | null>(null),
-      requestType: new FormControl<string[] | null>(null),
+      requestStatus: new FormControl<string[] | null | undefined>(null),
+      requestType: new FormControl<string[] | null | undefined>(null),
       requestTimeFrom: new FormControl<Moment | string | null>(null),
       requestTimeTo: new FormControl<Moment | string | null>(null),
       requester: new FormControl<string | null>(null),
@@ -222,10 +222,10 @@ export class LoadRequestComponent implements AfterViewInit {
                 emitEvent: false,
               });
             }
-            this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus || [], {
+            this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus, {
               emitEvent: false,
             });
-            this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType || [], {
+            this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType, {
               emitEvent: false,
             });
             if (searchCriteriaPatch.requestTimeFrom) {
@@ -270,7 +270,7 @@ export class LoadRequestComponent implements AfterViewInit {
           map((res: LoadRequestsResponse) => {
             this.resultsLength = res.result.pagination.totalCount!;
             this.resultsPageSize = res.result.pagination.pageSize!;
-            return res?.result.data || [];
+            return res?.result.data;
           }),
           tap({
             next: data => {
