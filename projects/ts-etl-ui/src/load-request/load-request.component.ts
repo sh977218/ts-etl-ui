@@ -47,7 +47,6 @@ import { AlertService } from '../service/alert-service';
 import { ConstantService } from '../service/constant-service';
 import { DownloadService } from '../service/download-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
-import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
 const moment = _rollupMoment;
@@ -142,7 +141,6 @@ export class LoadRequestComponent implements AfterViewInit {
               private activatedRoute: ActivatedRoute,
               private router: Router,
               private dialog: MatDialog,
-              private loadingService: LoadingService,
               private userService: UserService,
               public constantService: ConstantService,
               private alertService: AlertService,
@@ -180,7 +178,6 @@ export class LoadRequestComponent implements AfterViewInit {
       filter(reload => !!reload),
       switchMap(() => {
         return this.activatedRoute.queryParamMap.pipe(
-          tap({ next: () => this.loadingService.showLoading() }),
           // update UI from query parameters
           map((queryParams: Params) => {
             const searchCriteriaFromQueryParameter: FlatLoadRequestPayload = {
@@ -265,7 +262,7 @@ export class LoadRequestComponent implements AfterViewInit {
             const loadRequestPayload: LoadRequestPayload = generateLoadRequestPayload(qp);
             // store current search/filter criteria for download
             assign(this.currentLoadRequestSearchCriteria, loadRequestPayload);
-            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, this.currentLoadRequestSearchCriteria)
+            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, this.currentLoadRequestSearchCriteria);
           }),
           map((res: LoadRequestsResponse) => {
             this.resultsLength = res.result.pagination.totalCount!;
@@ -275,7 +272,6 @@ export class LoadRequestComponent implements AfterViewInit {
           tap({
             next: data => {
               this.data.set(data);
-              this.loadingService.hideLoading();
             },
           }),
         );
@@ -297,9 +293,6 @@ export class LoadRequestComponent implements AfterViewInit {
             this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
             this.reloadAllRequests$.next(true);
           },
-          // I think this next line should be removed and replaced in favor of http interceptor general error.
-          /* istanbul ignore next */
-          error: () => this.alertService.addAlert('danger', 'Error creating load request.'),
         }),
       )
       .subscribe();

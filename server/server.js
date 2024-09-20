@@ -278,7 +278,9 @@ app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
 
 app.get('/api/loadRequest/:opRequestSeq', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
-  res.send(await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq }));
+  const lr = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
+  if (!lr) return res.status(404).send();
+  res.send(lr);
 });
 
 app.post('/api/loadVersions', async (req, res) => {

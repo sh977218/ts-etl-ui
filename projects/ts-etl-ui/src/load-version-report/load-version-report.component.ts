@@ -51,7 +51,6 @@ import {
   Validation,
   Verification,
 } from '../model/load-version';
-import { LoadingService } from '../service/loading-service';
 
 @Component({
   standalone: true,
@@ -87,36 +86,22 @@ export class LoadVersionReportComponent {
 
   loadVersion$ = this.activatedRoute.paramMap
     .pipe(
-      tap({ next: () => this.loadingService.showLoading() }),
       map((params: Params) => {
         return params['params']['requestId'];
       }),
       distinctUntilChanged(),
       switchMap(requestId => {
-        return this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${requestId}`)
-          .pipe(
-            tap({
-              next: () => this.loadingService.hideLoading(),
-              error: () => this.loadingService.hideLoading(),
-            }),
-          );
+        return this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${requestId}`);
       }),
       shareReplay(1),
     );
   loadRequest$ = this.activatedRoute.paramMap
     .pipe(
-      tap({ next: () => this.loadingService.showLoading() }),
       map((params: Params) => {
         return params['params']['requestId'];
       }),
       switchMap(requestId => {
-        return this.http.get<LoadRequest>(`${environment.apiServer}/loadRequest/${requestId}`)
-          .pipe(
-            tap({
-              next: () => this.loadingService.hideLoading(),
-              error: () => this.loadingService.hideLoading(),
-            }),
-          );
+        return this.http.get<LoadRequest>(`${environment.apiServer}/loadRequest/${requestId}`);
       }),
     );
 
@@ -251,7 +236,6 @@ export class LoadVersionReportComponent {
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
-              private loadingService: LoadingService,
   ) {
   }
 }

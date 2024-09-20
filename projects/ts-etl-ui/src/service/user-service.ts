@@ -67,7 +67,6 @@ export class UserService {
           error: () => {
             this.user$.next(null);
             this._user = null;
-            this.alertService.addAlert('danger', `error log in`);
             this.cookieService.delete('Bearer');
           },
         }),

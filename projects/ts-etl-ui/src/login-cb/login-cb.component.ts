@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { switchMap, tap } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs';
 
 import { AlertService } from '../service/alert-service';
 import { UserService } from '../service/user-service';
@@ -33,12 +33,15 @@ export class LoginCbComponent {
             throw new Error('No ticket found.');
           }
         }),
+        catchError(() => {
+          throw new Error(`Unable to log in`);
+        }),
         tap({
           next: () => {
             router.navigate(['/']);
           },
-          error: () => {
-            this.alertService.addAlert('danger', `Unable to log in`);
+          error: (e: HttpErrorResponse) => {
+            this.alertService.addAlert('danger', `${e.message}`);
             cookieService.delete('Bearer');
             router.navigate(['/please-log-in']);
           },
