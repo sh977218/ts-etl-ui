@@ -30,6 +30,29 @@
               <ng-container *ngSwitchCase="'loadElapsedTime'">
                 {{element.value | easternTime:'hh:mm:ss'}}
               </ng-container>
+              <section *ngSwitchCase="'messageList'" class="message-table">
+                <table mat-table [dataSource]="element.value">
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> Type </th>
+                    <td mat-cell *matCellDef="let row"> {{row.messageType}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="tag">
+                    <th mat-header-cell *matHeaderCellDef> Tag </th>
+                    <td mat-cell *matCellDef="let row"> {{row.tag}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="message">
+                    <th mat-header-cell *matHeaderCellDef> Message </th>
+                    <td mat-cell *matCellDef="let row"> {{row.message}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="time">
+                    <th mat-header-cell *matHeaderCellDef> Time </th>
+                    <td mat-cell *matCellDef="let row"> {{row.creationTime | easternTime }} </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="messageColumns; sticky: true"></tr>
+                  <tr mat-row *matRowDef="let row; columns: messageColumns;"></tr>
+              </table>
+              </section>
               <ng-container *ngSwitchDefault>
                 <ng-container *ngIf="isTime(element.key); else regularField">
                   {{element.value | easternTime}}

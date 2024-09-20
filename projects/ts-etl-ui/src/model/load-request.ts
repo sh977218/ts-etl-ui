@@ -9,15 +9,6 @@ import {
 } from './api-response';
 import { SearchPayloadPagination, SearchPayloadSortCriteria } from './search';
 
-export type LoadRequestMessage = {
-  componentName: string;
-  messageGroup: string;
-  messageType: string;
-  tag: string;
-  message: string;
-  creationTime: Date;
-}
-
 export type LoadRequest = {
   opRequestSeq: number;
   codeSystemName: string;
@@ -28,13 +19,11 @@ export type LoadRequest = {
   requester: string;
   creationTime: Date;
   requestStatus: string;
-  numberOfMessages: number;
   loadNumber: string;
   loadStatus: string;
   loadStartTime: Date;
   loadEndTime: Date;
   duration: Date;
-  loadRequestMessages: LoadRequestMessage[]
 }
 
 // API request payload
