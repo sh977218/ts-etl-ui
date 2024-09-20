@@ -103,6 +103,7 @@ const LABEL_SORT_ARRAY = [
 export class LoadRequestDetailComponent implements OnInit {
 
   displayedColumns: string[] = ['key', 'value'];
+  messageColumns = ['type', 'tag', 'message', 'time'];
 
   user: User | null | undefined = undefined;
 
@@ -149,7 +150,7 @@ export class LoadRequestDetailComponent implements OnInit {
         .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
         .reduce<string[]>((acc, key) => {
           acc.push(key);
-          if (['creationTime', 'messageList'].includes(key)) {
+          if (['creationTime'].includes(key)) {
             acc.push('spacer');
           }
           return acc;
