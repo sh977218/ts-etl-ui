@@ -22,7 +22,7 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { assign } from 'lodash';
-import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 
 import { triggerExpandTableAnimation } from '../animations';
 import { environment } from '../environments/environment';
@@ -47,7 +47,6 @@ import {
 import { AlertService } from '../service/alert-service';
 import { ConstantService } from '../service/constant-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
-import { LoadingService } from '../service/loading-service';
 import { UserService } from '../service/user-service';
 
 @Component({
@@ -147,12 +146,11 @@ export class LoadVersionComponent implements AfterViewInit {
               private router: Router,
               private dialog: MatDialog,
               private cd: ChangeDetectorRef,
-              private loadingService: LoadingService,
               private userService: UserService,
               public constantService: ConstantService,
               private alertService: AlertService) {
     userService.user$.subscribe(user => {
-      this.username = user?.utsUser.username || '';
+      this.username = user!.utsUser.username;
     });
     this.searchCriteria.valueChanges
       .subscribe(val => {
@@ -169,7 +167,6 @@ export class LoadVersionComponent implements AfterViewInit {
 
     this.activatedRoute.queryParamMap
       .pipe(
-        tap({ next: () => this.loadingService.showLoading() }),
         map((queryParams: Params) => {
           const qp = { ...queryParams['params'] };
           // update UI from query parameters
@@ -183,8 +180,7 @@ export class LoadVersionComponent implements AfterViewInit {
           return this.currentLoadVersionSearchCriteria;
         }),
         switchMap((loadVersionPayload) => {
-          return this.http.post<LoadVersionsApiResponse>(`${environment.apiServer}/loadVersions`, loadVersionPayload)
-            .pipe(catchError(() => of(null)));
+          return this.http.post<LoadVersionsApiResponse>(`${environment.apiServer}/loadVersions`, loadVersionPayload);
         }),
         map((data: LoadVersionsApiResponse | null) => {
           if (data === null) {
@@ -196,14 +192,12 @@ export class LoadVersionComponent implements AfterViewInit {
       )
       .subscribe({
         next: data => {
-          this.loadingService.hideLoading();
           this.data = data;
           const expand = this.activatedRoute.snapshot.queryParams['expand'];
           if (expand) {
             this.expandedElement = this.data.at(Number.parseInt(expand) || 0);
           }
         },
-        error: () => this.loadingService.hideLoading(),
       });
   }
 
@@ -212,7 +206,6 @@ export class LoadVersionComponent implements AfterViewInit {
   }
 
   action(newLoadVersionActivity: LoadVersionActivity, loadVersion: LoadVersion) {
-    this.loadingService.showLoading();
     this.http.post(`${environment.apiServer}/loadVersionActivity`, {
       requestId: loadVersion!.requestId,
       loadVersionActivity: newLoadVersionActivity,
@@ -224,7 +217,6 @@ export class LoadVersionComponent implements AfterViewInit {
         next: (updatedLoadVersion) => {
           loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
           loadVersion.versionStatus = updatedLoadVersion.versionStatus;
-          this.loadingService.hideLoading();
           this.alertService.addAlert('', 'Activity added successfully.');
         }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
       });
@@ -239,7 +231,6 @@ export class LoadVersionComponent implements AfterViewInit {
       .pipe(
         filter(reason => !!reason),
         switchMap((activityNote: LoadVersionActivityNote) => {
-          this.loadingService.showLoading();
           activityNote.createdBy = this.username;
           activityNote.createdTime = new Date();
           activityNote.hashtags = activityNote.hashtags.filter(n => n !== '');
@@ -253,10 +244,8 @@ export class LoadVersionComponent implements AfterViewInit {
         next: (activityNote: LoadVersionActivityNote) => {
           loadVersion.loadVersionActivities[0].notes.push(activityNote);
           loadVersion.loadVersionActivities = [...loadVersion.loadVersionActivities];
-          this.loadingService.hideLoading();
           this.alertService.addAlert('', 'Note added successfully.');
         }, error: () => {
-          this.loadingService.hideLoading();
           this.alertService.addAlert('', 'Note add failed.');
         },
       });

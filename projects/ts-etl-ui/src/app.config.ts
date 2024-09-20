@@ -6,7 +6,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { TokenInterceptor } from './token-interceptor';
+import { ErrorInterceptor } from './error-interceptor';
 
 export const MY_FORMATS = {
   parse: {
@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideMomentDateAdapter(MY_FORMATS),
     provideRouter(routes),
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { floatLabel: 'always' } },
   ],
 };
