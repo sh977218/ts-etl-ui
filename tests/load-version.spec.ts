@@ -120,4 +120,10 @@ test.describe('LV - ', async () => {
     await expect(page.locator(tbody)).toContainText('TestTag');
     await expect(page.locator(tbody)).toContainText('Tag.3');
   });
+
+  test('Table Exanded', async ({ page }) => {
+    await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
+    await page.getByRole('link', {name: 'Go to QA Report'})
+  });
+
 });

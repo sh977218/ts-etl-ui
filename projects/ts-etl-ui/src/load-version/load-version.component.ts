@@ -22,7 +22,7 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { assign } from 'lodash';
-import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 
 import { triggerExpandTableAnimation } from '../animations';
 import { environment } from '../environments/environment';
@@ -150,7 +150,7 @@ export class LoadVersionComponent implements AfterViewInit {
               public constantService: ConstantService,
               private alertService: AlertService) {
     userService.user$.subscribe(user => {
-      this.username = user?.utsUser.username || '';
+      this.username = user!.utsUser.username;
     });
     this.searchCriteria.valueChanges
       .subscribe(val => {
@@ -180,13 +180,9 @@ export class LoadVersionComponent implements AfterViewInit {
           return this.currentLoadVersionSearchCriteria;
         }),
         switchMap((loadVersionPayload) => {
-          return this.http.post<LoadVersionsApiResponse>(`${environment.apiServer}/loadVersions`, loadVersionPayload)
-            .pipe(catchError(() => of(null)));
+          return this.http.post<LoadVersionsApiResponse>(`${environment.apiServer}/loadVersions`, loadVersionPayload);
         }),
-        map((data: LoadVersionsApiResponse | null) => {
-          if (data === null) {
-            return [];
-          }
+        map((data: LoadVersionsApiResponse) => {
           this.resultsLength = data.total_count;
           return data.items;
         }),
