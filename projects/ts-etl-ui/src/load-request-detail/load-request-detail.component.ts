@@ -167,7 +167,7 @@ export class LoadRequestDetailComponent implements OnInit {
 
           const messages: Message[] = [];
           if (['messageList', 'numberOfMessages'].includes(key)) {
-            lv?.loadSummary?.components.forEach(c => {
+            lv?.loadSummary?.components?.forEach(c => {
               [...c.errors, ...c.infos, ...c.warnings].forEach(m => {
                 messages.push(m);
               });

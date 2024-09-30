@@ -57,7 +57,7 @@
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
               <mat-form-field appearance="outline" class="dense-form-field">
-                <mat-label>Scheduled time</mat-label>
+                <mat-label>Scheduled Time</mat-label>
                 <mat-select formControlName="scheduledTime">
                   <mat-option value=""></mat-option>
                   <mat-option *ngFor="let option of scheduledTimeOptions()" [value]="option">{{option}}</mat-option>

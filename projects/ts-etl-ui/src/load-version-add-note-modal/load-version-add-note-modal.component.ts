@@ -53,37 +53,16 @@ export class LoadVersionAddNoteModalComponent {
 
   removeHashtag(hashtag: string) {
     this.hashtagsSig.update(hashtagsSig => {
-      const index = hashtagsSig.indexOf(hashtag);
-      if (index < 0) {
-        return hashtagsSig;
-      }
-
-      hashtagsSig.splice(index, 1);
+      hashtagsSig.splice(hashtagsSig.indexOf(hashtag), 1);
       this.announcer.announce(`removed ${hashtag}`);
       return [...hashtagsSig];
     });
   }
 
   addHashtag(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.hashtagsSig.update(hashtagsSig => [...hashtagsSig, value]);
-    }
+    const value = event.value.trim();
+    this.hashtagsSig.update(hashtagsSig => [...hashtagsSig, value]);
     event.chipInput!.clear();
   }
-
-
-  // sanitizeHashtags(i: number) {
-  //   const currentControl = this.hashtags.controls[i];
-  //   currentControl.setValue(currentControl.value.replace(/[^a-zA-Z0-9.\n]/g, ''));
-  //   this.hashtags.controls.forEach((fc, i) => {
-  //     if(this.hashtags.controls[i].value === '' && this.hashtags.controls.length !== (i+ 1)) {
-  //       this.hashtags.removeAt(i);
-  //     }
-  //   });
-  //   if(this.hashtags.controls[this.hashtags.controls.length - 1].value !== '') {
-  //     this.hashtags.push(new FormControl(''));
-  //   }
-  // }
 
 }
