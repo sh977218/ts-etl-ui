@@ -65,7 +65,8 @@ export class CreateLoadRequestModalComponent {
         [Validators.required, sourceFilePathValidator()]),
       requestSubject: new FormControl<string>('', [Validators.required]),
       notificationEmail: new FormControl(this.userService.user?.email, [Validators.required, Validators.email]),
-      requester: new FormControl<string>({ value: `${this.userService.user!.utsUser.firstName} ${this.userService.user!.utsUser.lastName}`, disabled: true }),
+      requesterDisplay: new FormControl<string>({ value: `${this.userService.user!.utsUser.firstName} ${this.userService.user!.utsUser.lastName}`, disabled: true }),
+      requester: new FormControl<string>(this.userService.user!.utsUser.username),
       requestTime: new FormControl<Date>({ value: new Date(), disabled: true }),
     },
   );
