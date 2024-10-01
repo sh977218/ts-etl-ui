@@ -241,9 +241,15 @@ app.post('/load-request', async (req, res) => {
   const apiStartTime = new Date();
   const loadRequest = req.body;
 
-  const { loadRequestsCollection } = await mongoCollection();
+  const jwtToken = req.cookies['Bearer'];
+  if (!jwtToken) return res.status(401).send();
+  const payload = jwt.verify(jwtToken, SECRET_TOKEN);
+  loadRequest.requester = payload.data;
+
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   loadRequest.creationTime = new Date();
+
+  const { loadRequestsCollection } = await mongoCollection();
   const result = await loadRequestsCollection.insertOne({
     opRequestSeq: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
   });

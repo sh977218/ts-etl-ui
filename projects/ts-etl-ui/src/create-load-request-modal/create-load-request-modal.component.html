@@ -80,7 +80,7 @@
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Requester</mat-label>
-        <input matInput placeholder="Requester" type="email" formControlName="requesterDisplay">
+        <input matInput placeholder="Requester" type="email" formControlName="requesterDisplay" class="hidden">{{userService.user!.utsUser.firstName}} {{userService.user!.utsUser.lastName}}
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Request Date</mat-label>
