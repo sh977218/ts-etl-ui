@@ -1,6 +1,8 @@
 import test from './baseFixture';
 import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
+import { format } from 'date-fns-tz';
+import { DEFAULT_TIME_FORMAT, DEFAULT_TIMEZONE, EU_TIMEZONE } from './CONSTANT';
 
 test.describe('LR - ', async () => {
 
@@ -286,22 +288,88 @@ test.describe('LR - ', async () => {
     await expect(page.locator('tbody')).toContainText('No results found');
   });
 
-  test('LR View Messages', async ({page}) => {
+  test('LR View Messages', async ({ page }) => {
     await page.goto('/load-request/0');
     await expect(page.getByRole('row', { name: '# of Messages:' })).toContainText('4');
     await page.locator('td:has-text("Error while extracting")');
   });
 
-  test('LR Message Filter', async ({page}) => {
+  test('LR Message Filter', async ({ page }) => {
     await page.goto('/load-request/0');
     await expect(page.locator('app-load-request-message')).toContainText('RAW_TABLE_COUNT');
     await page.getByPlaceholder('Ex. INFO').pressSequentially('inject');
-    await page.getByRole('link', {name: 'Load Request'}).focus();
+    await page.getByRole('link', { name: 'Load Request' }).focus();
     await expect(page.locator('app-load-request-message')).not.toContainText('RAW_TABLE_COUNT');
   });
 
-  test('LR with no LV', async ({page}) => {
+  test('LR with no LV', async ({ page }) => {
     await page.goto('/load-request/8');
     await expect(page.locator('body')).toContainText('bensonmcgowan@zilphur.com');
   });
+
+
+  test.use({ timezoneId: EU_TIMEZONE });
+  test('Create Load Request in different timezone', async ({ page, materialPo }) => {
+    const newCreateSubject = `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`;
+    let euTime = '';
+    const matDialog = materialPo.matDialog();
+
+    // this api interception is to make network slow, so the spinner can be verified.
+    await page.route('**/load-request/list', async route => {
+      await page.waitForTimeout(2000);
+      await route.continue();
+    });
+
+    await page.route('**/loadRequest/', async route => {
+      await page.waitForTimeout(2000);
+      await route.continue();
+    });
+
+    await test.step(`add load request in ${EU_TIMEZONE}`, async () => {
+      await page.getByRole('button', { name: 'Create Request' }).click();
+      await matDialog.waitFor();
+      /**
+       * note: We can use `await page.getByRole('radio', {name: 'Regular'}).check();`
+       * but using `matDialog` instead of `page` is it ensures those fields are inside a dialog modal
+       */
+      await matDialog.getByRole('radio', { name: 'Scheduled' }).check();
+      await matDialog.getByRole('button', { name: 'Open calendar' }).click();
+      await page.locator(`mat-calendar`).waitFor();
+      await page.locator('.mat-calendar-body-cell.mat-calendar-body-active').click();
+      await page.locator(`mat-calendar`).waitFor({ state: 'hidden' });
+      await matDialog.getByRole('combobox', { name: 'Scheduled time' }).click();
+      await page.getByRole('option', { name: '11:30 PM' }).click();
+      await matDialog.getByLabel('Code System Name').click();
+      /**
+       * mat-option is not attached to modal, it appends to end of app root tag, so using page instead of `matDialog`.
+       */
+      await page.getByRole('option', { name: 'HPO' }).click();
+      await matDialog.getByLabel('Request Subject').fill(newCreateSubject);
+      await matDialog.getByLabel('Source File Path').clear();
+      await matDialog.getByLabel('Source File Path').fill('this is not valid');
+      await page.locator('mat-dialog-container h2').click();
+      await expect(page.locator('mat-dialog-container')).toContainText('Please select source file from NLM server');
+      await matDialog.getByLabel('Source File Path').clear();
+      await matDialog.getByLabel('Source File Path').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
+      await page.locator('mat-dialog-container h2').click();
+      await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
+      euTime = await matDialog.locator(`[id="requestTime"]`).innerText();
+      await matDialog.getByRole('button', { name: 'Submit' }).click();
+      await matDialog.waitFor({ state: 'hidden' });
+      await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
+    });
+
+    await test.step(`verify load request created in EU shows EST`, async () => {
+      await page.getByPlaceholder('subject...').fill(newCreateSubject);
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.waitForSpinner();
+      const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
+      const euTimeIso = new Date(euTime).toISOString();
+      const estTimeIso = format(euTimeIso, DEFAULT_TIME_FORMAT, { timeZone: DEFAULT_TIMEZONE });
+      await expect(tableRows.first().locator('td').nth(5)).toHaveText(estTimeIso);
+    });
+
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
+  });
+
 });
