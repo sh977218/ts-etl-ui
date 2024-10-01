@@ -37,7 +37,7 @@
         </mat-icon>
         <mat-hint>Copy and paste source file path here. It must be in the form of file://path/to/folder</mat-hint>
         <mat-error *ngIf="loadRequestCreationForm.get('sourceFilePath')?.hasError('sourceFilePathError')">
-          Please select source file from NLM server
+          The path must be subfolder under the base URL file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/
         </mat-error>
       </mat-form-field>
       <div class="mb-5">
