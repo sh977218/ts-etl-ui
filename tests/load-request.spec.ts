@@ -2,7 +2,7 @@ import test from './baseFixture';
 import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
 import { format } from 'date-fns-tz';
-import { DEFAULT_TIME_FORMAT, DEFAULT_TIMEZONE, EU_TIMEZONE } from './CONSTANT';
+import { DEFAULT_TIME_FORMAT, DEFAULT_TIMEZONE, EU_LATITUDE, EU_LONGITUDE, EU_TIMEZONE } from './CONSTANT';
 
 test.describe('LR - ', async () => {
 
@@ -308,7 +308,10 @@ test.describe('LR - ', async () => {
   });
 
 
-  test.use({ timezoneId: EU_TIMEZONE });
+  test.use({
+    timezoneId: EU_TIMEZONE,
+    geolocation: { longitude: EU_LONGITUDE, latitude: EU_LATITUDE },
+  });
   test('Create Load Request in different timezone', async ({ page, materialPo }) => {
     const newCreateSubject = `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`;
     let euTime = '';
