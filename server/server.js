@@ -56,7 +56,7 @@ app.post('/load-request/list', async (req, res) => {
   const { pagination, searchFilters, searchColumns, sortCriteria } = req.body;
   const { pageNum, pageSize } = pagination;
   const { filterRequestTime, filterRequester } = searchFilters;
-  const {
+  let {
     opRequestSeq,
     codeSystemName,
     requestSubject,
@@ -70,12 +70,16 @@ app.post('/load-request/list', async (req, res) => {
   } = searchColumns;
   const { sortBy, sortDirection } = sortCriteria;
 
+
   const $match = {};
   // searchColumns
   if (opRequestSeq) {
     $match.opRequestSeq = Number.parseInt(opRequestSeq);
   }
   if (codeSystemName && codeSystemName.length) {
+    if (typeof codeSystemName === 'string') {
+      codeSystemName = [codeSystemName];
+    }
     $match.codeSystemName = {
       $in: codeSystemName,
     };
@@ -84,11 +88,17 @@ app.post('/load-request/list', async (req, res) => {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
   if (requestStatus && requestStatus.length) {
+    if (typeof requestStatus === 'string') {
+      requestStatus = [requestStatus];
+    }
     $match.requestStatus = {
       $in: requestStatus,
     };
   }
   if (requestType && requestType.length) {
+    if (typeof requestType === 'string') {
+      requestType = [requestType];
+    }
     $match.requestType = {
       $in: requestType,
     };

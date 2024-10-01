@@ -55,6 +55,9 @@
                        [matDatepickerFilter]="futureDateFilter">
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
+                <mat-error *ngIf="loadRequestCreationForm.get('scheduledDate')?.hasError('matDatepickerFilter')">
+                  The date cannot be before current date
+                </mat-error>
               </mat-form-field>
               <mat-form-field appearance="outline" class="dense-form-field">
                 <mat-label>Scheduled Time</mat-label>
