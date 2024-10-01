@@ -90,7 +90,7 @@ test.describe('LR - ', async () => {
       await matDialog.getByLabel('Source File Path').clear();
       await matDialog.getByLabel('Source File Path').fill('this is not valid');
       await page.locator('mat-dialog-container h2').click();
-      await expect(page.locator('mat-dialog-container')).toContainText('Please select source file from NLM server');
+      await expect(page.locator('mat-dialog-container')).toContainText('The path must be subfolder under the base URL');
       await matDialog.getByLabel('Source File Path').clear();
       await matDialog.getByLabel('Source File Path').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
       await page.locator('mat-dialog-container h2').click();

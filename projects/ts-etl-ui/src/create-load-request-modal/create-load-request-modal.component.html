@@ -45,7 +45,7 @@
         <mat-radio-group aria-label-by="load-request-type-label" id="load-request-type-radio"
                          formControlName="requestType">
           <div class="ml-20">
-            <mat-radio-button *ngFor="let LOAD_REQUEST_TYPE of ['Emergency', 'Regular', 'Scheduled']"
+            <mat-radio-button *ngFor="let LOAD_REQUEST_TYPE of ['Regular', 'Emergency', 'Scheduled']"
                               [value]="LOAD_REQUEST_TYPE"
                               class="block">{{LOAD_REQUEST_TYPE}}</mat-radio-button>
             <ng-container *ngIf="loadRequestCreationForm.get('requestType')?.value === 'Scheduled'">
@@ -71,6 +71,9 @@
       <mat-form-field appearance="outline">
         <mat-label>Notification Email</mat-label>
         <input matInput placeholder="contact@nlm.nih.gov" formControlName="notificationEmail">
+        <mat-error *ngIf="loadRequestCreationForm.get('notificationEmail')?.invalid">
+          The email is not valid
+        </mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Requester</mat-label>
