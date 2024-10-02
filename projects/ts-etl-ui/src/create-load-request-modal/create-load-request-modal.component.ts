@@ -60,9 +60,7 @@ import { UserService } from '../service/user-service';
 })
 export class CreateLoadRequestModalComponent {
   userService: UserService = inject(UserService);
-
-  temp = new Date().toISOString();
-
+  
   CODE_SYSTEM_REQUIRED_SOURCE_FILE: string[] = [];
   loadRequestCreationForm = new FormGroup(
     {
