@@ -1,8 +1,7 @@
 import test from './baseFixture';
 import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
-import { format } from 'date-fns-tz';
-import { DEFAULT_TIME_FORMAT, DEFAULT_TIMEZONE, EU_LATITUDE, EU_LONGITUDE, EU_TIMEZONE } from './CONSTANT';
+import { EU_TIMEZONE } from './CONSTANT';
 
 test.describe('LR - ', async () => {
 
