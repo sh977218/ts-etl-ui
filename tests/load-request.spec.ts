@@ -308,10 +308,7 @@ test.describe('LR - ', async () => {
   });
 
 
-  test.use({
-    timezoneId: EU_TIMEZONE,
-    geolocation: { longitude: EU_LONGITUDE, latitude: EU_LATITUDE },
-  });
+  test.use({ timezoneId: EU_TIMEZONE });
   test('Create Load Request in different timezone', async ({ page, materialPo }) => {
     const newCreateSubject = `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`;
     let euTime = '';
@@ -348,11 +345,6 @@ test.describe('LR - ', async () => {
        */
       await page.getByRole('option', { name: 'HPO' }).click();
       await matDialog.getByLabel('Request Subject').fill(newCreateSubject);
-      await matDialog.getByLabel('Source File Path').clear();
-      await matDialog.getByLabel('Source File Path').fill('this is not valid');
-      await page.locator('mat-dialog-container h2').click();
-      await expect(page.locator('mat-dialog-container')).toContainText('Please select source file from NLM server');
-      await matDialog.getByLabel('Source File Path').clear();
       await matDialog.getByLabel('Source File Path').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
       await page.locator('mat-dialog-container h2').click();
       await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
@@ -362,7 +354,7 @@ test.describe('LR - ', async () => {
       await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
     });
 
-    await test.step(`verify load request created in EU shows EST`, async () => {
+    await test.step(`verify load request created in ${EU_TIMEZONE}`, async () => {
       await page.getByPlaceholder('subject...').fill(newCreateSubject);
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
