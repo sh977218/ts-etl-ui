@@ -84,7 +84,8 @@
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Request Date</mat-label>
-        <input matInput placeholder="Request Date" formControlName="requestTime">
+        <input #requestTime matInput placeholder="Request Date" formControlName="requestTime" class="hidden">
+        <span>{{requestTime.value | easternTime}}</span>
       </mat-form-field>
     </div>
   </mat-dialog-content>

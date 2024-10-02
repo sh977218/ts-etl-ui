@@ -23,14 +23,19 @@ import { LoadRequest } from '../model/load-request';
 import { PropertyResponse } from '../model/property';
 import { sourceFilePathValidator } from '../service/app.validator';
 import { ConstantService } from '../service/constant-service';
+import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { UserService } from '../service/user-service';
 
 @Component({
   standalone: true,
-  providers: [provideNativeDateAdapter()],
+  providers: [
+    provideNativeDateAdapter(),
+    EasternTimePipe,
+  ],
   imports: [
     NgIf,
     NgForOf,
+    AsyncPipe,
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -47,15 +52,15 @@ import { UserService } from '../service/user-service';
     MatDatepicker,
     MatDatepickerInput,
     MatDatepickerToggle,
-    AsyncPipe,
     CdkCopyToClipboard,
+    EasternTimePipe,
   ],
   templateUrl: './create-load-request-modal.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class CreateLoadRequestModalComponent {
   userService: UserService = inject(UserService);
-
+  
   CODE_SYSTEM_REQUIRED_SOURCE_FILE: string[] = [];
   loadRequestCreationForm = new FormGroup(
     {
@@ -65,7 +70,11 @@ export class CreateLoadRequestModalComponent {
         [Validators.required, sourceFilePathValidator()]),
       requestSubject: new FormControl<string>('', [Validators.required]),
       notificationEmail: new FormControl(this.userService.user?.email, [Validators.required, Validators.email]),
-      requestTime: new FormControl<Date>({ value: new Date(), disabled: true }),
+      requester: new FormControl<string>({ value: this.userService.user!.utsUser.username!, disabled: true }),
+      requestTime: new FormControl<Date | string>({
+        value: new Date().toISOString(),
+        disabled: true,
+      }),
     },
   );
 
