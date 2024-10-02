@@ -1,5 +1,6 @@
 import test from './baseFixture';
 import { expect } from '@playwright/test';
+import { readFileSync } from 'fs';
 
 test.describe('LV - ', async () => {
 
@@ -96,6 +97,10 @@ test.describe('LV - ', async () => {
     await expect(page.locator(tbody)).toContainText('TestTag');
     await expect(page.locator(tbody)).toContainText('Tag.3');
 
+    await page.locator('#activityIdInput').pressSequentially('2024');
+    await expect(page.locator(tbody)).not.toContainText('TestTag');
+    await page.locator('#activityIdInput').clear();
+
     await page.locator('#hashtagsFilterInput').selectOption('Tag2');
     await expect(page.locator(tbody)).toContainText('Note2');
     await expect(page.locator(tbody)).not.toContainText('TestTag');
@@ -124,6 +129,31 @@ test.describe('LV - ', async () => {
   test('Table Exanded', async ({ page }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
     await page.getByRole('link', {name: 'Go to QA Report'})
+  });
+
+  test('Edit Activity Avail Date', async ({ page, materialPo }) => {
+    await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
+    await page.getByRole('link', {name: 'Go to QA Report'})
+    await page.getByRole('button', {'name': 'Edit available date'}).click();
+    await page.locator('app-load-version-activity input').clear();
+    await page.locator('app-load-version-activity input').fill('2025-03-10');
+    await page.getByRole('button', {'name': 'Confirm'}).click();
+    await materialPo.checkAndCloseAlert('Available Date Updated');
+    await expect(page.locator('app-load-version-activity')).toContainText('2025/03');
+  });
+
+  test(`download newly added load request`, async ({page, materialPo}) => {
+    await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
+    const [, downloadFile] = await Promise.all([
+      page.getByRole('button', { name: 'Download' }).click(),
+      page.waitForEvent('download')],
+    );
+
+    await materialPo.checkAndCloseAlert('QA Activities downloaded.');
+
+    const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
+    expect(fileContent).toContain('id, activity,');
+    expect(fileContent).toContain('"2023-07-02T04:00:00.000Z","Accept",');
   });
 
 });

@@ -110,7 +110,7 @@ export class LoadRequestComponent implements AfterViewInit {
   searchCriteria = new FormGroup(
     {
       opRequestSeq: new FormControl<string | null>(null),
-      codeSystemName: new FormControl<string[] | null>(null),
+      codeSystemName: new FormControl<string[] | null | undefined>(null),
       requestSubject: new FormControl<string | null>(null),
       requestStatus: new FormControl<string[] | null | undefined>(null),
       requestType: new FormControl<string[] | null | undefined>(null),
@@ -210,8 +210,7 @@ export class LoadRequestComponent implements AfterViewInit {
                 emitEvent: false,
               });
             }
-            /* istanbul ignore next */
-            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName || [], {
+            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName, {
               emitEvent: false,
             });
             if (searchCriteriaPatch.requestSubject) {

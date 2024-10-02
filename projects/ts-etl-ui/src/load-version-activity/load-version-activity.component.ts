@@ -99,23 +99,12 @@ export class LoadVersionActivityComponent implements AfterViewInit {
       tap({
         next: () => {
           this.alertService.addAlert('info', `Available Date Updated`);
-          if (this.editAvailableDateForm.get('availableDate')?.value) {
-            this.loadVersion().loadVersionActivities[0].availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
-          }
+          this.loadVersion().loadVersionActivities[0].availableDate = this.editAvailableDateForm.get('availableDate')!.value!;
           this.activitiesTable.renderRows();
           this.cd.detectChanges();
         },
       }),
     ).subscribe();
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator?.firstPage();
-    }
   }
 
   downloadQaActivities() {
@@ -130,8 +119,7 @@ export class LoadVersionActivityComponent implements AfterViewInit {
           next: (blob) => {
             saveAs(blob, 'loadVersionActivity-export.csv');
             this.alertService.addAlert('', 'QA Activities downloaded.');
-          },
-          error: () => this.alertService.addAlert('', 'QA Activities download failed.'),
+          }
         }),
       )
       .subscribe();

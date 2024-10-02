@@ -56,7 +56,7 @@ app.post('/load-request/list', async (req, res) => {
   const { pagination, searchFilters, searchColumns, sortCriteria } = req.body;
   const { pageNum, pageSize } = pagination;
   const { filterRequestTime, filterRequester } = searchFilters;
-  const {
+  let {
     opRequestSeq,
     codeSystemName,
     requestSubject,
@@ -70,12 +70,16 @@ app.post('/load-request/list', async (req, res) => {
   } = searchColumns;
   const { sortBy, sortDirection } = sortCriteria;
 
+
   const $match = {};
   // searchColumns
   if (opRequestSeq) {
     $match.opRequestSeq = Number.parseInt(opRequestSeq);
   }
   if (codeSystemName && codeSystemName.length) {
+    if (typeof codeSystemName === 'string') {
+      codeSystemName = [codeSystemName];
+    }
     $match.codeSystemName = {
       $in: codeSystemName,
     };
@@ -84,11 +88,17 @@ app.post('/load-request/list', async (req, res) => {
     $match.requestSubject = new RegExp(escapeRegex(requestSubject), 'i');
   }
   if (requestStatus && requestStatus.length) {
+    if (typeof requestStatus === 'string') {
+      requestStatus = [requestStatus];
+    }
     $match.requestStatus = {
       $in: requestStatus,
     };
   }
   if (requestType && requestType.length) {
+    if (typeof requestType === 'string') {
+      requestType = [requestType];
+    }
     $match.requestType = {
       $in: requestType,
     };
@@ -231,9 +241,15 @@ app.post('/load-request', async (req, res) => {
   const apiStartTime = new Date();
   const loadRequest = req.body;
 
-  const { loadRequestsCollection } = await mongoCollection();
+  const jwtToken = req.cookies['Bearer'];
+  if (!jwtToken) return res.status(401).send();
+  const payload = jwt.verify(jwtToken, SECRET_TOKEN);
+  loadRequest.requester = payload.data;
+
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   loadRequest.creationTime = new Date();
+
+  const { loadRequestsCollection } = await mongoCollection();
   const result = await loadRequestsCollection.insertOne({
     opRequestSeq: (await getNextLoadRequestSequenceId(req)) + 1, requestStatus: 'Open', ...loadRequest,
   });

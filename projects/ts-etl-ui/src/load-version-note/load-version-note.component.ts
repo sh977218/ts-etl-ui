@@ -47,7 +47,7 @@ export class LoadVersionNoteComponent implements AfterViewInit {
   loadVersionActivities = input.required<LoadVersionActivity[]>();
 
   unwoundActivities = computed(() => {
-    return (this.loadVersionActivities() || []).flatMap(activity =>
+    return (this.loadVersionActivities()).flatMap(activity =>
       activity.notes.map(note => ({
         activityId: activity.id!,
         note: note.notes,
@@ -63,20 +63,20 @@ export class LoadVersionNoteComponent implements AfterViewInit {
     dataSource.filterPredicate = (data: ActivityNoteSortable) => {
       let hashtagMatched = true;
       if (this.searchCriteria.getRawValue().hashtags?.length) {
-        hashtagMatched = data.hashtags.includes((this.searchCriteria.getRawValue().hashtags || ''));
+        hashtagMatched = data.hashtags.includes((this.searchCriteria.getRawValue().hashtags!));
       }
       let createdByMatch = true;
       if (this.searchCriteria.getRawValue().createdBy?.length) {
-        createdByMatch = data.createdBy.toLowerCase().includes((this.searchCriteria.getRawValue().createdBy || '').toLowerCase());
+        createdByMatch = data.createdBy.toLowerCase().includes((this.searchCriteria.getRawValue().createdBy!).toLowerCase());
       }
       let activityIdMatch = true;
       if (this.searchCriteria.getRawValue().activityId?.length) {
         const dateAsString = this.easternTimePipe.transform(data.activityId, 'yyyy-MM-dd');
-        activityIdMatch = dateAsString!.toLowerCase().includes((this.searchCriteria.getRawValue().activityId || '').toLowerCase());
+        activityIdMatch = dateAsString!.toLowerCase().includes((this.searchCriteria.getRawValue().activityId!).toLowerCase());
       }
       let noteMatch = true;
       if (this.searchCriteria.getRawValue().note?.length) {
-        noteMatch = data.note.toLowerCase().includes((this.searchCriteria.getRawValue().note || '').toLowerCase());
+        noteMatch = data.note.toLowerCase().includes((this.searchCriteria.getRawValue().note!).toLowerCase());
       }
       return hashtagMatched && createdByMatch && activityIdMatch && noteMatch;
     };
