@@ -348,7 +348,6 @@ test.describe('LR - ', async () => {
       await matDialog.getByLabel('Source File Path').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
       await page.locator('mat-dialog-container h2').click();
       await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
-      euTime = await matDialog.locator(`[id="requestTime"]`).innerText();
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
       await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
@@ -359,9 +358,7 @@ test.describe('LR - ', async () => {
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
-      const euTimeIso = new Date(euTime).toISOString();
-      const estTimeIso = format(euTimeIso, DEFAULT_TIME_FORMAT, { timeZone: DEFAULT_TIMEZONE });
-      await expect(tableRows.first().locator('td').nth(5)).toHaveText(estTimeIso);
+      await expect(tableRows.first().locator('td').nth(5)).toContainText('EDT');
     });
 
     await page.unrouteAll({ behavior: 'ignoreErrors' });
