@@ -43,7 +43,6 @@ export class LoadVersionReportComparisonComponent {
 
   summaryDataSource =
     toObservable(this.codeSystemName).pipe(
-      catchError(() => []),
       switchMap((codeSystemName: string) => {
         return this.http.get<VersionStatusMeta>(`${environment.apiServer}/versionStatusMeta/${codeSystemName}`)
           .pipe(
@@ -59,8 +58,8 @@ export class LoadVersionReportComparisonComponent {
                     map((versionStatus: VersionStatus) => versionStatus.summary),
                   ),
               ])
-                .pipe(catchError(() => []),
-                );
+              .pipe(catchError(() => []),
+              );
             }),
             map(([currentVersionSummary, priorVersionSummary]) => {
               const versionSummary = [];

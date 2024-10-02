@@ -3,7 +3,7 @@
     <legend>QA Activities</legend>
     <div class="flex">
       <button mat-icon-button color="primary" (click)="downloadQaActivities()" class="transform scale-25"
-              *ngIf="dataSource.data.length">
+              *ngIf="dataSource.data.length" aria-label="Download">
         <mat-icon fontIcon="file_download"></mat-icon>
       </button>
     </div>
@@ -30,7 +30,7 @@
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
-              <button mat-icon-button color="primary" type="submit"
+              <button mat-icon-button color="primary" type="submit" aria-label="confirm"
                       (click)="$event.stopPropagation(); editDateMode = -1;" class="transform scale-25">
                 <mat-icon fontIcon="check"></mat-icon>
               </button>
@@ -44,7 +44,7 @@
             <span style="vertical-align: super">
               {{element.availableDate | easternTime:'yyyy/MM/dd z'}}
             </span>
-            <button mat-icon-button color="primary"
+            <button mat-icon-button color="primary" aria-label="Edit available date"
                     *ngIf="loadVersion().loadVersionActivities[0].activity === 'Accept' && index === 0"
                     (click)="$event.stopPropagation(); editDateMode = index" class="transform scale-25">
               <mat-icon fontIcon="edit"></mat-icon>
