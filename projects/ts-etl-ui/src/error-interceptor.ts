@@ -18,7 +18,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             next: () => this.loadingService.showLoading(),
             error: (e: HttpErrorResponse) => {
               this.loadingService.hideLoading();
-              this.alertService.addAlert('danger', e.error || 'something broken');
+              this.alertService.addAlert('danger', e.message || 'something broken');
             },
             complete: () => this.loadingService.hideLoading(),
           },
