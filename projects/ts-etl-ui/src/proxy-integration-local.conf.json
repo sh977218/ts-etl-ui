@@ -1,17 +1,9 @@
 {
-  "/portal-backend/api": {
-    "target": "http://localhost:3001/api",
-    "secure": false,
-    "pathRewrite": {
-      "^/portal-backend/api": ""
-    },
-    "changeOrigin": true
-  },
-  "/portal-backend/newApi": {
+  "/portal-backend": {
     "target": "http://localhost:3001",
     "secure": false,
     "pathRewrite": {
-      "^/portal-backend/newApi": ""
+      "^/portal-backend": ""
     },
     "changeOrigin": true
   },

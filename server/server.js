@@ -51,7 +51,8 @@ function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-app.post('/load-request/list', async (req, res) => {
+//search LR
+app.post('/api/load-request/list', async (req, res) => {
   const apiStartTime = new Date();
   const { pagination, searchFilters, searchColumns, sortCriteria } = req.body;
   const { pageNum, pageSize } = pagination;
@@ -224,7 +225,8 @@ async function getNextLoadRequestSequenceId() {
   return loadRequestsCollection.countDocuments({});
 }
 
-app.post('/loadRequest/:opRequestSeq', async (req, res) => {
+//Cancel LR
+app.post('/api/load-request/cancel/:opRequestSeq', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
 
   const loadRequest = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
@@ -237,7 +239,8 @@ app.post('/loadRequest/:opRequestSeq', async (req, res) => {
   res.send();
 });
 
-app.post('/load-request', async (req, res) => {
+//create LR
+app.post('/api/load-request', async (req, res) => {
   const apiStartTime = new Date();
   const loadRequest = req.body;
 
@@ -265,6 +268,7 @@ app.post('/load-request', async (req, res) => {
   });
 });
 
+//edit LR
 app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
   const newLoadRequest = req.body;
   const { loadRequestsCollection, loadVersionsCollection } = await mongoCollection();
@@ -292,7 +296,7 @@ app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
   res.send(updatedLR);
 });
 
-app.get('/api/loadRequest/:opRequestSeq', async (req, res) => {
+app.get('/api/load-request/:opRequestSeq', async (req, res) => {
   const { loadRequestsCollection } = await mongoCollection();
   const lr = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
   if (!lr) return res.status(404).send();
@@ -476,7 +480,7 @@ app.get('/api/versionStatusMeta/:codeSystemName', async (req, res) => {
   });
 });
 
-app.get('/property/code-system/list', async (req, res) => {
+app.get('/api/property/code-system/list', async (req, res) => {
   const apiStartTime = new Date();
   const { propertyCollection } = await mongoCollection();
   const property = await propertyCollection.findOne({ propertyName: 'create-request-code-systems' });
@@ -497,7 +501,7 @@ app.get('/property/code-system/list', async (req, res) => {
   });
 });
 
-app.get('/property/data-files/:codeSystemName', async (req, res) => {
+app.get('/api/property/data-files/:codeSystemName', async (req, res) => {
   const apiStartTime = new Date();
   const { codeSystemName } = req.params;
   const { propertyCollection } = await mongoCollection();
@@ -516,7 +520,7 @@ app.get('/property/data-files/:codeSystemName', async (req, res) => {
   });
 });
 
-app.get('/property/:propertyName', async (req, res) => {
+app.get('/api/property/:propertyName', async (req, res) => {
   const apiStartTime = new Date();
   const { propertyName } = req.params;
   const { propertyCollection } = await mongoCollection();

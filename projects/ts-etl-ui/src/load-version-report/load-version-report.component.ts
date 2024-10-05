@@ -101,7 +101,7 @@ export class LoadVersionReportComponent {
         return params['params']['requestId'];
       }),
       switchMap(requestId => {
-        return this.http.get<LoadRequest>(`${environment.apiServer}/loadRequest/${requestId}`);
+        return this.http.get<LoadRequest>(`${environment.apiServer}/load-request/${requestId}`);
       }),
     );
 

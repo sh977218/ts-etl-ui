@@ -35,7 +35,7 @@ test.describe('LR - ', async () => {
   });
 
   test('Jwt Fail', async ({ page }) => {
-    await page.route('**/api/login', route => {
+    await page.route('**/login', route => {
       route.fulfill({
         contentType: 'application/json',
         body: JSON.stringify({}),

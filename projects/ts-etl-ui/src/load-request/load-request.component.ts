@@ -261,7 +261,7 @@ export class LoadRequestComponent implements AfterViewInit {
             const loadRequestPayload: LoadRequestPayload = generateLoadRequestPayload(qp);
             // store current search/filter criteria for download
             assign(this.currentLoadRequestSearchCriteria, loadRequestPayload);
-            return this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`, this.currentLoadRequestSearchCriteria);
+            return this.http.post<LoadRequestsResponse>(`${environment.apiServer}/load-request/list`, this.currentLoadRequestSearchCriteria);
           }),
           map((res: LoadRequestsResponse) => {
             this.resultsLength = res.result.pagination.totalCount!;
@@ -285,7 +285,7 @@ export class LoadRequestComponent implements AfterViewInit {
       .afterClosed()
       .pipe(
         filter(newLoadRequest => !!newLoadRequest),
-        switchMap(newLoadRequest => this.http.post<CreateLoadRequestsResponse>(`${environment.newApiServer}/load-request`, newLoadRequest as LoadRequest)),
+        switchMap(newLoadRequest => this.http.post<CreateLoadRequestsResponse>(`${environment.apiServer}/load-request`, newLoadRequest as LoadRequest)),
         map(res => res.result.data),
         tap({
           next: (opRequestSeq) => {
@@ -298,7 +298,7 @@ export class LoadRequestComponent implements AfterViewInit {
   }
 
   download() {
-    this.http.post<LoadRequestsResponse>(`${environment.newApiServer}/load-request/list`,
+    this.http.post<LoadRequestsResponse>(`${environment.apiServer}/load-request/list`,
       Object.assign(this.currentLoadRequestSearchCriteria, {
           pagination: {
             pageNum: 1,
