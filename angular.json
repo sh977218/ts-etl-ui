@@ -81,14 +81,6 @@
               "outputHashing": "all"
             },
             "development": {
-            },
-            "ci": {
-              "fileReplacements": [
-                {
-                  "replace": "projects/ts-etl-ui/src/environments/environment.ts",
-                  "with": "projects/ts-etl-ui/src/environments/environment.ci.ts"
-                }
-              ]
             }
           },
           "defaultConfiguration": "prod"
@@ -96,9 +88,6 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "options": {
-              "proxyConfig": "projects/ts-etl-ui/src/proxy.conf.json"
-            },
             "prod": {
               "buildTarget": "ts-etl-ui:build:prod",
               "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
@@ -107,8 +96,7 @@
               "buildTarget": "ts-etl-ui:build:render"
             },
             "development": {
-              "buildTarget": "ts-etl-ui:build:development",
-              "proxyConfig": "projects/ts-etl-ui/src/proxy.conf.json"
+              "buildTarget": "ts-etl-ui:build:development"
             },
             "integration": {
               "buildTarget": "ts-etl-ui:build:integration",
@@ -117,9 +105,6 @@
             "integration-local": {
               "buildTarget": "ts-etl-ui:build:integration",
               "proxyConfig": "projects/ts-etl-ui/src/proxy-integration-local.conf.json"
-            },
-            "ci": {
-              "buildTarget": "ts-etl-ui:build:ci"
             }
           },
           "defaultConfiguration": "development"

@@ -8,6 +8,5 @@ export const environment: Environment = {
   loginUrl: '/loginUrl',
   logoutUrl: '/logoutUrl',
   loginServiceUrl: 'https://login-prod.nlm.nih.gov/uts/login',
-  apiServer: '/portal-backend/api',
-  newApiServer: '/portal-backend/newApi',
+  apiServer: '/portal-backend',
 };

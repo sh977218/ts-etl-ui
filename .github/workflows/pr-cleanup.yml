@@ -1,13 +1,16 @@
-name: Close Pull Request
+name: Clean up on PR close
 
 # only trigger on pull request closed events
 on:
   pull_request:
     types: [ closed ]
 
+env:
+  GH_TOKEN: ${{ secrets.GithubCliToken }}
+
 jobs:
-  deploy:
-    name: Clean up on PR close
+  clean_up_mongo_DB:
+    name: Clean up MongoDB collection
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,16 +27,17 @@ jobs:
       - name: Remove Mongo DB collections for pr ${{ github.event.number }}
         run: PR=${{ github.event.number }} node --env-file server/.coverage.env server/clean-up-mongo-db-for-pr.js
 
+  clean_up_azure:
+    name: Clean up Azure Static content storage
+    runs-on: ubuntu-latest
+    steps:
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       - name: Remove all-report from Azure
         uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
             az storage blob delete-batch --account-name tsetlui -s ts-etl-ui --pattern ${{github.event.pull_request.number}}*
-
-

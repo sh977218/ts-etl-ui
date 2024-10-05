@@ -60,7 +60,7 @@ import { UserService } from '../service/user-service';
 })
 export class CreateLoadRequestModalComponent {
   userService: UserService = inject(UserService);
-  
+
   CODE_SYSTEM_REQUIRED_SOURCE_FILE: string[] = [];
   loadRequestCreationForm = new FormGroup(
     {
@@ -125,7 +125,7 @@ export class CreateLoadRequestModalComponent {
     const codeSystemName = event.value;
     /* istanbul ignore else */
     if (!this.constantService.CODE_SYSTEM_REQUIRED_SOURCE_FILE.get(codeSystemName)) {
-      this.http.get<PropertyResponse>(`${environment.newApiServer}/property/data-files/${codeSystemName}`)
+      this.http.get<PropertyResponse>(`${environment.apiServer}/property/data-files/${codeSystemName}`)
         .pipe(
           map((res) => res.result.data as string[]),
           tap(res => {

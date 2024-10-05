@@ -123,7 +123,7 @@ export class LoadRequestDetailComponent implements OnInit {
         return params['params']['requestId'];
       }),
       switchMap(requestId => {
-        return this.http.get<LoadRequest>(`${environment.apiServer}/loadRequest/${requestId}`);
+        return this.http.get<LoadRequest>(`${environment.apiServer}/load-request/${requestId}`);
       }),
     );
 
@@ -194,7 +194,7 @@ export class LoadRequestDetailComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter((dialogResult: boolean) => dialogResult),
-        switchMap(() => this.http.post(`${environment.newApiServer}/loadRequest/${reqId}`, {})),
+        switchMap(() => this.http.post(`${environment.apiServer}/load-request/cancel/${reqId}`, {})),
       )
       .subscribe({
         next: () => {
