@@ -1,0 +1,17 @@
+/**
+  * Do not delete this file. this proxy is needed so that mock server can set cookie in response and browser will honor it.
+  */
+{
+  "/api": {
+    "target": "http://localhost:3000/"
+  },
+  "/ticketUrl": {
+    "target": "http://localhost:3000/api/serviceValidate",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/ticketUrl": ""
+    },
+    "loglevel": "debug"
+  }
+}

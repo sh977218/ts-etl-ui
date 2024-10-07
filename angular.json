@@ -92,11 +92,9 @@
               "buildTarget": "ts-etl-ui:build:prod",
               "proxyConfig": "projects/ts-etl-ui/src/proxy-integration.conf.json"
             },
-            "render": {
-              "buildTarget": "ts-etl-ui:build:render"
-            },
             "development": {
-              "buildTarget": "ts-etl-ui:build:development"
+              "buildTarget": "ts-etl-ui:build:development",
+              "proxyConfig": "projects/ts-etl-ui/src/proxy.conf.json"
             },
             "integration": {
               "buildTarget": "ts-etl-ui:build:integration",

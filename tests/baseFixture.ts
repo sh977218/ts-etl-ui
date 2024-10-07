@@ -76,7 +76,6 @@ const test = baseTest.extend<{
     await use(new MaterialPO(page));
   },
   page: async ({ page, baseURL }, use, testInfo) => {
-
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
         UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
@@ -97,7 +96,7 @@ const test = baseTest.extend<{
       await page.getByRole('button', { name: 'Sign in' }).click();
       await page.locator('[name="ticket"]').selectOption('Peter');
       await page.getByRole('button', { name: 'Ok' }).click();
-      await page.waitForURL(`${baseURL}/load-requests` || '');
+      await page.waitForURL(`${baseURL}/load-requests`);
     });
     await use(page);
     if (!!process.env['CI'] || process.env['COVERAGE']) {
