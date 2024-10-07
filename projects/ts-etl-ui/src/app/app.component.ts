@@ -65,9 +65,7 @@ export class AppComponent {
     this.dialog
       .open(LogInModalComponent)
       .afterClosed()
-      .subscribe((res) => {
-        console.log(res);
-      });
+      .subscribe();
   }
 
   /* istanbul ignore next */

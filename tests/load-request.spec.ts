@@ -4,6 +4,8 @@ import { readFileSync } from 'fs';
 import { EU_TIMEZONE } from './CONSTANT';
 
 test.describe('LR - ', async () => {
+  const firstCell = 'table tbody tr:first-of-type td:first-of-type';
+  const firstRow = 'table tbody tr:first-of-type';
 
   test('Not Logged in', async ({ page }) => {
     await page.goto('/load-requests');
@@ -231,8 +233,6 @@ test.describe('LR - ', async () => {
 
   });
 
-  const firstCell = 'table tbody tr:first-of-type td:first-of-type';
-  const firstRow = 'table tbody tr:first-of-type';
   test('URL Search Request Time From', async ({ page, materialPo }) => {
     await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=asc');
     await expect(materialPo.matDialog()).toBeHidden();
@@ -276,10 +276,44 @@ test.describe('LR - ', async () => {
     await expect(page.locator(firstCell)).toHaveText('6');
   });
 
-  test('Search Page Size', async ({ page }) => {
-    await page.goto('/load-requests?pageSize=15');
-    const rows = await page.locator('table tbody tr');
-    await expect(rows).toHaveCount(15);
+  test('Pagination and Sort', async ({ page, materialPo }) => {
+    const rows = page.locator('table tbody tr');
+
+    await test.step(`Go to next page`, async () => {
+      await page.getByRole('button', { name: 'Next page' }).click();
+      await expect(rows).toHaveCount(10);
+
+      await expect(page).toHaveURL(/pageNum=2/);
+      await expect(page).toHaveURL(/pageSize=10/);
+    });
+
+    await test.step(`Change sort`, async () => {
+      await page.getByRole('columnheader', { name: 'Request ID' }).click();
+      await expect(rows).toHaveCount(10);
+
+      await test.step('page size remain the same', async () => {
+        await expect(page).toHaveURL(/pageSize=10/);
+      });
+      await test.step('page number reset to 1', async () => {
+        await expect(page).toHaveURL(/pageNum=1/);
+      });
+      await expect(page).toHaveURL(/sortBy=opRequestSeq/);
+    });
+
+    await test.step(`Change page size`, async () => {
+      await page.getByRole('combobox', { name: '10' }).click();
+      await materialPo.matOption().filter({ hasText: `50` }).click();
+      await expect(rows).toHaveCount(50);
+
+      await test.step('sort remain the same', async () => {
+        await expect(page).toHaveURL(/sortBy=opRequestSeq/);
+      });
+      await test.step('page number reset to 1', async () => {
+        await expect(page).toHaveURL(/pageNum=1/);
+      });
+      await expect(page).toHaveURL(/pageSize=50/);
+    });
+
   });
 
   test('Search Returns empty', async ({ page }) => {
@@ -305,7 +339,6 @@ test.describe('LR - ', async () => {
     await page.goto('/load-request/8');
     await expect(page.locator('body')).toContainText('bensonmcgowan@zilphur.com');
   });
-
 
   test.use({ timezoneId: EU_TIMEZONE });
   test('Create Load Request in different timezone', async ({ page, materialPo }) => {
@@ -361,5 +394,4 @@ test.describe('LR - ', async () => {
 
     await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
-
 });

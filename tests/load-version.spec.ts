@@ -1,5 +1,5 @@
 import test from './baseFixture';
-import { expect } from '@playwright/test';
+import { expect, test as pwTest } from '@playwright/test';
 import { readFileSync } from 'fs';
 
 test.describe('LV - ', async () => {
@@ -49,7 +49,6 @@ test.describe('LV - ', async () => {
         page.waitForEvent('popup'),
         page.getByRole('link', { name: 'Go to QA Report' }).click(),
       ]);
-
       await expect(qaReportPage).toHaveTitle(`Version QA Report`);
     });
   });
@@ -126,23 +125,30 @@ test.describe('LV - ', async () => {
     await expect(page.locator(tbody)).toContainText('Tag.3');
   });
 
-  test('Table Exanded', async ({ page }) => {
+  test('Table Expanded', async ({ page }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
-    await page.getByRole('link', {name: 'Go to QA Report'})
+    await page.getByRole('link', { name: 'Go to QA Report' });
+
+    await page.locator(`[id="versionFilterInput"]`).fill('2023');
+    await page.keyboard.press('Enter');
+    await page.getByRole('columnheader', { name: 'Code System Name' }).click();
+    await expect(page).toHaveURL(/loadNumber=20231012080001/);
+    await expect(page).toHaveURL(/version=2023/);
+    await expect(page).toHaveURL(/sortBy=codeSystemName/);
   });
 
   test('Edit Activity Avail Date', async ({ page, materialPo }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
-    await page.getByRole('link', {name: 'Go to QA Report'})
-    await page.getByRole('button', {'name': 'Edit available date'}).click();
+    await page.getByRole('link', { name: 'Go to QA Report' });
+    await page.getByRole('button', { 'name': 'Edit available date' }).click();
     await page.locator('app-load-version-activity input').clear();
     await page.locator('app-load-version-activity input').fill('2025-03-10');
-    await page.getByRole('button', {'name': 'Confirm'}).click();
+    await page.getByRole('button', { 'name': 'Confirm' }).click();
     await materialPo.checkAndCloseAlert('Available Date Updated');
     await expect(page.locator('app-load-version-activity')).toContainText('2025/03');
   });
 
-  test(`download newly added load request`, async ({page, materialPo}) => {
+  test(`download newly added load request`, async ({ page, materialPo }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
     const [, downloadFile] = await Promise.all([
       page.getByRole('button', { name: 'Download' }).click(),
@@ -156,4 +162,19 @@ test.describe('LV - ', async () => {
     expect(fileContent).toContain('"2023-07-02T04:00:00.000Z","Accept",');
   });
 
+});
+
+pwTest('QA report on localhost 4200', async ({ page }) => {
+  await page.goto('http://localhost:4200');
+  await page.getByRole('button', { name: 'Log In' }).click();
+  await page.getByRole('button', { name: 'UTS' }).click();
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.locator('[name="ticket"]').selectOption('Peter');
+  await page.getByRole('button', { name: 'Ok' }).click();
+  await page.waitForURL(/load-requests/);
+  await expect(page.getByRole('button', { name: 'Download' })).toBeVisible();
+
+  await page.goto('http://localhost:4200/load-version-report/0');
+  const row = 'app-load-version-report-rule tbody tr:nth-of-type(2)';
+  await expect(page.locator(row)).toContainText('Code.DuplicateCode');
 });
