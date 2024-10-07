@@ -1,5 +1,8 @@
 import { Environment } from '../model/environment';
 
+/*
+ * Do not change this file, it's used by render.com.
+ */
 export const environment: Environment = {
   /* eslint-disable */
   environmentName: 'render',
