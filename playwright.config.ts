@@ -78,7 +78,7 @@ export default defineConfig({
       reuseExistingServer: true,
     },
     {
-      command: 'npm run serve:coverage',
+      command: 'npm run serve',
       port: 4200,
       reuseExistingServer: true,
     },
