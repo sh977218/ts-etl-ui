@@ -109,19 +109,19 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      opRequestSeq: new FormControl<string | null>(null),
+      opRequestSeq: new FormControl<string | null>(null, { updateOn: 'submit' }),
       codeSystemName: new FormControl<string[] | null | undefined>(null),
-      requestSubject: new FormControl<string | null>(null),
+      requestSubject: new FormControl<string | null>(null, { updateOn: 'submit' }),
       requestStatus: new FormControl<string[] | null | undefined>(null),
       requestType: new FormControl<string[] | null | undefined>(null),
       requestTimeFrom: new FormControl<Moment | string | null>(null),
       requestTimeTo: new FormControl<Moment | string | null>(null),
-      requester: new FormControl<string | null>(null),
+      requester: new FormControl<string | null>(null, { updateOn: 'submit' }),
       creationTimeFrom: new FormControl<Moment | string | null>(null),
       creationTimeTo: new FormControl<Moment | string | null>(null),
       filterRequestTime: new FormControl<string | null>(null),
       filterRequester: new FormControl<string | null>(null),
-    }, { updateOn: 'submit' },
+    },
   );
 
   currentLoadRequestSearchCriteria: LoadRequestPayload = {
