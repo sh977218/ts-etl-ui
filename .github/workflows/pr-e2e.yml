@@ -24,7 +24,7 @@ jobs:
         run: npm i
 
       - name: Reset MongoDB
-        run: npm run reset-db
+        run: PR=${{ github.event.number }} npm run reset-db
 
   e2e-test:
     needs: [ reset-db ]
