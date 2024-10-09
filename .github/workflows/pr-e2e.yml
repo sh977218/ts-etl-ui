@@ -172,3 +172,18 @@ jobs:
         if: always()
         run: |
           echo "# Deployed all report to https://tsetlui.blob.core.windows.net/ts-etl-ui/${{github.event.pull_request.number}}/index.html" >> $GITHUB_STEP_SUMMARY
+
+
+
+  # This allows us to have a branch protection rule for playwright test with matrix
+  deploy-status:
+    needs: [ e2e-test ]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: All jobs ran successful.
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Not all jobs ran successful.
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
