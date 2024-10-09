@@ -20,7 +20,6 @@ const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 let MONGO_CLIENT;
 
 export function getPrNumber() {
-
   if (PR_FROM_ENV) {
     return PR_FROM_ENV;
   }
@@ -28,8 +27,7 @@ export function getPrNumber() {
     const pr_in_url_regex = /https:\/\/ts-etl-ui-pr-(\d+)\.onrender\.com/;
     const matchedArray = pr_in_url_regex.exec(RENDER_EXTERNAL_URL);
     if (matchedArray && matchedArray.length === 2) {
-      const pr_in_url = matchedArray[1].trim();
-      return pr_in_url;
+      return matchedArray[1].trim();
     } else {
       return '';
     }
@@ -147,7 +145,7 @@ export async function resetMongoCollection() {
   });
   const db = client.db(MONGO_DBNAME);
   const PR_NUMBER = getPrNumber();
-  console.log(`resetting DB: ${db.s.namespace.db}`);
+  console.log(`resetting DB: ${db.s.namespace.db} with pr: ${PR_NUMBER}`);
   await dropMongoCollection(db, PR_NUMBER);
   await createMongoCollections(db, PR_NUMBER);
   await restoreMongoCollections(db, PR_NUMBER);
