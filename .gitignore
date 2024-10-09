@@ -53,6 +53,7 @@ Thumbs.db
 
 # coverage file
 e2e_nyc_output
+.nyc_output
 coverage-e2e
 all-report/coverage-e2e
 all-report/playwright-report
