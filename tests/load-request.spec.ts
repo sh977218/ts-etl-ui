@@ -109,7 +109,7 @@ test.describe('LR - ', async () => {
       await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
-      await materialPo.checkAndCloseAlert(`Request (ID: ${newlyCreatedLoadRequestId} ) created successfully`);
+      await materialPo.checkAndCloseAlert(`Request (ID: ${newlyCreatedLoadRequestId}) created successfully`);
     });
 
     await test.step('search for newly added load request', async () => {
