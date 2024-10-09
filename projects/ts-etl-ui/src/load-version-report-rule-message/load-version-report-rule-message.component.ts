@@ -33,9 +33,9 @@ export class LoadVersionReportRuleMessageComponent {
     const dataSource = new MatTableDataSource(this.verificationRuleMessages());
     dataSource.filterPredicate = (data: RuleMessageUI) => {
       const nameMatched = data.name.toLowerCase().includes((this.searchCriteria.getRawValue().name || '').toLowerCase());
-      const messageGroupMatched = !this.searchCriteria.getRawValue().messageGroup || data.messageGroup.toLowerCase().includes((this.searchCriteria.getRawValue().messageGroup || '').toLowerCase());
-      const messageTypeMatched = !this.searchCriteria.getRawValue().messageType || data.messageType.toLowerCase().includes((this.searchCriteria.getRawValue().messageType || '').toLowerCase());
-      const tagMatched = !this.searchCriteria.getRawValue().tag || data.tag.toLowerCase().includes((this.searchCriteria.getRawValue().tag || '').toLowerCase());
+      const messageGroupMatched = !this.searchCriteria.getRawValue().messageGroup || data.messageGroup.toLowerCase().includes((this.searchCriteria.getRawValue().messageGroup!).toLowerCase());
+      const messageTypeMatched = !this.searchCriteria.getRawValue().messageType || data.messageType.toLowerCase().includes((this.searchCriteria.getRawValue().messageType!).toLowerCase());
+      const tagMatched = !this.searchCriteria.getRawValue().tag || data.tag.toLowerCase().includes((this.searchCriteria.getRawValue().tag!).toLowerCase());
       const messageMatched = data.message.toLowerCase().includes((this.searchCriteria.getRawValue().message || '').toLowerCase());
       return nameMatched && messageGroupMatched && messageTypeMatched && tagMatched && messageMatched;
     };
@@ -82,10 +82,7 @@ export class LoadVersionReportRuleMessageComponent {
   applyFilter() {
     // this line only triggers the filter event, but the 'filter' value is not actually used in 'filterPredicate'.
     this.dataSource().filter = this.searchCriteria.getRawValue().toString();
-
-    if (this.dataSource().paginator) {
-      this.dataSource().paginator?.firstPage();
-    }
+    this.dataSource().paginator?.firstPage();
   }
 
 }

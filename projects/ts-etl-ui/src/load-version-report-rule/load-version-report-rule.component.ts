@@ -76,10 +76,7 @@ export class LoadVersionReportRuleComponent {
   applyFilter() {
     // this line only triggers the filter event, but the 'filter' value is not actually used in 'filterPredicate'.
     this.dataSource().filter = this.searchCriteria.getRawValue().toString();
-
-    if (this.dataSource().paginator) {
-      this.dataSource().paginator?.firstPage();
-    }
+    this.dataSource().paginator?.firstPage();
   }
 
   openLogViewer(element: RuleUI) {
@@ -88,6 +85,5 @@ export class LoadVersionReportRuleComponent {
       data: element,
     });
   }
-
 
 }
