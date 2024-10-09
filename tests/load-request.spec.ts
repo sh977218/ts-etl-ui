@@ -60,7 +60,7 @@ test.describe('LR - ', async () => {
     await expect(page.getByRole('table').locator('tbody tr.example-element-row')).not.toHaveCount(0);
 
     // this api interception is to make network slow, so the spinner can be verified.
-    await page.route('**/load-request/list', async route => {
+    await page.route(/load-request\/list$/, async route => {
       await page.waitForTimeout(2000);
       await route.continue();
     });
@@ -68,6 +68,17 @@ test.describe('LR - ', async () => {
     await page.route('**/loadRequest/', async route => {
       await page.waitForTimeout(2000);
       await route.continue();
+    });
+
+    let newlyCreatedLoadRequestId = '';
+
+    await page.route(/load-request$/, async route => {
+      const response = await route.fetch();
+      const body = await response.json();
+      newlyCreatedLoadRequestId = body.result.data + '';
+      await route.fulfill({
+        response,
+      });
     });
 
     await test.step('add load request', async () => {
@@ -100,11 +111,11 @@ test.describe('LR - ', async () => {
       await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
-      await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
+      await materialPo.checkAndCloseAlert(`Request (ID: ${newlyCreatedLoadRequestId}) created successfully`);
     });
 
     await test.step('search for newly added load request', async () => {
-      await page.getByPlaceholder('Req. ID').fill('149');
+      await page.getByPlaceholder('Req. ID').fill(newlyCreatedLoadRequestId);
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `Today's` }).click();
       await page.getByRole('button', { name: 'Search' }).click();
@@ -125,11 +136,11 @@ test.describe('LR - ', async () => {
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","HPO","newly created load request","Open","Scheduled"');
+      expect(fileContent).toContain(`"${newlyCreatedLoadRequestId}","HPO","newly created load request","Open","Scheduled"`);
     });
 
     await test.step(`edit load request`, async () => {
-      await page.getByText('149').click();
+      await page.getByText(newlyCreatedLoadRequestId).click();
       await page.getByRole('button', { name: 'Edit' }).click();
       await matDialog.waitFor();
       await matDialog.getByRole('radio', { name: 'Emergency' }).check();
@@ -146,7 +157,7 @@ test.describe('LR - ', async () => {
 
     await test.step('search for newly edited load request', async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
-      await page.getByPlaceholder('Req. ID').fill('149');
+      await page.getByPlaceholder('Req. ID').fill(newlyCreatedLoadRequestId);
       // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `This week's` }).click();
@@ -168,11 +179,11 @@ test.describe('LR - ', async () => {
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","CPT","newly edited load request","Open","Emergency"');
+      expect(fileContent).toContain(`"${newlyCreatedLoadRequestId}","CPT","newly edited load request","Open","Emergency"`);
     });
 
     await test.step(`cancel load request`, async () => {
-      await page.getByText('149').click();
+      await page.getByText(newlyCreatedLoadRequestId).click();
       await page.getByRole('button', { name: 'Cancel' }).click();
       await matDialog.waitFor();
       await matDialog.getByRole('button', { name: 'Confirm' }).click();
@@ -202,7 +213,7 @@ test.describe('LR - ', async () => {
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
-      expect(fileContent).toContain('"149","CPT","newly edited load request","Cancelled","Emergency"');
+      expect(fileContent).toContain(`"${newlyCreatedLoadRequestId}","CPT","newly edited load request","Cancelled","Emergency"`);
     });
 
     await page.unrouteAll({ behavior: 'ignoreErrors' });
@@ -393,5 +404,18 @@ test.describe('LR - ', async () => {
     });
 
     await page.unrouteAll({ behavior: 'ignoreErrors' });
+  });
+
+  test('download csv fail', async ({ page, materialPo }) => {
+    await page.route('**/load-request/list', async route => {
+      await route.abort();
+    });
+
+    await test.step(`download csv failed.`, async () => {
+      await page.getByRole('button', { name: 'Download' }).click();
+
+      await materialPo.checkAndCloseAlert('Export download failed.');
+    });
+
   });
 });

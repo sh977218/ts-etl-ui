@@ -28,6 +28,7 @@ export default defineConfig({
   workers: process.env.CI ? 3 : parseInt(process.env.PW_WORKERS ?? '1', 10),
 
   reporter: [
+    ['blob'],
     ['html'],
   ],
 
@@ -68,10 +69,6 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: [
-    {
-      // this is not async, no guarantee that test will start after reset DB
-      command: `npm run reset-db`,
-    },
     {
       command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
       port: 3000,
