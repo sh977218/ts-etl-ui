@@ -147,7 +147,7 @@ export async function resetMongoCollection() {
   });
   const db = client.db(MONGO_DBNAME);
   const PR_NUMBER = getPrNumber();
-  console.log(`resetting DB: ${db.s.namespace.db}`);
+  console.log(`resetting DB: ${db.s.namespace.db} with pr: ${PR_NUMBER}`);
   await dropMongoCollection(db, PR_NUMBER);
   await createMongoCollections(db, PR_NUMBER);
   await restoreMongoCollections(db, PR_NUMBER);
