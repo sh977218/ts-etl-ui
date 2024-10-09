@@ -20,7 +20,6 @@ const MONGO_DBNAME = process.env.MONGO_DBNAME || '';
 let MONGO_CLIENT;
 
 export function getPrNumber() {
-
   if (PR_FROM_ENV) {
     return PR_FROM_ENV;
   }
@@ -29,6 +28,7 @@ export function getPrNumber() {
     const matchedArray = pr_in_url_regex.exec(RENDER_EXTERNAL_URL);
     if (matchedArray && matchedArray.length === 2) {
       const pr_in_url = matchedArray[1].trim();
+      console.log(`pr_in_url: ${pr_in_url}`);
       return pr_in_url;
     } else {
       return '';
