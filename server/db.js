@@ -27,9 +27,7 @@ export function getPrNumber() {
     const pr_in_url_regex = /https:\/\/ts-etl-ui-pr-(\d+)\.onrender\.com/;
     const matchedArray = pr_in_url_regex.exec(RENDER_EXTERNAL_URL);
     if (matchedArray && matchedArray.length === 2) {
-      const pr_in_url = matchedArray[1].trim();
-      console.log(`pr_in_url: ${pr_in_url}`);
-      return pr_in_url;
+      return matchedArray[1].trim();
     } else {
       return '';
     }
