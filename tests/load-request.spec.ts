@@ -75,8 +75,10 @@ test.describe('LR - ', async () => {
     await page.route(/load-request$/, async route => {
       const response = await route.fetch();
       const body = await response.json();
-      newlyCreatedLoadRequestId = body.result.data as string;
-      await route.continue();
+      newlyCreatedLoadRequestId = body.result.data + '';
+      await route.fulfill({
+        response,
+      });
     });
 
     await test.step('add load request', async () => {
