@@ -176,9 +176,10 @@ jobs:
 
 
   # This allows us to have a branch protection rule for playwright test with matrix
-  deploy-status:
+  test-status:
     needs: [ e2e-test ]
     if: always()
+    name: Status check for matrix jobs
     runs-on: ubuntu-latest
     steps:
       - name: All jobs ran successful.
