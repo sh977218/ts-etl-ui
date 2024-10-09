@@ -8,18 +8,43 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  reset-db:
+    name: reset-db
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Reset MongoDB
+        run: npm run reset-db
+
   e2e-test:
+    needs: [ reset-db ]
+    if: always()
     name: e2e-test
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.47.0-jammy
-
+      image: mcr.microsoft.com/playwright:v1.48.0-jammy
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+        shardTotal: [ 10 ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install dependencies
         run: npm i
+
       - name: Output Node & NPM info
         run: node --version && npm --version
 
@@ -30,7 +55,64 @@ jobs:
         run: npm run build:coverage
 
       - name: Run Playwright tests
-        run: PR=${{ github.event.number }} npm run test
+        run: PR=${{ github.event.number }} npx playwright test --project=ts-etl-ui --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+      - name: Upload raw playwright blob data
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: blob-report
+          path: blob-report
+          if-no-files-found: warn
+          retention-days: 1
+
+      - name: Upload raw coverage nyc data
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: e2e_nyc_output
+          path: e2e_nyc_output
+          if-no-files-found: warn
+          retention-days: 1
+
+  generate-report:
+    needs: [ e2e-test ]
+    if: always()
+    name: generate-report
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.48.0-jammy
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Download raw playwright blob data from Previous job
+        uses: actions/download-artifact@v3
+        with:
+          name: blob-report
+          path: blob-report
+
+      - name: Download raw coverage nyc data from Previous job
+        uses: actions/download-artifact@v3
+        with:
+          name: e2e_nyc_output
+          path: e2e_nyc_output
+
+      - name: generate nyc coverage report
+        if: always()
+        run: npx nyc report
+
+      - name: generate playwright report
+        if: always()
+        run: npx playwright merge-reports --reporter html ./blob-report
 
       - name: Merge both playwright & coverage report
         if: always()
@@ -38,20 +120,20 @@ jobs:
 
       - name: Upload all-report to artifactory
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: all-report
           path: all-report
           retention-days: 30
 
   publish-report:
-    needs: [ e2e-test ]
+    needs: [ generate-report ]
     if: always()
     name: publish-report
     runs-on: ubuntu-latest
     steps:
       - name: Download all report from Previous job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: all-report
           path: all-report

@@ -394,4 +394,17 @@ test.describe('LR - ', async () => {
 
     await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
+
+  test('download csv fail', async ({ page, materialPo }) => {
+    await page.route('**/load-request/list', async route => {
+      await route.abort();
+    });
+
+    await test.step(`download csv failed.`, async () => {
+      await page.getByRole('button', { name: 'Download' }).click();
+
+      await materialPo.checkAndCloseAlert('Export download failed.');
+    });
+
+  });
 });
