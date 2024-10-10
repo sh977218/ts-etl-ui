@@ -69,7 +69,7 @@ export class AppComponent {
   }
 
   /* istanbul ignore next */
-  serverInfo$ = environment.environmentName === 'ci' ?
+  serverInfo$ = ['ci'].includes(environment.environmentName) ?
     this.http.get<{
       pr: string,
       db: string
