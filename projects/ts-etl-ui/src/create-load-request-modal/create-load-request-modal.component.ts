@@ -56,6 +56,7 @@ import { UserService } from '../service/user-service';
     EasternTimePipe,
   ],
   templateUrl: './create-load-request-modal.component.html',
+  styleUrl: './create-load-request-modal.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class CreateLoadRequestModalComponent {

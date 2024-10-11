@@ -1,0 +1,23 @@
+.custom-mat-form-field {
+  display: block;
+  position: relative;
+  padding: 16px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.38);
+  border-radius: 4px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.custom-mat-form-field legend {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+  padding: 0 8px;
+}
+
+.custom-mat-form-field:hover {
+  border-color: rgba(0, 0, 0, 0.87);
+}
+
+.custom-mat-form-field.mat-focused {
+  border-color: #3f51b5; /* Primary theme color */
+}
