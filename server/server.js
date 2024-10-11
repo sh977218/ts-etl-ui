@@ -349,7 +349,7 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
   }, []) || [];
 
   const lrResult = {
-    'loadRequestRecord': {
+    'loadRequestSummary': {
       'opRequestSeq': lr.opRequestSeq,
       'codeSystemName': lr.codeSystemName,
       'requestSubject': lr.requestSubject,

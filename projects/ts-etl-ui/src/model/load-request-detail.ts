@@ -1,6 +1,6 @@
 import { ApiResponseService, ApiResponseStatus } from './api-response';
 
-export type LoadRequestRecord = {
+export type LoadRequestSummary = {
   opRequestSeq: number;
   codeSystemName: string;
   requestSubject: string;
@@ -45,7 +45,7 @@ export type LoadComponentMessage = {
 }
 
 export type LoadRequestDetail = {
-  'loadRequestRecord': LoadRequestRecord,
+  'loadRequestSummary': LoadRequestSummary,
   'loadComponentList': [LoadComponent]
   'loadComponentMessageList': [LoadComponentMessage],
 }

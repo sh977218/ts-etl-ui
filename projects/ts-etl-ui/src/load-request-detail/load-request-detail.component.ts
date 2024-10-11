@@ -18,7 +18,7 @@ import { LoadRequestActivityComponent } from '../load-request-activity/load-requ
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadVersionReviewModalComponent } from '../load-version-review-modal/load-version-review-modal.component';
 import { LoadRequest } from '../model/load-request';
-import { LoadRequestDetailResponse, LoadRequestMessage, LoadRequestRecord } from '../model/load-request-detail';
+import { LoadRequestDetailResponse, LoadRequestMessage, LoadRequestSummary } from '../model/load-request-detail';
 import { User } from '../model/user';
 import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
@@ -130,8 +130,8 @@ export class LoadRequestDetailComponent implements OnInit {
 
   ngOnInit() {
     this.loadRequest$.subscribe((lr) => {
-      const loadRequestRecord = lr.loadRequestRecord;
-      this.dataSource = [...Object.keys(loadRequestRecord), 'loadElapsedTime', 'numberOfMessages']
+      const loadRequestSummary = lr.loadRequestSummary;
+      this.dataSource = [...Object.keys(loadRequestSummary), 'loadElapsedTime', 'numberOfMessages']
         .filter(k => !['_id', 'requesterUsername', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
         .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
         .reduce<string[]>((acc, key) => {
@@ -146,7 +146,7 @@ export class LoadRequestDetailComponent implements OnInit {
             /* istanbul ignore next */
             label: LABEL_MAPPING[key] || `something wrong about ${key}`,
             key,
-            value: loadRequestRecord[key as keyof LoadRequestRecord],
+            value: loadRequestSummary[key as keyof LoadRequestSummary],
           };
 
           if (key === 'spacer') {
@@ -158,11 +158,11 @@ export class LoadRequestDetailComponent implements OnInit {
           }
 
           if (key === 'numberOfMessages') {
-            result.value = lr.loadRequestRecord.loadRequestMessageList.length || 0;
+            result.value = lr.loadRequestSummary.loadRequestMessageList.length || 0;
           }
 
           if (key === 'loadElapsedTime') {
-            result.value = new Date(lr.loadRequestRecord.loadEndTime).getTime() - new Date(lr.loadRequestRecord.loadStartTime).getTime();
+            result.value = new Date(lr.loadRequestSummary.loadEndTime).getTime() - new Date(lr.loadRequestSummary.loadStartTime).getTime();
           }
 
           return result;
@@ -190,16 +190,16 @@ export class LoadRequestDetailComponent implements OnInit {
       });
   }
 
-  openEditDialog(loadRequestRecord: LoadRequestRecord) {
+  openEditDialog(loadRequestSummary: LoadRequestSummary) {
     this.dialog.open(CreateLoadRequestModalComponent, {
       width: '700px',
-      data: loadRequestRecord,
+      data: loadRequestSummary,
     })
       .afterClosed()
       .pipe(
         filter(newLoadRequest => !!newLoadRequest),
         switchMap(newLoadRequest => this.http.post<LoadRequest>
-        (`${environment.apiServer}/loadRequest/${loadRequestRecord.opRequestSeq}`, newLoadRequest as LoadRequest)),
+        (`${environment.apiServer}/loadRequest/${loadRequestSummary.opRequestSeq}`, newLoadRequest as LoadRequest)),
       )
       .subscribe({
         next: (newLR) => {
