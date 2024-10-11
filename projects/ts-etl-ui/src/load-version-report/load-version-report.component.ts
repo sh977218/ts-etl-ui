@@ -18,7 +18,6 @@ import {
   Observable,
   shareReplay,
   switchMap,
-  tap,
 } from 'rxjs';
 
 import { environment } from '../environments/environment';
@@ -43,6 +42,7 @@ import {
   CodeSystemSourceInformation2,
 } from '../model/code-system';
 import { LoadRequest } from '../model/load-request';
+import { LoadComponentMessage } from '../model/load-request-detail';
 import {
   LoadVersion,
   RuleMessageUI,
@@ -104,6 +104,44 @@ export class LoadVersionReportComponent {
         return this.http.get<LoadRequest>(`${environment.apiServer}/load-request/${requestId}`);
       }),
     );
+
+  loadComponentMessages$ = this.loadVersion$.pipe(map(loadVersion => {
+    return loadVersion.loadSummary.components.reduce((previousValue: LoadComponentMessage[], currentValue) => {
+      const loadComponentMessage: LoadComponentMessage[] = [
+        ...currentValue.errors.map(error => {
+          return {
+            ...error,
+            componentName: currentValue.componentName,
+            messageTag: '',
+            creationTime: '',
+            messageGroup: 'Error',
+          };
+        }),
+        ...currentValue.infos.map(info => {
+          return {
+            ...info,
+            componentName: currentValue.componentName,
+            messageTag: '',
+            creationTime: '',
+            messageGroup: 'Info',
+          };
+        }),
+        ...currentValue.warnings.map(warning => {
+          return {
+            ...warning,
+            componentName: currentValue.componentName,
+            messageTag: '',
+            creationTime: '',
+            messageGroup: 'Warning',
+          };
+        }),
+      ];
+      return [
+        ...previousValue,
+        ...loadComponentMessage,
+      ];
+    }, []) || [];
+  }));
 
   identification$: Observable<[LoadRequest, LoadVersion]> = this.loadRequest$.pipe(combineLatestWith(this.loadVersion$));
 

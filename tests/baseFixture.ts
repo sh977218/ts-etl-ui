@@ -92,7 +92,7 @@ const test = baseTest.extend<{
 
     await test.step('login', async () => {
       await page.getByRole('button', { name: 'Log In' }).click();
-      await page.getByRole('button', { name: 'UTS' }).click();
+      await page.getByRole('link', { name: 'UTS' }).click();
       await page.getByRole('button', { name: 'Sign in' }).click();
       await page.locator('[name="ticket"]').selectOption('Peter');
       await page.getByRole('button', { name: 'Ok' }).click();

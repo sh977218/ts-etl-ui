@@ -1,7 +1,7 @@
 import { CommonModule, NgIf } from '@angular/common';
 import {
   AfterViewInit,
-  Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit, ViewChild,
+  Component, computed, CUSTOM_ELEMENTS_SCHEMA, input, NO_ERRORS_SCHEMA, ViewChild,
 } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,7 +12,7 @@ import {
   MatTableDataSource, MatTableModule,
 } from '@angular/material/table';
 
-import { LoadComponent, LoadVersion } from '../model/load-version';
+import { LoadComponent } from '../model/load-request-detail';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 
 @Component({
@@ -32,8 +32,8 @@ import { EasternTimePipe } from '../service/eastern-time.pipe';
   templateUrl: './load-request-activity.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
-export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
-  @Input() loadVersion: LoadVersion;
+export class LoadRequestActivityComponent implements AfterViewInit {
+  componentActivities = input.required<LoadComponent[]>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -47,20 +47,16 @@ export class LoadRequestActivityComponent implements OnInit, AfterViewInit {
     'nbOfMessages',
   ];
 
-  dataSource: MatTableDataSource<LoadComponent> = new MatTableDataSource<LoadComponent>([]);
-
-  ngOnInit(): void {
-    this.dataSource = new MatTableDataSource(this.loadVersion.loadSummary.components);
-  }
+  dataSource = computed(() => new MatTableDataSource<LoadComponent>(this.componentActivities()));
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource().paginator = this.paginator;
+    this.dataSource().sort = this.sort;
   }
 
   duration(row: LoadComponent) {
-    const startDate = new Date(row.startTime);
-    const endDate = new Date(row.endTime);
+    const startDate = new Date(row.componentStartTime);
+    const endDate = new Date(row.componentEndTime);
     return endDate.getTime() - startDate.getTime();
   }
 

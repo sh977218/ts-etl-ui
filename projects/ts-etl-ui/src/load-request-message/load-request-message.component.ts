@@ -6,17 +6,8 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
-import { LoadVersion } from '../model/load-version';
+import { LoadComponentMessage } from '../model/load-request-detail';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
-
-type MessageUI = {
-  componentName: string;
-  messageGroup: string;
-  messageType: string;
-  tag: string;
-  message: string;
-  creationTime: Date;
-}
 
 @Component({
   selector: 'app-load-request-message',
@@ -37,7 +28,7 @@ type MessageUI = {
 })
 export class LoadRequestMessageComponent implements AfterViewInit {
 
-  loadVersion = input.required<LoadVersion>();
+  loadComponentMessages = input.required<LoadComponentMessage[]>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -51,43 +42,7 @@ export class LoadRequestMessageComponent implements AfterViewInit {
     'creationTime',
   ];
 
-  dataSource = computed(() => {
-    const messages: MessageUI[] = [];
-    this.loadVersion()?.loadSummary.components?.forEach(m => {
-      m.infos.forEach(i => {
-        messages.push({
-          componentName: m.componentName,
-          messageGroup: 'Info',
-          messageType: i.messageType,
-          message: i.message,
-          tag: i.tag,
-          creationTime: i.creationTime,
-        });
-      });
-      m.warnings.forEach(i => {
-        messages.push({
-          componentName: m.componentName,
-          messageGroup: 'Warning',
-          messageType: i.messageType,
-          message: i.message,
-          tag: i.tag,
-          creationTime: i.creationTime,
-        });
-      });
-      m.errors.forEach(i => {
-        messages.push({
-          componentName: m.componentName,
-          messageGroup: 'Error',
-          messageType: i.messageType,
-          message: i.message,
-          tag: i.tag,
-          creationTime: i.creationTime,
-        });
-      });
-    });
-
-    return new MatTableDataSource<MessageUI>(messages);
-  });
+  dataSource = computed(() => new MatTableDataSource<LoadComponentMessage>(this.loadComponentMessages()));
 
   ngAfterViewInit() {
     this.dataSource().paginator = this.paginator;

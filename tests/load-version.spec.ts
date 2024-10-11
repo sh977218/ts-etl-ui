@@ -167,7 +167,7 @@ test.describe('LV - ', async () => {
 pwTest('QA report on localhost 4200', async ({ page }) => {
   await page.goto('http://localhost:4200');
   await page.getByRole('button', { name: 'Log In' }).click();
-  await page.getByRole('button', { name: 'UTS' }).click();
+  await page.getByRole('link', { name: 'UTS' }).click();
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.locator('[name="ticket"]').selectOption('Peter');
   await page.getByRole('button', { name: 'Ok' }).click();

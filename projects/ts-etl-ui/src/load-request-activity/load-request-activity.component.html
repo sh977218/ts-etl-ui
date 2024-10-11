@@ -1,6 +1,6 @@
 <fieldset>
   <legend>Load Activities</legend>
-  <table mat-table [dataSource]="dataSource" matSort>
+  <table mat-table [dataSource]="dataSource()" matSort>
     <ng-container matColumnDef="componentName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Component name</th>
       <td mat-cell *matCellDef="let element"> {{element.componentName}} </td>
@@ -8,12 +8,12 @@
 
     <ng-container matColumnDef="startTime">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Start time</th>
-      <td mat-cell *matCellDef="let element"> {{element.startTime | easternTime}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.componentStartTime | easternTime}} </td>
     </ng-container>
 
     <ng-container matColumnDef="endTime">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> End Time</th>
-      <td mat-cell *matCellDef="let element"> {{element.endTime | easternTime}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.componentEndTime | easternTime}} </td>
     </ng-container>
 
     <ng-container matColumnDef="duration">
@@ -23,13 +23,12 @@
 
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
-      <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.componentStatus}} </td>
     </ng-container>
 
     <ng-container matColumnDef="nbOfMessages">
       <th mat-header-cell *matHeaderCellDef mat-sort-header># of Messages</th>
-      <td mat-cell
-          *matCellDef="let element"> {{element.infos.length + element.warnings.length + element.errors.length}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.messageCount}} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
