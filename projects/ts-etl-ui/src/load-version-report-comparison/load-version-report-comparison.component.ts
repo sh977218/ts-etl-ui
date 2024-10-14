@@ -46,7 +46,6 @@ export class LoadVersionReportComparisonComponent {
       switchMap((codeSystemName: string) => {
         return this.http.get<VersionStatusMeta>(`${environment.apiServer}/versionStatusMeta/${codeSystemName}`)
           .pipe(
-            catchError(() => []),
             switchMap((versionStatusMeta: VersionStatusMeta) => {
               return forkJoin([
                 this.http.get<VersionStatus>(`${environment.apiServer}/versionStatus/${versionStatusMeta.codeSystemName}/${versionStatusMeta.currentVersion}`)

@@ -62,6 +62,18 @@ test.describe('LV - ', async () => {
 
     await page.locator('#messageGroupSearch').selectOption('Warning');
     await expect(page.locator(firstRow)).not.toContainText('Code D90012 is not mapped to a term');
+    await expect(page.locator(firstRow)).toContainText('The difference of TERM');
+    await page.locator('#messageGroupSearch').selectOption('All');
+
+    await page.locator('#messageTypeSearch').selectOption('DEV');
+    await expect(page.locator(firstRow)).toContainText('Code D90012 is not mapped to a term');
+    await expect(page.locator(firstRow)).not.toContainText('The difference of TERM');
+    await page.locator('#messageTypeSearch').selectOption('All');
+
+    await page.locator('#tagSearch').selectOption('DUPLICATE_CODE_COUNT');
+    await expect(page.locator(firstRow)).not.toContainText('The difference of TERM');
+    await expect(page.locator(firstRow)).toContainText('Code D90001 appears more than once');
+    await page.locator('#tagSearch').selectOption('All');
   });
 
   test('QA Rules', async ({ page, materialPo }) => {
@@ -135,6 +147,13 @@ test.describe('LV - ', async () => {
     await expect(page).toHaveURL(/loadNumber=20231012080001/);
     await expect(page).toHaveURL(/version=2023/);
     await expect(page).toHaveURL(/sortBy=codeSystemName/);
+  });
+
+  test('Collapse Table', async ({ page }) => {
+    await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
+    await expect(page.locator('main')).toContainText('View Source Data Files');
+    await page.locator('tbody tr td .fake-link', { hasText: '20231012080001' }).click();
+    await expect(page.locator('main')).not.toContainText('View Source Data Files');
   });
 
   test('Edit Activity Avail Date', async ({ page, materialPo }) => {

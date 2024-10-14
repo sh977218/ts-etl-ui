@@ -198,7 +198,7 @@ export class LoadVersionComponent implements AfterViewInit {
       });
   }
 
-  expandRow(row: LoadVersion | null | undefined) {
+  expandRow(row: LoadVersion) {
     this.expandedElement = this.expandedElement === row ? null : row;
   }
 
@@ -215,7 +215,7 @@ export class LoadVersionComponent implements AfterViewInit {
           loadVersion.loadVersionActivities = updatedLoadVersion.loadVersionActivities;
           loadVersion.versionStatus = updatedLoadVersion.versionStatus;
           this.alertService.addAlert('', 'Activity added successfully.');
-        }, error: () => this.alertService.addAlert('', 'Activity add failed.'),
+        },
       });
   }
 
@@ -242,8 +242,6 @@ export class LoadVersionComponent implements AfterViewInit {
           loadVersion.loadVersionActivities[0].notes.push(activityNote);
           loadVersion.loadVersionActivities = [...loadVersion.loadVersionActivities];
           this.alertService.addAlert('', 'Note added successfully.');
-        }, error: () => {
-          this.alertService.addAlert('', 'Note add failed.');
         },
       });
   }

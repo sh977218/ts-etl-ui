@@ -18,7 +18,6 @@ import {
   Observable,
   shareReplay,
   switchMap,
-  tap,
 } from 'rxjs';
 
 import { environment } from '../environments/environment';
