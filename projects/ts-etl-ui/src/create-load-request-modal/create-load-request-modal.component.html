@@ -41,8 +41,8 @@
         </mat-error>
       </mat-form-field>
       <div class="mb-5">
-        <fieldset class="custom-mat-form-field">
-          <legend class="mat-label">Request Type</legend>
+        <fieldset class="custom-mat-form-field" [ngClass]="loadRequestCreationForm.get('requestType')?.errors?'border-red-500':''">
+          <legend class="mat-label">Request Type*</legend>
           <mat-radio-group aria-label-by="load-request-type-label" id="load-request-type-radio"
                          formControlName="requestType">
             <div class="ml-20">
