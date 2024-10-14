@@ -229,7 +229,6 @@ test.describe('LR - ', async () => {
     });
 
     await test.step(`Search and verify result`, async () => {
-      await page.getByRole('button', { name: 'Search' }).click();
       const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
       await expect(tableRows).toHaveCount(2);
       await expect(tableRows.first()).toContainText('MMSL');
@@ -394,7 +393,6 @@ test.describe('LR - ', async () => {
 
     await test.step(`verify load request created in ${EU_TIMEZONE}`, async () => {
       await page.getByPlaceholder('subject...').fill(newCreateSubject);
-      await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
       await expect(tableRows.first().locator('td').nth(5)).toContainText('EDT');
