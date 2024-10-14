@@ -47,7 +47,7 @@ test.describe('LR - ', async () => {
     await expect(page.locator('body')).toContainText('This application requires you to log in');
   });
 
-  test('Load Request table @smoke', async ({ page, materialPo }) => {
+  test('Load Request table', async ({ page, materialPo }) => {
     const matDialog = materialPo.matDialog();
 
     await expect(page.getByRole('link', { name: 'Load Request' })).toBeVisible();
