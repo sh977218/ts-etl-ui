@@ -35,6 +35,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Fetch latest merged pr workflow
         id: latest_merged_pr_run_id
         run: echo "run_id=$(gh run list -w 'Playwright Tests' -b ${{ github.event.pull_request.head.ref }} -s completed -L 1 --json 'databaseId' --jq '.[].databaseId')" >> $GITHUB_OUTPUT
@@ -46,16 +49,19 @@ jobs:
           run-id: ${{ steps.latest_merged_pr_run_id.outputs.run_id }}
           name: all-report          # the artifact name uploaded
           path: all-report  # the folder name where artifact will be downloaded to
+
       - name: Upload all report to github-pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: all-report
+
       - name: Deploy all report to Github Pages
         if: always()
         id: deploy-all-report-to-github
         uses: actions/deploy-pages@v4
         with:
           preview: true
+
       - name: update job summary
         run: echo "# Deployed all report to ${{ steps.deploy-all-report-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
 
