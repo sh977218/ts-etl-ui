@@ -37,7 +37,8 @@ jobs:
     steps:
       - name: Fetch latest merged pr workflow
         id: latest_merged_pr_run_id
-        run: echo "run_id=$(gh run list -w 'Playwright Tests' -s completed -L 1 --json databaseId --jq '.[].databaseId')" >> $GITHUB_OUTPUT
+        run: echo "run_id=$(gh run list -w 'Playwright Tests' -b ${{ github.event.pull_request.base.ref }} -s completed -L 1 --json 'databaseId' --jq '.[].databaseId')" >> $GITHUB_OUTPUT ||
+
       - name: Download latest merged pr code coverage
         uses: actions/download-artifact@v4
         with:

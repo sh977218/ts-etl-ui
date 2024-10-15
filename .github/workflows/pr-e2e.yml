@@ -7,6 +7,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  GH_TOKEN: ${{ secrets.GithubCliToken }}
+
 jobs:
   reset-db:
     name: reset-db
@@ -25,6 +28,9 @@ jobs:
 
       - name: Reset MongoDB
         run: PR=${{ github.event.number }} npm run reset-db
+
+      - run: echo "run_id=$(gh run list -w 'Playwright Tests' -b ${{ github.event.pull_request.base.ref }} -s completed -L 1 --json 'databaseId' --jq '.[].databaseId')" >> $GITHUB_OUTPUT ||
+
 
   e2e-test:
     needs: [ reset-db ]
