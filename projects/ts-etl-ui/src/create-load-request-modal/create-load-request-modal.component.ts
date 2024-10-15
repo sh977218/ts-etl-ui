@@ -1,5 +1,5 @@
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, Inject, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -54,8 +54,10 @@ import { UserService } from '../service/user-service';
     MatDatepickerToggle,
     CdkCopyToClipboard,
     EasternTimePipe,
+    NgClass,
   ],
   templateUrl: './create-load-request-modal.component.html',
+  styleUrl: './create-load-request-modal.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class CreateLoadRequestModalComponent {

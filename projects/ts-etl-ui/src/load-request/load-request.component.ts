@@ -27,7 +27,7 @@ import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash';
 import { default as _rollupMoment, Moment } from 'moment';
-import { filter, map, startWith, Subject, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { environment } from '../environments/environment';
@@ -121,7 +121,7 @@ export class LoadRequestComponent implements AfterViewInit {
       creationTimeTo: new FormControl<Moment | string | null>(null),
       filterRequestTime: new FormControl<string | null>(null),
       filterRequester: new FormControl<string | null>(null),
-    }, { updateOn: 'submit' },
+    },
   );
 
   currentLoadRequestSearchCriteria: LoadRequestPayload = {
@@ -147,29 +147,36 @@ export class LoadRequestComponent implements AfterViewInit {
               private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
     this.searchCriteria.valueChanges
-      .subscribe(val => {
-        const queryParams = { pageNum: 1, ...val };
-        const requestTimeFrom = val.requestTimeFrom;
-        if (requestTimeFrom) {
-          queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
-        }
-        const requestTimeTo = val.requestTimeTo;
-        if (requestTimeTo) {
-          queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
-        }
-        const creationTimeFrom = val.creationTimeFrom;
-        if (creationTimeFrom) {
-          queryParams.creationTimeFrom = (creationTimeFrom as Moment).toISOString();
-        }
-        const creationTimeTo = val.creationTimeTo;
-        if (creationTimeTo) {
-          queryParams.creationTimeTo = (creationTimeTo as Moment).toISOString();
-        }
-        this.router.navigate(['load-requests'], {
-          queryParamsHandling: 'merge',
-          queryParams,
-        });
-      });
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap({
+          next: val => {
+            const queryParams = { pageNum: 1, ...val };
+            const requestTimeFrom = val.requestTimeFrom;
+            if (requestTimeFrom) {
+              queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
+            }
+            const requestTimeTo = val.requestTimeTo;
+            if (requestTimeTo) {
+              queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
+            }
+            const creationTimeFrom = val.creationTimeFrom;
+            if (creationTimeFrom) {
+              queryParams.creationTimeFrom = (creationTimeFrom as Moment).toISOString();
+            }
+            const creationTimeTo = val.creationTimeTo;
+            if (creationTimeTo) {
+              queryParams.creationTimeTo = (creationTimeTo as Moment).toISOString();
+            }
+            this.router.navigate(['load-requests'], {
+              queryParamsHandling: 'merge',
+              queryParams,
+            });
+          },
+        }),
+      )
+      .subscribe();
   }
 
   ngAfterViewInit() {
