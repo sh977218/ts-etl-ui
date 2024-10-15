@@ -31,6 +31,10 @@ jobs:
     name: Publish latest merged pr code coverage
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -49,6 +53,10 @@ jobs:
           run-id: ${{ steps.latest_merged_pr_run_id.outputs.run_id }}
           name: all-report          # the artifact name uploaded
           path: all-report  # the folder name where artifact will be downloaded to
+
+      - name: Setup Pages
+        if: always()
+        uses: actions/configure-pages@v4
 
       - name: Upload all report to github-pages
         uses: actions/upload-pages-artifact@v3
