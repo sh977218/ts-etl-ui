@@ -27,7 +27,40 @@ jobs:
       - name: Remove Mongo DB collections for pr ${{ github.event.number }}
         run: PR=${{ github.event.number }} node --env-file server/.coverage.env server/clean-up-mongo-db-for-pr.js
 
+  copy-code-coverage:
+    name: Publish latest merged pr code coverage
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Fetch latest merged pr workflow
+        id: latest_merged_pr_run_id
+        run: echo "run_id=$(gh run list -w 'Playwright Tests' -b ${{ github.event.pull_request.head.ref }} -s completed -L 1 --json 'databaseId' --jq '.[].databaseId')" >> $GITHUB_OUTPUT
+
+      - name: Download latest merged pr code coverage
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GithubCliToken }}
+          run-id: ${{ steps.latest_merged_pr_run_id.outputs.run_id }}
+          name: all-report          # the artifact name uploaded
+          path: all-report  # the folder name where artifact will be downloaded to
+      - name: Upload all report to github-pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: all-report
+      - name: Deploy all report to Github Pages
+        if: always()
+        id: deploy-all-report-to-github
+        uses: actions/deploy-pages@v4
+        with:
+          preview: true
+      - name: update job summary
+        run: echo "# Deployed all report to ${{ steps.deploy-all-report-to-github.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+
   clean_up_azure:
+    needs: [ copy-code-coverage ]
     name: Clean up Azure Static content storage
     runs-on: ubuntu-latest
     steps:
@@ -41,3 +74,8 @@ jobs:
           azcliversion: latest
           inlineScript: |
             az storage blob delete-batch --account-name tsetlui -s ts-etl-ui --pattern ${{github.event.pull_request.number}}*
+
+
+
+
+
