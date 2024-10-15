@@ -29,9 +29,6 @@ jobs:
       - name: Reset MongoDB
         run: PR=${{ github.event.number }} npm run reset-db
 
-      - run: echo "run_id=$(gh run list -w 'Playwright Tests' -b ${{ github.event.pull_request.head.ref }} -s completed -L 1 --json 'databaseId' --jq '.[].databaseId')" >> $GITHUB_OUTPUT ||
-
-
   e2e-test:
     needs: [ reset-db ]
     if: always()
