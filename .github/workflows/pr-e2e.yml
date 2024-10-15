@@ -7,9 +7,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  GH_TOKEN: ${{ secrets.GithubCliToken }}
-
 jobs:
   reset-db:
     name: reset-db
