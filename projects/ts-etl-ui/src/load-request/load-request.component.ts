@@ -39,7 +39,7 @@ import {
   FlatLoadRequestPayload,
   generateLoadRequestPayload,
   LoadRequest,
-  LoadRequestPayload,
+  LoadRequestPayload, LoadRequestSearchForm,
   LoadRequestsResponse,
 } from '../model/load-request';
 import { User } from '../model/user';
@@ -121,7 +121,7 @@ export class LoadRequestComponent implements AfterViewInit {
       creationTimeTo: new FormControl<Moment | string | null>(null),
       filterRequestTime: new FormControl<string | null>(null),
       filterRequester: new FormControl<string | null>(null),
-    },
+    }, { updateOn: 'submit' },
   );
 
   currentLoadRequestSearchCriteria: LoadRequestPayload = {
@@ -136,6 +136,62 @@ export class LoadRequestComponent implements AfterViewInit {
       sortBy: 'requestSubject',
     },
   };
+  
+  formChanged$ = this.searchCriteria.valueChanges.pipe(
+    debounceTime(500),
+    distinctUntilChanged(),
+    tap({
+      next: val => {
+        const queryParams = { pageNum: 1, ...val };
+        const requestTimeFrom = val.requestTimeFrom;
+        if (requestTimeFrom) {
+          queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
+        }
+        const requestTimeTo = val.requestTimeTo;
+        if (requestTimeTo) {
+          queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
+        }
+        const creationTimeFrom = val.creationTimeFrom;
+        if (creationTimeFrom) {
+          queryParams.creationTimeFrom = (creationTimeFrom as Moment).toISOString();
+        }
+        const creationTimeTo = val.creationTimeTo;
+        if (creationTimeTo) {
+          queryParams.creationTimeTo = (creationTimeTo as Moment).toISOString();
+        }
+        this.router.navigate(['load-requests'], {
+          queryParamsHandling: 'merge',
+          queryParams,
+        });
+      },
+    }),
+  );
+  routerChanged$ = this.activatedRoute.queryParamMap.pipe(
+    // update UI from query parameters
+    map((queryParams: Params) => {
+      const searchCriteriaFromQueryParameter: FlatLoadRequestPayload = {
+        opRequestSeq: queryParams.get('opRequestSeq'),
+        codeSystemName: queryParams.getAll('codeSystemName'),
+        requestSubject: queryParams.get('requestSubject'),
+        requestStatus: queryParams.getAll('requestStatus'),
+        requestType: queryParams.getAll('requestType'),
+        requestTimeFrom: queryParams.get('requestTimeFrom'),
+        requestTimeTo: queryParams.get('requestTimeTo'),
+        requester: queryParams.get('requester'),
+        creationTimeFrom: queryParams.get('creationTimeFrom'),
+        creationTimeTo: queryParams.get('creationTimeTo'),
+        filterRequestTime: queryParams.get('filterRequestTime'),
+        filterRequester: queryParams.get('filterRequester'),
+        pageNum: Number(queryParams.get('pageNum')),
+        pageSize: Number(queryParams.get('pageSize')),
+        sortBy: queryParams.get('sortBy'),
+        sortDirection: queryParams.get('sortDirection'),
+      };
+      const loadRequestSearchForm = { ...searchCriteriaFromQueryParameter };
+      this.updateSearchFormWhenQueryParameterChanged(loadRequestSearchForm);
+      return searchCriteriaFromQueryParameter;
+    }),
+  );
 
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
@@ -146,37 +202,7 @@ export class LoadRequestComponent implements AfterViewInit {
               private alertService: AlertService,
               private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
-    this.searchCriteria.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        tap({
-          next: val => {
-            const queryParams = { pageNum: 1, ...val };
-            const requestTimeFrom = val.requestTimeFrom;
-            if (requestTimeFrom) {
-              queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
-            }
-            const requestTimeTo = val.requestTimeTo;
-            if (requestTimeTo) {
-              queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
-            }
-            const creationTimeFrom = val.creationTimeFrom;
-            if (creationTimeFrom) {
-              queryParams.creationTimeFrom = (creationTimeFrom as Moment).toISOString();
-            }
-            const creationTimeTo = val.creationTimeTo;
-            if (creationTimeTo) {
-              queryParams.creationTimeTo = (creationTimeTo as Moment).toISOString();
-            }
-            this.router.navigate(['load-requests'], {
-              queryParamsHandling: 'merge',
-              queryParams,
-            });
-          },
-        }),
-      )
-      .subscribe();
+    this.formChanged$.subscribe();
   }
 
   ngAfterViewInit() {
@@ -184,86 +210,7 @@ export class LoadRequestComponent implements AfterViewInit {
       startWith(true),
       filter(reload => !!reload),
       switchMap(() => {
-        return this.activatedRoute.queryParamMap.pipe(
-          // update UI from query parameters
-          map((queryParams: Params) => {
-            const searchCriteriaFromQueryParameter: FlatLoadRequestPayload = {
-              opRequestSeq: queryParams.get('opRequestSeq'),
-              codeSystemName: queryParams.getAll('codeSystemName'),
-              requestSubject: queryParams.get('requestSubject'),
-              requestStatus: queryParams.getAll('requestStatus'),
-              requestType: queryParams.getAll('requestType'),
-              requestTimeFrom: queryParams.get('requestTimeFrom'),
-              requestTimeTo: queryParams.get('requestTimeTo'),
-              requester: queryParams.get('requester'),
-              creationTimeFrom: queryParams.get('creationTimeFrom'),
-              creationTimeTo: queryParams.get('creationTimeTo'),
-              filterRequestTime: queryParams.get('filterRequestTime'),
-              filterRequester: queryParams.get('filterRequester'),
-              pageNum: queryParams.get('pageNum'),
-              pageSize: queryParams.get('pageSize'),
-              sortBy: queryParams.get('sortBy'),
-              sortDirection: queryParams.get('sortDirection'),
-            };
-
-            /*
-            @TODO find an elegant way to patch the entire form without trigger valueChanges
-             If you patch the entire reactive form, even with `emitEvent: false`, there will be many valueChange triggered, one per changes.
-             I had to patch reactive form's individual property with `emitEvent: false` so it doesn't propagate the valueChange.
-           */
-            const searchCriteriaPatch = { ...searchCriteriaFromQueryParameter };
-            if (searchCriteriaPatch.opRequestSeq) {
-              this.searchCriteria.controls.opRequestSeq.patchValue(searchCriteriaPatch.opRequestSeq, {
-                emitEvent: false,
-              });
-            }
-            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName, {
-              emitEvent: false,
-            });
-            if (searchCriteriaPatch.requestSubject) {
-              this.searchCriteria.controls.requestSubject.patchValue(searchCriteriaPatch.requestSubject, {
-                emitEvent: false,
-              });
-            }
-            this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus, {
-              emitEvent: false,
-            });
-            this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType, {
-              emitEvent: false,
-            });
-            if (searchCriteriaPatch.requestTimeFrom) {
-              this.searchCriteria.controls.requestTimeFrom.patchValue(moment(searchCriteriaPatch.requestTimeFrom), {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.requestTimeTo) {
-              this.searchCriteria.controls.requestTimeTo.patchValue(moment(searchCriteriaPatch.requestTimeTo), {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.requester) {
-              this.searchCriteria.controls.requester.patchValue(searchCriteriaPatch.requester, {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.creationTimeFrom) {
-              this.searchCriteria.controls.creationTimeFrom.patchValue(moment(searchCriteriaPatch.creationTimeFrom), {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.creationTimeTo) {
-              this.searchCriteria.controls.creationTimeTo.patchValue(moment(searchCriteriaPatch.creationTimeTo), {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.filterRequestTime) {
-              this.searchCriteria.controls.filterRequestTime.patchValue(searchCriteriaPatch.filterRequestTime, {
-                emitEvent: false,
-              });
-            }
-
-            return searchCriteriaFromQueryParameter;
-          }),
+        return this.routerChanged$.pipe(
           switchMap((qp) => {
             const loadRequestPayload: LoadRequestPayload = generateLoadRequestPayload(qp);
             // store current search/filter criteria for download
@@ -283,6 +230,67 @@ export class LoadRequestComponent implements AfterViewInit {
         );
       }))
       .subscribe();
+  }
+
+  /**
+   * @TODO find an elegant way to patch the entire form without trigger valueChanges
+   * If you patch the entire reactive form at once, even with `emitEvent: false`, there will be many valueChange triggered, one per changes.
+   * I had to patch reactive form's individual property with `emitEvent: false` so it doesn't propagate the valueChange.
+   */
+  private updateSearchFormWhenQueryParameterChanged = (searchCriteriaPatch: LoadRequestSearchForm) => {
+    if (searchCriteriaPatch.opRequestSeq) {
+      this.searchCriteria.controls.opRequestSeq.patchValue(searchCriteriaPatch.opRequestSeq, {
+        emitEvent: false,
+      });
+    }
+    this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName, {
+      emitEvent: false,
+    });
+    if (searchCriteriaPatch.requestSubject) {
+      this.searchCriteria.controls.requestSubject.patchValue(searchCriteriaPatch.requestSubject, {
+        emitEvent: false,
+      });
+    }
+    this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus, {
+      emitEvent: false,
+    });
+    this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType, {
+      emitEvent: false,
+    });
+    if (searchCriteriaPatch.requestTimeFrom) {
+      this.searchCriteria.controls.requestTimeFrom.patchValue(moment(searchCriteriaPatch.requestTimeFrom), {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.requestTimeTo) {
+      this.searchCriteria.controls.requestTimeTo.patchValue(moment(searchCriteriaPatch.requestTimeTo), {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.requester) {
+      this.searchCriteria.controls.requester.patchValue(searchCriteriaPatch.requester, {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.creationTimeFrom) {
+      this.searchCriteria.controls.creationTimeFrom.patchValue(moment(searchCriteriaPatch.creationTimeFrom), {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.creationTimeTo) {
+      this.searchCriteria.controls.creationTimeTo.patchValue(moment(searchCriteriaPatch.creationTimeTo), {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.filterRequestTime) {
+      this.searchCriteria.controls.filterRequestTime.patchValue(searchCriteriaPatch.filterRequestTime, {
+        emitEvent: false,
+      });
+    }
+  };
+
+  public doSearch() {
+    return this.http.post<LoadRequestsResponse>(`${environment.apiServer}/load-request/list`, this.currentLoadRequestSearchCriteria);
   }
 
   openCreateLoadRequestModal() {
@@ -328,9 +336,9 @@ export class LoadRequestComponent implements AfterViewInit {
       .subscribe();
   }
 
-  handlePageEvent(e: PageEvent) {
+  async handlePageEvent(e: PageEvent) {
     const { pageIndex, pageSize } = e;
-    this.router.navigate(['load-requests'], {
+    await this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
         // mat paginator is 0 base index, but API expect 1 base index.
@@ -340,9 +348,9 @@ export class LoadRequestComponent implements AfterViewInit {
     });
   }
 
-  handleSortEvent(e: Sort) {
+  async handleSortEvent(e: Sort) {
     const { active, direction } = e;
-    this.router.navigate(['load-requests'], {
+    await this.router.navigate(['load-requests'], {
       queryParamsHandling: 'merge',
       queryParams: {
         pageNum: 1,

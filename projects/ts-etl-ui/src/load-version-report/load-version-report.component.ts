@@ -102,6 +102,7 @@ export class LoadVersionReportComponent {
       switchMap(requestId => {
         return this.http.get<LoadRequest>(`${environment.apiServer}/load-request/${requestId}`);
       }),
+      shareReplay(1),
     );
 
   identification$: Observable<[LoadRequest, LoadVersion]> = this.loadRequest$.pipe(combineLatestWith(this.loadVersion$));

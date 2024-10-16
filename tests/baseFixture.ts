@@ -47,10 +47,19 @@ class MaterialPO {
     return this.page.locator('mat-option');
   }
 
-  async selectMultiOptions(selectLocator: Locator, options: string[]) {
+  /**
+   *
+   * @param selectLocator the locator where the select button is
+   * @param options the options to select the dropdown
+   * @param waitForSpinner default true, whether waits for mat spinner or not, if true, there is a need to slow down the api by intercept the request
+   */
+  async selectMultiOptions(selectLocator: Locator, options: string[], waitForSpinner = true) {
     await selectLocator.click();
     for (const option of options) {
       await this.page.getByRole('option', { name: option }).click();
+      if (waitForSpinner) {
+        await this.waitForSpinner();
+      }
     }
     await this.page.keyboard.press('Escape');
   }
