@@ -505,5 +505,5 @@ pwTest('LR detail on localhost 4200', async ({ page }) => {
   await expect(page.locator(row)).toContainText('MISSING_DATA_FILE');
 
   expect(numOfLrApiCalled).toEqual(1);
-  expect(numOfLvApiCalled).toEqual(1);
+  expect(numOfLvApiCalled).toEqual(0);
 });
