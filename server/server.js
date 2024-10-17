@@ -591,14 +591,14 @@ app.get('/api/login', async (req, res) => {
     payload = jwt.verify(jwtToken, SECRET_TOKEN);
   } catch (e) {
     return res.send(500);
-  } finally {
-    if (!payload) {
-      return res.send(500);
-    }
-    const { usersCollection } = await mongoCollection();
-    const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
-    res.send(user);
   }
+  if (!payload) {
+    return res.send(500);
+  }
+  const { usersCollection } = await mongoCollection();
+  const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
+  res.send(user);
+
 });
 
 app.post('/api/logout', async (req, res) => {
