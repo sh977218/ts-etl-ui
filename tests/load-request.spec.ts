@@ -1,9 +1,15 @@
 import test from './baseFixture';
 import { expect, test as pwTest } from '@playwright/test';
 import { readFileSync } from 'fs';
-import { EU_TIMEZONE } from './CONSTANT';
+import { EU_TIMEZONE, MatDate } from './CONSTANT';
 
 test.describe('LR -', async () => {
+  const today = new Date();
+  const todayInMatDate: MatDate = {
+    year: today.getFullYear(),
+    month: today.getMonth(),
+    day: today.getDay(),
+  };
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
   const firstRow = 'table tbody tr:first-of-type';
 
@@ -258,10 +264,10 @@ test.describe('LR -', async () => {
     await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
-  test.describe(`Search Request Time From`, async () => {
+  test.describe(`Request Time`, async () => {
     test('input', async ({ page, materialPo }) => {
       const datePicker = page.locator(`[id="requestTimeRange"]`);
-      await materialPo.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 });
+      await materialPo.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 }, todayInMatDate);
       await expect(materialPo.matDialog()).toBeHidden();
       await page.getByRole('columnheader', { name: 'Request Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
@@ -269,37 +275,28 @@ test.describe('LR -', async () => {
     });
 
     test('URL', async ({ page, materialPo }) => {
-      await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=asc');
+      await page.goto('/load-requests?requestTimeFrom=2017-11-01&requestTimeTo=2024-10-1&sortBy=requestTime&sortDirection=asc');
       await expect(materialPo.matDialog()).toBeHidden();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
     });
   });
 
-  test('URL Search Request Time To', async ({ page }) => {
-    await page.goto('/load-requests?requestTimeFrom=2017-11-01&requestTimeTo=2017-11-30&sortBy=requestTime&sortDirection=desc');
-    await expect(page.locator(firstCell)).toHaveText('59');
-  });
-
-  test.describe(`Search Creation Time From`, async () => {
+  test.describe(`Creation Time`, async () => {
     test('input', async ({ page, materialPo }) => {
       const datePicker = page.locator(`[id="creationTimeRange"]`);
-      await materialPo.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 });
+      await materialPo.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 }, todayInMatDate);
       await expect(materialPo.matDialog()).toBeHidden();
       await page.getByRole('columnheader', { name: 'Creation Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
     });
 
-    test('URL', async ({ page }) => {
-      await page.goto('/load-requests?creationTimeFrom=2010-01-01&sortBy=creationTime&sortDirection=asc');
+    test('URL', async ({ page, materialPo }) => {
+      await page.goto('/load-requests?creationTimeFrom=2010-01-01&creationTimeTo=2013-01-01&sortBy=creationTime&sortDirection=desc');
+      await expect(materialPo.matDialog()).toBeHidden();
       await expect(page.locator(firstCell)).toHaveText('27');
     });
-
-  });
-  test('URL Search Creation Time To', async ({ page }) => {
-    await page.goto('/load-requests?creationTimeFrom=2010-01-01&creationTimeTo=2013-01-01&sortBy=creationTime&sortDirection=desc');
-    await expect(page.locator(firstCell)).toHaveText('27');
   });
 
   test.describe('Subject Filter', async () => {
