@@ -9,7 +9,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { filter, map, switchMap } from 'rxjs';
+import { filter, map, shareReplay, switchMap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
@@ -126,6 +126,7 @@ export class LoadRequestDetailComponent implements OnInit {
         return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`)
           .pipe(map(res => res.result.data));
       }),
+      shareReplay(1),
     );
 
   ngOnInit() {
