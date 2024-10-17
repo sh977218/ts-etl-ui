@@ -41,8 +41,7 @@ import {
   CodeSystemSourceInformation1,
   CodeSystemSourceInformation2,
 } from '../model/code-system';
-import { LoadRequest } from '../model/load-request';
-import { LoadComponentMessage } from '../model/load-request-detail';
+import { LoadComponentMessage, LoadRequestDetailResponse } from '../model/load-request-detail';
 import {
   LoadVersion,
   RuleMessageUI,
@@ -90,7 +89,7 @@ export class LoadVersionReportComponent {
         return params['params']['requestId'];
       }),
       switchMap(requestId => {
-        return this.http.get<LoadRequest>(`${environment.apiServer}/load-request/${requestId}`);
+        return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`);
       }),
       shareReplay(1),
     );
@@ -146,7 +145,7 @@ export class LoadVersionReportComponent {
     }, []) || [];
   }));
 
-  identification$: Observable<[LoadRequest, LoadVersion]> = this.loadRequest$.pipe(combineLatestWith(this.loadVersion$));
+  identification$: Observable<[LoadRequestDetailResponse, LoadVersion]> = this.loadRequest$.pipe(combineLatestWith(this.loadVersion$));
 
   sourceInformationKeys1: string[] = [
     'Version ID',
@@ -180,7 +179,8 @@ export class LoadVersionReportComponent {
 
   private sourceInformation$ = this.loadRequest$.pipe(
     switchMap(loadRequest => {
-      return this.http.get<CodeSystem>(`${environment.apiServer}/codeSystem/${loadRequest.codeSystemName}`);
+      const codeSystemName = loadRequest.result.data.loadRequestSummary.codeSystemName;
+      return this.http.get<CodeSystem>(`${environment.apiServer}/codeSystem/${codeSystemName}`);
     }),
     map((codeSystem: CodeSystem) => {
       return codeSystem.sourceInformation;
