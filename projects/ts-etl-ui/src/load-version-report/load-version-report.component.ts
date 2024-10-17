@@ -83,6 +83,17 @@ import {
 })
 export class LoadVersionReportComponent {
 
+  loadRequest$ = this.activatedRoute.paramMap
+    .pipe(
+      map((params: Params) => {
+        return params['params']['requestId'];
+      }),
+      switchMap(requestId => {
+        return this.http.get<LoadRequest>(`${environment.apiServer}/load-request/${requestId}`);
+      }),
+      shareReplay(1),
+    );
+  
   loadVersion$ = this.activatedRoute.paramMap
     .pipe(
       map((params: Params) => {
@@ -94,15 +105,7 @@ export class LoadVersionReportComponent {
       }),
       shareReplay(1),
     );
-  loadRequest$ = this.activatedRoute.paramMap
-    .pipe(
-      map((params: Params) => {
-        return params['params']['requestId'];
-      }),
-      switchMap(requestId => {
-        return this.http.get<LoadRequest>(`${environment.apiServer}/load-request/${requestId}`);
-      }),
-    );
+
 
   identification$: Observable<[LoadRequest, LoadVersion]> = this.loadRequest$.pipe(combineLatestWith(this.loadVersion$));
 

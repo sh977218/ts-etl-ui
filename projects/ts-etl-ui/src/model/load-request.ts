@@ -32,6 +32,11 @@ type LoadRequestPayloadSearchFilters = {
   filterRequester?: string;
 }
 
+export type LoadRequestSearchForm = LoadRequestPayloadSearchColumns & {
+  filterRequestTime?: string;
+  filterRequester?: string;
+}
+
 type LoadRequestPayloadSearchColumns = {
   opRequestSeq?: string;
   codeSystemName?: string[];

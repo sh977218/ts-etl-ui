@@ -9,7 +9,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { combineLatest, filter, map, switchMap } from 'rxjs';
+import { combineLatest, filter, map, shareReplay, switchMap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
@@ -125,6 +125,7 @@ export class LoadRequestDetailComponent implements OnInit {
       switchMap(requestId => {
         return this.http.get<LoadRequest>(`${environment.apiServer}/load-request/${requestId}`);
       }),
+      shareReplay(1),
     );
 
   loadVersion$ = this.activatedRoute.paramMap
@@ -135,7 +136,9 @@ export class LoadRequestDetailComponent implements OnInit {
       switchMap(requestId => {
         return this.http.get<LoadVersion>(`${environment.apiServer}/loadVersion/${requestId}`);
       }),
+      shareReplay(1),
     );
+
 
   ngOnInit() {
     combineLatest([this.loadRequest$, this.loadVersion$]).subscribe(([lr, lv]) => {

@@ -3,6 +3,7 @@ import { test as baseTest, expect, Page, ConsoleMessage, TestInfo, Locator } fro
 import { randomBytes } from 'crypto';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
+import { MAT_MONTH_MAP, MatDate } from './CONSTANT';
 
 const PROJECT_ROOT_FOLDER = join(__dirname, '..');
 const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
@@ -47,12 +48,56 @@ class MaterialPO {
     return this.page.locator('mat-option');
   }
 
-  async selectMultiOptions(selectLocator: Locator, options: string[]) {
+  /**
+   *
+   * @param selectLocator the locator where the select button is
+   * @param options the options to select the dropdown
+   * @param waitForSpinner default true, whether waits for mat spinner or not, if true, there is a need to slow down the api by intercept the request
+   */
+  async selectMultiOptions(selectLocator: Locator, options: string[], waitForSpinner = true) {
     await selectLocator.click();
     for (const option of options) {
       await this.page.getByRole('option', { name: option }).click();
+      if (waitForSpinner) {
+        await this.waitForSpinner();
+      }
     }
     await this.page.keyboard.press('Escape');
+  }
+
+  async selectDateRangerPicker(containerLocator: Locator, from: MatDate, to: MatDate | undefined = undefined) {
+    const calendarIcon = containerLocator.locator(`button[aria-label="Open calendar"]`);
+    await calendarIcon.click();
+    const calendar = this.page.locator(`mat-calendar`);
+    await calendar.waitFor();
+    await this.selectMatDate(from);
+    if (to) {
+      await this.selectMatDate(to);
+    } else {
+      await this.page.keyboard.press('Escape');
+    }
+    await calendar.waitFor({ state: 'hidden' });
+  }
+
+  private async selectMatDate(d: MatDate) {
+    const calendar = this.page.locator(`mat-calendar`);
+    await calendar.locator(`[aria-label="Choose month and year"]`).click();
+
+    // navigate to year select which desired year in range
+    let firstYear = await calendar.getByRole('gridcell').first().innerText();
+    while (d.year < Number(firstYear)) {
+      await calendar.getByLabel('Previous 24 years').click();
+      firstYear = await calendar.getByRole('gridcell').first().innerText();
+    }
+    let lastYear = await calendar.getByRole('gridcell').last().innerText();
+    while (d.year > Number(lastYear)) {
+      await calendar.getByLabel('Next 24 years').click();
+      lastYear = await calendar.getByRole('gridcell').last().innerText();
+    }
+
+    await calendar.getByRole('button', { name: d.year + '', exact: true }).click();
+    await calendar.getByLabel(MAT_MONTH_MAP[d.month]).click();
+    await calendar.getByLabel(`${MAT_MONTH_MAP[d.month]} ${d.day},`).click();
   }
 
   async waitForSpinner() {
@@ -92,7 +137,7 @@ const test = baseTest.extend<{
 
     await test.step('login', async () => {
       await page.getByRole('button', { name: 'Log In' }).click();
-      await page.getByRole('button', { name: 'UTS' }).click();
+      await page.getByRole('link', { name: 'UTS' }).click();
       await page.getByRole('button', { name: 'Sign in' }).click();
       await page.locator('[name="ticket"]').selectOption('Peter');
       await page.getByRole('button', { name: 'Ok' }).click();
