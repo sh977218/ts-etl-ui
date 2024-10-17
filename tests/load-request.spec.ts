@@ -275,7 +275,7 @@ test.describe('LR -', async () => {
       const datePicker = page.locator(`[id="requestTimeRange"]`);
       await materialPo.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 }, todayInMatDate);
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.waitForSpinner();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await page.getByRole('columnheader', { name: 'Request Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
@@ -283,7 +283,7 @@ test.describe('LR -', async () => {
 
     test('URL', async ({ page, materialPo }) => {
       await page.goto('/load-requests?requestTimeFrom=2017-11-01&requestTimeTo=2024-10-1&sortBy=requestTime&sortDirection=asc');
-      await expect(materialPo.matDialog()).toBeHidden();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
     });
@@ -294,7 +294,7 @@ test.describe('LR -', async () => {
       const datePicker = page.locator(`[id="creationTimeRange"]`);
       await materialPo.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 }, todayInMatDate);
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.waitForSpinner();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await page.getByRole('columnheader', { name: 'Creation Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
@@ -302,7 +302,7 @@ test.describe('LR -', async () => {
 
     test('URL', async ({ page, materialPo }) => {
       await page.goto('/load-requests?creationTimeFrom=2010-01-01&creationTimeTo=2013-01-01&sortBy=creationTime&sortDirection=desc');
-      await expect(materialPo.matDialog()).toBeHidden();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('27');
     });
   });
@@ -312,12 +312,13 @@ test.describe('LR -', async () => {
       await page.goto('/load-requests');
       await page.getByPlaceholder('subject...').fill('Great Subject');
       await page.keyboard.press('Enter');
-      await materialPo.waitForSpinner();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('29');
     });
 
-    test(`URL`, async ({ page }) => {
+    test(`URL`, async ({ page, materialPo }) => {
       await page.goto('/load-requests?requestSubject=Great%20Subject');
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('29');
     });
   });
@@ -327,12 +328,13 @@ test.describe('LR -', async () => {
       await page.goto('/load-requests');
       await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped']);
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.waitForSpinner();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('30');
     });
 
-    test(`URL`, async ({ page }) => {
+    test(`URL`, async ({ page, materialPo }) => {
       await page.goto('/load-requests?requestStatus=Stopped');
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('30');
     });
   });
@@ -342,12 +344,13 @@ test.describe('LR -', async () => {
       await page.goto('/load-requests');
       await page.getByPlaceholder('requester...').fill('bernicevega');
       await page.keyboard.press('Enter');
-      await materialPo.waitForSpinner();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('6');
     });
 
-    test(`URL`, async ({ page }) => {
+    test(`URL`, async ({ page, materialPo }) => {
       await page.goto('/load-requests?requester=bernicevega');
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('6');
     });
   });
@@ -357,6 +360,7 @@ test.describe('LR -', async () => {
 
     await test.step(`Go to next page`, async () => {
       await page.getByRole('button', { name: 'Next page' }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(rows).toHaveCount(10);
 
       await expect(page).toHaveURL(/pageNum=2/);
@@ -365,6 +369,7 @@ test.describe('LR -', async () => {
 
     await test.step(`Change sort`, async () => {
       await page.getByRole('columnheader', { name: 'Request ID' }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(rows).toHaveCount(10);
 
       await test.step('page size remain the same', async () => {
@@ -379,6 +384,7 @@ test.describe('LR -', async () => {
     await test.step(`Change page size`, async () => {
       await page.getByRole('combobox', { name: '10' }).click();
       await materialPo.matOption().filter({ hasText: `50` }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(rows).toHaveCount(50);
 
       await test.step('sort remain the same', async () => {
@@ -391,8 +397,9 @@ test.describe('LR -', async () => {
     });
   });
 
-  test('Search Returns empty', async ({ page }) => {
+  test('Search Returns empty', async ({ page, materialPo }) => {
     await page.goto('/load-requests?requestStatus=notaStatus');
+    await materialPo.matDialog().waitFor({ state: 'hidden' });
     await expect(page.locator('tbody')).toContainText('No results found');
   });
 
