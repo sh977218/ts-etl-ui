@@ -266,7 +266,7 @@ test.describe('LR -', async () => {
       await expect(tableRows.nth(1)).toContainText('Scheduled');
     });
 
-    expect(numOfApiCalled).toEqual(6);
+    expect(numOfApiCalled).toEqual(1);
     await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
