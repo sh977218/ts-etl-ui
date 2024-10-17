@@ -586,10 +586,16 @@ async function loginWithUts(ticket) {
 app.get('/api/login', async (req, res) => {
   const jwtToken = req.cookies['Bearer'];
   if (!jwtToken) return res.status(401).send();
-  const payload = jwt.verify(jwtToken, SECRET_TOKEN);
-  const { usersCollection } = await mongoCollection();
-  const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
-  res.send(user);
+  let payload;
+  try {
+    payload = jwt.verify(jwtToken, SECRET_TOKEN);
+  } catch (e) {
+    return res.send(500);
+  } finally {
+    const { usersCollection } = await mongoCollection();
+    const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
+    res.send(user);
+  }
 });
 
 app.post('/api/logout', async (req, res) => {
