@@ -14,7 +14,7 @@ import {
 
 import { LoadComponent } from '../model/load-request-detail';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
-import { easternTimeMaSortingDataAccessor } from '../utility/mat-date-sort-fn';
+import { easternTimeMaSortingDataAccessor } from '../utility/mat-sorting-data-accessor';
 
 @Component({
   selector: 'app-load-component',

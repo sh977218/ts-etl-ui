@@ -503,6 +503,9 @@ pwTest('LR detail on localhost 4200', async ({ page }) => {
   await page.goto('http://localhost:4200/load-request/0');
   const row = 'app-load-component-message tbody tr:nth-of-type(2)';
   await expect(page.locator(row)).toContainText('MISSING_DATA_FILE');
+  await page.getByRole('button', { name: 'Time', exact: true }).click();
+  await page.getByRole('button', { name: 'Start Time' }).click();
+  await page.getByRole('button', { name: 'Creation Time' }).click();
 
   expect(numOfLrApiCalled).toEqual(1);
   expect(numOfLvApiCalled).toEqual(0);

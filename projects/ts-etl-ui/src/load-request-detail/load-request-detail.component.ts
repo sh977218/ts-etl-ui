@@ -29,7 +29,7 @@ import { User } from '../model/user';
 import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { UserService } from '../service/user-service';
-import { easternTimeMaSortingDataAccessor } from '../utility/mat-date-sort-fn';
+import { easternTimeMaSortingDataAccessor } from '../utility/mat-sorting-data-accessor';
 
 export interface RowElement {
   label: string;
