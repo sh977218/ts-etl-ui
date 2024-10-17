@@ -1,8 +1,8 @@
 <fieldset>
-  <legend>Load Activities</legend>
-  <table mat-table [dataSource]="dataSource()" matSort>
+  <legend>Load Components</legend>
+  <table mat-table [dataSource]="dataSource()" matSort matSortActive="startTime" matSortDirection="asc">
     <ng-container matColumnDef="componentName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Component name</th>
+      <th mat-header-cell *matHeaderCellDef> Component name</th>
       <td mat-cell *matCellDef="let element"> {{element.componentName}} </td>
     </ng-container>
 
@@ -12,17 +12,17 @@
     </ng-container>
 
     <ng-container matColumnDef="endTime">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> End Time</th>
+      <th mat-header-cell *matHeaderCellDef> End Time</th>
       <td mat-cell *matCellDef="let element"> {{element.componentEndTime | easternTime}} </td>
     </ng-container>
 
     <ng-container matColumnDef="duration">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Duration</th>
-      <td mat-cell *matCellDef="let element"> {{duration(element) | easternTime: 'hh:mm:ss'}} </td>
+      <th mat-header-cell *matHeaderCellDef> Duration</th>
+      <td mat-cell *matCellDef="let element"> {{duration(element) | easternTime: 's'}} </td>
     </ng-container>
 
     <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
+      <th mat-header-cell *matHeaderCellDef> Status</th>
       <td mat-cell *matCellDef="let element"> {{element.componentStatus}} </td>
     </ng-container>
 

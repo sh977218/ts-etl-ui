@@ -1,7 +1,7 @@
 import { CommonModule, NgIf } from '@angular/common';
 import {
   AfterViewInit,
-  Component, computed, CUSTOM_ELEMENTS_SCHEMA, input, NO_ERRORS_SCHEMA, ViewChild,
+  Component, computed, CUSTOM_ELEMENTS_SCHEMA, inject, input, NO_ERRORS_SCHEMA, ViewChild,
 } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,9 +14,10 @@ import {
 
 import { LoadComponent } from '../model/load-request-detail';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
+import { easternTimeMaSortingDataAccessor } from '../utility/mat-date-sort-fn';
 
 @Component({
-  selector: 'app-load-request-activity',
+  selector: 'app-load-component',
   standalone: true,
   imports: [
     CommonModule,
@@ -29,11 +30,14 @@ import { EasternTimePipe } from '../service/eastern-time.pipe';
     NgIf,
     MatProgressSpinner,
   ],
-  templateUrl: './load-request-activity.component.html',
+  providers: [EasternTimePipe],
+  templateUrl: './load-component.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
-export class LoadRequestActivityComponent implements AfterViewInit {
-  componentActivities = input.required<LoadComponent[]>();
+export class LoadComponentComponent implements AfterViewInit {
+  easternTime = inject(EasternTimePipe);
+
+  loadComponents = input.required<LoadComponent[]>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -47,11 +51,12 @@ export class LoadRequestActivityComponent implements AfterViewInit {
     'nbOfMessages',
   ];
 
-  dataSource = computed(() => new MatTableDataSource<LoadComponent>(this.componentActivities()));
+  dataSource = computed(() => new MatTableDataSource<LoadComponent>(this.loadComponents()));
 
   ngAfterViewInit() {
     this.dataSource().paginator = this.paginator;
     this.dataSource().sort = this.sort;
+    this.dataSource().sortingDataAccessor = easternTimeMaSortingDataAccessor;
   }
 
   duration(row: LoadComponent) {

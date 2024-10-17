@@ -21,7 +21,7 @@ import {
 } from 'rxjs';
 
 import { environment } from '../environments/environment';
-import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
+import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import {
   LoadVersionReportIdentificationComponent,
@@ -66,7 +66,7 @@ import {
     AsyncPipe,
     CdkCopyToClipboard,
     JsonPipe,
-    LoadRequestMessageComponent,
+    LoadComponentMessageComponent,
     LoadSummaryComponent,
     LoadSummaryComponent,
     MatTableModule,
@@ -94,7 +94,7 @@ export class LoadVersionReportComponent {
       }),
       shareReplay(1),
     );
-  
+
   loadVersion$ = this.activatedRoute.paramMap
     .pipe(
       map((params: Params) => {

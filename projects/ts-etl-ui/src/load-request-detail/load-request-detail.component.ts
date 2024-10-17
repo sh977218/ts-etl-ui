@@ -1,28 +1,35 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { AsyncPipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
-import { MatIcon } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
 import { filter, map, shareReplay, switchMap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { environment } from '../environments/environment';
-import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
+import { LoadComponentComponent } from '../load-component/load-component.component';
+import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadVersionReviewModalComponent } from '../load-version-review-modal/load-version-review-modal.component';
 import { LoadRequest } from '../model/load-request';
-import { LoadRequestDetailResponse, LoadRequestMessage, LoadRequestSummary } from '../model/load-request-detail';
+import {
+  LoadRequestDetailResponse,
+  LoadRequestMessage,
+  LoadRequestSummary,
+} from '../model/load-request-detail';
 import { User } from '../model/user';
 import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { UserService } from '../service/user-service';
+import { easternTimeMaSortingDataAccessor } from '../utility/mat-date-sort-fn';
 
 export interface RowElement {
   label: string;
@@ -76,37 +83,40 @@ const LABEL_SORT_ARRAY = [
   selector: 'app-load-request-detail',
   standalone: true,
   imports: [
-    AsyncPipe,
+    NgIf,
+    NgForOf,
     NgSwitch,
     NgSwitchCase,
     NgSwitchDefault,
+    RouterLink,
+    AsyncPipe,
     MatDialogModule,
     MatButtonModule,
     MatTableModule,
     MatCardModule,
-    MatDivider,
-    LoadVersionReviewModalComponent,
-    MatIcon,
-    NgIf,
-    RouterLink,
-    EasternTimePipe,
-    LoadRequestActivityComponent,
-    LoadRequestMessageComponent,
-    NgForOf,
+    MatDividerModule,
+    MatIconModule,
+    MatSortModule,
     CdkVirtualScrollViewport,
+    EasternTimePipe,
+    LoadComponentMessageComponent,
+    LoadVersionReviewModalComponent,
+    LoadRequestMessageComponent,
+    LoadComponentComponent,
   ],
   templateUrl: './load-request-detail.component.html',
   styleUrl: './load-request-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoadRequestDetailComponent implements OnInit {
+export class LoadRequestDetailComponent {
+  @ViewChild('loadRequestMessageList') sort!: MatSort;
 
   displayedColumns: string[] = ['key', 'value'];
   messageColumns = ['type', 'tag', 'message', 'time'];
 
   user: User | null | undefined = undefined;
 
-  dataSource: RowElement[] = [];
+  dataSource = new MatTableDataSource<RowElement>([]);
 
   constructor(private http: HttpClient,
               private dialog: MatDialog,
@@ -115,6 +125,51 @@ export class LoadRequestDetailComponent implements OnInit {
               private userService: UserService,
   ) {
     userService.user$.subscribe(user => this.user = user);
+    this.loadRequest$.pipe(
+      map(lr => {
+
+        const loadRequestSummary = lr.loadRequestSummary;
+        return [...Object.keys(loadRequestSummary), 'loadElapsedTime', 'numberOfMessages']
+          .filter(k => !['_id', 'requesterUsername', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
+          .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
+          .reduce<string[]>((acc, key) => {
+            acc.push(key);
+            if (['creationTime'].includes(key)) {
+              acc.push('spacer');
+            }
+            return acc;
+          }, [])
+          .map(key => {
+            const result: RowElement = {
+              /* istanbul ignore next */
+              label: LABEL_MAPPING[key] || `something wrong about ${key}`,
+              key,
+              value: loadRequestSummary[key as keyof LoadRequestSummary],
+            };
+
+            if (key === 'spacer') {
+              return {
+                label: '',
+                key: 'spacer',
+                value: '',
+              };
+            }
+
+            if (key === 'numberOfMessages') {
+              result.value = lr.loadRequestSummary.loadRequestMessageList.length || 0;
+            }
+
+            if (key === 'loadElapsedTime') {
+              result.value = new Date(lr.loadRequestSummary.loadEndTime).getTime() - new Date(lr.loadRequestSummary.loadStartTime).getTime();
+            }
+
+            return result;
+          });
+      })).subscribe((data) => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = easternTimeMaSortingDataAccessor;
+    });
   }
 
   loadRequest$ = this.activatedRoute.paramMap
@@ -128,48 +183,6 @@ export class LoadRequestDetailComponent implements OnInit {
       }),
       shareReplay(1),
     );
-
-  ngOnInit() {
-    this.loadRequest$.subscribe((lr) => {
-      const loadRequestSummary = lr.loadRequestSummary;
-      this.dataSource = [...Object.keys(loadRequestSummary), 'loadElapsedTime', 'numberOfMessages']
-        .filter(k => !['_id', 'requesterUsername', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
-        .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
-        .reduce<string[]>((acc, key) => {
-          acc.push(key);
-          if (['creationTime'].includes(key)) {
-            acc.push('spacer');
-          }
-          return acc;
-        }, [])
-        .map(key => {
-          const result: RowElement = {
-            /* istanbul ignore next */
-            label: LABEL_MAPPING[key] || `something wrong about ${key}`,
-            key,
-            value: loadRequestSummary[key as keyof LoadRequestSummary],
-          };
-
-          if (key === 'spacer') {
-            return {
-              label: '',
-              key: 'spacer',
-              value: '',
-            };
-          }
-
-          if (key === 'numberOfMessages') {
-            result.value = lr.loadRequestSummary.loadRequestMessageList.length || 0;
-          }
-
-          if (key === 'loadElapsedTime') {
-            result.value = new Date(lr.loadRequestSummary.loadEndTime).getTime() - new Date(lr.loadRequestSummary.loadStartTime).getTime();
-          }
-
-          return result;
-        });
-    });
-  }
 
   isTime(key: string) {
     return ['requestTime', 'scheduledDate', 'creationTime', 'loadStartTime', 'loadEndTime'].includes(key);

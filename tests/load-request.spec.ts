@@ -392,10 +392,10 @@ test.describe('LR -', async () => {
 
   test('LR Message Filter', async ({ page }) => {
     await page.goto('/load-request/0');
-    await expect(page.locator('app-load-request-message')).toContainText('RAW_TABLE_COUNT');
+    await expect(page.locator('app-load-component-message')).toContainText('RAW_TABLE_COUNT');
     await page.getByPlaceholder('Ex. INFO').pressSequentially('inject');
     await page.getByRole('link', { name: 'Load Request' }).focus();
-    await expect(page.locator('app-load-request-message')).not.toContainText('RAW_TABLE_COUNT');
+    await expect(page.locator('app-load-component-message')).not.toContainText('RAW_TABLE_COUNT');
   });
 
   test('LR with no LV', async ({ page }) => {
@@ -501,7 +501,7 @@ pwTest('LR detail on localhost 4200', async ({ page }) => {
   });
 
   await page.goto('http://localhost:4200/load-request/0');
-  const row = 'app-load-request-message tbody tr:nth-of-type(2)';
+  const row = 'app-load-component-message tbody tr:nth-of-type(2)';
   await expect(page.locator(row)).toContainText('MISSING_DATA_FILE');
 
   expect(numOfLrApiCalled).toEqual(1);
