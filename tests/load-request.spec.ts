@@ -1,9 +1,9 @@
 import test from './baseFixture';
-import { expect } from '@playwright/test';
+import { expect, test as pwTest } from '@playwright/test';
 import { readFileSync } from 'fs';
 import { EU_TIMEZONE } from './CONSTANT';
 
-test.describe('LR - ', async () => {
+test.describe('LR -', async () => {
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
   const firstRow = 'table tbody tr:first-of-type';
 
@@ -36,15 +36,23 @@ test.describe('LR - ', async () => {
     await materialPo.checkAndCloseAlert('Unable to log in');
   });
 
-  test('Jwt Fail', async ({ page }) => {
-    await page.route('**/login', route => {
-      route.fulfill({
-        contentType: 'application/json',
-        body: JSON.stringify({}),
+  test.describe('JWT fail', async () => {
+    test('Jwt Fail', async ({ page }) => {
+      await page.route('**/login', route => {
+        route.fulfill({
+          contentType: 'application/json',
+          body: JSON.stringify({}),
+        });
       });
+      await page.goto('/load-requests');
+      await expect(page.locator('body')).toContainText('This application requires you to log in');
     });
-    await page.goto('/load-requests');
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
+
+    test('Incorrect Jwt', async ({ page, context }) => {
+      await context.addCookies([{ name: 'Bearer', value: 'bogusJwt', domain: 'localhost', path: '/' }]);
+      await page.goto('/load-requests');
+      await expect(page.locator('body')).toContainText('This application requires you to log in');
+    });
   });
 
   test('Load Request table', async ({ page, materialPo }) => {
@@ -192,9 +200,7 @@ test.describe('LR - ', async () => {
     await test.step(`search for newly 'Cancelled'/'Emergency' load request`, async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
       await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Cancelled']);
-      await materialPo.waitForSpinner();
       await materialPo.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency']);
-      await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
       await expect(page.locator('td:has-text("CPT")')).toBeVisible();
       await expect(page.locator('td:has-text("Cancelled")')).toBeVisible();
@@ -218,6 +224,15 @@ test.describe('LR - ', async () => {
   });
 
   test(`Search multi select fields`, async ({ page, materialPo }) => {
+    let numOfApiCalled = 0;
+    await page.route(/load-request\/list$/, async route => {
+      await page.waitForTimeout(2000);
+      if (route.request().resourceType() === 'xhr') {
+        numOfApiCalled++;
+      }
+      await route.continue();
+    });
+
     await test.step(`select 2 Code System Name`, async () => {
       await materialPo.selectMultiOptions(page.locator(`[id="codeSystemSelect"]`), ['GS', 'MMSL']);
     });
@@ -239,13 +254,26 @@ test.describe('LR - ', async () => {
       await expect(tableRows.nth(1)).toContainText('Scheduled');
     });
 
+    expect(numOfApiCalled).toEqual(6);
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
-  test('URL Search Request Time From', async ({ page, materialPo }) => {
-    await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=asc');
-    await expect(materialPo.matDialog()).toBeHidden();
-    await expect(page.locator(firstRow)).toHaveCount(1);
-    await expect(page.locator(firstCell)).toHaveText('27');
+  test.describe(`Search Request Time From`, async () => {
+    test('input', async ({ page, materialPo }) => {
+      const datePicker = page.locator(`[id="requestTimeRange"]`);
+      await materialPo.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 });
+      await expect(materialPo.matDialog()).toBeHidden();
+      await page.getByRole('columnheader', { name: 'Request Time' }).click();
+      await expect(page.locator(firstRow)).toHaveCount(1);
+      await expect(page.locator(firstCell)).toHaveText('27');
+    });
+
+    test('URL', async ({ page, materialPo }) => {
+      await page.goto('/load-requests?requestTimeFrom=2017-11-01&sortBy=requestTime&sortDirection=asc');
+      await expect(materialPo.matDialog()).toBeHidden();
+      await expect(page.locator(firstRow)).toHaveCount(1);
+      await expect(page.locator(firstCell)).toHaveText('27');
+    });
   });
 
   test('URL Search Request Time To', async ({ page }) => {
@@ -253,34 +281,66 @@ test.describe('LR - ', async () => {
     await expect(page.locator(firstCell)).toHaveText('59');
   });
 
-  test('URL Search Creation Time From', async ({ page }) => {
-    await page.goto('/load-requests?creationTimeFrom=2010-01-01&sortBy=creationTime&sortDirection=asc');
-    await expect(page.locator(firstCell)).toHaveText('27');
-  });
+  test.describe(`Search Creation Time From`, async () => {
+    test('input', async ({ page, materialPo }) => {
+      const datePicker = page.locator(`[id="creationTimeRange"]`);
+      await materialPo.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 });
+      await expect(materialPo.matDialog()).toBeHidden();
+      await page.getByRole('columnheader', { name: 'Creation Time' }).click();
+      await expect(page.locator(firstRow)).toHaveCount(1);
+      await expect(page.locator(firstCell)).toHaveText('27');
+    });
 
+    test('URL', async ({ page }) => {
+      await page.goto('/load-requests?creationTimeFrom=2010-01-01&sortBy=creationTime&sortDirection=asc');
+      await expect(page.locator(firstCell)).toHaveText('27');
+    });
+
+  });
   test('URL Search Creation Time To', async ({ page }) => {
     await page.goto('/load-requests?creationTimeFrom=2010-01-01&creationTimeTo=2013-01-01&sortBy=creationTime&sortDirection=desc');
     await expect(page.locator(firstCell)).toHaveText('27');
   });
 
-  test('URL Subject Filter', async ({ page }) => {
-    await page.goto('/load-requests');
-    await page.getByPlaceholder('subject...').fill('Great Subject');
-    await page.keyboard.press('Enter');
-    await expect(page.locator(firstCell)).toHaveText('29');
+  test.describe('Subject Filter', async () => {
+    test(`input`, async ({ page }) => {
+      await page.goto('/load-requests');
+      await page.getByPlaceholder('subject...').fill('Great Subject');
+      await page.keyboard.press('Enter');
+      await expect(page.locator(firstCell)).toHaveText('29');
+    });
+
+    test(`URL`, async ({ page }) => {
+      await page.goto('/load-requests?requestSubject=Great%20Subject');
+      await expect(page.locator(firstCell)).toHaveText('29');
+    });
   });
 
-  test('URL Status Filter', async ({ page, materialPo }) => {
-    await page.goto('/load-requests');
-    await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped']);
-    await expect(page.locator(firstCell)).toHaveText('30');
+  test.describe('Status Filter', async () => {
+    test(`input`, async ({ page, materialPo }) => {
+      await page.goto('/load-requests');
+      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped'], false);
+      await expect(page.locator(firstCell)).toHaveText('30');
+    });
+
+    test(`URL`, async ({ page }) => {
+      await page.goto('/load-requests?requestStatus=Stopped');
+      await expect(page.locator(firstCell)).toHaveText('30');
+    });
   });
 
-  test('URL User Filter', async ({ page }) => {
-    await page.goto('/load-requests');
-    await page.getByPlaceholder('requester...').fill('bernicevega');
-    await page.keyboard.press('Enter');
-    await expect(page.locator(firstCell)).toHaveText('6');
+  test.describe('User Filter', async () => {
+    test(`input`, async ({ page }) => {
+      await page.goto('/load-requests');
+      await page.getByPlaceholder('requester...').fill('bernicevega');
+      await page.keyboard.press('Enter');
+      await expect(page.locator(firstCell)).toHaveText('6');
+    });
+
+    test(`URL`, async ({ page }) => {
+      await page.goto('/load-requests?requester=bernicevega');
+      await expect(page.locator(firstCell)).toHaveText('6');
+    });
   });
 
   test('Pagination and Sort', async ({ page, materialPo }) => {
@@ -320,7 +380,6 @@ test.describe('LR - ', async () => {
       });
       await expect(page).toHaveURL(/pageSize=50/);
     });
-
   });
 
   test('Search Returns empty', async ({ page }) => {
@@ -413,4 +472,41 @@ test.describe('LR - ', async () => {
     });
 
   });
+
+});
+
+pwTest('LR detail on localhost 4200', async ({ page }) => {
+  let numOfLrApiCalled = 0;
+  let numOfLvApiCalled = 0;
+
+  await page.goto('http://localhost:4200');
+  await page.getByRole('button', { name: 'Log In' }).click();
+  await page.getByRole('link', { name: 'UTS' }).click();
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.locator('[name="ticket"]').selectOption('Peter');
+  await page.getByRole('button', { name: 'Ok' }).click();
+  await page.waitForURL(/load-requests/);
+  await expect(page.getByRole('button', { name: 'Download' })).toBeVisible();
+
+  await page.route(/load-request\/\d$/, async route => {
+    await page.waitForTimeout(2000);
+    if (route.request().resourceType() === 'xhr') {
+      numOfLrApiCalled++;
+    }
+    await route.continue();
+  });
+  await page.route(/loadVersion\/\d$/, async route => {
+    await page.waitForTimeout(2000);
+    if (route.request().resourceType() === 'xhr') {
+      numOfLvApiCalled++;
+    }
+    await route.continue();
+  });
+
+  await page.goto('http://localhost:4200/load-request/0');
+  const row = 'app-load-request-message tbody tr:nth-of-type(2)';
+  await expect(page.locator(row)).toContainText('MISSING_DATA_FILE');
+
+  expect(numOfLrApiCalled).toEqual(1);
+  expect(numOfLvApiCalled).toEqual(1);
 });
