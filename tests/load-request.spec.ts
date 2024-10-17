@@ -132,6 +132,7 @@ test.describe('LR -', async () => {
       await page.getByPlaceholder('Req. ID').fill(newlyCreatedLoadRequestId);
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `Today's` }).click();
+      await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
 
       await expect(page.locator('td:has-text("Scheduled")')).toBeVisible();
@@ -174,6 +175,7 @@ test.describe('LR -', async () => {
       // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `This week's` }).click();
+      await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
 
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
@@ -207,6 +209,8 @@ test.describe('LR -', async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
       await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Cancelled']);
       await materialPo.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency']);
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
       await expect(page.locator('td:has-text("CPT")')).toBeVisible();
       await expect(page.locator('td:has-text("Cancelled")')).toBeVisible();
@@ -250,6 +254,8 @@ test.describe('LR -', async () => {
     });
 
     await test.step(`Search and verify result`, async () => {
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.waitForSpinner();
       const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
       await expect(tableRows).toHaveCount(2);
       await expect(tableRows.first()).toContainText('MMSL');
@@ -268,7 +274,8 @@ test.describe('LR -', async () => {
     test('input', async ({ page, materialPo }) => {
       const datePicker = page.locator(`[id="requestTimeRange"]`);
       await materialPo.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 }, todayInMatDate);
-      await expect(materialPo.matDialog()).toBeHidden();
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.waitForSpinner();
       await page.getByRole('columnheader', { name: 'Request Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
@@ -286,7 +293,8 @@ test.describe('LR -', async () => {
     test('input', async ({ page, materialPo }) => {
       const datePicker = page.locator(`[id="creationTimeRange"]`);
       await materialPo.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 }, todayInMatDate);
-      await expect(materialPo.matDialog()).toBeHidden();
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.waitForSpinner();
       await page.getByRole('columnheader', { name: 'Creation Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
@@ -300,10 +308,11 @@ test.describe('LR -', async () => {
   });
 
   test.describe('Subject Filter', async () => {
-    test(`input`, async ({ page }) => {
+    test(`input`, async ({ page, materialPo }) => {
       await page.goto('/load-requests');
       await page.getByPlaceholder('subject...').fill('Great Subject');
       await page.keyboard.press('Enter');
+      await materialPo.waitForSpinner();
       await expect(page.locator(firstCell)).toHaveText('29');
     });
 
@@ -316,7 +325,9 @@ test.describe('LR -', async () => {
   test.describe('Status Filter', async () => {
     test(`input`, async ({ page, materialPo }) => {
       await page.goto('/load-requests');
-      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped'], false);
+      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped']);
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.waitForSpinner();
       await expect(page.locator(firstCell)).toHaveText('30');
     });
 
@@ -327,10 +338,11 @@ test.describe('LR -', async () => {
   });
 
   test.describe('User Filter', async () => {
-    test(`input`, async ({ page }) => {
+    test(`input`, async ({ page, materialPo }) => {
       await page.goto('/load-requests');
       await page.getByPlaceholder('requester...').fill('bernicevega');
       await page.keyboard.press('Enter');
+      await materialPo.waitForSpinner();
       await expect(page.locator(firstCell)).toHaveText('6');
     });
 
@@ -449,6 +461,7 @@ test.describe('LR -', async () => {
 
     await test.step(`verify load request created in ${EU_TIMEZONE}`, async () => {
       await page.getByPlaceholder('subject...').fill(newCreateSubject);
+      await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
       await expect(tableRows.first().locator('td').nth(5)).toContainText('EDT');

@@ -54,7 +54,7 @@ class MaterialPO {
    * @param options the options to select the dropdown
    * @param waitForSpinner default true, whether waits for mat spinner or not, if true, there is a need to slow down the api by intercept the request
    */
-  async selectMultiOptions(selectLocator: Locator, options: string[], waitForSpinner = true) {
+  async selectMultiOptions(selectLocator: Locator, options: string[], waitForSpinner = false) {
     await selectLocator.click();
     for (const option of options) {
       await this.page.getByRole('option', { name: option }).click();
