@@ -284,7 +284,7 @@ test.describe('LR -', async () => {
   test.describe(`Search Creation Time From`, async () => {
     test('input', async ({ page, materialPo }) => {
       const datePicker = page.locator(`[id="creationTimeRange"]`);
-      await materialPo.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 });
+      await materialPo.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 });
       await expect(materialPo.matDialog()).toBeHidden();
       await page.getByRole('columnheader', { name: 'Creation Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);

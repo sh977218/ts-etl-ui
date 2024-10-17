@@ -82,6 +82,9 @@ class MaterialPO {
   private async selectMatDate(d: MatDate) {
     const calendar = this.page.locator(`mat-calendar`);
     await calendar.locator(`[aria-label="Choose month and year"]`).click();
+    if (d.year < 2016) {
+      await calendar.getByLabel('Previous 24 years').click();
+    }
     await calendar.getByRole('button', { name: d.year + '', exact: true }).click();
     await calendar.getByLabel(MAT_MONTH_MAP[d.month]).click();
     await calendar.getByLabel(`${MAT_MONTH_MAP[d.month]} ${d.day},`).click();
