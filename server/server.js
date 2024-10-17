@@ -592,6 +592,9 @@ app.get('/api/login', async (req, res) => {
   } catch (e) {
     return res.send(500);
   } finally {
+    if (!payload) {
+      return res.send(500);
+    }
     const { usersCollection } = await mongoCollection();
     const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
     res.send(user);
