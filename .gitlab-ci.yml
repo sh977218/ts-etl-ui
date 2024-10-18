@@ -1,3 +1,4 @@
+
 stages:
   - build
   - test
@@ -5,6 +6,8 @@ stages:
 
 build-app:
   stage: build
+  tags:
+    - amazon_linux_2023
   script:
     - npm i
     - npm run build:coverage
