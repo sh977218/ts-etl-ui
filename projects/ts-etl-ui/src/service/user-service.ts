@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { isEmpty } from 'lodash';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, finalize, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, switchMap, tap } from 'rxjs';
 
 import { AlertService } from './alert-service';
 
@@ -74,13 +74,11 @@ export class UserService {
   }
 
   logOut() {
+    this._user$.next(null);
+    this.cookieService.delete('Bearer');
     this.http.post(`${environment.logoutUrl}`, {})
       .pipe(
         switchMap(() => this.router.navigate(['/please-log-in'])),
-        finalize(() => {
-          this._user$.next(null);
-          this.cookieService.delete('Bearer');
-        }),
       )
       .subscribe();
   }
