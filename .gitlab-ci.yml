@@ -10,7 +10,7 @@ build-app:
     - amazon_linux_2023
   script:
     - pwd
-    - npm i
+    - npm ci
     - npm run build:coverage
 
 playwright:
