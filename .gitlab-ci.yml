@@ -9,6 +9,7 @@ build-app:
   tags:
     - amazon_linux_2023
   script:
+    - pwd
     - npm i
     - npm run build:coverage
 
