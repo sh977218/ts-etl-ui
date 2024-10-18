@@ -390,6 +390,7 @@ test.describe('LR -', async () => {
     await page.getByRole('button', { name: 'Time', exact: true }).click();
     await page.getByRole('button', { name: 'Start Time' }).click();
     await page.getByRole('button', { name: 'Creation Time' }).click();
+    await page.getByRole('button', { name: 'Message Type' }).click();
 
     await page.locator('td:has-text("Error while extracting")');
   });
