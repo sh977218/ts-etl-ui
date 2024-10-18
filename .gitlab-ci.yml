@@ -27,6 +27,7 @@ build-app:      # This job runs in the build stage, which runs first.
     - amazon_linux_2023
   script:
     - pwd
+    - /usr/nlm/node_activate 20
     - npm i
     - npm run build:coverage
     - npx playwright test --project=ts-etl-ui
