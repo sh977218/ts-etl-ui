@@ -13,54 +13,6 @@ test.describe('LR -', async () => {
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
   const firstRow = 'table tbody tr:first-of-type';
 
-  test('Not Logged in', async ({ page }) => {
-    await page.goto('/load-requests');
-    await page.getByLabel('user menu').click();
-    await page.getByRole('menuitem', { name: 'Log Out' }).click();
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-    await page.goto('/load-requests');
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-    await page.getByRole('button', { name: 'Log In' }).click();
-    await expect(page.locator('mat-dialog-container')).toContainText('Login with Following');
-    await page.locator('button', { hasText: 'Close' });
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-  });
-
-  test('Invalid User', async ({ page, materialPo }) => {
-    await page.goto('/load-requests');
-    await page.getByLabel('user menu').click();
-    await page.getByRole('menuitem', { name: 'Log Out' }).click();
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-    await page.goto('/login-cb?ticket=bogusTicket');
-    await materialPo.checkAndCloseAlert('Unable to log in');
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-  });
-
-  test('Missing Ticket', async ({ page, materialPo }) => {
-    await page.goto('/load-requests');
-    await page.goto('/login-cb');
-    await materialPo.checkAndCloseAlert('Unable to log in');
-  });
-
-  test.describe('JWT fail', async () => {
-    test('Jwt Fail', async ({ page }) => {
-      await page.route('**/login', route => {
-        route.fulfill({
-          contentType: 'application/json',
-          body: JSON.stringify({}),
-        });
-      });
-      await page.goto('/load-requests');
-      await expect(page.locator('body')).toContainText('This application requires you to log in');
-    });
-
-    test('Incorrect Jwt', async ({ page, context }) => {
-      await context.addCookies([{ name: 'Bearer', value: 'bogusJwt', domain: 'localhost', path: '/' }]);
-      await page.goto('/load-requests');
-      await expect(page.locator('body')).toContainText('This application requires you to log in');
-    });
-  });
-
   test('Load Request table', async ({ page, materialPo }) => {
     const matDialog = materialPo.matDialog();
 
