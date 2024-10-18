@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { format } from 'date-fns-tz';
+
+import { easternTimeFormatter } from '../utility/date-time-formatter';
 
 @Pipe({
   name: 'easternTime',
@@ -8,6 +9,6 @@ import { format } from 'date-fns-tz';
 export class EasternTimePipe implements PipeTransform {
 
   transform(value: Date | string | number, dateFormat: string = 'yyyy-MM-dd hh:mm a z', timeZone = 'America/New_York'): string {
-    return value ? format(value, dateFormat, { timeZone }) : '';
+    return easternTimeFormatter(value, dateFormat, timeZone);
   }
 }

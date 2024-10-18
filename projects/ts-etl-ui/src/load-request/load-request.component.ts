@@ -31,9 +31,9 @@ import { debounceTime, distinctUntilChanged, filter, map, startWith, Subject, sw
 
 import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
 import { environment } from '../environments/environment';
-import { LoadRequestActivityComponent } from '../load-request-activity/load-request-activity.component';
+import { LoadComponentComponent } from '../load-component/load-component.component';
+import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
-import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import {
   CreateLoadRequestsResponse,
   FlatLoadRequestPayload,
@@ -72,9 +72,9 @@ const moment = _rollupMoment;
     MatPaginatorModule,
     MatOptionModule,
     MatSelectModule,
-    LoadRequestActivityComponent,
+    LoadComponentComponent,
     LoadRequestDetailComponent,
-    LoadRequestMessageComponent,
+    LoadComponentMessageComponent,
   ],
   templateUrl: './load-request.component.html',
   styleUrls: ['./load-request.component.scss'],
