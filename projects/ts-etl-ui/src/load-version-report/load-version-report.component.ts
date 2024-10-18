@@ -21,7 +21,7 @@ import {
 } from 'rxjs';
 
 import { environment } from '../environments/environment';
-import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
+import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
 import { LoadSummaryComponent } from '../load-summary/load-summary.component';
 import {
   LoadVersionReportIdentificationComponent,
@@ -41,7 +41,7 @@ import {
   CodeSystemSourceInformation1,
   CodeSystemSourceInformation2,
 } from '../model/code-system';
-import { LoadRequest } from '../model/load-request';
+import { LoadComponentMessage, LoadRequestDetailResponse } from '../model/load-request-detail';
 import {
   LoadVersion,
   RuleMessageUI,
@@ -65,7 +65,7 @@ import {
     AsyncPipe,
     CdkCopyToClipboard,
     JsonPipe,
-    LoadRequestMessageComponent,
+    LoadComponentMessageComponent,
     LoadSummaryComponent,
     LoadSummaryComponent,
     MatTableModule,
@@ -89,11 +89,11 @@ export class LoadVersionReportComponent {
         return params['params']['requestId'];
       }),
       switchMap(requestId => {
-        return this.http.get<LoadRequest>(`${environment.apiServer}/load-request/${requestId}`);
+        return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`);
       }),
       shareReplay(1),
     );
-  
+
   loadVersion$ = this.activatedRoute.paramMap
     .pipe(
       map((params: Params) => {
@@ -107,7 +107,45 @@ export class LoadVersionReportComponent {
     );
 
 
-  identification$: Observable<[LoadRequest, LoadVersion]> = this.loadRequest$.pipe(combineLatestWith(this.loadVersion$));
+  loadComponentMessages$ = this.loadVersion$.pipe(map(loadVersion => {
+    return loadVersion.loadSummary.components.reduce((previousValue: LoadComponentMessage[], currentValue) => {
+      const loadComponentMessage: LoadComponentMessage[] = [
+        ...currentValue.errors.map(error => {
+          return {
+            ...error,
+            componentName: currentValue.componentName,
+            messageTag: '',
+            creationTime: '',
+            messageGroup: 'Error',
+          };
+        }),
+        ...currentValue.infos.map(info => {
+          return {
+            ...info,
+            componentName: currentValue.componentName,
+            messageTag: '',
+            creationTime: '',
+            messageGroup: 'Info',
+          };
+        }),
+        ...currentValue.warnings.map(warning => {
+          return {
+            ...warning,
+            componentName: currentValue.componentName,
+            messageTag: '',
+            creationTime: '',
+            messageGroup: 'Warning',
+          };
+        }),
+      ];
+      return [
+        ...previousValue,
+        ...loadComponentMessage,
+      ];
+    }, []) || [];
+  }));
+
+  identification$: Observable<[LoadRequestDetailResponse, LoadVersion]> = this.loadRequest$.pipe(combineLatestWith(this.loadVersion$));
 
   sourceInformationKeys1: string[] = [
     'Version ID',
@@ -141,7 +179,8 @@ export class LoadVersionReportComponent {
 
   private sourceInformation$ = this.loadRequest$.pipe(
     switchMap(loadRequest => {
-      return this.http.get<CodeSystem>(`${environment.apiServer}/codeSystem/${loadRequest.codeSystemName}`);
+      const codeSystemName = loadRequest.result.data.loadRequestSummary.codeSystemName;
+      return this.http.get<CodeSystem>(`${environment.apiServer}/codeSystem/${codeSystemName}`);
     }),
     map((codeSystem: CodeSystem) => {
       return codeSystem.sourceInformation;

@@ -298,10 +298,87 @@ app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
 
 // get LR detail
 app.get('/api/load-request/:opRequestSeq', async (req, res) => {
-  const { loadRequestsCollection } = await mongoCollection();
+  const apiStartTime = new Date();
+  const { loadRequestsCollection, loadVersionsCollection } = await mongoCollection();
   const lr = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
+  const lv = await loadVersionsCollection.findOne({ requestId: +req.params.opRequestSeq });
   if (!lr) return res.status(404).send();
-  res.send(lr);
+  const loadRequestMessageList = lv?.loadSummary?.components?.reduce((previousValue, currentValue, currentIndex, messages) => {
+    return [
+      ...previousValue,
+      ...currentValue.errors,
+      ...currentValue.infos,
+      ...currentValue.warnings,
+    ];
+  }, []) || [];
+  const loadComponentList = lv?.loadSummary?.components?.map((currentValue) => {
+    return {
+      'componentName': currentValue.componentName,
+      'componentStatus': currentValue.status,
+      'componentStartTime': currentValue.startTime,
+      'componentEndTime': currentValue.endTime,
+      'error': currentValue.errors.length,
+      'warning': currentValue.warnings.length,
+      'info': currentValue.infos.length,
+    };
+  }) || [];
+  const loadComponentMessageList = lv?.loadSummary?.components?.reduce((previousValue, currentValue, currentIndex, messages) => {
+    return [
+      ...previousValue,
+      ...currentValue.errors.map(error => {
+        return {
+          ...error,
+          componentName: currentValue.componentName,
+          messageGroup: 'Error',
+        };
+      }),
+      ...currentValue.infos.map(info => {
+        return {
+          ...info,
+          componentName: currentValue.componentName,
+          messageGroup: 'Info',
+        };
+      }),
+      ...currentValue.warnings.map(warning => {
+        return {
+          ...warning,
+          componentName: currentValue.componentName,
+          messageGroup: 'Warning',
+        };
+      })];
+  }, []) || [];
+
+  const lrResult = {
+    'loadRequestSummary': {
+      'opRequestSeq': lr.opRequestSeq,
+      'codeSystemName': lr.codeSystemName,
+      'requestSubject': lr.requestSubject,
+      'sourceFilePath': lr.sourceFilePath,
+      'requestType': lr.requestType,
+      'requestTime': lr.requestTime,
+      'requester': lr.requester,
+      'requesterUsername': '',
+      'creationTime': lr.creationTime,
+      'requestStatus': lr.requestStatus,
+      'loadNumber': lr.loadNumber,
+      'loadStatus': lr.versionStatus,
+      'loadStartTime': lr.loadStartTime,
+      'loadEndTime': lr.loadEndTime,
+      'loadRequestMessageList': loadRequestMessageList,
+    },
+    'loadComponentList': loadComponentList,
+    'loadComponentMessageList': loadComponentMessageList,
+  };
+  const apiEndTime = new Date();
+  res.send({
+    result: {
+      data: lrResult,
+      hasPagination: false,
+      pagination: null,
+    },
+    service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
+    status: { success: true },
+  });
 });
 
 app.post('/api/loadVersions', async (req, res) => {

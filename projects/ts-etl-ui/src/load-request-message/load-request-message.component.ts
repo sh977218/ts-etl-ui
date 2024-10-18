@@ -1,22 +1,20 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, input, ViewChild } from '@angular/core';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { CommonModule, NgIf } from '@angular/common';
+import {
+  AfterViewInit,
+  Component, computed, CUSTOM_ELEMENTS_SCHEMA, inject, input, NO_ERRORS_SCHEMA, ViewChild,
+} from '@angular/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTableModule,
+} from '@angular/material/table';
 
-import { LoadVersion } from '../model/load-version';
+import { LoadRequestMessage } from '../model/load-request-detail';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
-
-type MessageUI = {
-  componentName: string;
-  messageGroup: string;
-  messageType: string;
-  tag: string;
-  message: string;
-  creationTime: Date;
-}
+import { easternTimeMaSortingDataAccessor } from '../utility/mat-sorting-data-accessor';
 
 @Component({
   selector: 'app-load-request-message',
@@ -24,80 +22,39 @@ type MessageUI = {
   imports: [
     CommonModule,
     EasternTimePipe,
+    MatFormFieldModule,
+    MatInputModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatFormField,
-    MatInputModule,
-    MatLabel,
+    NgIf,
+    MatProgressSpinner,
   ],
+  providers: [EasternTimePipe],
   templateUrl: './load-request-message.component.html',
-  styleUrl: './load-request-message.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class LoadRequestMessageComponent implements AfterViewInit {
+  easternTime = inject(EasternTimePipe);
 
-  loadVersion = input.required<LoadVersion>();
+  loadRequestMessages = input.required<LoadRequestMessage[]>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   displayedColumns: string[] = [
-    'componentName',
-    'messageGroup',
-    'messageType',
+    'type',
     'tag',
     'message',
-    'creationTime',
+    'time',
   ];
 
-  dataSource = computed(() => {
-    const messages: MessageUI[] = [];
-    this.loadVersion()?.loadSummary.components?.forEach(m => {
-      m.infos.forEach(i => {
-        messages.push({
-          componentName: m.componentName,
-          messageGroup: 'Info',
-          messageType: i.messageType,
-          message: i.message,
-          tag: i.tag,
-          creationTime: i.creationTime,
-        });
-      });
-      m.warnings.forEach(i => {
-        messages.push({
-          componentName: m.componentName,
-          messageGroup: 'Warning',
-          messageType: i.messageType,
-          message: i.message,
-          tag: i.tag,
-          creationTime: i.creationTime,
-        });
-      });
-      m.errors.forEach(i => {
-        messages.push({
-          componentName: m.componentName,
-          messageGroup: 'Error',
-          messageType: i.messageType,
-          message: i.message,
-          tag: i.tag,
-          creationTime: i.creationTime,
-        });
-      });
-    });
-
-    return new MatTableDataSource<MessageUI>(messages);
-  });
+  dataSource = computed(() => new MatTableDataSource<LoadRequestMessage>(this.loadRequestMessages()));
 
   ngAfterViewInit() {
     this.dataSource().paginator = this.paginator;
     this.dataSource().sort = this.sort;
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource().filter = filterValue.trim().toLowerCase();
-    this.dataSource().paginator!.firstPage();
+    this.dataSource().sortingDataAccessor = easternTimeMaSortingDataAccessor;
   }
 
 }

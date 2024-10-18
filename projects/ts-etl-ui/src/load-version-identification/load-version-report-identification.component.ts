@@ -12,7 +12,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { RouterLink } from '@angular/router';
 import { map, Observable } from 'rxjs';
 
-import { LoadRequest } from '../model/load-request';
+import { LoadRequestDetailResponse } from '../model/load-request-detail';
 import { LoadVersion } from '../model/load-version';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 
@@ -35,7 +35,7 @@ import { EasternTimePipe } from '../service/eastern-time.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadVersionReportIdentificationComponent {
-  identification$ = input.required<Observable<[LoadRequest, LoadVersion]>>();
+  identification$ = input.required<Observable<[LoadRequestDetailResponse, LoadVersion]>>();
 
   identificationKeys1: Record<string, string> = {
     'codeSystemName': 'Code System Name',

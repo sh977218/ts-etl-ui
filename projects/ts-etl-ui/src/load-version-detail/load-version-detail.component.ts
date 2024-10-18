@@ -7,12 +7,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { triggerExpandTableAnimation } from '../animations';
 import { LoadVersionNoteComponent } from '../load-version-note/load-version-note.component';
-import {
-  LoadVersionReviewModalComponent,
-} from '../load-version-review-modal/load-version-review-modal.component';
-import {
-  LoadVersionSourceDataFileModalComponent,
-} from '../load-version-source-data-file-modal/load-version-source-data-file-modal.component';
+import { LoadVersionReviewModalComponent } from '../load-version-review-modal/load-version-review-modal.component';
 import type { LoadVersion, LoadVersionActivity } from '../model/load-version';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 
@@ -77,15 +72,6 @@ export class LoadVersionDetailComponent implements OnInit {
     this.dataSource.push({ key: 'Request Id:', value: this.loadVersion.requestId });
     this.dataSource.push({ key: 'Requester:', value: this.loadVersion.requester });
     this.dataSource.push({ key: 'Request Time:', value: this.loadVersion.requestTime, type: 'date' });
-  }
-
-  openSourceDataFileModal() {
-    this.dialog.open(LoadVersionSourceDataFileModalComponent, {
-      width: '600px',
-      data: this.loadVersion.version,
-    })
-      .afterClosed()
-      .subscribe();
   }
 
 }
