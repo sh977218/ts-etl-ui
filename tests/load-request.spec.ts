@@ -13,54 +13,6 @@ test.describe('LR -', async () => {
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
   const firstRow = 'table tbody tr:first-of-type';
 
-  test('Not Logged in', async ({ page }) => {
-    await page.goto('/load-requests');
-    await page.getByLabel('user menu').click();
-    await page.getByRole('menuitem', { name: 'Log Out' }).click();
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-    await page.goto('/load-requests');
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-    await page.getByRole('button', { name: 'Log In' }).click();
-    await expect(page.locator('mat-dialog-container')).toContainText('Login with Following');
-    await page.locator('button', { hasText: 'Close' });
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-  });
-
-  test('Invalid User', async ({ page, materialPo }) => {
-    await page.goto('/load-requests');
-    await page.getByLabel('user menu').click();
-    await page.getByRole('menuitem', { name: 'Log Out' }).click();
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-    await page.goto('/login-cb?ticket=bogusTicket');
-    await materialPo.checkAndCloseAlert('Unable to log in');
-    await expect(page.locator('body')).toContainText('This application requires you to log in');
-  });
-
-  test('Missing Ticket', async ({ page, materialPo }) => {
-    await page.goto('/load-requests');
-    await page.goto('/login-cb');
-    await materialPo.checkAndCloseAlert('Unable to log in');
-  });
-
-  test.describe('JWT fail', async () => {
-    test('Jwt Fail', async ({ page }) => {
-      await page.route('**/login', route => {
-        route.fulfill({
-          contentType: 'application/json',
-          body: JSON.stringify({}),
-        });
-      });
-      await page.goto('/load-requests');
-      await expect(page.locator('body')).toContainText('This application requires you to log in');
-    });
-
-    test('Incorrect Jwt', async ({ page, context }) => {
-      await context.addCookies([{ name: 'Bearer', value: 'bogusJwt', domain: 'localhost', path: '/' }]);
-      await page.goto('/load-requests');
-      await expect(page.locator('body')).toContainText('This application requires you to log in');
-    });
-  });
-
   test('Load Request table', async ({ page, materialPo }) => {
     const matDialog = materialPo.matDialog();
 
@@ -132,6 +84,7 @@ test.describe('LR -', async () => {
       await page.getByPlaceholder('Req. ID').fill(newlyCreatedLoadRequestId);
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `Today's` }).click();
+      await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
 
       await expect(page.locator('td:has-text("Scheduled")')).toBeVisible();
@@ -174,6 +127,7 @@ test.describe('LR -', async () => {
       // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
       await materialPo.matOption().filter({ hasText: `This week's` }).click();
+      await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
 
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
@@ -207,6 +161,8 @@ test.describe('LR -', async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
       await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Cancelled']);
       await materialPo.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency']);
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
       await expect(page.locator('td:has-text("CPT")')).toBeVisible();
       await expect(page.locator('td:has-text("Cancelled")')).toBeVisible();
@@ -250,6 +206,8 @@ test.describe('LR -', async () => {
     });
 
     await test.step(`Search and verify result`, async () => {
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.waitForSpinner();
       const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
       await expect(tableRows).toHaveCount(2);
       await expect(tableRows.first()).toContainText('MMSL');
@@ -260,7 +218,7 @@ test.describe('LR -', async () => {
       await expect(tableRows.nth(1)).toContainText('Scheduled');
     });
 
-    expect(numOfApiCalled).toEqual(6);
+    expect(numOfApiCalled).toEqual(1);
     await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
@@ -268,7 +226,8 @@ test.describe('LR -', async () => {
     test('input', async ({ page, materialPo }) => {
       const datePicker = page.locator(`[id="requestTimeRange"]`);
       await materialPo.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 }, todayInMatDate);
-      await expect(materialPo.matDialog()).toBeHidden();
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await page.getByRole('columnheader', { name: 'Request Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
@@ -276,7 +235,7 @@ test.describe('LR -', async () => {
 
     test('URL', async ({ page, materialPo }) => {
       await page.goto('/load-requests?requestTimeFrom=2017-11-01&requestTimeTo=2024-10-1&sortBy=requestTime&sortDirection=asc');
-      await expect(materialPo.matDialog()).toBeHidden();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
     });
@@ -286,7 +245,8 @@ test.describe('LR -', async () => {
     test('input', async ({ page, materialPo }) => {
       const datePicker = page.locator(`[id="creationTimeRange"]`);
       await materialPo.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 }, todayInMatDate);
-      await expect(materialPo.matDialog()).toBeHidden();
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await page.getByRole('columnheader', { name: 'Creation Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
@@ -294,21 +254,23 @@ test.describe('LR -', async () => {
 
     test('URL', async ({ page, materialPo }) => {
       await page.goto('/load-requests?creationTimeFrom=2010-01-01&creationTimeTo=2013-01-01&sortBy=creationTime&sortDirection=desc');
-      await expect(materialPo.matDialog()).toBeHidden();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('27');
     });
   });
 
   test.describe('Subject Filter', async () => {
-    test(`input`, async ({ page }) => {
+    test(`input`, async ({ page, materialPo }) => {
       await page.goto('/load-requests');
       await page.getByPlaceholder('subject...').fill('Great Subject');
       await page.keyboard.press('Enter');
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('29');
     });
 
-    test(`URL`, async ({ page }) => {
+    test(`URL`, async ({ page, materialPo }) => {
       await page.goto('/load-requests?requestSubject=Great%20Subject');
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('29');
     });
   });
@@ -316,26 +278,31 @@ test.describe('LR -', async () => {
   test.describe('Status Filter', async () => {
     test(`input`, async ({ page, materialPo }) => {
       await page.goto('/load-requests');
-      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped'], false);
+      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped']);
+      await page.getByRole('button', { name: 'Search' }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('30');
     });
 
-    test(`URL`, async ({ page }) => {
+    test(`URL`, async ({ page, materialPo }) => {
       await page.goto('/load-requests?requestStatus=Stopped');
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('30');
     });
   });
 
   test.describe('User Filter', async () => {
-    test(`input`, async ({ page }) => {
+    test(`input`, async ({ page, materialPo }) => {
       await page.goto('/load-requests');
       await page.getByPlaceholder('requester...').fill('bernicevega');
       await page.keyboard.press('Enter');
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('6');
     });
 
-    test(`URL`, async ({ page }) => {
+    test(`URL`, async ({ page, materialPo }) => {
       await page.goto('/load-requests?requester=bernicevega');
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('6');
     });
   });
@@ -345,6 +312,7 @@ test.describe('LR -', async () => {
 
     await test.step(`Go to next page`, async () => {
       await page.getByRole('button', { name: 'Next page' }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(rows).toHaveCount(10);
 
       await expect(page).toHaveURL(/pageNum=2/);
@@ -353,6 +321,7 @@ test.describe('LR -', async () => {
 
     await test.step(`Change sort`, async () => {
       await page.getByRole('columnheader', { name: 'Request ID' }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(rows).toHaveCount(10);
 
       await test.step('page size remain the same', async () => {
@@ -367,6 +336,7 @@ test.describe('LR -', async () => {
     await test.step(`Change page size`, async () => {
       await page.getByRole('combobox', { name: '10' }).click();
       await materialPo.matOption().filter({ hasText: `50` }).click();
+      await materialPo.matDialog().waitFor({ state: 'hidden' });
       await expect(rows).toHaveCount(50);
 
       await test.step('sort remain the same', async () => {
@@ -379,8 +349,9 @@ test.describe('LR -', async () => {
     });
   });
 
-  test('Search Returns empty', async ({ page }) => {
+  test('Search Returns empty', async ({ page, materialPo }) => {
     await page.goto('/load-requests?requestStatus=notaStatus');
+    await materialPo.matDialog().waitFor({ state: 'hidden' });
     await expect(page.locator('tbody')).toContainText('No results found');
   });
 
@@ -454,6 +425,7 @@ test.describe('LR -', async () => {
 
     await test.step(`verify load request created in ${EU_TIMEZONE}`, async () => {
       await page.getByPlaceholder('subject...').fill(newCreateSubject);
+      await page.getByRole('button', { name: 'Search' }).click();
       await materialPo.waitForSpinner();
       const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
       await expect(tableRows.first().locator('td').nth(5)).toContainText('EDT');

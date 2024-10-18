@@ -39,7 +39,7 @@ import {
   FlatLoadRequestPayload,
   generateLoadRequestPayload,
   LoadRequest,
-  LoadRequestPayload,
+  LoadRequestPayload, LoadRequestSearchForm,
   LoadRequestsResponse,
 } from '../model/load-request';
 import { User } from '../model/user';
@@ -109,18 +109,18 @@ export class LoadRequestComponent implements AfterViewInit {
 
   searchCriteria = new FormGroup(
     {
-      opRequestSeq: new FormControl<string | null>(null),
-      codeSystemName: new FormControl<string[] | null | undefined>(null),
-      requestSubject: new FormControl<string | null>(null),
-      requestStatus: new FormControl<string[] | null | undefined>(null),
-      requestType: new FormControl<string[] | null | undefined>(null),
-      requestTimeFrom: new FormControl<Moment | string | null>(null),
-      requestTimeTo: new FormControl<Moment | string | null>(null),
-      requester: new FormControl<string | null>(null),
-      creationTimeFrom: new FormControl<Moment | string | null>(null),
-      creationTimeTo: new FormControl<Moment | string | null>(null),
-      filterRequestTime: new FormControl<string | null>(null),
-      filterRequester: new FormControl<string | null>(null),
+      opRequestSeq: new FormControl<string | null>(null, { updateOn: 'submit' }),
+      codeSystemName: new FormControl<string[] | null | undefined>(null, { updateOn: 'submit' }),
+      requestSubject: new FormControl<string | null>(null, { updateOn: 'submit' }),
+      requestStatus: new FormControl<string[] | null | undefined>(null, { updateOn: 'submit' }),
+      requestType: new FormControl<string[] | null | undefined>(null, { updateOn: 'submit' }),
+      requestTimeFrom: new FormControl<Moment | string | null>(null, { updateOn: 'submit' }),
+      requestTimeTo: new FormControl<Moment | string | null>(null, { updateOn: 'submit' }),
+      requester: new FormControl<string | null>(null, { updateOn: 'submit' }),
+      creationTimeFrom: new FormControl<Moment | string | null>(null, { updateOn: 'submit' }),
+      creationTimeTo: new FormControl<Moment | string | null>(null, { updateOn: 'submit' }),
+      filterRequestTime: new FormControl<string | null>(null, { updateOn: 'change' }),
+      filterRequester: new FormControl<string | null>(null, { updateOn: 'change' }),
     },
   );
 
@@ -137,6 +137,36 @@ export class LoadRequestComponent implements AfterViewInit {
     },
   };
 
+  formChanged$ = this.searchCriteria.valueChanges.pipe(
+    debounceTime(500),
+    distinctUntilChanged(),
+    tap({
+      next: val => {
+        const queryParams = { pageNum: null, ...val };
+        const requestTimeFrom = val.requestTimeFrom;
+        if (requestTimeFrom) {
+          queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
+        }
+        const requestTimeTo = val.requestTimeTo;
+        if (requestTimeTo) {
+          queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
+        }
+        const creationTimeFrom = val.creationTimeFrom;
+        if (creationTimeFrom) {
+          queryParams.creationTimeFrom = (creationTimeFrom as Moment).toISOString();
+        }
+        const creationTimeTo = val.creationTimeTo;
+        if (creationTimeTo) {
+          queryParams.creationTimeTo = (creationTimeTo as Moment).toISOString();
+        }
+        this.router.navigate(['load-requests'], {
+          queryParamsHandling: 'merge',
+          queryParams,
+        });
+      },
+    }),
+  );
+
   constructor(private http: HttpClient,
               private activatedRoute: ActivatedRoute,
               private router: Router,
@@ -146,37 +176,7 @@ export class LoadRequestComponent implements AfterViewInit {
               private alertService: AlertService,
               private downloadService: DownloadService) {
     userService.user$.subscribe(user => this.user = user);
-    this.searchCriteria.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        tap({
-          next: val => {
-            const queryParams = { pageNum: 1, ...val };
-            const requestTimeFrom = val.requestTimeFrom;
-            if (requestTimeFrom) {
-              queryParams.requestTimeFrom = (requestTimeFrom as Moment).toISOString();
-            }
-            const requestTimeTo = val.requestTimeTo;
-            if (requestTimeTo) {
-              queryParams.requestTimeTo = (requestTimeTo as Moment).toISOString();
-            }
-            const creationTimeFrom = val.creationTimeFrom;
-            if (creationTimeFrom) {
-              queryParams.creationTimeFrom = (creationTimeFrom as Moment).toISOString();
-            }
-            const creationTimeTo = val.creationTimeTo;
-            if (creationTimeTo) {
-              queryParams.creationTimeTo = (creationTimeTo as Moment).toISOString();
-            }
-            this.router.navigate(['load-requests'], {
-              queryParamsHandling: 'merge',
-              queryParams,
-            });
-          },
-        }),
-      )
-      .subscribe();
+    this.formChanged$.subscribe();
   }
 
   ngAfterViewInit() {
@@ -200,68 +200,14 @@ export class LoadRequestComponent implements AfterViewInit {
               creationTimeTo: queryParams.get('creationTimeTo'),
               filterRequestTime: queryParams.get('filterRequestTime'),
               filterRequester: queryParams.get('filterRequester'),
-              pageNum: queryParams.get('pageNum'),
-              pageSize: queryParams.get('pageSize'),
+              pageNum: Number(queryParams.get('pageNum')),
+              pageSize: Number(queryParams.get('pageSize')),
               sortBy: queryParams.get('sortBy'),
               sortDirection: queryParams.get('sortDirection'),
             };
 
-            /*
-            @TODO find an elegant way to patch the entire form without trigger valueChanges
-             If you patch the entire reactive form, even with `emitEvent: false`, there will be many valueChange triggered, one per changes.
-             I had to patch reactive form's individual property with `emitEvent: false` so it doesn't propagate the valueChange.
-           */
-            const searchCriteriaPatch = { ...searchCriteriaFromQueryParameter };
-            if (searchCriteriaPatch.opRequestSeq) {
-              this.searchCriteria.controls.opRequestSeq.patchValue(searchCriteriaPatch.opRequestSeq, {
-                emitEvent: false,
-              });
-            }
-            this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName, {
-              emitEvent: false,
-            });
-            if (searchCriteriaPatch.requestSubject) {
-              this.searchCriteria.controls.requestSubject.patchValue(searchCriteriaPatch.requestSubject, {
-                emitEvent: false,
-              });
-            }
-            this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus, {
-              emitEvent: false,
-            });
-            this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType, {
-              emitEvent: false,
-            });
-            if (searchCriteriaPatch.requestTimeFrom) {
-              this.searchCriteria.controls.requestTimeFrom.patchValue(moment(searchCriteriaPatch.requestTimeFrom), {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.requestTimeTo) {
-              this.searchCriteria.controls.requestTimeTo.patchValue(moment(searchCriteriaPatch.requestTimeTo), {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.requester) {
-              this.searchCriteria.controls.requester.patchValue(searchCriteriaPatch.requester, {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.creationTimeFrom) {
-              this.searchCriteria.controls.creationTimeFrom.patchValue(moment(searchCriteriaPatch.creationTimeFrom), {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.creationTimeTo) {
-              this.searchCriteria.controls.creationTimeTo.patchValue(moment(searchCriteriaPatch.creationTimeTo), {
-                emitEvent: false,
-              });
-            }
-            if (searchCriteriaPatch.filterRequestTime) {
-              this.searchCriteria.controls.filterRequestTime.patchValue(searchCriteriaPatch.filterRequestTime, {
-                emitEvent: false,
-              });
-            }
-
+            const loadRequestSearchForm = { ...searchCriteriaFromQueryParameter };
+            this.updateSearchFormWhenQueryParameterChanged(loadRequestSearchForm);
             return searchCriteriaFromQueryParameter;
           }),
           switchMap((qp) => {
@@ -284,6 +230,63 @@ export class LoadRequestComponent implements AfterViewInit {
       }))
       .subscribe();
   }
+
+  /**
+   * @TODO find an elegant way to patch the entire form without trigger valueChanges
+   * If you patch the entire reactive form at once, even with `emitEvent: false`, there will be many valueChange triggered, one per changes.
+   * I had to patch reactive form's individual property with `emitEvent: false` so it doesn't propagate the valueChange.
+   */
+  private updateSearchFormWhenQueryParameterChanged = (searchCriteriaPatch: LoadRequestSearchForm) => {
+    if (searchCriteriaPatch.opRequestSeq) {
+      this.searchCriteria.controls.opRequestSeq.patchValue(searchCriteriaPatch.opRequestSeq, {
+        emitEvent: false,
+      });
+    }
+    this.searchCriteria.controls.codeSystemName.patchValue(searchCriteriaPatch.codeSystemName, {
+      emitEvent: false,
+    });
+    if (searchCriteriaPatch.requestSubject) {
+      this.searchCriteria.controls.requestSubject.patchValue(searchCriteriaPatch.requestSubject, {
+        emitEvent: false,
+      });
+    }
+    this.searchCriteria.controls.requestStatus.patchValue(searchCriteriaPatch.requestStatus, {
+      emitEvent: false,
+    });
+    this.searchCriteria.controls.requestType.patchValue(searchCriteriaPatch.requestType, {
+      emitEvent: false,
+    });
+    if (searchCriteriaPatch.requestTimeFrom) {
+      this.searchCriteria.controls.requestTimeFrom.patchValue(moment(searchCriteriaPatch.requestTimeFrom), {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.requestTimeTo) {
+      this.searchCriteria.controls.requestTimeTo.patchValue(moment(searchCriteriaPatch.requestTimeTo), {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.requester) {
+      this.searchCriteria.controls.requester.patchValue(searchCriteriaPatch.requester, {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.creationTimeFrom) {
+      this.searchCriteria.controls.creationTimeFrom.patchValue(moment(searchCriteriaPatch.creationTimeFrom), {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.creationTimeTo) {
+      this.searchCriteria.controls.creationTimeTo.patchValue(moment(searchCriteriaPatch.creationTimeTo), {
+        emitEvent: false,
+      });
+    }
+    if (searchCriteriaPatch.filterRequestTime) {
+      this.searchCriteria.controls.filterRequestTime.patchValue(searchCriteriaPatch.filterRequestTime, {
+        emitEvent: false,
+      });
+    }
+  };
 
   openCreateLoadRequestModal() {
     this.dialog.open(CreateLoadRequestModalComponent, {
