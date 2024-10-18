@@ -61,6 +61,7 @@ export default defineConfig({
     },
     {
       name: 'ts-etl-ui',
+      grep: [/@smoke/, /@debug/],
       use: {
         ...devices['Desktop Chrome'],
       },
