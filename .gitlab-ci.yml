@@ -24,7 +24,7 @@ stages:         # List of stages for jobs, and their order of execution
 build-app:      # This job runs in the build stage, which runs first.
   stage: build
   tags:
-    - amazon_linux_2023
+    - int-101
   script:
     - pwd
     - /usr/nlm/node_activate 20
