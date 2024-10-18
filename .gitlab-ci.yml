@@ -24,14 +24,12 @@ stages:         # List of stages for jobs, and their order of execution
 build-app:      # This job runs in the build stage, which runs first.
   stage: build
   tags:
-    - int-101
+  - amazon_linux_2023
   script:
     - pwd
-    - export PATH=/usr/nlm/node/bin:$PATH
-    - /usr/nlm/node_activate 20
     - npm i
     - npm run build:coverage
-    - npx playwright test --project=ts-etl-ui
+    - npx playwright test --project=ts-etl-ui --config=playwright-gitlab.config.ts
     - npx nyc report
 
 deployment-job:     # This job runs in the deployment stage, which runs last.
