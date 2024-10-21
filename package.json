@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "main": "server/server.js",
   "scripts": {
+    "preinstall": "node -e 'console.log(v8.getHeapStatistics());'",
     "ng": "ng",
     "serve": "ng serve ts-etl-ui",
     "serve:prod": "ng serve ts-etl-ui -c prod",
