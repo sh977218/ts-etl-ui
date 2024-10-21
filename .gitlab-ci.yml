@@ -27,6 +27,7 @@ build-app:      # This job runs in the build stage, which runs first.
     - amazon_linux_2023
   script:
     - pwd
+    - NODE_OPTIONS=--max_old_space_size=4096
     - npm i
     - npm run build:coverage
     - npx playwright test --project=ts-etl-ui --config=playwright-gitlab.config.ts
