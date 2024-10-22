@@ -138,18 +138,15 @@ const test = baseTest.extend<{
     });
 
     if (accountUsername) {
-      console.log(`accountUsername ************** :${accountUsername}`);
       const userNameMap: Record<string, string> = {
-        'Peter': 'Peter',
         'peter': 'Peter',
-        'Christophe': 'Christophe',
         'christophe': 'Christophe',
       };
       await test.step('login', async () => {
         await page.getByRole('button', { name: 'Log In' }).click();
         await page.getByRole('link', { name: 'UTS' }).click();
         await page.getByRole('button', { name: 'Sign in' }).click();
-        await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername]);
+        await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()]);
         await page.getByRole('button', { name: 'Ok' }).click();
         await page.waitForURL(`${baseURL}/load-requests`);
       });

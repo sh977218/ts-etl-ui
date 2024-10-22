@@ -21,19 +21,21 @@ test.describe('System testing -', async () => {
     await materialPo.checkAndCloseAlert('Unable to log in');
   });
 
-  test(`Global api error handler`, async ({ page, materialPo }) => {
-    test.use({ accountUsername: 'Peter' });
-    await page.route('**/property/request-types', async route => {
-      await route.fulfill({
-        status: 500,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          message: 'Something wrong',
-        }),
+  test.describe(`error handler`, async () => {
+    test.use({ accountUsername: 'peter' });
+    test(`Global api error handler`, async ({ page, materialPo }) => {
+      await page.route('**/property/request-types', async route => {
+        await route.fulfill({
+          status: 500,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            message: 'Something wrong',
+          }),
+        });
       });
+      await page.goto('/load-requests');
+      await materialPo.checkAndCloseAlert('Something wrong');
     });
-    await page.goto('/load-requests');
-    await materialPo.checkAndCloseAlert('Something wrong');
   });
 
   test.describe('JWT fail', async () => {
