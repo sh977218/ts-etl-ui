@@ -116,11 +116,13 @@ class MaterialPO {
 
 const test = baseTest.extend<{
   materialPo: MaterialPO,
+  accountUsername: string
 }>({
   materialPo: async ({ page, baseURL }, use) => {
     await use(new MaterialPO(page));
   },
-  page: async ({ page, baseURL }, use, testInfo) => {
+  accountUsername: '',
+  page: async ({ page, accountUsername, baseURL }, use, testInfo) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
         UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
@@ -135,14 +137,20 @@ const test = baseTest.extend<{
       await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
     });
 
-    await test.step('login', async () => {
-      await page.getByRole('button', { name: 'Log In' }).click();
-      await page.getByRole('link', { name: 'UTS' }).click();
-      await page.getByRole('button', { name: 'Sign in' }).click();
-      await page.locator('[name="ticket"]').selectOption('Peter');
-      await page.getByRole('button', { name: 'Ok' }).click();
-      await page.waitForURL(`${baseURL}/load-requests`);
-    });
+    if (accountUsername) {
+      const userNameMap: Record<string, string> = {
+        'peter': 'Peter',
+        'christophe': 'Christophe',
+      };
+      await test.step('login', async () => {
+        await page.getByRole('button', { name: 'Log In' }).click();
+        await page.getByRole('link', { name: 'UTS' }).click();
+        await page.getByRole('button', { name: 'Sign in' }).click();
+        await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()]);
+        await page.getByRole('button', { name: 'Ok' }).click();
+        await page.waitForURL(`${baseURL}/load-requests`);
+      });
+    }
     await use(page);
     if (!!process.env['CI'] || process.env['COVERAGE']) {
       await codeCoverage(page, testInfo);
