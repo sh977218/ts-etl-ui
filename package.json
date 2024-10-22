@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "main": "server/server.js",
   "scripts": {
+    "preinstall": "node -e 'const os = require('os'); console.log(os.totalmem());console.log(v8.getHeapStatistics());",
     "ng": "ng",
     "serve": "ng serve ts-etl-ui",
     "serve:prod": "ng serve ts-etl-ui -c prod",
@@ -14,12 +15,12 @@
     "start:coverage": "npm run start:coverage --prefix server",
     "build": "ng build ts-etl-ui -c render && node server/insert-commit-hash.js",
     "build:prod": "ng build ts-etl-ui -c prod && node server/insert-commit-hash.js",
-    "build:coverage": "ng build e2e-coverage -c coverage && node server/insert-commit-hash.js",
+    "build:coverage": "ng build e2e-coverage -c coverage",
     "test": "playwright test --project=ts-etl-ui",
     "test:smoke": "playwright test --project=debug",
     "test:debug": "playwright test --project=debug --debug",
     "test:ui": "playwright test --project=ts-etl-ui --ui",
-    "reset-db": "node --env-file server/.coverage.env server/reset-mongo-db.js",
+    "reset-db": "node server/reset-mongo-db.js",
     "coverage-report": "npx nyc report",
     "prepare": "husky"
   },
