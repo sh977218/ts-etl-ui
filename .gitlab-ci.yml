@@ -16,12 +16,12 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
-stages:         # List of stages for jobs, and their order of execution
+stages: # List of stages for jobs, and their order of execution
   - build
   - test
   - deployment
 
-build-app:      # This job runs in the build stage, which runs first.
+build-app: # This job runs in the build stage, which runs first.
   stage: build
   tags:
     - amazon_linux_2023
@@ -30,19 +30,19 @@ build-app:      # This job runs in the build stage, which runs first.
     - npm i
     - npm run build:coverage
 
-playwright:     # This job runs in the test stage.
+playwright: # This job runs in the test stage.
   stage: test
   allow_failure: true
   script:
     - npx playwright test --project=ts-etl-ui
-
-check-coverage: # This job runs in the test stage.
-  stage: test
-  allow_failure: true
-  script:
+    - npx playwright merge-reports --reporter html ./blob-report
     - npx nyc report
+  artifacts:
+    paths:
+      - playwright-report
+      - coverage-e2e
 
-deployment-job:     # This job runs in the deployment stage, which runs last.
+deployment-job: # This job runs in the deployment stage, which runs last.
   stage: deployment
   script:
     - echo "Deploying application..."
