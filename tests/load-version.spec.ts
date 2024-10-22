@@ -2,6 +2,7 @@ import test from './baseFixture';
 import { expect, test as pwTest } from '@playwright/test';
 import { readFileSync } from 'fs';
 
+test.use({ accountUsername: 'Christophe' });
 test.describe('LV - ', async () => {
 
   test('Version QA Table', async ({ page, materialPo }) => {

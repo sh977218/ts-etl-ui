@@ -3,6 +3,7 @@ import { expect, test as pwTest } from '@playwright/test';
 import { readFileSync } from 'fs';
 import { EU_TIMEZONE, MatDate } from './CONSTANT';
 
+test.use({ accountUsername: 'Peter' });
 test.describe('LR -', async () => {
   const today = new Date();
   const todayInMatDate: MatDate = {
