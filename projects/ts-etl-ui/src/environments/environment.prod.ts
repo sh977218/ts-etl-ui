@@ -1,7 +1,6 @@
 import { Environment } from '../model/environment';
 
 export const environment: Environment = {
-  /* eslint-disable */
   environmentName: 'prod',
   production: true,
   ticketUrl: '/portal-backend/user/serviceValidate',
