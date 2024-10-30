@@ -23,19 +23,21 @@ stages: # List of stages for jobs, and their order of execution
 
 build-app: # This job runs in the build stage, which runs first.
   stage: build
+  image:
+    name: tools.nlm.nih.gov/amz-nodejs20
+    entrypoint: [""]
   tags:
-    - amazon_linux_2023
+    - docker
+    - dvlb7docker03
   script:
+    - export PATH=/usr/bin/node:/usr/nlm/node/bin:$PATH
     - pwd
+    - echo $PATH
+    - NODE_OPTIONS=--max_old_space_size=4096
     - npm i
     - npm run build:coverage
-
-playwright: # This job runs in the test stage.
-  stage: test
-  allow_failure: true
-  script:
-    - npx playwright test --project=ts-etl-ui
-    - npx playwright merge-reports --reporter html ./blob-report
+    - npx playwright install --with-deps
+    - npx playwright test --project=ts-etl-ui --config=playwright-gitlab.config.ts
     - npx nyc report
   artifacts:
     paths:
