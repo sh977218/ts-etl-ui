@@ -24,7 +24,7 @@ stages: # List of stages for jobs, and their order of execution
 build-app: # This job runs in the build stage, which runs first.
   stage: build
   image:
-    name: tools.nlm.nih.gov/amz-nodejs20
+    name: tools.nlm.nih.gov/playwright:latest
     entrypoint: [""]
   tags:
     - docker
