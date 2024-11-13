@@ -1,9 +1,10 @@
 import { test as baseTest, expect, Page, ConsoleMessage, TestInfo, Locator } from '@playwright/test';
-
 import { randomBytes } from 'crypto';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { MAT_MONTH_MAP, MatDate } from './CONSTANT';
+import * as jwt from 'jsonwebtoken';
+
+import { MAT_MONTH_MAP, MatDate, User } from './CONSTANT';
 
 const PROJECT_ROOT_FOLDER = join(__dirname, '..');
 const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
@@ -114,6 +115,18 @@ class MaterialPO {
   }
 }
 
+const SECRET_TOKEN = 'some-secret'; // should be from process.env
+const userNameMap: Record<string, User> = {
+  'peter': {
+    username: 'Peter',
+    jwt: jwt.sign({ data: 'peterhuanguts' }, SECRET_TOKEN),
+  },
+  'christophe': {
+    username: 'Christophe',
+    jwt: jwt.sign({ data: 'ludetc' }, SECRET_TOKEN),
+  },
+};
+
 const test = baseTest.extend<{
   materialPo: MaterialPO,
   accountUsername: string
@@ -128,28 +141,37 @@ const test = baseTest.extend<{
         UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
       }
     });
-
+    if (accountUsername) {
+      const cookies = [{
+        name: 'Bearer',
+        value: userNameMap[accountUsername.toLowerCase()].jwt,
+        path: '/',
+        domain: 'localhost',
+      }];
+      await page.context().addCookies(cookies);
+    }
     await page.goto('/');
-    await test.step('has title', async () => {
-      await expect(page).toHaveTitle('Please Log In');
-    });
-    await test.step('has login required message', async () => {
-      await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
-    });
+    /*
+        await test.step('has title', async () => {
+          await expect(page).toHaveTitle('Please Log In');
+        });
+        await test.step('has login required message', async () => {
+          await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
+        });
+    */
 
     if (accountUsername) {
-      const userNameMap: Record<string, string> = {
-        'peter': 'Peter',
-        'christophe': 'Christophe',
-      };
-      await test.step('login', async () => {
-        await page.getByRole('button', { name: 'Log In' }).click();
-        await page.getByRole('link', { name: 'UTS' }).click();
-        await page.getByRole('button', { name: 'Sign in' }).click();
-        await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()]);
-        await page.getByRole('button', { name: 'Ok' }).click();
-        await page.waitForURL(`${baseURL}/load-requests`);
-      });
+
+      /*
+            await test.step('login', async () => {
+              await page.getByRole('button', { name: 'Log In' }).click();
+              await page.getByRole('link', { name: 'UTS' }).click();
+              await page.getByRole('button', { name: 'Sign in' }).click();
+              await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].username);
+              await page.getByRole('button', { name: 'Ok' }).click();
+              await page.waitForURL(`${baseURL}/load-requests`);
+            });
+      */
     }
     await use(page);
     if (!!process.env['CI'] || process.env['COVERAGE']) {

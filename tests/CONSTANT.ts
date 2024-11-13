@@ -22,3 +22,8 @@ export type MatDate = {
   month: number,
   day: number
 }
+
+export type User = {
+  username: string;
+  jwt: string;
+}

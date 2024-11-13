@@ -1,6 +1,7 @@
 import { mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 import { execSync } from 'child_process';
+import jwt from 'jsonwebtoken';
 
 const PROJECT_ROOT_FOLDER = __dirname;
 const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
