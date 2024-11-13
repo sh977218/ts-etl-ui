@@ -118,11 +118,13 @@ class MaterialPO {
 const SECRET_TOKEN = 'some-secret'; // should be from process.env
 const userNameMap: Record<string, User> = {
   'peter': {
-    username: 'Peter',
+    displayUsername: 'Peter',
+    utsUsername: 'peterhuanguts',
     jwt: jwt.sign({ data: 'peterhuanguts' }, SECRET_TOKEN),
   },
   'christophe': {
-    username: 'Christophe',
+    displayUsername: 'Christophe',
+    utsUsername: 'ludetc',
     jwt: jwt.sign({ data: 'ludetc' }, SECRET_TOKEN),
   },
 };
