@@ -45,7 +45,7 @@ export default defineConfig({
     trace: 'on',
     browserName: 'chromium',
     ignoreHTTPSErrors: true,
-    baseURL: process.env['CI'] ? 'http://localhost:3000' : process.env.PW_BASE_URL ?? 'http://localhost:4200',
+    baseURL: process.env['CI'] ? 'https://tsdata-dev.nlm.nih.gov/protal-frontend' : process.env.PW_BASE_URL ?? 'http://localhost:4200',
   },
 
   /* Configure projects for major browsers */
@@ -75,7 +75,7 @@ export default defineConfig({
       command: `MONGO_USERNAME=peterhuangnih MONGO_PASSWORD=upbjppmDsYVsl61H MONGO_HOSTNAME=ts-etl-ui.oyinipt.mongodb.net/ MONGO_DBNAME=ci ENV_NAME=coverage npm run reset-db`,
     }] : [],
     {
-      command:`MONGO_USERNAME=peterhuangnih MONGO_PASSWORD=upbjppmDsYVsl61H MONGO_HOSTNAME=ts-etl-ui.oyinipt.mongodb.net/ MONGO_DBNAME=ci ENV_NAME=coverage npm run start:coverage`,
+      command: `MONGO_USERNAME=peterhuangnih MONGO_PASSWORD=upbjppmDsYVsl61H MONGO_HOSTNAME=ts-etl-ui.oyinipt.mongodb.net/ MONGO_DBNAME=ci ENV_NAME=coverage npm run start:coverage`,
       port: 3000,
       reuseExistingServer: true,
     },
