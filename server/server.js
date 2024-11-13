@@ -634,7 +634,7 @@ app.get('/nih-login', (req, res) => {
 
 /* @todo TS's backend needs to implement the following APIs. */
 // this map simulate UTS ticket to username, NOTE: user `ghost` exist in UTS DB but not in TS DB (Do not add user 'ghost' in data/user.json).
-const ticketMap = new Map([['peter-ticket', 'peterhuanguts'], ['christophe-ticket', 'ludetc'], ['ghost-ticket', 'ghost']]);
+const ticketMap = new Map([['peter-ticket', 'peterhuang'], ['christophe-ticket', 'ludetc'], ['ghost-ticket', 'ghost']]);
 app.get('/api/serviceValidate', async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;

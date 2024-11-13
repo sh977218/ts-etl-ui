@@ -119,8 +119,8 @@ const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
 const userNameMap: Record<string, User> = {
   'peter': {
     displayUsername: 'Peter',
-    utsUsername: 'peterhuanguts',
-    jwt: jwt.sign({ data: 'peterhuanguts' }, SECRET_TOKEN),
+    utsUsername: 'peterhuang',
+    jwt: jwt.sign({ data: 'peterhuang' }, SECRET_TOKEN),
   },
   'christophe': {
     displayUsername: 'Christophe',
