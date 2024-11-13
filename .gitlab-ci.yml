@@ -30,10 +30,6 @@ build-app: # This job runs in the build stage, which runs first.
     - docker
     - dvlb7docker03
   script:
-    - export PATH=/usr/bin/node:/usr/nlm/node/bin:$PATH
-    - pwd
-    - echo $PATH
-    - NODE_OPTIONS=--max_old_space_size=4096
     - npm i
     - npm run build:coverage
     - npx playwright install --with-deps
