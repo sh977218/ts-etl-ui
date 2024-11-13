@@ -16,7 +16,7 @@
     "build:prod": "ng build ts-etl-ui -c prod && node server/insert-commit-hash.js",
     "build:coverage": "ng build e2e-coverage -c coverage",
     "test": "playwright test --project=ts-etl-ui",
-    "test:gitlab": "playwright test --project=ts-etl-ui --config playwright-gitlab.config.ts",
+    "test:gitlab": "playwright test --project=ts-etl-ui --config playwright-gitlab.config.ts --headed",
     "test:smoke": "playwright test --project=debug",
     "test:debug": "playwright test --project=debug --debug",
     "test:ui": "playwright test --project=ts-etl-ui --ui",

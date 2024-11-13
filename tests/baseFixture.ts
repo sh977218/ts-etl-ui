@@ -58,7 +58,7 @@ class MaterialPO {
   async selectMultiOptions(selectLocator: Locator, options: string[], waitForSpinner = false) {
     await selectLocator.click();
     for (const option of options) {
-      await this.page.getByRole('option', { name: option }).click();
+      await this.page.getByRole('option', {name: option}).click();
       if (waitForSpinner) {
         await this.waitForSpinner();
       }
@@ -77,7 +77,7 @@ class MaterialPO {
     } else {
       await this.page.keyboard.press('Escape');
     }
-    await calendar.waitFor({ state: 'hidden' });
+    await calendar.waitFor({state: 'hidden'});
   }
 
   private async selectMatDate(d: MatDate) {
@@ -96,14 +96,16 @@ class MaterialPO {
       lastYear = await calendar.getByRole('gridcell').last().innerText();
     }
 
-    await calendar.getByRole('button', { name: d.year + '', exact: true }).click();
+    await calendar.getByRole('button', {name: d.year + '', exact: true}).click();
     await calendar.getByLabel(MAT_MONTH_MAP[d.month]).click();
     await calendar.getByLabel(`${MAT_MONTH_MAP[d.month]} ${d.day},`).click();
   }
 
   async waitForSpinner() {
+/*
     await this.matSpinner().waitFor();
-    await this.matSpinner().waitFor({ state: 'hidden' });
+    await this.matSpinner().waitFor({state: 'hidden'});
+*/
   }
 
   async checkAndCloseAlert(text: string | RegExp) {
@@ -117,15 +119,21 @@ class MaterialPO {
 
 const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
 const userNameMap: Record<string, User> = {
-  'peter': {
-    displayUsername: 'Peter',
-    utsUsername: 'peterhuang',
-    jwt: jwt.sign({ data: 'peterhuang' }, SECRET_TOKEN),
+  peter: {
+    sub:'peterhuang',
+    userId: 5,
+    firstName: "Peter",
+    lastName: "Huang",
+    email: "shi.huang@nih.gov",
+    role: "Admin"
   },
-  'christophe': {
-    displayUsername: 'Christophe',
-    utsUsername: 'ludetc',
-    jwt: jwt.sign({ data: 'ludetc' }, SECRET_TOKEN),
+  christophe: {
+    userId: 6,
+    firstName: "Christophe",
+    lastName: "Ludet",
+    sub: "ludetc",
+    email: "christophe.ludet@nih.gov",
+    role: "Admin"
   },
 };
 
@@ -134,23 +142,24 @@ const test = baseTest.extend<{
   accountUsername: string,
   byPassLogin: boolean,
 }>({
-  materialPo: async ({ page, baseURL }, use) => {
+  materialPo: async ({page, baseURL}, use) => {
     await use(new MaterialPO(page));
   },
   accountUsername: '',
   byPassLogin: true,
-  page: async ({ page, accountUsername, byPassLogin, baseURL }, use, testInfo) => {
+  page: async ({page, accountUsername, byPassLogin, baseURL}, use, testInfo) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
         UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
       }
     });
     if (byPassLogin) {
+      const payload = userNameMap[accountUsername.toLowerCase()]
       const cookies = [{
         name: 'Bearer',
-        value: userNameMap[accountUsername.toLowerCase()].jwt,
+        value: jwt.sign(payload, SECRET_TOKEN),
         path: '/',
-        domain: 'localhost',
+        domain: 'tsdata-dev.nlm.nih.gov',
       }];
       await page.context().addCookies(cookies);
     }
@@ -164,11 +173,11 @@ const test = baseTest.extend<{
       });
       if (accountUsername) {
         await test.step('login', async () => {
-          await page.getByRole('button', { name: 'Log In' }).click();
-          await page.getByRole('link', { name: 'UTS' }).click();
-          await page.getByRole('button', { name: 'Sign in' }).click();
-          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].displayUsername);
-          await page.getByRole('button', { name: 'Ok' }).click();
+          await page.getByRole('button', {name: 'Log In'}).click();
+          await page.getByRole('link', {name: 'UTS'}).click();
+          await page.getByRole('button', {name: 'Sign in'}).click();
+          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername].sub);
+          await page.getByRole('button', {name: 'Ok'}).click();
           await page.waitForURL(`${baseURL}/load-requests`);
         });
       }
@@ -180,7 +189,7 @@ const test = baseTest.extend<{
   },
 });
 
-test.afterEach(async ({ page }, testInfo) => {
+test.afterEach(async ({page}, testInfo) => {
 });
 
 test.afterAll(async () => {

@@ -20,23 +20,21 @@ export default defineConfig({
   expect: {
     timeout: 5000,
   },
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
 
   retries: 0,
-
-  workers: process.env.CI ? 3 : parseInt(process.env.PW_WORKERS ?? '1', 10),
+  maxFailures: 3,
+  workers: 1,
 
   reporter: [
-    ['blob'],
     ['html'],
+    ['blob'],
   ],
 
   use: {
     actionTimeout: 5000,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    headless: !!process.env['CI'],
+    headless: false,
     launchOptions: {
       slowMo: 500,
     },
@@ -45,7 +43,7 @@ export default defineConfig({
     trace: 'on',
     browserName: 'chromium',
     ignoreHTTPSErrors: true,
-    baseURL: process.env['CI'] ? 'https://tsdata-dev.nlm.nih.gov/protal-frontend' : process.env.PW_BASE_URL ?? 'http://localhost:4200',
+    baseURL: 'https://tsdata-dev.nlm.nih.gov/portal-frontend',
   },
 
   /* Configure projects for major browsers */
@@ -57,6 +55,7 @@ export default defineConfig({
         video: 'on',
         trace: 'on',
         screenshot: 'on',
+        browserName: 'chromium',
       },
     },
     {

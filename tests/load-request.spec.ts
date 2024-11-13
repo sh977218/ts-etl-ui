@@ -14,7 +14,7 @@ test.describe('LR -', async () => {
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
   const firstRow = 'table tbody tr:first-of-type';
 
-  test('Load Request table', async ({ page, materialPo }) => {
+  test('Load Request table @smoke', async ({ page, materialPo }) => {
     const matDialog = materialPo.matDialog();
 
     await expect(page.getByRole('link', { name: 'Load Request' })).toBeVisible();
@@ -66,14 +66,14 @@ test.describe('LR -', async () => {
       /**
        * mat-option is not attached to modal, it appends to end of app root tag, so using page instead of `matDialog`.
        */
-      await page.getByRole('option', { name: 'HPO' }).click();
+      await page.getByRole('option', { name: 'USP' }).click();
       await matDialog.getByLabel('Request Subject').fill('newly created load request');
       await matDialog.getByLabel('Source File Path').clear();
       await matDialog.getByLabel('Source File Path').fill('this is not valid');
       await page.locator('mat-dialog-container h2').click();
       await expect(page.locator('mat-dialog-container')).toContainText('The path must be subfolder under the base URL');
       await matDialog.getByLabel('Source File Path').clear();
-      await matDialog.getByLabel('Source File Path').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
+      await matDialog.getByLabel('Source File Path').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823');
       await page.locator('mat-dialog-container h2').click();
       await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
