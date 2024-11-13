@@ -34,7 +34,7 @@ test.describe('System testing -', async () => {
       await expect(page.locator('body')).toContainText('This application requires you to log in');
     });
 
-    test('Incorrect Jwt @smoke', async ({ page, context }) => {
+    test('Incorrect Jwt', async ({ page, context }) => {
       await context.addCookies([{ name: 'Bearer', value: 'bogusJwt', domain: 'localhost', path: '/' }]);
       await page.goto('/load-requests');
       await expect(page.locator('body')).toContainText('This application requires you to log in');
