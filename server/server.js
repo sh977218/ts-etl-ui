@@ -26,7 +26,7 @@ const port = process.env.PORT || 3000;
 @Todo those can be from config
 */
 const COOKIE_EXPIRATION_IN_MS = ['prod'].includes(process.env.ENV_NAME) ? 60 * 1000 * 60 * 2 : 60 * 1000 * 60 * 8; // 2 hours on prod, 8 hours on dev
-const SECRET_TOKEN = 'some-secret'; // should be from process.env
+const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
 
 app.use(express.json());
 app.use(cookieParser());

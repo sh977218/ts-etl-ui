@@ -115,7 +115,7 @@ class MaterialPO {
   }
 }
 
-const SECRET_TOKEN = 'some-secret'; // should be from process.env
+const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
 const userNameMap: Record<string, User> = {
   'peter': {
     displayUsername: 'Peter',
@@ -162,15 +162,16 @@ const test = baseTest.extend<{
       await test.step('has login required message', async () => {
         await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
       });
-
-      await test.step('login', async () => {
-        await page.getByRole('button', { name: 'Log In' }).click();
-        await page.getByRole('link', { name: 'UTS' }).click();
-        await page.getByRole('button', { name: 'Sign in' }).click();
-        await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].displayUsername);
-        await page.getByRole('button', { name: 'Ok' }).click();
-        await page.waitForURL(`${baseURL}/load-requests`);
-      });
+      if (accountUsername) {
+        await test.step('login', async () => {
+          await page.getByRole('button', { name: 'Log In' }).click();
+          await page.getByRole('link', { name: 'UTS' }).click();
+          await page.getByRole('button', { name: 'Sign in' }).click();
+          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].displayUsername);
+          await page.getByRole('button', { name: 'Ok' }).click();
+          await page.waitForURL(`${baseURL}/load-requests`);
+        });
+      }
     }
     await use(page);
     if (!!process.env['CI'] || process.env['COVERAGE']) {
