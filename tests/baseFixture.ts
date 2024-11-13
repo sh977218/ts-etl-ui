@@ -1,9 +1,10 @@
 import { test as baseTest, expect, Page, ConsoleMessage, TestInfo, Locator } from '@playwright/test';
-
 import { randomBytes } from 'crypto';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { MAT_MONTH_MAP, MatDate } from './CONSTANT';
+import * as jwt from 'jsonwebtoken';
+
+import { MAT_MONTH_MAP, MatDate, User } from './CONSTANT';
 
 const PROJECT_ROOT_FOLDER = join(__dirname, '..');
 const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
@@ -114,42 +115,63 @@ class MaterialPO {
   }
 }
 
+const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
+const userNameMap: Record<string, User> = {
+  'peter': {
+    displayUsername: 'Peter',
+    utsUsername: 'peterhuang',
+    jwt: jwt.sign({ data: 'peterhuang' }, SECRET_TOKEN),
+  },
+  'christophe': {
+    displayUsername: 'Christophe',
+    utsUsername: 'ludetc',
+    jwt: jwt.sign({ data: 'ludetc' }, SECRET_TOKEN),
+  },
+};
+
 const test = baseTest.extend<{
   materialPo: MaterialPO,
-  accountUsername: string
+  accountUsername: string,
+  byPassLogin: boolean,
 }>({
   materialPo: async ({ page, baseURL }, use) => {
     await use(new MaterialPO(page));
   },
   accountUsername: '',
-  page: async ({ page, accountUsername, baseURL }, use, testInfo) => {
+  byPassLogin: true,
+  page: async ({ page, accountUsername, byPassLogin, baseURL }, use, testInfo) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
         UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
       }
     });
-
+    if (byPassLogin) {
+      const cookies = [{
+        name: 'Bearer',
+        value: userNameMap[accountUsername.toLowerCase()].jwt,
+        path: '/',
+        domain: 'localhost',
+      }];
+      await page.context().addCookies(cookies);
+    }
     await page.goto('/');
-    await test.step('has title', async () => {
-      await expect(page).toHaveTitle('Please Log In');
-    });
-    await test.step('has login required message', async () => {
-      await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
-    });
-
-    if (accountUsername) {
-      const userNameMap: Record<string, string> = {
-        'peter': 'Peter',
-        'christophe': 'Christophe',
-      };
-      await test.step('login', async () => {
-        await page.getByRole('button', { name: 'Log In' }).click();
-        await page.getByRole('link', { name: 'UTS' }).click();
-        await page.getByRole('button', { name: 'Sign in' }).click();
-        await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()]);
-        await page.getByRole('button', { name: 'Ok' }).click();
-        await page.waitForURL(`${baseURL}/load-requests`);
+    if (!byPassLogin) {
+      await test.step('has title', async () => {
+        await expect(page).toHaveTitle('Please Log In');
       });
+      await test.step('has login required message', async () => {
+        await expect(page.getByRole('heading').getByText('his application requires you to log in. Please do so before proceeding.')).toBeVisible();
+      });
+      if (accountUsername) {
+        await test.step('login', async () => {
+          await page.getByRole('button', { name: 'Log In' }).click();
+          await page.getByRole('link', { name: 'UTS' }).click();
+          await page.getByRole('button', { name: 'Sign in' }).click();
+          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].displayUsername);
+          await page.getByRole('button', { name: 'Ok' }).click();
+          await page.waitForURL(`${baseURL}/load-requests`);
+        });
+      }
     }
     await use(page);
     if (!!process.env['CI'] || process.env['COVERAGE']) {

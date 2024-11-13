@@ -2,6 +2,7 @@ import test from './baseFixture';
 import { expect } from '@playwright/test';
 
 test.describe('System testing -', async () => {
+  test.use({ byPassLogin: false });
   test('Not Logged in', async ({ page }) => {
     await expect(page.locator('body')).toContainText('This application requires you to log in');
     await page.getByRole('button', { name: 'Log In' }).click();
@@ -20,25 +21,8 @@ test.describe('System testing -', async () => {
     await page.goto('/login-cb');
     await materialPo.checkAndCloseAlert('Unable to log in');
   });
-
-  test.describe(`error handler`, async () => {
-    test.use({ accountUsername: 'peter' });
-    test(`Global api error handler`, async ({ page, materialPo }) => {
-      await page.route('**/property/request-types', async route => {
-        await route.fulfill({
-          status: 500,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            message: 'Something wrong',
-          }),
-        });
-      });
-      await page.goto('/load-requests');
-      await materialPo.checkAndCloseAlert('Something wrong');
-    });
-  });
-
   test.describe('JWT fail', async () => {
+    test.use({ byPassLogin: false });
     test('Jwt Fail', async ({ page }) => {
       await page.route('**/login', route => {
         route.fulfill({
@@ -57,3 +41,21 @@ test.describe('System testing -', async () => {
     });
   });
 });
+
+test.describe(`error handler`, async () => {
+  test.use({ accountUsername: 'peter' });
+  test(`Global api error handler`, async ({ page, materialPo }) => {
+    await page.route('**/property/request-types', async route => {
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          message: 'Something wrong',
+        }),
+      });
+    });
+    await page.goto('/load-requests');
+    await materialPo.checkAndCloseAlert('Something wrong');
+  });
+});
+
