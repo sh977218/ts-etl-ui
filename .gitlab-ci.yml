@@ -17,15 +17,12 @@
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
 stages: # List of stages for jobs, and their order of execution
-  - build
   - test
-  - deployment
 
-build-app: # This job runs in the build stage, which runs first.
-  stage: build
+test-app: # This job runs in the build stage, which runs first.
+  stage: test
   image:
     name: tools.nlm.nih.gov/playwright:latest
-    entrypoint: [""]
   tags:
     - docker
     - dvlb7docker03
@@ -37,9 +34,3 @@ build-app: # This job runs in the build stage, which runs first.
     when: always
     paths:
       - playwright-report
-
-deployment-job: # This job runs in the deployment stage, which runs last.
-  stage: deployment
-  script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
