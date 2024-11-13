@@ -33,11 +33,10 @@ build-app: # This job runs in the build stage, which runs first.
     - npm i
     - npx playwright install --with-deps
     - npx playwright test --project=ts-etl-ui --config=playwright-gitlab.config.ts
-    - npx nyc report
   artifacts:
+    when: always
     paths:
       - playwright-report
-      - coverage-e2e
 
 deployment-job: # This job runs in the deployment stage, which runs last.
   stage: deployment
