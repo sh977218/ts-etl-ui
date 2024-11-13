@@ -430,7 +430,7 @@ test.describe('LR -', async () => {
         await page.getByRole('button', { name: 'Search' }).click();
         await materialPo.waitForSpinner();
         const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
-        await expect(tableRows.first().locator('td').nth(5)).toContainText('EDT');
+        await expect(tableRows.first().locator('td').nth(5)).toContainText(/(EDT|EST)/);
       });
 
       await page.unrouteAll({ behavior: 'ignoreErrors' });
