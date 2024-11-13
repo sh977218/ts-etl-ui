@@ -67,22 +67,4 @@ export default defineConfig({
       },
     },
   ],
-
-  /* Run your local dev server before starting the tests */
-  webServer: [
-    ...['true'].includes(process.env.COVERAGE || '') ? [{
-      // this is not async, no guarantee that test will start after reset DB
-      command: `MONGO_USERNAME=peterhuangnih MONGO_PASSWORD=upbjppmDsYVsl61H MONGO_HOSTNAME=ts-etl-ui.oyinipt.mongodb.net/ MONGO_DBNAME=ci ENV_NAME=coverage npm run reset-db`,
-    }] : [],
-    {
-      command: `MONGO_USERNAME=peterhuangnih MONGO_PASSWORD=upbjppmDsYVsl61H MONGO_HOSTNAME=ts-etl-ui.oyinipt.mongodb.net/ MONGO_DBNAME=ci ENV_NAME=coverage npm run start:coverage`,
-      port: 3000,
-      reuseExistingServer: true,
-    },
-    {
-      command: 'npm run serve',
-      port: 4200,
-      reuseExistingServer: true,
-    },
-  ],
 });
