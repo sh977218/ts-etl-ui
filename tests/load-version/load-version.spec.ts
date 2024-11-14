@@ -1,12 +1,12 @@
-import test from './baseFixture';
+import test from '../fixture/baseFixture';
 import { expect, test as pwTest } from '@playwright/test';
 import { readFileSync } from 'fs';
 
 test.use({ accountUsername: 'Christophe' });
 test.describe('LV - ', async () => {
 
-  test('Version QA Table', async ({ page, materialPo }) => {
-    const matDialog = materialPo.matDialog();
+  test('Version QA Table', async ({ page, materialPage }) => {
+    const matDialog = materialPage.matDialog();
 
     await page.getByRole('link', { name: 'Version QA' }).click();
 
@@ -19,7 +19,7 @@ test.describe('LV - ', async () => {
       await matDialog.getByPlaceholder('Notes').fill('Accepted by me');
       await matDialog.getByRole('button', { name: 'Save' }).click();
       await matDialog.waitFor({ state: 'hidden' });
-      await materialPo.checkAndCloseAlert('Activity added successfully.');
+      await materialPage.checkAndCloseAlert('Activity added successfully.');
       await expect(page.locator('app-load-version-activity').getByText('Accepted by me')).toBeVisible();
       await expect(page.locator('app-load-version-note').getByText('Accepted by me')).toBeVisible();
     });
@@ -41,7 +41,7 @@ test.describe('LV - ', async () => {
 
       await page.locator('mat-dialog-content textarea').fill('New Test Note');
       await page.getByRole('button', { name: 'Save' }).click();
-      await materialPo.checkAndCloseAlert('Note added successfully.');
+      await materialPage.checkAndCloseAlert('Note added successfully.');
       await expect(page.locator('app-load-version-note').getByText('#Test.Hashtag2')).toBeVisible();
     });
 
@@ -77,7 +77,7 @@ test.describe('LV - ', async () => {
     await page.locator('#tagSearch').selectOption('All');
   });
 
-  test('QA Rules', async ({ page, materialPo }) => {
+  test('QA Rules', async ({ page, materialPage }) => {
     await page.goto('/load-version-report/0');
     const row = 'app-load-version-report-rule tbody tr:nth-of-type(2)';
     await expect(page.locator(row)).toContainText('Code.DuplicateCode');
@@ -90,10 +90,10 @@ test.describe('LV - ', async () => {
     await test.step(`log view modal`, async () => {
       const row1 = 'app-load-version-report-rule tbody tr:nth-of-type(1)';
       await page.locator(row1).locator('mat-icon', { hasText: 'announcement' }).click();
-      await materialPo.matDialog().waitFor();
-      await expect(materialPo.matDialog().getByText('The difference of TERM between expected and actual number is')).toBeVisible();
-      await materialPo.matDialog().getByRole('button', { name: 'Close' }).click();
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor();
+      await expect(materialPage.matDialog().getByText('The difference of TERM between expected and actual number is')).toBeVisible();
+      await materialPage.matDialog().getByRole('button', { name: 'Close' }).click();
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
     });
 
     await expect(page.locator(row)).not.toContainText('No duplicate codes in cs_code table');
@@ -157,25 +157,25 @@ test.describe('LV - ', async () => {
     await expect(page.locator('main')).not.toContainText('View Source Data Files');
   });
 
-  test('Edit Activity Avail Date', async ({ page, materialPo }) => {
+  test('Edit Activity Avail Date', async ({ page, materialPage }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
     await page.getByRole('link', { name: 'Go to QA Report' });
     await page.getByRole('button', { 'name': 'Edit available date' }).click();
     await page.locator('app-load-version-activity input').clear();
     await page.locator('app-load-version-activity input').fill('2025-03-10');
     await page.getByRole('button', { 'name': 'Confirm' }).click();
-    await materialPo.checkAndCloseAlert('Available Date Updated');
+    await materialPage.checkAndCloseAlert('Available Date Updated');
     await expect(page.locator('app-load-version-activity')).toContainText('2025/03');
   });
 
-  test(`download newly added load request`, async ({ page, materialPo }) => {
+  test(`download newly added load request`, async ({ page, materialPage }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
     const [, downloadFile] = await Promise.all([
       page.getByRole('button', { name: 'Download' }).click(),
       page.waitForEvent('download')],
     );
 
-    await materialPo.checkAndCloseAlert('QA Activities downloaded.');
+    await materialPage.checkAndCloseAlert('QA Activities downloaded.');
 
     const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
     expect(fileContent).toContain('id, activity,');
