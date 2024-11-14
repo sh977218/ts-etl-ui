@@ -673,7 +673,7 @@ app.get('/api/login', async (req, res) => {
     return res.send(500);
   }
   const { usersCollection } = await mongoCollection();
-  const user = await usersCollection.findOne({ 'utsUser.sub': payload.data });
+  const user = await usersCollection.findOne({ 'utsUser.sub': payload.sub });
   res.send(user);
 
 });
