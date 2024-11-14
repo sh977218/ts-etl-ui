@@ -62,10 +62,12 @@ const test = baseTest.extend<{
     });
     if (byPassLogin) {
       const payload = userNameMap[accountUsername.toLowerCase()];
+      const url = new URL(baseURL || '');
       const cookies = [{
         name: 'Bearer',
         value: jwt.sign(payload, SECRET_TOKEN),
-        url: baseURL,
+        path: '/',
+        domain: url.hostname,
       }];
       await page.context().addCookies(cookies);
     }

@@ -4,7 +4,7 @@ import test from '../fixture/baseFixture';
 import { EU_TIMEZONE } from '../CONSTANT';
 
 test.use({ accountUsername: 'Peter', timezoneId: EU_TIMEZONE });
-test('Create Load Request in different timezone @smoke', async ({ page, materialPage }) => {
+test('Create Load Request in different timezone', async ({ page, materialPage }) => {
   const newCreateSubject = `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`;
   const matDialog = materialPage.matDialog();
 
