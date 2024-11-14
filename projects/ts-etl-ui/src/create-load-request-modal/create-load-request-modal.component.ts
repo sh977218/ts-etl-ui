@@ -71,8 +71,8 @@ export class CreateLoadRequestModalComponent {
       sourceFilePath: new FormControl<string>('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/',
         [Validators.required, sourceFilePathValidator()]),
       requestSubject: new FormControl<string>('', [Validators.required]),
-      notificationEmail: new FormControl(this.userService.user?.email, [Validators.required, Validators.email]),
-      requester: new FormControl<string>({ value: this.userService.user!.utsUser.username!, disabled: true }),
+      notificationEmail: new FormControl(this.userService.user!.email, [Validators.required, Validators.email]),
+      requester: new FormControl<string>({ value: this.userService.user!.username!, disabled: true }),
       requestTime: new FormControl<Date | string>({
         value: new Date().toISOString(),
         disabled: true,

@@ -30,7 +30,7 @@ export type MatDate = {
 }
 
 export type User = {
-  sub: string
+  username: string
   userId: number
   firstName: string
   lastName: string

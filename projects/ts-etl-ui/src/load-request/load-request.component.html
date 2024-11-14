@@ -16,7 +16,7 @@
         <mat-label>All Requests</mat-label>
         <mat-select placeholder="All Requests" formControlName="filterRequester">
           <mat-option value="">All Requests</mat-option>
-          <mat-option [value]="user?.utsUser!.username">My Requests</mat-option>
+          <mat-option [value]="user!.username">My Requests</mat-option>
         </mat-select>
       </mat-form-field>
     </div>

@@ -247,8 +247,7 @@ app.post('/api/load-request', async (req, res) => {
   const jwtToken = req.cookies['Bearer'];
   if (!jwtToken) return res.status(401).send();
   const payload = verifyJwtToken(jwtToken);
-  loadRequest.requester = payload.firstName + ' ' + payload.lastName;
-  loadRequest.requesterUsername = payload.sub;
+  loadRequest.requester = payload.username;
 
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   loadRequest.creationTime = new Date();
@@ -343,7 +342,6 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
       'requestType': lr.requestType,
       'requestTime': lr.requestTime,
       'requester': lr.requester,
-      'requesterUsername': lr.requesterUsername || '',
       'creationTime': lr.creationTime,
       'requestStatus': lr.requestStatus,
       'loadNumber': lr.loadNumber,
@@ -616,7 +614,9 @@ app.get('/nih-login', (req, res) => {
 
 /* @todo TS's backend needs to implement the following APIs. */
 // this map simulate UTS ticket to username, NOTE: user `ghost` exist in UTS DB but not in TS DB (Do not add user 'ghost' in data/user.json).
-const ticketMap = new Map([['peter-ticket', 'peterhuang'], ['christophe-ticket', 'ludetc'], ['ghost-ticket', 'ghost']]);
+const ticketMap = {
+  'peter-ticket': 'peterhuang', 'christophe-ticket': 'ludetc', 'ghost-ticket': 'ghost',
+};
 app.get('/api/serviceValidate', async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
@@ -625,45 +625,26 @@ app.get('/api/serviceValidate', async (req, res) => {
   if (app !== 'angular' || !service || !ticket) {
     return res.status(400).send();
   }
-  const user = await loginWithUts(ticket);
-  if (!user || !user.utsUser || !user.utsUser.username) {
+  const username = ticketMap[ticket];
+  const { usersCollection } = await mongoCollection();
+  const user = await usersCollection.findOne({ username });
+  if (!user) {
     return res.status(404).send();
   }
-  const jwtToken = generateJwtToken(user.utsUser);
+  const jwtToken = generateJwtToken(user);
   res.cookie('Bearer', `${jwtToken}`, {
     expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
   });
 
-  res.send({
-    utsUser: {
-      username: user.utsUser.username,
-      apiKey: user.utsUser.apiKey,
-      idpUserOrg: user.utsUser.idpUserOrg,
-      firstName: user.utsUser.firstName,
-      lastName: user.utsUser.lastName,
-    },
-  });
+  res.send(user);
 });
 
 function generateJwtToken(user) {
-  return jwt.sign({
-    'sub': user.username,
-    'userId': user.userId,
-    'firstName': user.firstName,
-    'lastName': user.lastName,
-    'email': user.email,
-    'role': user.role,
-  }, SECRET_TOKEN);
+  return jwt.sign(user, SECRET_TOKEN);
 }
 
 function verifyJwtToken(jwtToken) {
   return jwt.verify(jwtToken, SECRET_TOKEN);
-}
-
-async function loginWithUts(ticket) {
-  const { usersCollection } = await mongoCollection();
-  const utsUsername = ticketMap.get(ticket);
-  return await usersCollection.findOne({ 'utsUser.username': utsUsername });
 }
 
 app.get('/api/login', async (req, res) => {
@@ -679,17 +660,8 @@ app.get('/api/login', async (req, res) => {
     return res.send(500);
   }
   const { usersCollection } = await mongoCollection();
-  const user = await usersCollection.findOne({ 'utsUser.username': payload.sub });
-  res.send({
-    utsUser: {
-      userId: user.utsUser.userId,
-      firstName: user.utsUser.firstName,
-      lastName: user.utsUser.lastName,
-      username: user.utsUser.username,
-      email: user.utsUser.email,
-      role: user.utsUser.role,
-    },
-  });
+  const user = await usersCollection.findOne({ 'username': payload.username });
+  res.send(user);
 
 });
 
