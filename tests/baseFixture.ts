@@ -118,14 +118,20 @@ class MaterialPO {
 const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
 const userNameMap: Record<string, User> = {
   'peter': {
-    displayUsername: 'Peter',
-    utsUsername: 'peterhuang',
-    jwt: jwt.sign({ data: 'peterhuang' }, SECRET_TOKEN),
+    sub: 'peterhuang',
+    userId: 5,
+    firstName: 'Peter',
+    lastName: 'Huang',
+    email: 'shi.huang@nih.gov',
+    role: 'Admin',
   },
   'christophe': {
-    displayUsername: 'Christophe',
-    utsUsername: 'ludetc',
-    jwt: jwt.sign({ data: 'ludetc' }, SECRET_TOKEN),
+    userId: 6,
+    firstName: 'Christophe',
+    lastName: 'Ludet',
+    sub: 'ludetc',
+    email: 'christophe.ludet@nih.gov',
+    role: 'Admin',
   },
 };
 
@@ -146,9 +152,10 @@ const test = baseTest.extend<{
       }
     });
     if (byPassLogin) {
+      const payload = userNameMap[accountUsername.toLowerCase()];
       const cookies = [{
         name: 'Bearer',
-        value: userNameMap[accountUsername.toLowerCase()].jwt,
+        value: jwt.sign(payload, SECRET_TOKEN),
         path: '/',
         domain: 'localhost',
       }];
@@ -167,7 +174,7 @@ const test = baseTest.extend<{
           await page.getByRole('button', { name: 'Log In' }).click();
           await page.getByRole('link', { name: 'UTS' }).click();
           await page.getByRole('button', { name: 'Sign in' }).click();
-          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].displayUsername);
+          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].sub);
           await page.getByRole('button', { name: 'Ok' }).click();
           await page.waitForURL(`${baseURL}/load-requests`);
         });

@@ -1,3 +1,9 @@
+import { join } from 'path';
+
+export const PROJECT_ROOT_FOLDER = join(__dirname, '..');
+export const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
+export const COVERAGE_REPORT_FOLDER = join(PROJECT_ROOT_FOLDER, 'coverage-e2e');
+
 export const EU_TIMEZONE = 'Etc/Greenwich';
 export const DEFAULT_TIMEZONE = 'America/New_York';
 export const DEFAULT_TIME_FORMAT = 'yyyy-MM-dd hh:mm a z';
@@ -24,7 +30,10 @@ export type MatDate = {
 }
 
 export type User = {
-  displayUsername: string; // for login model display
-  utsUsername: string;
-  jwt: string;
+  sub: string
+  userId: number
+  firstName: string
+  lastName: string
+  email: string
+  role: string
 }
