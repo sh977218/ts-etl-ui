@@ -626,7 +626,7 @@ app.get('/api/serviceValidate', async (req, res) => {
     return res.status(400).send();
   }
   const user = await loginWithUts(ticket);
-  if (!user || !user.utsUser || !user.utsUser.sub) {
+  if (!user || !user.utsUser || !user.utsUser.username) {
     return res.status(404).send();
   }
   const jwtToken = generateJwtToken(user.utsUser);
@@ -663,7 +663,7 @@ function verifyJwtToken(jwtToken) {
 async function loginWithUts(ticket) {
   const { usersCollection } = await mongoCollection();
   const utsUsername = ticketMap.get(ticket);
-  return await usersCollection.findOne({ 'utsUser.sub': utsUsername });
+  return await usersCollection.findOne({ 'utsUser.username': utsUsername });
 }
 
 app.get('/api/login', async (req, res) => {
@@ -690,6 +690,7 @@ app.get('/api/login', async (req, res) => {
       role: user.utsUser.role,
     },
   });
+
 });
 
 app.post('/api/logout', async (req, res) => {
