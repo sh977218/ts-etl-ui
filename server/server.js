@@ -246,8 +246,9 @@ app.post('/api/load-request', async (req, res) => {
 
   const jwtToken = req.cookies['Bearer'];
   if (!jwtToken) return res.status(401).send();
-  const payload = jwt.verify(jwtToken, SECRET_TOKEN);
-  loadRequest.requester = payload.data;
+  const payload = verifyJwtToken(jwtToken);
+  loadRequest.requester = payload.firstName + ' ' + payload.lastName;
+  loadRequest.requesterUsername = payload.sub;
 
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   loadRequest.creationTime = new Date();
@@ -342,7 +343,7 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
       'requestType': lr.requestType,
       'requestTime': lr.requestTime,
       'requester': lr.requester,
-      'requesterUsername': '',
+      'requesterUsername': lr.requesterUsername || '',
       'creationTime': lr.creationTime,
       'requestStatus': lr.requestStatus,
       'loadNumber': lr.loadNumber,
@@ -655,6 +656,10 @@ function generateJwtToken(user) {
   }, SECRET_TOKEN);
 }
 
+function verifyJwtToken(jwtToken) {
+  return jwt.verify(jwtToken, SECRET_TOKEN);
+}
+
 async function loginWithUts(ticket) {
   const { usersCollection } = await mongoCollection();
   const utsUsername = ticketMap.get(ticket);
@@ -666,7 +671,7 @@ app.get('/api/login', async (req, res) => {
   if (!jwtToken) return res.status(401).send();
   let payload;
   try {
-    payload = jwt.verify(jwtToken, SECRET_TOKEN);
+    payload = verifyJwtToken(jwtToken);
   } catch (e) {
     return res.send(500);
   }
