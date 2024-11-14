@@ -1,7 +1,7 @@
-import test from './baseFixture';
+import test from '../fixture/baseFixture';
 import { expect, test as pwTest } from '@playwright/test';
 import { readFileSync } from 'fs';
-import { EU_TIMEZONE, MatDate } from './CONSTANT';
+import { EU_TIMEZONE, MatDate } from '../CONSTANT';
 
 test.use({ accountUsername: 'Peter' });
 test.describe('LR -', async () => {
@@ -14,8 +14,8 @@ test.describe('LR -', async () => {
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
   const firstRow = 'table tbody tr:first-of-type';
 
-  test('Load Request table', async ({ page, materialPo }) => {
-    const matDialog = materialPo.matDialog();
+  test('Load Request table', async ({ page, materialPage }) => {
+    const matDialog = materialPage.matDialog();
 
     await expect(page.getByRole('link', { name: 'Load Request' })).toBeVisible();
 
@@ -78,15 +78,15 @@ test.describe('LR -', async () => {
       await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
-      await materialPo.checkAndCloseAlert(`Request (ID: ${newlyCreatedLoadRequestId}) created successfully`);
+      await materialPage.checkAndCloseAlert(`Request (ID: ${newlyCreatedLoadRequestId}) created successfully`);
     });
 
     await test.step('search for newly added load request', async () => {
       await page.getByPlaceholder('Req. ID').fill(newlyCreatedLoadRequestId);
       await page.getByPlaceholder('Any Request date').click();
-      await materialPo.matOption().filter({ hasText: `Today's` }).click();
+      await materialPage.matOption().filter({ hasText: `Today's` }).click();
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.waitForSpinner();
+      await materialPage.waitForSpinner();
 
       await expect(page.locator('td:has-text("Scheduled")')).toBeVisible();
       await expect(page.locator('td:has-text("HPO")')).toBeVisible();
@@ -99,7 +99,7 @@ test.describe('LR -', async () => {
         page.waitForEvent('download')],
       );
 
-      await materialPo.checkAndCloseAlert('Export downloaded.');
+      await materialPage.checkAndCloseAlert('Export downloaded.');
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
@@ -119,7 +119,7 @@ test.describe('LR -', async () => {
       await matDialog.getByLabel('Notification Email').fill('playwright-edit@example.com');
       await matDialog.getByRole('button', { name: 'Submit' }).click();
       await matDialog.waitFor({ state: 'hidden' });
-      await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) edited successfully/);
+      await materialPage.checkAndCloseAlert(/Request \(ID: \d+\) edited successfully/);
     });
 
     await test.step('search for newly edited load request', async () => {
@@ -127,9 +127,9 @@ test.describe('LR -', async () => {
       await page.getByPlaceholder('Req. ID').fill(newlyCreatedLoadRequestId);
       // next 2 lines might fall, if the test runs first step on Saturday 11:59 PM and this step runs on Sunday 00:00 AM. This week's filter will fail. But this is very unlikely
       await page.getByPlaceholder('Any Request date').click();
-      await materialPo.matOption().filter({ hasText: `This week's` }).click();
+      await materialPage.matOption().filter({ hasText: `This week's` }).click();
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.waitForSpinner();
+      await materialPage.waitForSpinner();
 
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
       await expect(page.locator('td:has-text("CPT")')).toBeVisible();
@@ -142,7 +142,7 @@ test.describe('LR -', async () => {
         page.waitForEvent('download')],
       );
 
-      await materialPo.checkAndCloseAlert('Export downloaded.');
+      await materialPage.checkAndCloseAlert('Export downloaded.');
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
@@ -155,15 +155,15 @@ test.describe('LR -', async () => {
       await matDialog.waitFor();
       await matDialog.getByRole('button', { name: 'Confirm' }).click();
       await matDialog.waitFor({ state: 'hidden' });
-      await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) deleted successfully/);
+      await materialPage.checkAndCloseAlert(/Request \(ID: \d+\) deleted successfully/);
     });
 
     await test.step(`search for newly 'Cancelled'/'Emergency' load request`, async () => {
       await page.getByRole('link', { name: 'Load Request' }).click();
-      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Cancelled']);
-      await materialPo.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency']);
+      await materialPage.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Cancelled']);
+      await materialPage.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency']);
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.waitForSpinner();
+      await materialPage.waitForSpinner();
       await expect(page.locator('td:has-text("Emergency")')).toBeVisible();
       await expect(page.locator('td:has-text("CPT")')).toBeVisible();
       await expect(page.locator('td:has-text("Cancelled")')).toBeVisible();
@@ -176,7 +176,7 @@ test.describe('LR -', async () => {
         page.waitForEvent('download')],
       );
 
-      await materialPo.checkAndCloseAlert('Export downloaded.');
+      await materialPage.checkAndCloseAlert('Export downloaded.');
 
       const fileContent = readFileSync(await downloadFile.path(), { encoding: 'utf-8' });
       expect(fileContent).toContain('opRequestSeq, codeSystemName, requestSubject, requestStatus, requestType, requestTime, requester, creationTime');
@@ -186,7 +186,7 @@ test.describe('LR -', async () => {
     await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
-  test(`Search multi select fields`, async ({ page, materialPo }) => {
+  test(`Search multi select fields`, async ({ page, materialPage }) => {
     let numOfApiCalled = 0;
     await page.route(/load-request\/list$/, async route => {
       await page.waitForTimeout(2000);
@@ -197,18 +197,18 @@ test.describe('LR -', async () => {
     });
 
     await test.step(`select 2 Code System Name`, async () => {
-      await materialPo.selectMultiOptions(page.locator(`[id="codeSystemSelect"]`), ['GS', 'MMSL']);
+      await materialPage.selectMultiOptions(page.locator(`[id="codeSystemSelect"]`), ['GS', 'MMSL']);
     });
     await test.step(`select 2 Request Status`, async () => {
-      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Incomplete', 'Stopped']);
+      await materialPage.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Incomplete', 'Stopped']);
     });
     await test.step(`select 2 Request Type`, async () => {
-      await materialPo.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency', 'Scheduled']);
+      await materialPage.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency', 'Scheduled']);
     });
 
     await test.step(`Search and verify result`, async () => {
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.waitForSpinner();
+      await materialPage.waitForSpinner();
       const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
       await expect(tableRows).toHaveCount(2);
       await expect(tableRows.first()).toContainText('MMSL');
@@ -224,96 +224,96 @@ test.describe('LR -', async () => {
   });
 
   test.describe(`Request Time`, async () => {
-    test('input', async ({ page, materialPo }) => {
+    test('input', async ({ page, materialPage }) => {
       const datePicker = page.locator(`[id="requestTimeRange"]`);
-      await materialPo.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 }, todayInMatDate);
+      await materialPage.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 }, todayInMatDate);
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await page.getByRole('columnheader', { name: 'Request Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
     });
 
-    test('URL', async ({ page, materialPo }) => {
+    test('URL', async ({ page, materialPage }) => {
       await page.goto('/load-requests?requestTimeFrom=2017-11-01&requestTimeTo=2024-10-1&sortBy=requestTime&sortDirection=asc');
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
     });
   });
 
   test.describe(`Creation Time`, async () => {
-    test('input', async ({ page, materialPo }) => {
+    test('input', async ({ page, materialPage }) => {
       const datePicker = page.locator(`[id="creationTimeRange"]`);
-      await materialPo.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 }, todayInMatDate);
+      await materialPage.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 }, todayInMatDate);
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await page.getByRole('columnheader', { name: 'Creation Time' }).click();
       await expect(page.locator(firstRow)).toHaveCount(1);
       await expect(page.locator(firstCell)).toHaveText('27');
     });
 
-    test('URL', async ({ page, materialPo }) => {
+    test('URL', async ({ page, materialPage }) => {
       await page.goto('/load-requests?creationTimeFrom=2010-01-01&creationTimeTo=2013-01-01&sortBy=creationTime&sortDirection=desc');
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('27');
     });
   });
 
   test.describe('Subject Filter', async () => {
-    test(`input`, async ({ page, materialPo }) => {
+    test(`input`, async ({ page, materialPage }) => {
       await page.goto('/load-requests');
       await page.getByPlaceholder('subject...').fill('Great Subject');
       await page.keyboard.press('Enter');
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('29');
     });
 
-    test(`URL`, async ({ page, materialPo }) => {
+    test(`URL`, async ({ page, materialPage }) => {
       await page.goto('/load-requests?requestSubject=Great%20Subject');
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('29');
     });
   });
 
   test.describe('Status Filter', async () => {
-    test(`input`, async ({ page, materialPo }) => {
+    test(`input`, async ({ page, materialPage }) => {
       await page.goto('/load-requests');
-      await materialPo.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped']);
+      await materialPage.selectMultiOptions(page.locator(`[id="requestStatusFilterSelect"]`), ['Stopped']);
       await page.getByRole('button', { name: 'Search' }).click();
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('30');
     });
 
-    test(`URL`, async ({ page, materialPo }) => {
+    test(`URL`, async ({ page, materialPage }) => {
       await page.goto('/load-requests?requestStatus=Stopped');
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('30');
     });
   });
 
   test.describe('User Filter', async () => {
-    test(`input`, async ({ page, materialPo }) => {
+    test(`input`, async ({ page, materialPage }) => {
       await page.goto('/load-requests');
       await page.getByPlaceholder('requester...').fill('bernicevega');
       await page.keyboard.press('Enter');
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('6');
     });
 
-    test(`URL`, async ({ page, materialPo }) => {
+    test(`URL`, async ({ page, materialPage }) => {
       await page.goto('/load-requests?requester=bernicevega');
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(page.locator(firstCell)).toHaveText('6');
     });
   });
 
-  test('Pagination and Sort', async ({ page, materialPo }) => {
+  test('Pagination and Sort', async ({ page, materialPage }) => {
     const rows = page.locator('table tbody tr');
 
     await test.step(`Go to next page`, async () => {
       await page.getByRole('button', { name: 'Next page' }).click();
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(rows).toHaveCount(10);
 
       await expect(page).toHaveURL(/pageNum=2/);
@@ -322,7 +322,7 @@ test.describe('LR -', async () => {
 
     await test.step(`Change sort`, async () => {
       await page.getByRole('columnheader', { name: 'Request ID' }).click();
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(rows).toHaveCount(10);
 
       await test.step('page size remain the same', async () => {
@@ -336,8 +336,8 @@ test.describe('LR -', async () => {
 
     await test.step(`Change page size`, async () => {
       await page.getByRole('combobox', { name: '10' }).click();
-      await materialPo.matOption().filter({ hasText: `50` }).click();
-      await materialPo.matDialog().waitFor({ state: 'hidden' });
+      await materialPage.matOption().filter({ hasText: `50` }).click();
+      await materialPage.matDialog().waitFor({ state: 'hidden' });
       await expect(rows).toHaveCount(50);
 
       await test.step('sort remain the same', async () => {
@@ -350,9 +350,9 @@ test.describe('LR -', async () => {
     });
   });
 
-  test('Search Returns empty', async ({ page, materialPo }) => {
+  test('Search Returns empty', async ({ page, materialPage }) => {
     await page.goto('/load-requests?requestStatus=notaStatus');
-    await materialPo.matDialog().waitFor({ state: 'hidden' });
+    await materialPage.matDialog().waitFor({ state: 'hidden' });
     await expect(page.locator('tbody')).toContainText('No results found');
   });
 
@@ -380,64 +380,8 @@ test.describe('LR -', async () => {
     await expect(page.locator('body')).toContainText('bensonmcgowan@zilphur.com');
   });
 
-  test.describe(`Create Load Request in different timezone`, async () => {
-    test.use({ timezoneId: EU_TIMEZONE });
-    test('EU timezone', async ({ page, materialPo }) => {
-      const newCreateSubject = `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`;
-      const matDialog = materialPo.matDialog();
 
-      // this api interception is to make network slow, so the spinner can be verified.
-      await page.route('**/load-request/list', async route => {
-        await page.waitForTimeout(2000);
-        await route.continue();
-      });
-
-      await page.route('**/loadRequest/', async route => {
-        await page.waitForTimeout(2000);
-        await route.continue();
-      });
-
-      await test.step(`add load request in ${EU_TIMEZONE}`, async () => {
-        await page.getByRole('button', { name: 'Create Request' }).click();
-        await matDialog.waitFor();
-        /**
-         * note: We can use `await page.getByRole('radio', {name: 'Regular'}).check();`
-         * but using `matDialog` instead of `page` is it ensures those fields are inside a dialog modal
-         */
-        await matDialog.getByRole('radio', { name: 'Scheduled' }).check();
-        await matDialog.getByRole('button', { name: 'Open calendar' }).click();
-        await page.locator(`mat-calendar`).waitFor();
-        await page.locator('.mat-calendar-body-cell.mat-calendar-body-active').click();
-        await page.locator(`mat-calendar`).waitFor({ state: 'hidden' });
-        await matDialog.getByRole('combobox', { name: 'Scheduled time' }).click();
-        await page.getByRole('option', { name: '11:30 PM' }).click();
-        await matDialog.getByLabel('Code System Name').click();
-        /**
-         * mat-option is not attached to modal, it appends to end of app root tag, so using page instead of `matDialog`.
-         */
-        await page.getByRole('option', { name: 'HPO' }).click();
-        await matDialog.getByLabel('Request Subject').fill(newCreateSubject);
-        await matDialog.getByLabel('Source File Path').fill('file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/LOINC/LOINC2020/');
-        await page.locator('mat-dialog-container h2').click();
-        await matDialog.getByLabel('Notification Email').fill('playwright@example.com');
-        await matDialog.getByRole('button', { name: 'Submit' }).click();
-        await matDialog.waitFor({ state: 'hidden' });
-        await materialPo.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
-      });
-
-      await test.step(`verify load request created in ${EU_TIMEZONE}`, async () => {
-        await page.getByPlaceholder('subject...').fill(newCreateSubject);
-        await page.getByRole('button', { name: 'Search' }).click();
-        await materialPo.waitForSpinner();
-        const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
-        await expect(tableRows.first().locator('td').nth(5)).toContainText(/(EDT|EST)/);
-      });
-
-      await page.unrouteAll({ behavior: 'ignoreErrors' });
-    });
-  });
-
-  test('download csv fail', async ({ page, materialPo }) => {
+  test('download csv fail', async ({ page, materialPage }) => {
     await page.route('**/load-request/list', async route => {
       await route.abort();
     });
@@ -445,45 +389,10 @@ test.describe('LR -', async () => {
     await test.step(`download csv failed.`, async () => {
       await page.getByRole('button', { name: 'Download' }).click();
 
-      await materialPo.checkAndCloseAlert('Export download failed.');
+      await materialPage.checkAndCloseAlert('Export download failed.');
     });
 
   });
 
 });
 
-pwTest('LR detail on localhost 4200', async ({ page }) => {
-  let numOfLrApiCalled = 0;
-  let numOfLvApiCalled = 0;
-
-  await page.goto('http://localhost:4200');
-  await page.getByRole('button', { name: 'Log In' }).click();
-  await page.getByRole('link', { name: 'UTS' }).click();
-  await page.getByRole('button', { name: 'Sign in' }).click();
-  await page.locator('[name="ticket"]').selectOption('Peter');
-  await page.getByRole('button', { name: 'Ok' }).click();
-  await page.waitForURL(/load-requests/);
-  await expect(page.getByRole('button', { name: 'Download' })).toBeVisible();
-
-  await page.route(/load-request\/\d$/, async route => {
-    await page.waitForTimeout(2000);
-    if (route.request().resourceType() === 'xhr') {
-      numOfLrApiCalled++;
-    }
-    await route.continue();
-  });
-  await page.route(/loadVersion\/\d$/, async route => {
-    await page.waitForTimeout(2000);
-    if (route.request().resourceType() === 'xhr') {
-      numOfLvApiCalled++;
-    }
-    await route.continue();
-  });
-
-  await page.goto('http://localhost:4200/load-request/0');
-  const row = 'app-load-component-message tbody tr:nth-of-type(2)';
-  await expect(page.locator(row)).toContainText('MISSING_DATA_FILE');
-
-  expect(numOfLrApiCalled).toEqual(1);
-  expect(numOfLvApiCalled).toEqual(0);
-});

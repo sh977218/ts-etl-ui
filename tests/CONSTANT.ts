@@ -24,7 +24,10 @@ export type MatDate = {
 }
 
 export type User = {
-  displayUsername: string; // for login model display
-  utsUsername: string;
-  jwt: string;
+  sub: string
+  userId: number
+  firstName: string
+  lastName: string
+  email: string
+  role: string
 }
