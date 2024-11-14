@@ -18,8 +18,12 @@
         "username": "peterhuang",
         "apiKey": "2468df67-8884-4ee7-83ed-5860406d200b",
         "idpUserOrg": "google",
+        "sub": "peterhuang",
+        "userId": 5,
         "firstName": "Peter",
-        "lastName": "Huang"
+        "lastName": "Huang",
+        "email": "shi.huang@nih.gov",
+        "role": "Admin"
       }
     },
     {
@@ -40,8 +44,12 @@
         "username": "ludetc",
         "apiKey": "2468df67-8884-4ee7-83ed-xxxxxxxxxxxx",
         "idpUserOrg": "google",
+        "userId": 6,
         "firstName": "Christophe",
-        "lastName": "Ludet"
+        "lastName": "Ludet",
+        "sub": "ludetc",
+        "email": "christophe.ludet@nih.gov",
+        "role": "Admin"
       }
     }
   ]

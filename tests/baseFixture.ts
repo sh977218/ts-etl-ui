@@ -4,10 +4,7 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 import * as jwt from 'jsonwebtoken';
 
-import { MAT_MONTH_MAP, MatDate, User } from './CONSTANT';
-
-const PROJECT_ROOT_FOLDER = join(__dirname, '..');
-const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
+import { MAT_MONTH_MAP, MatDate, NYC_OUTPUT_FOLDER, User } from './CONSTANT';
 
 async function codeCoverage(page: Page, testInfo: TestInfo) {
   const coverage: string = await page.evaluate(
@@ -15,8 +12,8 @@ async function codeCoverage(page: Page, testInfo: TestInfo) {
   );
   if (coverage) {
     const name = randomBytes(32).toString('hex');
-    const nycOutput = join(NYC_OUTPUT_FOLDER, `${name}`);
-    await writeFileSync(nycOutput, coverage);
+    const nycOutputFileName = join(NYC_OUTPUT_FOLDER, `${name}`);
+    await writeFileSync(nycOutputFileName, coverage);
   } else {
     throw new Error(`No coverage found for ${testInfo.testId}`);
   }
@@ -24,7 +21,6 @@ async function codeCoverage(page: Page, testInfo: TestInfo) {
 
 const EXPECTED_CONSOLE_LOGS: string[] = ['[webpack-dev-server]'];
 const UNEXPECTED_CONSOLE_LOGS: string[] = [];
-
 
 class MaterialPO {
   private readonly page: Page;
@@ -118,14 +114,20 @@ class MaterialPO {
 const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
 const userNameMap: Record<string, User> = {
   'peter': {
-    displayUsername: 'Peter',
-    utsUsername: 'peterhuang',
-    jwt: jwt.sign({ data: 'peterhuang' }, SECRET_TOKEN),
+    sub: 'peterhuang',
+    userId: 5,
+    firstName: 'Peter',
+    lastName: 'Huang',
+    email: 'shi.huang@nih.gov',
+    role: 'Admin',
   },
   'christophe': {
-    displayUsername: 'Christophe',
-    utsUsername: 'ludetc',
-    jwt: jwt.sign({ data: 'ludetc' }, SECRET_TOKEN),
+    userId: 6,
+    firstName: 'Christophe',
+    lastName: 'Ludet',
+    sub: 'ludetc',
+    email: 'christophe.ludet@nih.gov',
+    role: 'Admin',
   },
 };
 
@@ -146,9 +148,10 @@ const test = baseTest.extend<{
       }
     });
     if (byPassLogin) {
+      const payload = userNameMap[accountUsername.toLowerCase()];
       const cookies = [{
         name: 'Bearer',
-        value: userNameMap[accountUsername.toLowerCase()].jwt,
+        value: jwt.sign(payload, SECRET_TOKEN),
         path: '/',
         domain: 'localhost',
       }];
@@ -167,7 +170,7 @@ const test = baseTest.extend<{
           await page.getByRole('button', { name: 'Log In' }).click();
           await page.getByRole('link', { name: 'UTS' }).click();
           await page.getByRole('button', { name: 'Sign in' }).click();
-          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].displayUsername);
+          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].firstName);
           await page.getByRole('button', { name: 'Ok' }).click();
           await page.waitForURL(`${baseURL}/load-requests`);
         });

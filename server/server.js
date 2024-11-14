@@ -246,8 +246,9 @@ app.post('/api/load-request', async (req, res) => {
 
   const jwtToken = req.cookies['Bearer'];
   if (!jwtToken) return res.status(401).send();
-  const payload = jwt.verify(jwtToken, SECRET_TOKEN);
-  loadRequest.requester = payload.data;
+  const payload = verifyJwtToken(jwtToken);
+  loadRequest.requester = payload.firstName + ' ' + payload.lastName;
+  loadRequest.requesterUsername = payload.sub;
 
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   loadRequest.creationTime = new Date();
@@ -304,12 +305,7 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
   const lv = await loadVersionsCollection.findOne({ requestId: +req.params.opRequestSeq });
   if (!lr) return res.status(404).send();
   const loadRequestMessageList = lv?.loadSummary?.components?.reduce((previousValue, currentValue, currentIndex, messages) => {
-    return [
-      ...previousValue,
-      ...currentValue.errors,
-      ...currentValue.infos,
-      ...currentValue.warnings,
-    ];
+    return [...previousValue, ...currentValue.errors, ...currentValue.infos, ...currentValue.warnings];
   }, []) || [];
   const loadComponentList = lv?.loadSummary?.components?.map((currentValue) => {
     return {
@@ -323,29 +319,19 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
     };
   }) || [];
   const loadComponentMessageList = lv?.loadSummary?.components?.reduce((previousValue, currentValue, currentIndex, messages) => {
-    return [
-      ...previousValue,
-      ...currentValue.errors.map(error => {
-        return {
-          ...error,
-          componentName: currentValue.componentName,
-          messageGroup: 'Error',
-        };
-      }),
-      ...currentValue.infos.map(info => {
-        return {
-          ...info,
-          componentName: currentValue.componentName,
-          messageGroup: 'Info',
-        };
-      }),
-      ...currentValue.warnings.map(warning => {
-        return {
-          ...warning,
-          componentName: currentValue.componentName,
-          messageGroup: 'Warning',
-        };
-      })];
+    return [...previousValue, ...currentValue.errors.map(error => {
+      return {
+        ...error, componentName: currentValue.componentName, messageGroup: 'Error',
+      };
+    }), ...currentValue.infos.map(info => {
+      return {
+        ...info, componentName: currentValue.componentName, messageGroup: 'Info',
+      };
+    }), ...currentValue.warnings.map(warning => {
+      return {
+        ...warning, componentName: currentValue.componentName, messageGroup: 'Warning',
+      };
+    })];
   }, []) || [];
 
   const lrResult = {
@@ -357,7 +343,7 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
       'requestType': lr.requestType,
       'requestTime': lr.requestTime,
       'requester': lr.requester,
-      'requesterUsername': '',
+      'requesterUsername': lr.requesterUsername || '',
       'creationTime': lr.creationTime,
       'requestStatus': lr.requestStatus,
       'loadNumber': lr.loadNumber,
@@ -365,16 +351,12 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
       'loadStartTime': lr.loadStartTime,
       'loadEndTime': lr.loadEndTime,
       'loadRequestMessageList': loadRequestMessageList,
-    },
-    'loadComponentList': loadComponentList,
-    'loadComponentMessageList': loadComponentMessageList,
+    }, 'loadComponentList': loadComponentList, 'loadComponentMessageList': loadComponentMessageList,
   };
   const apiEndTime = new Date();
   res.send({
     result: {
-      data: lrResult,
-      hasPagination: false,
-      pagination: null,
+      data: lrResult, hasPagination: false, pagination: null,
     },
     service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
     status: { success: true },
@@ -647,12 +629,36 @@ app.get('/api/serviceValidate', async (req, res) => {
   if (!user || !user.utsUser || !user.utsUser.username) {
     return res.status(404).send();
   }
-  const jwtToken = jwt.sign({ data: user.utsUser.username }, SECRET_TOKEN);
+  const jwtToken = generateJwtToken(user.utsUser);
   res.cookie('Bearer', `${jwtToken}`, {
     expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
   });
-  res.send(user);
+
+  res.send({
+    utsUser: {
+      username: user.utsUser.username,
+      apiKey: user.utsUser.apiKey,
+      idpUserOrg: user.utsUser.idpUserOrg,
+      firstName: user.utsUser.firstName,
+      lastName: user.utsUser.lastName,
+    },
+  });
 });
+
+function generateJwtToken(user) {
+  return jwt.sign({
+    'sub': user.username,
+    'userId': user.userId,
+    'firstName': user.firstName,
+    'lastName': user.lastName,
+    'email': user.email,
+    'role': user.role,
+  }, SECRET_TOKEN);
+}
+
+function verifyJwtToken(jwtToken) {
+  return jwt.verify(jwtToken, SECRET_TOKEN);
+}
 
 async function loginWithUts(ticket) {
   const { usersCollection } = await mongoCollection();
@@ -665,7 +671,7 @@ app.get('/api/login', async (req, res) => {
   if (!jwtToken) return res.status(401).send();
   let payload;
   try {
-    payload = jwt.verify(jwtToken, SECRET_TOKEN);
+    payload = verifyJwtToken(jwtToken);
   } catch (e) {
     return res.send(500);
   }
@@ -673,8 +679,17 @@ app.get('/api/login', async (req, res) => {
     return res.send(500);
   }
   const { usersCollection } = await mongoCollection();
-  const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
-  res.send(user);
+  const user = await usersCollection.findOne({ 'utsUser.username': payload.sub });
+  res.send({
+    utsUser: {
+      userId: user.utsUser.userId,
+      firstName: user.utsUser.firstName,
+      lastName: user.utsUser.lastName,
+      username: user.utsUser.username,
+      email: user.utsUser.email,
+      role: user.utsUser.role,
+    },
+  });
 
 });
 
