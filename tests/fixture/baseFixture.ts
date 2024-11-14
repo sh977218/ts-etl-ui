@@ -65,7 +65,6 @@ const test = baseTest.extend<{
     });
     if (byPassLogin) {
       const payload = userNameMap[accountUsername.toLowerCase()];
-
       const cookies = [{
         name: 'Bearer',
         value: jwt.sign(payload, SECRET_TOKEN),
