@@ -1,7 +1,6 @@
-import { test as pwTest } from 'playwright/types/test';
-import { expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-pwTest('LR detail on localhost 4200', async ({ page }) => {
+test('LR detail on localhost 4200', async ({ page }) => {
   let numOfLrApiCalled = 0;
   let numOfLvApiCalled = 0;
 

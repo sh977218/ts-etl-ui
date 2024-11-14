@@ -1,6 +1,7 @@
+import { expect } from '@playwright/test';
+
 import test from '../fixture/baseFixture';
 import { EU_TIMEZONE } from '../CONSTANT';
-import { expect } from '@playwright/test';
 
 test.use({ accountUsername: 'Peter', timezoneId: EU_TIMEZONE });
 test('Create Load Request in different timezone', async ({ page, materialPage }) => {
