@@ -41,10 +41,11 @@
         </mat-error>
       </mat-form-field>
       <div class="mb-5">
-        <fieldset class="custom-mat-form-field" [ngClass]="loadRequestCreationForm.get('requestType')?.errors?'border-red-500':''">
+        <fieldset class="custom-mat-form-field"
+                  [ngClass]="loadRequestCreationForm.get('requestType')?.errors?'border-red-500':''">
           <legend class="mat-label">Request Type*</legend>
           <mat-radio-group aria-label-by="load-request-type-label" id="load-request-type-radio"
-                         formControlName="requestType">
+                           formControlName="requestType">
             <div class="ml-20">
               <mat-radio-button *ngFor="let LOAD_REQUEST_TYPE of ['Regular', 'Emergency', 'Scheduled']"
                                 [value]="LOAD_REQUEST_TYPE"
@@ -83,7 +84,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Requester</mat-label>
         <input matInput placeholder="Requester" type="email"
-               class="hidden">{{userService.user!.utsUser.firstName}} {{userService.user!.utsUser.lastName}}
+               class="hidden">{{userService.user!.firstName}} {{userService.user!.lastName}}
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Request Date</mat-label>

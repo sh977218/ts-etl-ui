@@ -150,7 +150,7 @@ export class LoadVersionComponent implements AfterViewInit {
               public constantService: ConstantService,
               private alertService: AlertService) {
     userService.user$.subscribe(user => {
-      this.username = user!.utsUser.username;
+      this.username = user!.username;
     });
     this.searchCriteria.valueChanges
       .subscribe(val => {
