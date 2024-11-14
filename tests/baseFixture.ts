@@ -170,7 +170,7 @@ const test = baseTest.extend<{
           await page.getByRole('button', { name: 'Log In' }).click();
           await page.getByRole('link', { name: 'UTS' }).click();
           await page.getByRole('button', { name: 'Sign in' }).click();
-          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].sub);
+          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].firstName);
           await page.getByRole('button', { name: 'Ok' }).click();
           await page.waitForURL(`${baseURL}/load-requests`);
         });
