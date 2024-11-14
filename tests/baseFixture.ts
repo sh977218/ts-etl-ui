@@ -4,10 +4,7 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 import * as jwt from 'jsonwebtoken';
 
-import { MAT_MONTH_MAP, MatDate, User } from './CONSTANT';
-
-const PROJECT_ROOT_FOLDER = join(__dirname, '..');
-const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
+import { MAT_MONTH_MAP, MatDate, NYC_OUTPUT_FOLDER, User } from './CONSTANT';
 
 async function codeCoverage(page: Page, testInfo: TestInfo) {
   const coverage: string = await page.evaluate(
@@ -15,8 +12,8 @@ async function codeCoverage(page: Page, testInfo: TestInfo) {
   );
   if (coverage) {
     const name = randomBytes(32).toString('hex');
-    const nycOutput = join(NYC_OUTPUT_FOLDER, `${name}`);
-    await writeFileSync(nycOutput, coverage);
+    const nycOutputFileName = join(NYC_OUTPUT_FOLDER, `${name}`);
+    await writeFileSync(nycOutputFileName, coverage);
   } else {
     throw new Error(`No coverage found for ${testInfo.testId}`);
   }
@@ -24,7 +21,6 @@ async function codeCoverage(page: Page, testInfo: TestInfo) {
 
 const EXPECTED_CONSOLE_LOGS: string[] = ['[webpack-dev-server]'];
 const UNEXPECTED_CONSOLE_LOGS: string[] = [];
-
 
 class MaterialPO {
   private readonly page: Page;
