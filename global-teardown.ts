@@ -1,9 +1,7 @@
 import { execSync } from 'child_process';
 import { readdirSync } from 'fs';
-import { join } from 'path';
 
-const PROJECT_ROOT_FOLDER = __dirname;
-const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
+import { NYC_OUTPUT_FOLDER } from './tests/CONSTANT';
 
 async function globalTeardown() {
   console.log('inside global tear down.');

@@ -4,11 +4,8 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 import * as jwt from 'jsonwebtoken';
 
-import { MAT_MONTH_MAP, MatDate, User } from '../CONSTANT';
+import { NYC_OUTPUT_FOLDER, User } from '../CONSTANT';
 import { MaterialPage } from './material-page';
-
-const PROJECT_ROOT_FOLDER = join(__dirname, '..');
-const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
 
 async function codeCoverage(page: Page, testInfo: TestInfo) {
   const coverage: string = await page.evaluate(

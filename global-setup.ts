@@ -1,11 +1,7 @@
 import { mkdirSync, rmSync } from 'fs';
-import { join } from 'path';
 import { execSync } from 'child_process';
-import jwt from 'jsonwebtoken';
 
-const PROJECT_ROOT_FOLDER = __dirname;
-const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
-const COVERAGE_REPORT_FOLDER = join(PROJECT_ROOT_FOLDER, 'coverage-e2e');
+import { COVERAGE_REPORT_FOLDER, NYC_OUTPUT_FOLDER } from './tests/CONSTANT';
 
 async function globalSetup() {
   if (!process.env['CI']) {
