@@ -26,7 +26,7 @@ const UNEXPECTED_CONSOLE_LOGS: string[] = [];
 const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
 const userNameMap: Record<string, User> = {
   'peter': {
-    sub: 'peterhuang',
+    username: 'peterhuang',
     userId: 5,
     firstName: 'Peter',
     lastName: 'Huang',
@@ -37,7 +37,7 @@ const userNameMap: Record<string, User> = {
     userId: 6,
     firstName: 'Christophe',
     lastName: 'Ludet',
-    sub: 'ludetc',
+    username: 'ludetc',
     email: 'christophe.ludet@nih.gov',
     role: 'Admin',
   },
