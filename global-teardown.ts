@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 import { readdirSync } from 'fs';
-
 import { NYC_OUTPUT_FOLDER } from './tests/CONSTANT';
 
 async function globalTeardown() {

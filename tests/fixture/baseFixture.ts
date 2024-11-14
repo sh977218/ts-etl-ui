@@ -13,8 +13,8 @@ async function codeCoverage(page: Page, testInfo: TestInfo) {
   );
   if (coverage) {
     const name = randomBytes(32).toString('hex');
-    const nycOutput = join(NYC_OUTPUT_FOLDER, `${name}`);
-    await writeFileSync(nycOutput, coverage);
+    const nycOutputFileName = join(NYC_OUTPUT_FOLDER, `${name}`);
+    await writeFileSync(nycOutputFileName, coverage);
   } else {
     throw new Error(`No coverage found for ${testInfo.testId}`);
   }
@@ -22,7 +22,6 @@ async function codeCoverage(page: Page, testInfo: TestInfo) {
 
 const EXPECTED_CONSOLE_LOGS: string[] = ['[webpack-dev-server]'];
 const UNEXPECTED_CONSOLE_LOGS: string[] = [];
-
 
 const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
 const userNameMap: Record<string, User> = {
@@ -62,12 +61,11 @@ const test = baseTest.extend<{
     });
     if (byPassLogin) {
       const payload = userNameMap[accountUsername.toLowerCase()];
-      const url = new URL(baseURL || '');
       const cookies = [{
         name: 'Bearer',
         value: jwt.sign(payload, SECRET_TOKEN),
         path: '/',
-        domain: url.hostname,
+        domain: 'localhost',
       }];
       await page.context().addCookies(cookies);
     }
@@ -84,7 +82,7 @@ const test = baseTest.extend<{
           await page.getByRole('button', { name: 'Log In' }).click();
           await page.getByRole('link', { name: 'UTS' }).click();
           await page.getByRole('button', { name: 'Sign in' }).click();
-          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].sub);
+          await page.locator('[name="ticket"]').selectOption(userNameMap[accountUsername.toLowerCase()].firstName);
           await page.getByRole('button', { name: 'Ok' }).click();
           await page.waitForURL(`${baseURL}/load-requests`);
         });

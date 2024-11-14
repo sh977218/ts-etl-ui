@@ -1,6 +1,5 @@
 import { mkdirSync, rmSync } from 'fs';
 import { execSync } from 'child_process';
-
 import { COVERAGE_REPORT_FOLDER, NYC_OUTPUT_FOLDER } from './tests/CONSTANT';
 
 async function globalSetup() {

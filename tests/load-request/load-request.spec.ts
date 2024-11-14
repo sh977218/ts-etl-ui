@@ -15,7 +15,7 @@ test.describe('LR -', async () => {
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
   const firstRow = 'table tbody tr:first-of-type';
 
-  test('Load Request table @smoke', async ({ page, materialPage }) => {
+  test('Load Request table', async ({ page, materialPage }) => {
     const matDialog = materialPage.matDialog();
 
     await expect(page.getByRole('link', { name: 'Load Request' })).toBeVisible();

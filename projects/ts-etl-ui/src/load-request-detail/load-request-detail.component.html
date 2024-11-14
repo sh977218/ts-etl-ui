@@ -3,7 +3,7 @@
     <fieldset>
       <legend>Load Request</legend>
       <ng-container
-        *ngIf="loadRequestSummary.requestStatus === 'Open' && user?.utsUser!.username === loadRequestSummary.requester">
+        *ngIf="loadRequestSummary.requestStatus === 'Open' && user?.utsUser!.username === loadRequestSummary.requesterUsername">
         <button mat-fab extended (click)="openEditDialog(loadRequestSummary)">
           Edit
         </button>
