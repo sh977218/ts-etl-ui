@@ -1,7 +1,8 @@
 import test from '../fixture/baseFixture';
-import { expect, test as pwTest } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
-import { EU_TIMEZONE, MatDate } from '../CONSTANT';
+
+import { MatDate } from '../CONSTANT';
 
 test.use({ accountUsername: 'Peter' });
 test.describe('LR -', async () => {
