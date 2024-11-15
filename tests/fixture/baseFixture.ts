@@ -4,9 +4,10 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 import * as jwt from 'jsonwebtoken';
 
-import { CreateLoadRequest, EU_TIMEZONE, MAT_MONTH_MAP, MatDate, NYC_OUTPUT_FOLDER, User } from '../CONSTANT';
+import { CreateLoadRequest, MatDate, NYC_OUTPUT_FOLDER, User } from '../CONSTANT';
 import { MaterialPage } from './material-page';
 import { CreateLoadRequestPage } from './create-load-request-page';
+import { AcceptRejectLoadVersionQaPage } from './accept-reject-load-version-qa-page';
 
 async function codeCoverage(page: Page, testInfo: TestInfo) {
   const coverage: string = await page.evaluate(
@@ -49,7 +50,9 @@ export const test = baseTest.extend<{
   accountUsername: string,
   byPassLogin: boolean,
   createLoadRequest: CreateLoadRequest | null,
+  loadNumber: string,
   createLoadRequestPage: CreateLoadRequestPage
+  acceptRejectLoadVersionQaPage: AcceptRejectLoadVersionQaPage
 }>({
   page: async ({ page, accountUsername, byPassLogin, createLoadRequest, baseURL }, use, testInfo) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
@@ -97,7 +100,9 @@ export const test = baseTest.extend<{
   accountUsername: '',
   byPassLogin: true,
   createLoadRequest: null,
+  loadNumber: '',
   createLoadRequestPage: async ({ page, materialPage, createLoadRequest }, use) => {
+    // those code can be moved to the fixture page object
     if (createLoadRequest) {
       const matDialog = materialPage.matDialog();
 
@@ -132,6 +137,38 @@ export const test = baseTest.extend<{
       await materialPage.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
     }
     await use(new CreateLoadRequestPage(page));
+  },
+  acceptRejectLoadVersionQaPage: async ({ page, materialPage, loadNumber }, use) => {
+    // those code can be moved to the fixture page object
+    const loadVersionTable = page.getByRole('table');
+    const firstRow = loadVersionTable.locator('tbody').getByRole('row').first();
+    const expandedRow = loadVersionTable.locator('tbody').getByRole('row').nth(1);
+
+    await page.getByRole('link', { name: 'Version QA' }).click();
+    await page.locator('id=loadNumberFilterInput').fill(loadNumber);
+    await page.keyboard.press('Enter');
+    await firstRow.getByRole('cell').nth(2).locator('.fake-link').click();
+
+    await use(new AcceptRejectLoadVersionQaPage(page));
+
+    if (loadNumber) {
+      const matDialog = materialPage.matDialog();
+      await page.getByRole('link', { name: 'Version QA' }).click();
+      await page.locator('id=loadNumberFilterInput').fill(loadNumber);
+      await page.keyboard.press('Enter');
+      await firstRow.getByRole('cell').nth(2).locator('.fake-link').click();
+      const resetButton = expandedRow.getByRole('button', { name: 'Reset' });
+      if (await resetButton.isVisible()) {
+        await resetButton.click();
+        await matDialog.waitFor();
+        await matDialog.getByPlaceholder('Notes').fill(`Fixture teardown, reset at ${new Date()}`);
+        await matDialog.getByRole('button', { name: 'Save' }).click();
+        await matDialog.waitFor({ state: 'hidden' });
+        await materialPage.checkAndCloseAlert('Activity added successfully.');
+        await expect(page.locator('app-load-version-activity table tbody tr').last().locator('td').nth(1)).toHaveText('Reset');
+
+      }
+    }
   },
 
 });

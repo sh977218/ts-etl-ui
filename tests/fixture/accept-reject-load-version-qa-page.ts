@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 
-export class CreateLoadRequestPage {
+export class AcceptRejectLoadVersionQaPage {
   constructor(public readonly page: Page) {
   }
 
