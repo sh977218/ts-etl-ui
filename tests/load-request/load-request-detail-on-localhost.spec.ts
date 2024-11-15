@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.use({ baseURL: 'http://localhost:4200' });
 test('LR detail on localhost 4200', async ({ page }) => {

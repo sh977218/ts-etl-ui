@@ -29,6 +29,16 @@ export type MatDate = {
   day: number
 }
 
+export type CreateLoadRequest = {
+  codeSystemName: string;
+  requestSubject: string;
+  sourceFilePath: string;
+  requestType: string;
+  scheduledDate?: MatDate | string;
+  scheduledTime?: string;
+  notificationEmail?: string;
+}
+
 export type User = {
   username: string
   userId: number

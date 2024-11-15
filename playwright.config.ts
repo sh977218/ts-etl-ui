@@ -65,6 +65,35 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
       },
     },
+    {
+      name: 'load-request',
+      testDir: './tests/load-request',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'load-version',
+      testDir: './tests/load-version',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'code-system',
+      testDir: './tests/code-system',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'load-request-nlm',
+      testDir: './tests/load-request',
+      use: {
+        baseURL: 'https://tsdata-dev.nlm.nih.gov/portal-frontend',
+        ...devices['Desktop Chrome'],
+      },
+    },
   ],
 
   /* Run your local dev server before starting the tests */
