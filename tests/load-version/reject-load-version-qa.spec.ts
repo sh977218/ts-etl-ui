@@ -5,7 +5,7 @@ import { test } from '../fixture/baseFixture';
 const loadNumber = '20230912080001';
 
 test.use({ accountUsername: 'Christophe', loadNumber });
-test('reject load version qa', async ({ page, materialPage, acceptRejectLoadVersionQaPage }) => {
+test('reject load version qa', async ({ page, materialPage, loadVersionQaPage }) => {
   const matDialog = materialPage.matDialog();
 
   await test.step(`Reject version QA`, async () => {

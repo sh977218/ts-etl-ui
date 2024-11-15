@@ -2,10 +2,10 @@ import { expect } from '@playwright/test';
 
 import { test } from '../fixture/baseFixture';
 
-const loadNumber = '20231012080001';
+const loadNumber = '20260501081501';
 test.use({ accountUsername: 'Christophe', loadNumber });
 
-test('accept load version qa', async ({ page, materialPage, acceptRejectLoadVersionQaPage }) => {
+test('accept load version qa', async ({ page, materialPage, loadVersionQaPage }) => {
   const matDialog = materialPage.matDialog();
 
   await test.step(`Accept version QA`, async () => {

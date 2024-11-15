@@ -7,7 +7,7 @@ import * as jwt from 'jsonwebtoken';
 import { CreateLoadRequest, MatDate, NYC_OUTPUT_FOLDER, User } from '../CONSTANT';
 import { MaterialPage } from './material-page';
 import { CreateLoadRequestPage } from './create-load-request-page';
-import { AcceptRejectLoadVersionQaPage } from './accept-reject-load-version-qa-page';
+import { LoadVersionQaPage } from './load-version-qa-page';
 
 async function codeCoverage(page: Page, testInfo: TestInfo) {
   const coverage: string = await page.evaluate(
@@ -52,7 +52,7 @@ export const test = baseTest.extend<{
   createLoadRequest: CreateLoadRequest | null,
   loadNumber: string,
   createLoadRequestPage: CreateLoadRequestPage
-  acceptRejectLoadVersionQaPage: AcceptRejectLoadVersionQaPage
+  loadVersionQaPage: LoadVersionQaPage
 }>({
   page: async ({ page, accountUsername, byPassLogin, createLoadRequest, baseURL }, use, testInfo) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
@@ -146,7 +146,7 @@ export const test = baseTest.extend<{
     }
     await use(new CreateLoadRequestPage(page));
   },
-  acceptRejectLoadVersionQaPage: async ({ page, materialPage, loadNumber }, use) => {
+  loadVersionQaPage: async ({ page, materialPage, loadNumber }, use) => {
     // those code can be moved to the fixture page object
     const loadVersionTable = page.getByRole('table');
     const firstRow = loadVersionTable.locator('tbody').getByRole('row').first();
@@ -157,7 +157,7 @@ export const test = baseTest.extend<{
     await page.keyboard.press('Enter');
     await firstRow.getByRole('cell').nth(2).locator('.fake-link').click();
 
-    await use(new AcceptRejectLoadVersionQaPage(page));
+    await use(new LoadVersionQaPage(page));
 
     if (loadNumber) {
       const matDialog = materialPage.matDialog();

@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 
 const loadNumber = '20250501081501';
 test.use({ accountUsername: 'Christophe', loadNumber });
-test('Note Filters', async ({ page, acceptRejectLoadVersionQaPage }) => {
+test('Note Filters', async ({ page, loadVersionQaPage }) => {
   const tbody = 'app-load-version-note tbody';
 
   await expect(page.locator(tbody)).toContainText('TestTag');

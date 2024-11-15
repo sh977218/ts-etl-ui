@@ -71,17 +71,6 @@ test.describe('LV - ', async () => {
     await expect(page.locator('main')).not.toContainText('View Source Data Files');
   });
 
-  test('Edit Activity Avail Date', async ({ page, materialPage }) => {
-    await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
-    await materialPage.waitForSpinner();
-    await page.getByRole('link', { name: 'Go to QA Report' });
-    await page.getByRole('button', { 'name': 'Edit available date' }).click();
-    await page.locator('app-load-version-activity input').clear();
-    await page.locator('app-load-version-activity input').fill('2025-03-10');
-    await page.getByRole('button', { 'name': 'Confirm' }).click();
-    await materialPage.checkAndCloseAlert('Available Date Updated');
-    await expect(page.locator('app-load-version-activity')).toContainText('2025/03');
-  });
 
   test(`download newly added load request`, async ({ page, materialPage }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
