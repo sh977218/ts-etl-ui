@@ -68,6 +68,14 @@ export const test = baseTest.extend<{
         path: '/',
         domain: 'localhost',
       }];
+      if (process.env['NLM']) {
+        cookies.push({
+          name: 'Bearer',
+          value: jwt.sign(payload, SECRET_TOKEN),
+          path: '/',
+          domain: 'tsdata-dev.nlm.nih.gov',
+        });
+      }
       await page.context().addCookies(cookies);
     }
     await page.goto('/');
