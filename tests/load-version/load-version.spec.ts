@@ -110,6 +110,7 @@ test.describe('LV - ', async () => {
 
   test('Edit Activity Avail Date', async ({ page, materialPage }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
+    await materialPage.waitForSpinner();
     await page.getByRole('link', { name: 'Go to QA Report' });
     await page.getByRole('button', { 'name': 'Edit available date' }).click();
     await page.locator('app-load-version-activity input').clear();
@@ -121,6 +122,7 @@ test.describe('LV - ', async () => {
 
   test(`download newly added load request`, async ({ page, materialPage }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
+    await materialPage.waitForSpinner();
     const [, downloadFile] = await Promise.all([
       page.getByRole('button', { name: 'Download' }).click(),
       page.waitForEvent('download')],
