@@ -65,21 +65,25 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
       },
     },
+    {
+      name: 'ts-etl-ui-nlm',
+      testDir: './tests/load-request',
+      use: {
+        baseURL: 'https://tsdata-dev.nlm.nih.gov/portal-frontend',
+        ...devices['Desktop Chrome'],
+      },
+    },
   ],
 
   /* Run your local dev server before starting the tests */
   webServer: [
-    ...['true'].includes(process.env.COVERAGE || '') ? [{
-      // this is not async, no guarantee that test will start after reset DB
-      command: `npm run reset-db`,
-    }] : [],
     {
       command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
       port: 3000,
       reuseExistingServer: true,
     },
     {
-      command: 'npm run serve',
+      command: process.env['CI'] ? `npm run serve:coverage` : `npm run serve:`,
       port: 4200,
       reuseExistingServer: true,
     },

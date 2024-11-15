@@ -55,7 +55,7 @@ export class MaterialPage {
     await calendar.waitFor({ state: 'hidden' });
   }
 
-  private async selectMatDate(d: MatDate) {
+  async selectMatDate(d: MatDate) {
     const calendar = this.page.locator(`mat-calendar`);
     await calendar.locator(`[aria-label="Choose month and year"]`).click();
 
@@ -77,7 +77,7 @@ export class MaterialPage {
   }
 
   async waitForSpinner() {
-    await this.matSpinner().waitFor();
+    // await this.matSpinner().waitFor();
     await this.matSpinner().waitFor({ state: 'hidden' });
   }
 

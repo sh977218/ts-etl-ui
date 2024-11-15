@@ -4,8 +4,9 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 import * as jwt from 'jsonwebtoken';
 
-import { NYC_OUTPUT_FOLDER, User } from '../CONSTANT';
+import { CreateLoadRequest, EU_TIMEZONE, MAT_MONTH_MAP, MatDate, NYC_OUTPUT_FOLDER, User } from '../CONSTANT';
 import { MaterialPage } from './material-page';
+import { CreateLoadRequestPage } from './create-load-request-page';
 
 async function codeCoverage(page: Page, testInfo: TestInfo) {
   const coverage: string = await page.evaluate(
@@ -47,13 +48,10 @@ export const test = baseTest.extend<{
   materialPage: MaterialPage,
   accountUsername: string,
   byPassLogin: boolean,
+  createLoadRequest: CreateLoadRequest | null,
+  createLoadRequestPage: CreateLoadRequestPage
 }>({
-  materialPage: async ({ page, baseURL }, use) => {
-    await use(new MaterialPage(page));
-  },
-  accountUsername: '',
-  byPassLogin: true,
-  page: async ({ page, accountUsername, byPassLogin, baseURL }, use, testInfo) => {
+  page: async ({ page, accountUsername, byPassLogin, createLoadRequest, baseURL }, use, testInfo) => {
     page.on('console', (consoleMessage: ConsoleMessage) => {
       if (consoleMessage) {
         UNEXPECTED_CONSOLE_LOGS.push(consoleMessage.text());
@@ -61,12 +59,19 @@ export const test = baseTest.extend<{
     });
     if (byPassLogin) {
       const payload = userNameMap[accountUsername.toLowerCase()];
-      const cookies = [{
-        name: 'Bearer',
-        value: jwt.sign(payload, SECRET_TOKEN),
-        path: '/',
-        domain: 'localhost',
-      }];
+      const cookies = [
+        {
+          name: 'Bearer',
+          value: jwt.sign(payload, SECRET_TOKEN),
+          url: baseURL,
+        },
+        {
+          name: 'Bearer',
+          value: jwt.sign(payload, SECRET_TOKEN),
+          path: '/',
+          domain: 'localhost',
+        },
+      ];
       await page.context().addCookies(cookies);
     }
     await page.goto('/');
@@ -93,6 +98,49 @@ export const test = baseTest.extend<{
       await codeCoverage(page, testInfo);
     }
   },
+  materialPage: async ({ page, baseURL }, use) => {
+    await use(new MaterialPage(page));
+  },
+  accountUsername: '',
+  byPassLogin: true,
+  createLoadRequest: null,
+  createLoadRequestPage: async ({ page, materialPage, createLoadRequest }, use) => {
+    if (createLoadRequest) {
+      const matDialog = materialPage.matDialog();
+
+      await page.getByRole('button', { name: 'Create Request' }).click();
+      await matDialog.waitFor();
+      await matDialog.getByLabel('Code System Name').click();
+      /**
+       * mat-option is not attached to modal, it appends to end of app root tag, so using page instead of `matDialog`.
+       */
+      await page.getByRole('option', { name: createLoadRequest.codeSystemName }).click();
+      await matDialog.getByLabel('Request Subject').fill(createLoadRequest.requestSubject);
+      await matDialog.getByLabel('Source File Path').fill(createLoadRequest.sourceFilePath);
+
+      await matDialog.getByRole('radio', { name: createLoadRequest.requestType }).check();
+      if (createLoadRequest.requestType === 'Scheduled') {
+        await matDialog.getByRole('button', { name: 'Open calendar' }).click();
+        await page.locator(`mat-calendar`).waitFor();
+        if (createLoadRequest.scheduledDate === 'today') {
+          await page.locator('.mat-calendar-body-cell.mat-calendar-body-active').click();
+        } else {
+          await materialPage.selectMatDate(createLoadRequest.scheduledDate as MatDate);
+        }
+        await page.locator(`mat-calendar`).waitFor({ state: 'hidden' });
+        await matDialog.getByRole('combobox', { name: 'Scheduled time' }).click();
+        await page.getByRole('option', { name: createLoadRequest.scheduledTime }).click();
+      }
+      if (createLoadRequest.notificationEmail) {
+        await matDialog.getByLabel('Notification Email').fill(createLoadRequest.notificationEmail);
+      }
+      await matDialog.getByRole('button', { name: 'Submit' }).click();
+      await matDialog.waitFor({ state: 'hidden' });
+      await materialPage.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);
+    }
+    await use(new CreateLoadRequestPage(page));
+  },
+
 });
 
 test.afterAll(async () => {
