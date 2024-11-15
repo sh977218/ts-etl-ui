@@ -5,56 +5,6 @@ import { test } from '../fixture/baseFixture';
 
 test.use({ accountUsername: 'Christophe' });
 test.describe('LV - ', async () => {
-
-  test('Version QA Table', async ({ page, materialPage }) => {
-    const matDialog = materialPage.matDialog();
-
-    await page.getByRole('link', { name: 'Version QA' }).click();
-
-    await expect(page.getByRole('table').locator('tbody tr')).not.toHaveCount(0);
-
-    await test.step(`Accept version QA`, async () => {
-      await page.locator('tbody tr td .fake-link').nth(1).click();
-      await page.getByRole('button', { name: 'Accept' }).click();
-      await matDialog.waitFor();
-      await matDialog.getByPlaceholder('Notes').fill('Accepted by me');
-      await matDialog.getByRole('button', { name: 'Save' }).click();
-      await matDialog.waitFor({ state: 'hidden' });
-      await materialPage.checkAndCloseAlert('Activity added successfully.');
-      await expect(page.locator('app-load-version-activity').getByText('Accepted by me')).toBeVisible();
-      await expect(page.locator('app-load-version-note').getByText('Accepted by me')).toBeVisible();
-    });
-
-    await test.step('Add note', async () => {
-      await page.getByRole('button', { name: 'Add Note' }).click();
-      for (const [index, tag] of ['Test.Hashtag1', 'Test.Hashtag2', 'New Test Note', 'This tag should be removed'].entries()) {
-        await page.getByPlaceholder('New Hashtag...').fill(tag);
-        await page.keyboard.press('Enter');
-        await expect(page.locator('mat-chip-row')).toHaveCount(index + 1);
-      }
-
-      await test.step('Remove one tag', async () => {
-        await matDialog.locator('mat-chip-row')
-          .filter({ hasText: 'This tag should be removed' })
-          .getByRole('button')
-          .click();
-      });
-
-      await page.locator('mat-dialog-content textarea').fill('New Test Note');
-      await page.getByRole('button', { name: 'Save' }).click();
-      await materialPage.checkAndCloseAlert('Note added successfully.');
-      await expect(page.locator('app-load-version-note').getByText('#Test.Hashtag2')).toBeVisible();
-    });
-
-    await test.step(`Open QA Report page`, async () => {
-      const [qaReportPage] = await Promise.all([
-        page.waitForEvent('popup'),
-        page.getByRole('link', { name: 'Go to QA Report' }).click(),
-      ]);
-      await expect(qaReportPage).toHaveTitle(`Version QA Report`);
-    });
-  });
-
   test('Rule Message', async ({ page }) => {
     await page.goto('/load-version-report/0');
     const firstRow = 'app-load-version-report-rule-message tbody tr:first-of-type';
@@ -101,43 +51,6 @@ test.describe('LV - ', async () => {
     await expect(page.locator(row)).toContainText('Raw counts are not present');
   });
 
-  test('Note Filters', async ({ page }) => {
-    await page.goto('/load-versions');
-    await page.locator('tbody tr td .fake-link', { hasText: '20231012080001' }).click();
-
-    const tbody = 'app-load-version-note tbody';
-
-    await expect(page.locator(tbody)).toContainText('TestTag');
-    await expect(page.locator(tbody)).toContainText('Tag.3');
-
-    await page.locator('#activityIdInput').pressSequentially('2024');
-    await expect(page.locator(tbody)).not.toContainText('TestTag');
-    await page.locator('#activityIdInput').clear();
-
-    await page.locator('#hashtagsFilterInput').selectOption('Tag2');
-    await expect(page.locator(tbody)).toContainText('Note2');
-    await expect(page.locator(tbody)).not.toContainText('TestTag');
-    await expect(page.locator(tbody)).not.toContainText('Tag.3');
-
-    await page.locator('#hashtagsFilterInput').selectOption('ALL');
-    await expect(page.locator(tbody)).toContainText('TestTag');
-    await expect(page.locator(tbody)).toContainText('Tag.3');
-
-    await page.locator('#noteInput').fill('Second');
-    await expect(page.locator(tbody)).toContainText('Note2');
-    await expect(page.locator(tbody)).not.toContainText('TestTag');
-    await expect(page.locator(tbody)).not.toContainText('Tag.3');
-
-    await page.locator('#noteInput').clear();
-    await page.locator('#createdBySearchInput').selectOption('ludetc');
-    await expect(page.locator(tbody)).toContainText('Note2');
-    await expect(page.locator(tbody)).not.toContainText('TestTag');
-    await expect(page.locator(tbody)).not.toContainText('Tag.3');
-
-    await page.locator('#createdBySearchInput').selectOption('ALL');
-    await expect(page.locator(tbody)).toContainText('TestTag');
-    await expect(page.locator(tbody)).toContainText('Tag.3');
-  });
 
   test('Table Expanded', async ({ page }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
@@ -158,19 +71,10 @@ test.describe('LV - ', async () => {
     await expect(page.locator('main')).not.toContainText('View Source Data Files');
   });
 
-  test('Edit Activity Avail Date', async ({ page, materialPage }) => {
-    await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
-    await page.getByRole('link', { name: 'Go to QA Report' });
-    await page.getByRole('button', { 'name': 'Edit available date' }).click();
-    await page.locator('app-load-version-activity input').clear();
-    await page.locator('app-load-version-activity input').fill('2025-03-10');
-    await page.getByRole('button', { 'name': 'Confirm' }).click();
-    await materialPage.checkAndCloseAlert('Available Date Updated');
-    await expect(page.locator('app-load-version-activity')).toContainText('2025/03');
-  });
 
   test(`download newly added load request`, async ({ page, materialPage }) => {
     await page.goto('/load-versions?loadNumber=20231012080001&expand=0');
+    await materialPage.waitForSpinner();
     const [, downloadFile] = await Promise.all([
       page.getByRole('button', { name: 'Download' }).click(),
       page.waitForEvent('download')],

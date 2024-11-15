@@ -7,7 +7,7 @@
       "loadEndTime": "2023-10-12T08:01:04+05:00",
       "codeSystemName": "CDT",
       "sourceFilePath": "file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/HPO100923",
-      "versionStatus": "Accepted",
+      "versionStatus": "Pending QA",
       "version": "2023",
       "effectiveDate": "2020-1-1",
       "requester": "hoffmantalley@zilphur.com",
@@ -395,7 +395,7 @@
       "loadEndTime": "2024-12-12T08:00:01+05:00",
       "codeSystemName": "SNOMEDCT",
       "sourceFilePath": "C:\\Talley\\LOINC\\Hoffman",
-      "versionStatus": "Failed",
+      "versionStatus": "Pending QA",
       "version": "2023-09",
       "effectiveDate": "2020-1-1",
       "requester": "hoffmantalley@zilphur.com",
@@ -417,6 +417,108 @@
       "requester": "hoffmantalley@zilphur.com",
       "requestTime": "2024-12-11T07:53:17+05:00",
       "loadVersionActivities": [
+      ],
+      "loadSummary": {}
+    },
+    {
+      "requestId": 4,
+      "loadNumber": "20250501081501",
+      "loadStartTime": "2024-05-01T08:15:01+05:00",
+      "loadEndTime": "2025-05-01T08:15:01+05:00",
+      "codeSystemName": "RXNORM",
+      "sourceFilePath": "C:\\Talley\\RXNOEM\\Hoffman",
+      "versionStatus": "Available",
+      "version": "2024-09",
+      "effectiveDate": "2020-1-1",
+      "requester": "hoffmantalley@zilphur.com",
+      "requestTime": "2024-12-11T07:53:17+05:00",
+      "loadVersionActivities": [
+        {
+          "id": "2023-07-02T04:00:00.000Z",
+          "createdBy": "peterhuang",
+          "activity": "Accept",
+          "availableDate": "2023-07-03T04:00:00.000Z",
+          "notes": [
+            {
+              "notes": "Testing the Notes feature",
+              "createdTime": "2023-07-02T11:07:23.546Z",
+              "createdBy": "peterhuang",
+              "hashtags": [
+                "Verification",
+                "TestTag"
+              ]
+            },
+            {
+              "notes": "Second Note",
+              "createdTime": "2023-07-03T11:07:23.546Z",
+              "createdBy": "ludetc",
+              "hashtags": [
+                "Note2",
+                "Tag2"
+              ]
+            },
+            {
+              "notes": "Third Node",
+              "createdTime": "2023-07-04T11:07:23.546Z",
+              "createdBy": "peterhuang",
+              "hashtags": [
+                "Note.Thrww",
+                "Tag.3"
+              ]
+            }
+          ]
+        }
+      ],
+      "loadSummary": {}
+    },
+    {
+      "requestId": 5,
+      "loadNumber": "20260501081501",
+      "loadStartTime": "2024-05-01T08:15:01+05:00",
+      "loadEndTime": "2025-05-01T08:15:01+05:00",
+      "codeSystemName": "RXNORM",
+      "sourceFilePath": "C:\\Talley\\RXNOEM\\Hoffman",
+      "versionStatus": "Available",
+      "version": "2024-09",
+      "effectiveDate": "2020-1-1",
+      "requester": "hoffmantalley@zilphur.com",
+      "requestTime": "2024-12-11T07:53:17+05:00",
+      "loadVersionActivities": [
+        {
+          "id": "2023-07-02T04:00:00.000Z",
+          "createdBy": "peterhuang",
+          "activity": "Accept",
+          "availableDate": "2023-07-03T04:00:00.000Z",
+          "notes": [
+            {
+              "notes": "Testing the Notes feature",
+              "createdTime": "2023-07-02T11:07:23.546Z",
+              "createdBy": "peterhuang",
+              "hashtags": [
+                "Verification",
+                "TestTag"
+              ]
+            },
+            {
+              "notes": "Second Note",
+              "createdTime": "2023-07-03T11:07:23.546Z",
+              "createdBy": "ludetc",
+              "hashtags": [
+                "Note2",
+                "Tag2"
+              ]
+            },
+            {
+              "notes": "Third Node",
+              "createdTime": "2023-07-04T11:07:23.546Z",
+              "createdBy": "peterhuang",
+              "hashtags": [
+                "Note.Thrww",
+                "Tag.3"
+              ]
+            }
+          ]
+        }
       ],
       "loadSummary": {}
     }

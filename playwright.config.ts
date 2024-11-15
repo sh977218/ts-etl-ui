@@ -102,15 +102,17 @@ export default defineConfig({
       // this is not async, no guarantee that test will start after reset DB
       command: `npm run reset-db`,
     }] : [],
-    {
-      command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
-      port: 3000,
-      reuseExistingServer: true,
-    },
-    {
-      command: 'npm run serve',
-      port: 4200,
-      reuseExistingServer: true,
-    },
+    ...!process.env.NLM ? [
+      {
+        // this is not async, no guarantee that test will start after reset DB
+        command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
+        port: 3000,
+        reuseExistingServer: true,
+      },
+      {
+        command: 'npm run serve',
+        port: 4200,
+        reuseExistingServer: true,
+      }] : [],
   ],
 });
