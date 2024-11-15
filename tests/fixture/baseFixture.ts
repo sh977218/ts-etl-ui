@@ -43,7 +43,7 @@ const userNameMap: Record<string, User> = {
   },
 };
 
-const test = baseTest.extend<{
+export const test = baseTest.extend<{
   materialPage: MaterialPage,
   accountUsername: string,
   byPassLogin: boolean,
@@ -95,9 +95,6 @@ const test = baseTest.extend<{
   },
 });
 
-test.afterEach(async ({ page }, testInfo) => {
-});
-
 test.afterAll(async () => {
   const unexpected_console_logs = UNEXPECTED_CONSOLE_LOGS.filter(UNEXPECTED_CONSOLE_LOG => {
     const expectedConsoleLogs = EXPECTED_CONSOLE_LOGS.filter(EXPECTED_CONSOLE_LOG => EXPECTED_CONSOLE_LOG.indexOf(UNEXPECTED_CONSOLE_LOG) > -1);
@@ -108,5 +105,3 @@ test.afterAll(async () => {
     throw new Error(`Unexpected console message: ${unexpected_console_logs.join('\n*****************\n')}`);
   }
 });
-
-export default test;

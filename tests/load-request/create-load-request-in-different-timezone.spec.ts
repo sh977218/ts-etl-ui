@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 
-import test from '../fixture/baseFixture';
+import { test } from '../fixture/baseFixture';
 import { EU_TIMEZONE } from '../CONSTANT';
 
 test.use({ accountUsername: 'Peter', timezoneId: EU_TIMEZONE });
