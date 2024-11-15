@@ -77,13 +77,17 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: [
+    ...['true'].includes(process.env.COVERAGE || '') ? [{
+      // this is not async, no guarantee that test will start after reset DB
+      command: `npm run reset-db`,
+    }] : [],
     {
       command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
       port: 3000,
       reuseExistingServer: true,
     },
     {
-      command: process.env['CI'] ? `npm run serve:coverage` : `npm run serve:`,
+      command: 'npm run serve',
       port: 4200,
       reuseExistingServer: true,
     },
