@@ -64,9 +64,31 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
       },
+      dependencies: ['load-request', 'load-version', 'code-system'],
     },
     {
-      name: 'ts-etl-ui-nlm',
+      name: 'load-request',
+      testDir: './tests/load-request',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'load-version',
+      testDir: './tests/load-version',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'code-system',
+      testDir: './tests/code-system',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'load-request-nlm',
       testDir: './tests/load-request',
       use: {
         baseURL: 'https://tsdata-dev.nlm.nih.gov/portal-frontend',
