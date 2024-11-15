@@ -34,6 +34,8 @@ test('Create Load Request in different timezone - EU', async ({ page, materialPa
 
     await test.step('validate source file path load request', async () => {
       await matDialog.getByLabel('Source File Path').fill('this is not valid');
+      await page.locator('mat-dialog-container h2').click();
+      await expect(page.locator('mat-dialog-container')).toContainText('The path must be subfolder under the base URL');
       await matDialog.getByLabel('Source File Path').fill(newLoadRequest.sourceFilePath);
     });
 
