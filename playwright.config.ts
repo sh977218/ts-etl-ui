@@ -102,7 +102,7 @@ export default defineConfig({
       // this is not async, no guarantee that test will start after reset DB
       command: `npm run reset-db`,
     }] : [],
-    ...process.env.NLM ? [
+    ...!process.env.NLM ? [
       {
         // this is not async, no guarantee that test will start after reset DB
         command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
