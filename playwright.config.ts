@@ -64,7 +64,6 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
       },
-      dependencies: ['load-request', 'load-version', 'code-system'],
     },
     {
       name: 'load-request',
