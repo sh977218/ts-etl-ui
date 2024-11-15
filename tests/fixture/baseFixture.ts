@@ -59,19 +59,12 @@ export const test = baseTest.extend<{
     });
     if (byPassLogin) {
       const payload = userNameMap[accountUsername.toLowerCase()];
-      const cookies = [
-        {
-          name: 'Bearer',
-          value: jwt.sign(payload, SECRET_TOKEN),
-          url: baseURL,
-        },
-        {
-          name: 'Bearer',
-          value: jwt.sign(payload, SECRET_TOKEN),
-          path: '/',
-          domain: 'localhost',
-        },
-      ];
+      const cookies = [{
+        name: 'Bearer',
+        value: jwt.sign(payload, SECRET_TOKEN),
+        path: '/',
+        domain: 'localhost',
+      }];
       await page.context().addCookies(cookies);
     }
     await page.goto('/');
