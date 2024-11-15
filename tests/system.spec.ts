@@ -1,5 +1,6 @@
-import test from './fixture/baseFixture';
 import { expect } from '@playwright/test';
+
+import { test } from './fixture/baseFixture';
 
 test.describe('System testing -', async () => {
   test.use({ byPassLogin: false });

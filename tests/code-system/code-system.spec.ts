@@ -1,7 +1,8 @@
-import test from '../fixture/baseFixture';
 import { expect } from '@playwright/test';
 
-// byPassLogin set to false to do login so code coverage is met.
+import { test } from '../fixture/baseFixture';
+
+// byPassLogin sets false to do login so code coverage is met.
 test.use({ accountUsername: 'peter', byPassLogin: false });
 test.describe('CS - ', async () => {
   test('Code System Table', async ({ page }) => {

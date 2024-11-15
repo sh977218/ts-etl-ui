@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.use({ baseURL: 'http://localhost:4200' });
-test('LR detail on localhost 4200', async ({ page }) => {
+test('QA report on localhost 4200', async ({ page }) => {
   let numOfLrApiCalled = 0;
   let numOfLvApiCalled = 0;
 
@@ -29,10 +29,10 @@ test('LR detail on localhost 4200', async ({ page }) => {
     await route.continue();
   });
 
-  await page.goto('/load-request/0');
-  const row = 'app-load-component-message tbody tr:nth-of-type(2)';
-  await expect(page.locator(row)).toContainText('MISSING_DATA_FILE');
+  await page.goto('http://localhost:4200/load-version-report/0');
+  const row = 'app-load-version-report-rule tbody tr:nth-of-type(2)';
+  await expect(page.locator(row)).toContainText('Code.DuplicateCode');
 
   expect(numOfLrApiCalled).toEqual(1);
-  expect(numOfLvApiCalled).toEqual(0);
+  expect(numOfLvApiCalled).toEqual(1);
 });
