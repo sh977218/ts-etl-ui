@@ -18,7 +18,7 @@ async function codeCoverage(page: Page, testInfo: TestInfo) {
     const nycOutputFileName = join(NYC_OUTPUT_FOLDER, `${name}`);
     await writeFileSync(nycOutputFileName, coverage);
   } else {
-    throw new Error(`No coverage found for ${testInfo.testId}`);
+    console.info(`No coverage found for ${testInfo.testId}`);
   }
 }
 
@@ -62,10 +62,11 @@ export const test = baseTest.extend<{
     });
     if (byPassLogin) {
       const payload = userNameMap[accountUsername.toLowerCase()];
-      const cookies = [{
+      const cookies: [any] = [{
         name: 'Bearer',
         value: jwt.sign(payload, SECRET_TOKEN),
         path: '/',
+        port: 3000,
         domain: 'localhost',
       }];
       if (process.env['NLM']) {

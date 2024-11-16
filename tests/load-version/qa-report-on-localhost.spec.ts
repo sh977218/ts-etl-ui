@@ -1,18 +1,11 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from '../fixture/baseFixture';
 
-test.use({ baseURL: 'http://localhost:4200' });
+test.use({ accountUsername: 'peter', baseURL: 'http://localhost:4200' });
+
 test('QA report on localhost 4200', async ({ page }) => {
   let numOfLrApiCalled = 0;
   let numOfLvApiCalled = 0;
-
-  await page.goto('/');
-  await page.getByRole('button', { name: 'Log In' }).click();
-  await page.getByRole('link', { name: 'UTS' }).click();
-  await page.getByRole('button', { name: 'Sign in' }).click();
-  await page.locator('[name="ticket"]').selectOption('Peter');
-  await page.getByRole('button', { name: 'Ok' }).click();
-  await page.waitForURL(/load-requests/);
-  await expect(page.getByRole('button', { name: 'Download' })).toBeVisible();
 
   await page.route(/load-request\/\d$/, async route => {
     await page.waitForTimeout(2000);
@@ -29,7 +22,8 @@ test('QA report on localhost 4200', async ({ page }) => {
     await route.continue();
   });
 
-  await page.goto('http://localhost:4200/load-version-report/0');
+  await page.goto('/load-version-report/0');
+
   const row = 'app-load-version-report-rule tbody tr:nth-of-type(2)';
   await expect(page.locator(row)).toContainText('Code.DuplicateCode');
 
