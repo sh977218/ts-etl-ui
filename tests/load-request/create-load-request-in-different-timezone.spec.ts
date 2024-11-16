@@ -68,5 +68,6 @@ test('Create Load Request in different timezone - EU', async ({ page, materialPa
     const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
     await expect(tableRows.first().locator('td').nth(5)).toContainText(/(EDT|EST)/);
   });
+
   await page.unrouteAll({ behavior: 'ignoreErrors' });
 });
