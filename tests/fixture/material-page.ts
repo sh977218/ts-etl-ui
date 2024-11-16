@@ -29,7 +29,7 @@ export class MaterialPage {
     if (totalCountString) {
       return parseInt(totalCountString);
     }
-    return -1;
+    throw new Error(`No pagination total count found.\npagination label: "${text}"\nregexResult: "${regexResult}"`);
   }
 
   matOption() {
