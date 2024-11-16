@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from '../fixture/baseFixture';
-import { CreateLoadRequest, EU_TIMEZONE, MatDate } from '../CONSTANT';
+import { CreateLoadRequest, EU_TIMEZONE, MatDate, tomorrowInMatDate } from '../CONSTANT';
 
 const newLoadRequest: CreateLoadRequest = {
   codeSystemName: 'USP',
