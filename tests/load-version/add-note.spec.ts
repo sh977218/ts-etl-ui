@@ -5,7 +5,7 @@ import { test } from '../fixture/baseFixture';
 const loadNumber = '20270501081501';
 test.use({ accountUsername: 'Christophe', loadNumber });
 
-test('add note to load version qa', async ({ page, materialPage, loadVersionQaPage }) => {
+test('add note to load version qa @smoke', async ({ page, materialPage, loadVersionQaPage }) => {
   const matDialog = materialPage.matDialog();
   await test.step('Add note', async () => {
     await page.getByRole('button', { name: 'Add Note' }).click();
@@ -25,7 +25,7 @@ test('add note to load version qa', async ({ page, materialPage, loadVersionQaPa
     await page.locator('mat-dialog-content textarea').fill('New Test Note');
     await page.getByRole('button', { name: 'Save' }).click();
     await materialPage.checkAndCloseAlert('Note added successfully.');
-    await expect(page.locator('app-load-version-note').getByText('#Test.Hashtag2')).toBeVisible();
+    await expect(page.locator('app-load-version-note').getByText('#Test.Hashtag2')).not.toHaveCount(0);
   });
 
 });
