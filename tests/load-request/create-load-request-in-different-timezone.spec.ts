@@ -1,14 +1,14 @@
 import { expect } from '@playwright/test';
 
 import { test } from '../fixture/baseFixture';
-import { CreateLoadRequest, EU_TIMEZONE, MatDate } from '../CONSTANT';
+import { CreateLoadRequest, EU_TIMEZONE, MatDate, tomorrowInMatDate } from '../CONSTANT';
 
 const newLoadRequest: CreateLoadRequest = {
   codeSystemName: 'USP',
   requestSubject: `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
-  scheduledDate: 'today',
+  scheduledDate: tomorrowInMatDate(),
   scheduledTime: '11:30 PM',
 };
 test.use({ accountUsername: 'peter', timezoneId: EU_TIMEZONE });
