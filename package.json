@@ -13,7 +13,7 @@
     "start": "npm run start --prefix server",
     "start:coverage": "npm run start:coverage --prefix server",
     "build": "ng build ts-etl-ui -c render && node server/insert-commit-hash.js",
-    "build:prod": "ng build ts-etl-ui -c prod && node server/insert-commit-hash.js",
+    "build:prod": "ng build e2e-coverage -c coverage && node server/insert-commit-hash.js",
     "build:coverage": "ng build e2e-coverage -c coverage && node server/insert-commit-hash.js",
     "test": "playwright test --project=ts-etl-ui",
     "test:nlm": "NLM=true playwright test --project=load-request-nlm",
