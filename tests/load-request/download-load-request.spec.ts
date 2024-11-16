@@ -1,4 +1,4 @@
-import { EU_TIMEZONE } from '../CONSTANT';
+import { EU_TIMEZONE, tomorrowInMatDate } from '../CONSTANT';
 import { test } from '../fixture/baseFixture';
 import { expect } from '@playwright/test';
 import { readFileSync } from 'fs';
@@ -8,7 +8,7 @@ const newLoadRequest = {
   requestSubject: `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
-  scheduledDate: 'today',
+  scheduledDate: tomorrowInMatDate(),
   scheduledTime: '11:30 PM',
 };
 
