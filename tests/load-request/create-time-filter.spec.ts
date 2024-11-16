@@ -4,14 +4,14 @@ import { EU_TIMEZONE, todayInMatDate, tomorrowInMatDate } from '../CONSTANT';
 
 const newLoadRequest = {
   codeSystemName: 'USP',
-  requestSubject: `Creation Time filter - created load request ${new Date().toISOString()}`,
+  requestSubject: `created load request ${new Date().toISOString()} for creation time filter`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
   scheduledDate: tomorrowInMatDate(),
   scheduledTime: '11:30 PM',
 };
 test.use({ accountUsername: 'Peter', createLoadRequest: newLoadRequest });
-test.describe(`Creation Time filter`, async () => {
+test.describe(`creation time filter`, async () => {
   test('input', async ({ page, materialPage }) => {
     const totalLoadRequestCountBeforeFilter = await materialPage.matPaginationTotalCount();
     const datePicker = page.locator(`[id="creationTimeRange"]`);

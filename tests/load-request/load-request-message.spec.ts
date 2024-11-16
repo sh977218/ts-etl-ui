@@ -4,7 +4,7 @@ import { tomorrowInMatDate } from '../CONSTANT';
 
 const newLoadRequest = {
   codeSystemName: 'USP',
-  requestSubject: `Load request detail view - created load request ${new Date().toISOString()}`,
+  requestSubject: `created load request ${new Date().toISOString()} for Load Request detail Messages`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
   scheduledDate: tomorrowInMatDate(),
@@ -34,7 +34,7 @@ test.describe('Load Request detail Messages', async () => {
     await page.getByRole('link', { name: 'Load Request' }).focus();
     await expect(page.locator('app-load-component-message')).not.toContainText('RAW_TABLE_COUNT');
   });
-  
+
   test('LR with no LV', async ({ page }) => {
     await page.goto('/load-request/8');
     await expect(page.locator('body')).toContainText('bensonmcgowan@zilphur.com');

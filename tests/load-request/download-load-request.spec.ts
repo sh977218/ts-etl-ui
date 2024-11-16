@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 
 const newLoadRequest = {
   codeSystemName: 'USP',
-  requestSubject: `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`,
+  requestSubject: `created load request ${new Date().toISOString()} for download Load Request`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
   scheduledDate: tomorrowInMatDate(),

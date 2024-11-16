@@ -4,14 +4,14 @@ import { todayInMatDate, tomorrowInMatDate } from '../CONSTANT';
 
 const newLoadRequest = {
   codeSystemName: 'USP',
-  requestSubject: `Request Time filter - created load request ${new Date().toISOString()}`,
+  requestSubject: `created load request ${new Date().toISOString()} for request time filter`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
   scheduledDate: tomorrowInMatDate(),
   scheduledTime: '11:30 PM',
 };
 test.use({ accountUsername: 'Peter', createLoadRequest: newLoadRequest });
-test.describe(`Request Time filter`, async () => {
+test.describe(`request time filter`, async () => {
 
   test('input', async ({ page, materialPage, createLoadRequestPage }) => {
     const totalLoadRequestCountBeforeFilter = await materialPage.matPaginationTotalCount();

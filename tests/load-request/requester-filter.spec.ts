@@ -4,7 +4,7 @@ import { tomorrowInMatDate } from '../CONSTANT';
 
 const newLoadRequest = {
   codeSystemName: 'USP',
-  requestSubject: `Requester filter - created load request ${new Date().toISOString()}`,
+  requestSubject: `created load request ${new Date().toISOString()} for requester filter`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
   scheduledDate: tomorrowInMatDate(),
@@ -12,7 +12,7 @@ const newLoadRequest = {
 };
 const requester = 'peterhuang';
 test.use({ accountUsername: 'Peter', createLoadRequest: newLoadRequest });
-test.describe('Requester Filter', async () => {
+test.describe('requester filter', async () => {
   test(`input`, async ({ page, materialPage, createLoadRequestPage }) => {
     const totalLoadRequestCountBeforeFilter = await materialPage.matPaginationTotalCount();
     await page.getByPlaceholder('requester...').fill(requester);

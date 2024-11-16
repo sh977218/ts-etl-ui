@@ -4,7 +4,7 @@ import { expect } from '@playwright/test';
 
 const newLoadRequest = {
   codeSystemName: 'USP',
-  requestSubject: `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`,
+  requestSubject: `created load request ${new Date().toISOString()} for edit load request`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
   scheduledDate: tomorrowInMatDate(),
@@ -14,7 +14,7 @@ const newLoadRequest = {
 const updatedLoadRequestType = 'Emergency';
 
 test.use({ accountUsername: 'Peter', createLoadRequest: newLoadRequest });
-test('Edit Load Request', async ({ page, materialPage, createLoadRequestPage }) => {
+test('edit load request', async ({ page, materialPage, createLoadRequestPage }) => {
   const matDialog = materialPage.matDialog();
 
   await test.step('search for newly added load request', async () => {
