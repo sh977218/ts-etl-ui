@@ -10,10 +10,15 @@ export const DEFAULT_TIMEZONE = 'America/New_York';
 export const DEFAULT_TIME_FORMAT = 'yyyy-MM-dd hh:mm a z';
 
 export const tomorrowInMatDate = (): MatDate => {
+  const tomorrow = endOfTomorrow();
+  const year = tomorrow.getFullYear();
+  // MatDate Month 1 based, date-fns month 0 based
+  const month = tomorrow.getMonth() + 1;
+  const day = tomorrow.getDate();
   return {
-    year: endOfTomorrow().getFullYear(),
-    month: endOfTomorrow().getMonth(),
-    day: endOfTomorrow().getDay(),
+    year,
+    month,
+    day,
   };
 };
 

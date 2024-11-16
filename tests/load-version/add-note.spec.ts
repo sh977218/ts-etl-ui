@@ -5,7 +5,7 @@ import { test } from '../fixture/baseFixture';
 const loadNumber = '20270501081501';
 test.use({ accountUsername: 'Christophe', loadNumber });
 
-test('add note to load version qa @smoke', async ({ page, materialPage, loadVersionQaPage }) => {
+test('add note to load version qa', async ({ page, materialPage, loadVersionQaPage }) => {
   const matDialog = materialPage.matDialog();
   await test.step('Add note', async () => {
     await page.getByRole('button', { name: 'Add Note' }).click();
