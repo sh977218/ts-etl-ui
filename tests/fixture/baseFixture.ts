@@ -66,7 +66,6 @@ export const test = baseTest.extend<{
         name: 'Bearer',
         value: jwt.sign(payload, SECRET_TOKEN),
         path: '/',
-        port: 3000,
         domain: 'localhost',
       }];
       if (process.env['NLM']) {
