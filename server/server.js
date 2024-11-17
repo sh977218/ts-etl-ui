@@ -246,8 +246,8 @@ app.post('/api/load-request', async (req, res) => {
 
   const jwtToken = req.cookies['Bearer'];
   if (!jwtToken) return res.status(401).send();
-  const payload = jwt.verify(jwtToken, SECRET_TOKEN);
-  loadRequest.requester = payload.data;
+  const payload = verifyJwtToken(jwtToken);
+  loadRequest.requester = payload.username;
 
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   loadRequest.creationTime = new Date();
@@ -304,12 +304,7 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
   const lv = await loadVersionsCollection.findOne({ requestId: +req.params.opRequestSeq });
   if (!lr) return res.status(404).send();
   const loadRequestMessageList = lv?.loadSummary?.components?.reduce((previousValue, currentValue, currentIndex, messages) => {
-    return [
-      ...previousValue,
-      ...currentValue.errors,
-      ...currentValue.infos,
-      ...currentValue.warnings,
-    ];
+    return [...previousValue, ...currentValue.errors, ...currentValue.infos, ...currentValue.warnings];
   }, []) || [];
   const loadComponentList = lv?.loadSummary?.components?.map((currentValue) => {
     return {
@@ -323,29 +318,19 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
     };
   }) || [];
   const loadComponentMessageList = lv?.loadSummary?.components?.reduce((previousValue, currentValue, currentIndex, messages) => {
-    return [
-      ...previousValue,
-      ...currentValue.errors.map(error => {
-        return {
-          ...error,
-          componentName: currentValue.componentName,
-          messageGroup: 'Error',
-        };
-      }),
-      ...currentValue.infos.map(info => {
-        return {
-          ...info,
-          componentName: currentValue.componentName,
-          messageGroup: 'Info',
-        };
-      }),
-      ...currentValue.warnings.map(warning => {
-        return {
-          ...warning,
-          componentName: currentValue.componentName,
-          messageGroup: 'Warning',
-        };
-      })];
+    return [...previousValue, ...currentValue.errors.map(error => {
+      return {
+        ...error, componentName: currentValue.componentName, messageGroup: 'Error',
+      };
+    }), ...currentValue.infos.map(info => {
+      return {
+        ...info, componentName: currentValue.componentName, messageGroup: 'Info',
+      };
+    }), ...currentValue.warnings.map(warning => {
+      return {
+        ...warning, componentName: currentValue.componentName, messageGroup: 'Warning',
+      };
+    })];
   }, []) || [];
 
   const lrResult = {
@@ -357,7 +342,6 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
       'requestType': lr.requestType,
       'requestTime': lr.requestTime,
       'requester': lr.requester,
-      'requesterUsername': '',
       'creationTime': lr.creationTime,
       'requestStatus': lr.requestStatus,
       'loadNumber': lr.loadNumber,
@@ -365,16 +349,12 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
       'loadStartTime': lr.loadStartTime,
       'loadEndTime': lr.loadEndTime,
       'loadRequestMessageList': loadRequestMessageList,
-    },
-    'loadComponentList': loadComponentList,
-    'loadComponentMessageList': loadComponentMessageList,
+    }, 'loadComponentList': loadComponentList, 'loadComponentMessageList': loadComponentMessageList,
   };
   const apiEndTime = new Date();
   res.send({
     result: {
-      data: lrResult,
-      hasPagination: false,
-      pagination: null,
+      data: lrResult, hasPagination: false, pagination: null,
     },
     service: { url: req.url, accessTime: apiStartTime, duration: apiEndTime - apiStartTime },
     status: { success: true },
@@ -634,7 +614,9 @@ app.get('/nih-login', (req, res) => {
 
 /* @todo TS's backend needs to implement the following APIs. */
 // this map simulate UTS ticket to username, NOTE: user `ghost` exist in UTS DB but not in TS DB (Do not add user 'ghost' in data/user.json).
-const ticketMap = new Map([['peter-ticket', 'peterhuang'], ['christophe-ticket', 'ludetc'], ['ghost-ticket', 'ghost']]);
+const ticketMap = {
+  'peter-ticket': 'peterhuang', 'christophe-ticket': 'ludetc', 'ghost-ticket': 'ghost',
+};
 app.get('/api/serviceValidate', async (req, res) => {
   const ticket = req.query.ticket;
   const service = req.query.service;
@@ -643,21 +625,26 @@ app.get('/api/serviceValidate', async (req, res) => {
   if (app !== 'angular' || !service || !ticket) {
     return res.status(400).send();
   }
-  const user = await loginWithUts(ticket);
-  if (!user || !user.utsUser || !user.utsUser.username) {
+  const username = ticketMap[ticket];
+  const { usersCollection } = await mongoCollection();
+  const user = await usersCollection.findOne({ username });
+  if (!user) {
     return res.status(404).send();
   }
-  const jwtToken = jwt.sign({ data: user.utsUser.username }, SECRET_TOKEN);
+  const jwtToken = generateJwtToken(user);
   res.cookie('Bearer', `${jwtToken}`, {
     expires: new Date(Date.now() + COOKIE_EXPIRATION_IN_MS),
   });
+
   res.send(user);
 });
 
-async function loginWithUts(ticket) {
-  const { usersCollection } = await mongoCollection();
-  const utsUsername = ticketMap.get(ticket);
-  return await usersCollection.findOne({ 'utsUser.username': utsUsername });
+function generateJwtToken(user) {
+  return jwt.sign(user, SECRET_TOKEN);
+}
+
+function verifyJwtToken(jwtToken) {
+  return jwt.verify(jwtToken, SECRET_TOKEN);
 }
 
 app.get('/api/login', async (req, res) => {
@@ -665,7 +652,7 @@ app.get('/api/login', async (req, res) => {
   if (!jwtToken) return res.status(401).send();
   let payload;
   try {
-    payload = jwt.verify(jwtToken, SECRET_TOKEN);
+    payload = verifyJwtToken(jwtToken);
   } catch (e) {
     return res.send(500);
   }
@@ -673,7 +660,7 @@ app.get('/api/login', async (req, res) => {
     return res.send(500);
   }
   const { usersCollection } = await mongoCollection();
-  const user = await usersCollection.findOne({ 'utsUser.username': payload.data });
+  const user = await usersCollection.findOne({ 'username': payload.username });
   res.send(user);
 
 });

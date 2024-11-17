@@ -65,23 +65,50 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
       },
     },
+    {
+      name: 'load-request',
+      testDir: './tests/load-request',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'load-version',
+      testDir: './tests/load-version',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'code-system',
+      testDir: './tests/code-system',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'load-request-nlm',
+      testDir: './tests/load-request',
+      use: {
+        baseURL: 'https://tsdata-dev.nlm.nih.gov/portal-frontend',
+        ...devices['Desktop Chrome'],
+      },
+    },
   ],
 
   /* Run your local dev server before starting the tests */
   webServer: [
-    ...['true'].includes(process.env.COVERAGE || '') ? [{
-      // this is not async, no guarantee that test will start after reset DB
-      command: `npm run reset-db`,
-    }] : [],
-    {
-      command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
-      port: 3000,
-      reuseExistingServer: true,
-    },
-    {
-      command: 'npm run serve',
-      port: 4200,
-      reuseExistingServer: true,
-    },
+    ...!process.env.NLM ? [
+      {
+        // this is not async, no guarantee that test will start after reset DB
+        command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
+        port: 3000,
+        reuseExistingServer: true,
+      },
+      {
+        command: 'npm run serve',
+        port: 4200,
+        reuseExistingServer: true,
+      }] : [],
   ],
 });

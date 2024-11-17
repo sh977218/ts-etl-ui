@@ -1,5 +1,6 @@
-import test from './baseFixture';
 import { expect } from '@playwright/test';
+
+import { test } from '../fixture/baseFixture';
 
 test.describe('System testing -', async () => {
   test.use({ byPassLogin: false });
@@ -11,15 +12,15 @@ test.describe('System testing -', async () => {
     await expect(page.locator('body')).toContainText('This application requires you to log in');
   });
 
-  test('Invalid User', async ({ page, materialPo }) => {
+  test('Invalid User', async ({ page, materialPage }) => {
     await page.goto('/login-cb?ticket=bogusTicket');
-    await materialPo.checkAndCloseAlert('Unable to log in');
+    await materialPage.checkAndCloseAlert('Unable to log in');
     await expect(page.locator('body')).toContainText('This application requires you to log in');
   });
 
-  test('Missing Ticket', async ({ page, materialPo }) => {
+  test('Missing Ticket', async ({ page, materialPage }) => {
     await page.goto('/login-cb');
-    await materialPo.checkAndCloseAlert('Unable to log in');
+    await materialPage.checkAndCloseAlert('Unable to log in');
   });
   test.describe('JWT fail', async () => {
     test.use({ byPassLogin: false });
@@ -44,7 +45,7 @@ test.describe('System testing -', async () => {
 
 test.describe(`error handler`, async () => {
   test.use({ accountUsername: 'peter' });
-  test(`Global api error handler`, async ({ page, materialPo }) => {
+  test(`Global api error handler`, async ({ page, materialPage }) => {
     await page.route('**/property/request-types', async route => {
       await route.fulfill({
         status: 500,
@@ -55,7 +56,7 @@ test.describe(`error handler`, async () => {
       });
     });
     await page.goto('/load-requests');
-    await materialPo.checkAndCloseAlert('Something wrong');
+    await materialPage.checkAndCloseAlert('Something wrong');
   });
 });
 

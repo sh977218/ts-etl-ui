@@ -11,7 +11,7 @@
     </ng-container>
   </span>
   <ng-container *ngIf="(userService.user$ | async) as user;  else logInTemplate">
-    <button mat-button [matMenuTriggerFor]="userMenu" aria-label="user menu">{{user.utsUser.username}}</button>
+    <button mat-button [matMenuTriggerFor]="userMenu" aria-label="user menu">{{user.username}}</button>
   </ng-container>
   <mat-menu #userMenu="matMenu">
     <button mat-menu-item (click)="userService.logOut()">Log Out</button>

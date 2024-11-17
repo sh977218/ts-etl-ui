@@ -53,8 +53,8 @@ export class LoadVersionReviewModalComponent {
   ) {
     this.dataSource = data;
     userService.user$.subscribe(user => {
-      this.reviewForm.get('createdBy')?.setValue(user!.utsUser.username);
-      this.notes.at(0)?.get('createdBy')?.setValue(user!.utsUser.username);
+      this.reviewForm.get('createdBy')?.setValue(user!.username);
+      this.notes.at(0)?.get('createdBy')?.setValue(user!.username);
     });
   }
 

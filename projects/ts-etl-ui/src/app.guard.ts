@@ -13,7 +13,7 @@ export const logInGuard = () => {
     .pipe(
       skipWhile(user => user === undefined),
       map(u => {
-        if (!u?.utsUser) {
+        if (!u) {
           router.navigate(['./please-log-in']);
           return;
         }

@@ -1,48 +1,20 @@
 {
   "data": [
     {
-      "userID": "peterhuanguts@gmail.com",
-      "credentialType": "PrincipalBearingCredential",
-      "firstName": "",
-      "authenticationDate": "2024-05-10T17:39:13.421236Z",
-      "isFromNewLogin": "true",
-      "authenticationMethod": "NIHSITE",
-      "successfulAuthenticationHandlers": "NIHSITE",
-      "longTermAuthenticationRequestTokenUsed": "false",
-      "email": "peterhuanguts@gmail.com",
-      "lastName": "",
-      "idpUserOrg": "google",
-      "success": true,
-      "userStatus": "ACTIVE",
-      "utsUser": {
-        "username": "peterhuang",
-        "apiKey": "2468df67-8884-4ee7-83ed-5860406d200b",
-        "idpUserOrg": "google",
-        "firstName": "Peter",
-        "lastName": "Huang"
-      }
+      "userId": 5,
+      "username": "peterhuang",
+      "firstName": "Peter",
+      "lastName": "Huang",
+      "email": "shi.huang@nih.gov",
+      "role": "Admin"
     },
     {
-      "userID": "ludetc@nih.gov",
-      "credentialType": "PrincipalBearingCredential",
-      "firstName": "",
-      "authenticationDate": "2024-05-10T17:39:13.421236Z",
-      "isFromNewLogin": "true",
-      "authenticationMethod": "NIHSITE",
-      "successfulAuthenticationHandlers": "NIHSITE",
-      "longTermAuthenticationRequestTokenUsed": "false",
-      "email": "ludetc@nih.gov",
-      "lastName": "",
-      "idpUserOrg": "google",
-      "success": true,
-      "userStatus": "ACTIVE",
-      "utsUser": {
-        "username": "ludetc",
-        "apiKey": "2468df67-8884-4ee7-83ed-xxxxxxxxxxxx",
-        "idpUserOrg": "google",
-        "firstName": "Christophe",
-        "lastName": "Ludet"
-      }
+      "userId": 6,
+      "username": "ludetc",
+      "firstName": "Christophe",
+      "lastName": "Ludet",
+      "email": "christophe.ludet@nih.gov",
+      "role": "Admin"
     }
   ]
 }
