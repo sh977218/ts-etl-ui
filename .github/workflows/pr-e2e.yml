@@ -8,28 +8,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  create-db:
-    name: create-db
-    if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm i
-
-      - name: Create MongoDB
-        run: PR=${{ github.event.number }} npm run create-db
-
   reset-db:
-    # if: ${{ github.event_name == 'pull_request' && github.event.action == 'synchronize' }}
-    if: false
     name: reset-db
     runs-on: ubuntu-latest
     steps:
@@ -77,15 +56,6 @@ jobs:
 
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npx playwright test --project=ts-etl-ui --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-
-      - name: Upload server log
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: server.log
-          path: server/server.log
-          if-no-files-found: warn
-          retention-days: 1
 
       - name: Upload raw playwright blob data
         if: always()

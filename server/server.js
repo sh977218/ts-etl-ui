@@ -4,7 +4,6 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 
-import * as winston from 'winston';
 import jwt from 'jsonwebtoken';
 
 import cookieParser from 'cookie-parser';
@@ -32,14 +31,6 @@ const SECRET_TOKEN = process.env.SECRET_TOKEN || 'some-secret';
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
-
-const logger = winston.createLogger({
-  level: 'info',
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'server.log' }),
-  ],
-});
 
 if (['coverage'].includes(process.env.ENV_NAME)) {
   if (!existsSync('../dist/e2e-coverage')) {
@@ -703,11 +694,11 @@ app.use(async (err, req, res) => {
 });
 
 app.listen(port, () => {
-  logger.info(`TS ELT UI mock server listening on port ${port}, using DB: ${MONGO_DBNAME}`);
+  console.log(`TS ELT UI mock server listening on port ${port}, using DB: ${MONGO_DBNAME}`);
   if (RESET_DB) {
     resetMongoCollection()
-      .then(() => logger.info('Reset DB successfully from server.js'))
-      .catch(() => logger.info('Reset DB failed from server.js'))
-      .finally(() => logger.info('Reset DB final callback from server.js'));
+      .then(() => console.log('Reset DB successfully from server.js'))
+      .catch(() => console.log('Reset DB failed from server.js'))
+      .finally(() => console.log('Reset DB final callback from server.js'));
   }
 });
