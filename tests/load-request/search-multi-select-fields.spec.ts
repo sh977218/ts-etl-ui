@@ -28,7 +28,7 @@ test(`Search multi select fields`, async ({ page, materialPage }) => {
 
   await page.getByRole('button', { name: 'Search' }).click();
 
-  await materialPage.matDialog().waitFor({ state: 'hidden' });
+  await materialPage.waitForSpinner();
   expect(numOfApiCalled).toEqual(1);
   const totalLoadRequestCountAfterFilter = await materialPage.matPaginationTotalCount();
   expect(totalLoadRequestCountAfterFilter).toBeLessThan(totalLoadRequestCountBeforeFilter);
