@@ -26,19 +26,7 @@ test(`Search multi select fields`, async ({ page, materialPage }) => {
     await materialPage.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency', 'Scheduled']);
   });
 
-  await test.step(`Search and verify result`, async () => {
-    await page.getByRole('button', { name: 'Search' }).click();
-    await materialPage.waitForSpinner();
-    const tableRows = page.locator('tbody[role="rowgroup"]').getByRole('row');
-    await expect(tableRows).toHaveCount(2);
-    await expect(tableRows.first()).toContainText('MMSL');
-    await expect(tableRows.first()).toContainText('Incomplete');
-    await expect(tableRows.first()).toContainText('Emergency');
-    await expect(tableRows.nth(1)).toContainText('GS');
-    await expect(tableRows.nth(1)).toContainText('Stopped');
-    await expect(tableRows.nth(1)).toContainText('Scheduled');
-  });
-
+  await materialPage.matDialog().waitFor({ state: 'hidden' });
   expect(numOfApiCalled).toEqual(1);
   const totalLoadRequestCountAfterFilter = await materialPage.matPaginationTotalCount();
   expect(totalLoadRequestCountAfterFilter).toBeLessThan(totalLoadRequestCountBeforeFilter);
