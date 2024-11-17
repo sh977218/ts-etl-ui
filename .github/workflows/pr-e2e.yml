@@ -58,6 +58,15 @@ jobs:
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npx playwright test --project=ts-etl-ui --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
+      - name: Upload server log
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: server.log
+          path: server/server.log
+          if-no-files-found: warn
+          retention-days: 1
+
       - name: Upload raw playwright blob data
         if: always()
         uses: actions/upload-artifact@v3
