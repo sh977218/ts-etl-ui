@@ -5,7 +5,7 @@ import { CreateLoadRequest, EU_TIMEZONE, MatDate, tomorrowInMatDate } from '../C
 
 const newLoadRequest: CreateLoadRequest = {
   codeSystemName: 'USP',
-  requestSubject: `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`,
+  requestSubject: `created load request ${new Date().toISOString()} for Create Load Request in different timezone - EU`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
   scheduledDate: tomorrowInMatDate(),

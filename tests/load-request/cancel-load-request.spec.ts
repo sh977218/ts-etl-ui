@@ -5,7 +5,7 @@ import { test } from '../fixture/baseFixture';
 
 const newLoadRequest = {
   codeSystemName: 'USP',
-  requestSubject: `newly ${EU_TIMEZONE} created load request ${new Date().toISOString()}`,
+  requestSubject: `created load request ${new Date().toISOString()} for cancel load request`,
   sourceFilePath: 'file://nlmsambaserver.nlm.nih.gov/dev-ts-data-import/USP/USP20220823',
   requestType: 'Scheduled',
   scheduledDate: tomorrowInMatDate(),
@@ -13,7 +13,7 @@ const newLoadRequest = {
 };
 
 test.use({ accountUsername: 'Peter', createLoadRequest: newLoadRequest });
-test('cancel Load Request', async ({ page, materialPage, createLoadRequestPage }) => {
+test('cancel load request', async ({ page, materialPage, createLoadRequestPage }) => {
   const matDialog = materialPage.matDialog();
 
   await test.step('search for newly added load request', async () => {

@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 import { test } from '../fixture/baseFixture';
 
 // byPassLogin sets false to do login so code coverage is met.
-test.use({ accountUsername: 'peter', byPassLogin: false });
+test.use({ accountUsername: 'Peter', byPassLogin: false });
 test.describe('CS - ', async () => {
   test('Code System Table', async ({ page }) => {
     await page.getByRole('link', { name: 'Code System' }).click();

@@ -20,6 +20,18 @@ export class MaterialPage {
     return this.page.locator('mat-spinner');
   }
 
+  async matPaginationTotalCount() {
+    const matPaginationLabel = this.page.locator('.mat-mdc-paginator-range-label');
+    await this.page.waitForTimeout(1000); //@TODO find better way to know the pagination text is updated after search
+    const text = await matPaginationLabel.innerText();
+    const regexResult = /1 – \d+ of (\d+)/.exec(text);
+    const totalCountString = regexResult?.at(1);
+    if (totalCountString) {
+      return parseInt(totalCountString);
+    }
+    throw new Error(`No pagination total count found.\npagination label: "${text}"\nregexResult: "${regexResult}"`);
+  }
+
   matOption() {
     return this.page.locator('mat-option');
   }
