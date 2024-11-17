@@ -37,7 +37,7 @@ jobs:
         run: PR=${{ github.event.number }} npm run reset-db
 
   e2e-test:
-    needs: [ reset-db ]
+    needs: [ prepare-db ]
     if: always()
     name: e2e-test
     runs-on: ubuntu-latest
