@@ -42,6 +42,9 @@ testem.log
 .DS_Store
 Thumbs.db
 
+#log
+server/server.log
+
 # Playwright files
 /test-results/
 /playwright-report/
