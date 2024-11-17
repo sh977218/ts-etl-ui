@@ -1,5 +1,5 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { AsyncPipe, JsonPipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { AsyncPipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -103,7 +103,6 @@ const LABEL_SORT_ARRAY = [
     LoadVersionReviewModalComponent,
     LoadRequestMessageComponent,
     LoadComponentComponent,
-    JsonPipe,
   ],
   templateUrl: './load-request-detail.component.html',
   styleUrl: './load-request-detail.component.scss',
@@ -131,7 +130,7 @@ export class LoadRequestDetailComponent {
 
         const loadRequestSummary = lr.loadRequestSummary;
         return [...Object.keys(loadRequestSummary), 'loadElapsedTime', 'numberOfMessages']
-          .filter(k => !['_id', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
+          .filter(k => !['_id', 'requesterUsername', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
           .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
           .reduce<string[]>((acc, key) => {
             acc.push(key);
@@ -222,4 +221,6 @@ export class LoadRequestDetailComponent {
         },
       });
   }
+
+
 }
