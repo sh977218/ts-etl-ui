@@ -31,11 +31,6 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
         run: PR=${{ github.event.number }} npm run create-db
 
-      - name: Reset MongoDB
-        # if: ${{ github.event_name == 'pull_request' && github.event.action == 'synchronize' }}
-        if: false
-        run: PR=${{ github.event.number }} npm run reset-db
-
   e2e-test:
     needs: [ prepare-db ]
     if: always()
