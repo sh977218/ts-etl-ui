@@ -247,7 +247,7 @@ app.post('/api/load-request', async (req, res) => {
   const jwtToken = req.cookies['Bearer'];
   if (!jwtToken) return res.status(401).send();
   const payload = verifyJwtToken(jwtToken);
-  loadRequest.requester = payload.username;
+  loadRequest.requesterUsername = payload.username;
 
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   loadRequest.creationTime = new Date();
