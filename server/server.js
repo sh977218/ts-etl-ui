@@ -247,7 +247,7 @@ app.post('/api/load-request', async (req, res) => {
   const jwtToken = req.cookies['Bearer'];
   if (!jwtToken) return res.status(401).send();
   const payload = verifyJwtToken(jwtToken);
-  loadRequest.requester = payload.username;
+  loadRequest.requesterUsername = payload.username;
 
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   loadRequest.creationTime = new Date();
@@ -342,6 +342,7 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
       'requestType': lr.requestType,
       'requestTime': lr.requestTime,
       'requester': lr.requester,
+      'requesterUsername': lr.requesterUsername,
       'creationTime': lr.creationTime,
       'requestStatus': lr.requestStatus,
       'loadNumber': lr.loadNumber,

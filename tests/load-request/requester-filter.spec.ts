@@ -10,7 +10,7 @@ const newLoadRequest = {
   scheduledDate: tomorrowInMatDate(),
   scheduledTime: '11:30 PM',
 };
-const requester = 'peterhuang';
+const requester = 'peter huang';
 test.use({ accountUsername: 'Peter', createLoadRequest: newLoadRequest });
 test.describe('requester filter', async () => {
   test(`input`, async ({ page, materialPage, createLoadRequestPage }) => {
@@ -25,7 +25,7 @@ test.describe('requester filter', async () => {
 
   test(`URL`, async ({ page, materialPage, createLoadRequestPage }) => {
     const totalLoadRequestCountBeforeFilter = await materialPage.matPaginationTotalCount();
-    await page.goto(`/load-requests?requester=${requester}`);
+    await page.goto(`/load-requests?requester=${encodeURIComponent(requester)}`);
     await materialPage.matDialog().waitFor({ state: 'hidden' });
     const totalLoadRequestCountAfterFilter = await materialPage.matPaginationTotalCount();
     expect(totalLoadRequestCountAfterFilter).toBeLessThan(totalLoadRequestCountBeforeFilter);
