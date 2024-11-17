@@ -8,9 +8,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  reset-db:
-    if: false
-    name: reset-db
+  prepare-db:
+    name: prepare-db
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,7 +23,17 @@ jobs:
       - name: Install dependencies
         run: npm i
 
+      - name: Create MongoDB
+        if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
+        run: PR=${{ github.event.number }} npm run create-db
+
+      - name: Restore MongoDB
+        if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
+        run: PR=${{ github.event.number }} npm run create-db
+
       - name: Reset MongoDB
+        # if: ${{ github.event_name == 'pull_request' && github.event.action == 'synchronize' }}
+        if: false
         run: PR=${{ github.event.number }} npm run reset-db
 
   e2e-test:
@@ -57,6 +66,15 @@ jobs:
 
       - name: Run Playwright tests
         run: PR=${{ github.event.number }} npx playwright test --project=ts-etl-ui --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+      - name: Upload server log
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: server.log
+          path: server/server.log
+          if-no-files-found: warn
+          retention-days: 1
 
       - name: Upload raw playwright blob data
         if: always()
