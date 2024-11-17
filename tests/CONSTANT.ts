@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { endOfTomorrow } from 'date-fns';
+import { endOfToday, endOfTomorrow } from 'date-fns';
 
 export const PROJECT_ROOT_FOLDER = join(__dirname, '..');
 export const NYC_OUTPUT_FOLDER = join(PROJECT_ROOT_FOLDER, 'e2e_nyc_output');
@@ -8,6 +8,19 @@ export const COVERAGE_REPORT_FOLDER = join(PROJECT_ROOT_FOLDER, 'coverage-e2e');
 export const EU_TIMEZONE = 'Etc/Greenwich';
 export const DEFAULT_TIMEZONE = 'America/New_York';
 export const DEFAULT_TIME_FORMAT = 'yyyy-MM-dd hh:mm a z';
+
+export const todayInMatDate = (): MatDate => {
+  const today = endOfToday();
+  const year = today.getFullYear();
+  // MatDate Month 1 based, date-fns month 0 based
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  return {
+    year,
+    month,
+    day,
+  };
+};
 
 export const tomorrowInMatDate = (): MatDate => {
   const tomorrow = endOfTomorrow();

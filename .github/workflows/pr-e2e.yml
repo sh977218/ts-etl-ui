@@ -9,7 +9,6 @@ concurrency:
 
 jobs:
   reset-db:
-    if: false
     name: reset-db
     runs-on: ubuntu-latest
     steps:

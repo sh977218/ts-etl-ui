@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from '../fixture/baseFixture';
-import { EU_TIMEZONE, MatDate, tomorrowInMatDate } from '../CONSTANT';
+import { EU_TIMEZONE, todayInMatDate, tomorrowInMatDate } from '../CONSTANT';
 
 const newLoadRequest = {
   codeSystemName: 'USP',
@@ -15,11 +15,6 @@ const newLoadRequest = {
 test.use({ accountUsername: 'Peter', createLoadRequest: newLoadRequest });
 test.describe('LR -', async () => {
   const today = new Date();
-  const todayInMatDate: MatDate = {
-    year: today.getFullYear(),
-    month: today.getMonth(),
-    day: today.getDay(),
-  };
   const firstCell = 'table tbody tr:first-of-type td:first-of-type';
   const firstRow = 'table tbody tr:first-of-type';
 
@@ -63,7 +58,7 @@ test.describe('LR -', async () => {
   test.describe(`Request Time`, async () => {
     test('input', async ({ page, materialPage }) => {
       const datePicker = page.locator(`[id="requestTimeRange"]`);
-      await materialPage.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 }, todayInMatDate);
+      await materialPage.selectDateRangerPicker(datePicker, { year: 2017, month: 11, day: 1 }, todayInMatDate());
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPage.matDialog().waitFor({ state: 'hidden' });
       await page.getByRole('columnheader', { name: 'Request Time' }).click();
@@ -82,7 +77,7 @@ test.describe('LR -', async () => {
   test.describe(`Creation Time`, async () => {
     test('input', async ({ page, materialPage }) => {
       const datePicker = page.locator(`[id="creationTimeRange"]`);
-      await materialPage.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 }, todayInMatDate);
+      await materialPage.selectDateRangerPicker(datePicker, { year: 2010, month: 1, day: 1 }, todayInMatDate());
       await page.getByRole('button', { name: 'Search' }).click();
       await materialPage.matDialog().waitFor({ state: 'hidden' });
       await page.getByRole('columnheader', { name: 'Creation Time' }).click();
