@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node --env-file .prod.env server.js",
-    "start:coverage": "MONGO_USERNAME=peterhuangnih MONGO_PASSWORD=upbjppmDsYVsl61H MONGO_HOSTNAME=ts-etl-ui.oyinipt.mongodb.net/ MONGO_DBNAME=ci ENV_NAME=coverage node server.js",
+    "start:coverage": "node --env-file .coverage.env server.js",
     "prepare": "husky"
   },
   "private": true,
