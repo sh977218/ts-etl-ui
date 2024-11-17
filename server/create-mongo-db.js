@@ -1,4 +1,4 @@
-import { createMongoCollections, resetMongoCollection } from './db.js';
+import { createMongoCollections } from './db.js';
 
 createMongoCollections()
   .then(() => {
