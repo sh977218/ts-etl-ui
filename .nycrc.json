@@ -1,6 +1,6 @@
 {
   "all": true,
-  "check-coverage": false,
+  "check-coverage": true,
   "reportDir": "coverage-e2e",
   "temp-dir": "e2e_nyc_output",
   "reporter": [
