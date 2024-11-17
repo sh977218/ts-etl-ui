@@ -1,6 +1,7 @@
 import { test } from '../fixture/baseFixture';
 import { expect } from '@playwright/test';
 
+test.use({ accountUsername: 'peter' });
 test('Pagination and Sort', async ({ page, materialPage }) => {
   const rows = page.locator('table tbody tr');
 
