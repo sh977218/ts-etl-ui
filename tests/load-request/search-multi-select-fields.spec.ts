@@ -26,6 +26,8 @@ test(`Search multi select fields`, async ({ page, materialPage }) => {
     await materialPage.selectMultiOptions(page.locator(`[id="requestTypeFilterSelect"]`), ['Emergency', 'Scheduled']);
   });
 
+  await page.getByRole('button', { name: 'Search' }).click();
+
   await materialPage.matDialog().waitFor({ state: 'hidden' });
   expect(numOfApiCalled).toEqual(1);
   const totalLoadRequestCountAfterFilter = await materialPage.matPaginationTotalCount();
