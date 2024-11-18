@@ -35,7 +35,6 @@ import { LoadComponentComponent } from '../load-component/load-component.compone
 import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import {
-  CreateLoadRequestsResponse,
   FlatLoadRequestPayload,
   generateLoadRequestPayload,
   LoadRequest,
@@ -294,15 +293,7 @@ export class LoadRequestComponent implements AfterViewInit {
     })
       .afterClosed()
       .pipe(
-        filter(newLoadRequest => !!newLoadRequest),
-        switchMap(newLoadRequest => this.http.post<CreateLoadRequestsResponse>(`${environment.apiServer}/load-request`, newLoadRequest as LoadRequest)),
-        map(res => res.result.data),
-        tap({
-          next: (opRequestSeq) => {
-            this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
-            this.reloadAllRequests$.next(true);
-          },
-        }),
+        tap(() => this.reloadAllRequests$.next(true))
       )
       .subscribe();
   }

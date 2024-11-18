@@ -56,6 +56,13 @@ test('Create Load Request in different timezone - EU', async ({ page, materialPa
     if (newLoadRequest.notificationEmail) {
       await matDialog.getByLabel('Notification Email').fill(newLoadRequest.notificationEmail);
     }
+
+    await matDialog.getByLabel('Source File Path').fill('bad-folder/doesnt-matter');
+    await matDialog.getByRole('button', { name: 'Submit' }).click();
+    await materialPage.checkAndCloseAlert('Specified Source File Path does not exist');
+    await matDialog.getByLabel('Source File Path').clear();
+    await matDialog.getByLabel('Source File Path').fill(newLoadRequest.sourceFilePath);
+
     await matDialog.getByRole('button', { name: 'Submit' }).click();
     await matDialog.waitFor({ state: 'hidden' });
     await materialPage.checkAndCloseAlert(/Request \(ID: \d+\) created successfully/);

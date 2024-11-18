@@ -249,6 +249,13 @@ app.post('/api/load-request', async (req, res) => {
   const payload = verifyJwtToken(jwtToken);
   loadRequest.requesterUsername = payload.username;
 
+  if (loadRequest.sourceFilePath.includes('bad-folder')) {
+    return res.status(400).send({
+      isSuccess: false,
+      error: 'Specified Source File Path does not exist'
+    });
+  }
+
   loadRequest.requestTime = new Date(loadRequest.requestTime);
   loadRequest.creationTime = new Date();
 
