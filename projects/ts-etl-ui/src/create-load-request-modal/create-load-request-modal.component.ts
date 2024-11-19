@@ -145,6 +145,23 @@ export class CreateLoadRequestModalComponent {
   }
 
   modalClose() {
+    if (this.existingLoadRequest?.opRequestSeq) {
+      this.http.post<LoadRequest>(`${environment.apiServer}/loadRequest/${this.existingLoadRequest.opRequestSeq}`, this.loadRequestCreationForm.getRawValue())
+        .pipe(
+          tap({
+            next: () => {
+              this.alertService.addAlert('info', `Request (ID: ${this.existingLoadRequest.opRequestSeq}) edited successfully`);
+              this.dialogRef.close();
+            },
+          }),
+        )
+        .subscribe({
+          error: err => {
+            this.alertService.addAlert('error', err.error?.error);
+          }
+        })
+    }
+
     this.http.post<CreateLoadRequestsResponse>(`${environment.apiServer}/load-request`, this.loadRequestCreationForm.getRawValue())
       .pipe(
         map(res => res.result.data),

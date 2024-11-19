@@ -19,7 +19,6 @@ import { LoadComponentComponent } from '../load-component/load-component.compone
 import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadVersionReviewModalComponent } from '../load-version-review-modal/load-version-review-modal.component';
-import { LoadRequest } from '../model/load-request';
 import {
   LoadRequestDetailResponse,
   LoadRequestMessage,
@@ -210,16 +209,7 @@ export class LoadRequestDetailComponent {
       data: loadRequestSummary,
     })
       .afterClosed()
-      .pipe(
-        filter(newLoadRequest => !!newLoadRequest),
-        switchMap(newLoadRequest => this.http.post<LoadRequest>
-        (`${environment.apiServer}/loadRequest/${loadRequestSummary.opRequestSeq}`, newLoadRequest as LoadRequest)),
-      )
-      .subscribe({
-        next: (newLR) => {
-          this.alertService.addAlert('info', `Request (ID: ${newLR.opRequestSeq}) edited successfully`);
-        },
-      });
+      .subscribe();
   }
 
 
