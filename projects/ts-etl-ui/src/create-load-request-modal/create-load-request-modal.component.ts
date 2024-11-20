@@ -145,33 +145,28 @@ export class CreateLoadRequestModalComponent {
   }
 
   modalClose() {
-    if (this.existingLoadRequest?.opRequestSeq) {
-      this.http.post<LoadRequest>(`${environment.apiServer}/loadRequest/${this.existingLoadRequest.opRequestSeq}`, this.loadRequestCreationForm.getRawValue())
-        .pipe(
-          tap({
-            next: () => {
-              this.alertService.addAlert('info', `Request (ID: ${this.existingLoadRequest.opRequestSeq}) edited successfully`);
-              this.dialogRef.close();
-            },
-          }),
-        )
-        .subscribe({
-          error: err => {
-            this.alertService.addAlert('error', err.error?.error);
-          }
-        })
-    }
+    const url = this.existingLoadRequest?.opRequestSeq ?
+      `${environment.apiServer}/loadRequest/${this.existingLoadRequest.opRequestSeq}` :
+      `${environment.apiServer}/load-request`;
 
-    this.http.post<CreateLoadRequestsResponse>(`${environment.apiServer}/load-request`, this.loadRequestCreationForm.getRawValue())
+    this.http.post<LoadRequest | CreateLoadRequestsResponse>(url, this.loadRequestCreationForm.getRawValue())
       .pipe(
-        map(res => res.result.data),
+        map(res => {
+          if ('result' in res) {
+            return res.result.data
+          } else {
+            return res.opRequestSeq;
+          }
+        }),
         tap({
-          next: (opRequestSeq) => {
-            this.alertService.addAlert('info', `Request (ID: ${opRequestSeq}) created successfully`);
+          next: (opReqSeq) => {
+            const word = this.existingLoadRequest?.opRequestSeq ? 'edited' : 'created';
+            this.alertService.addAlert('info', `Request (ID: ${opReqSeq || this.existingLoadRequest.opRequestSeq}) ${word} successfully`);
             this.dialogRef.close();
           },
         }),
-      ).subscribe({
+      )
+      .subscribe({
         error: err => {
           this.alertService.addAlert('error', err.error?.error);
         }
