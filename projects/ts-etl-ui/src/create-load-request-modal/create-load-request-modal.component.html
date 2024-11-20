@@ -96,7 +96,7 @@
   <mat-dialog-actions>
     <button mat-raised-button color="primary" mat-dialog-close>Cancel</button>
     <button mat-raised-button color="warn" type="submit" [disabled]="loadRequestCreationForm.invalid"
-            [mat-dialog-close]="loadRequestCreationForm.getRawValue()">Submit
+            (click)="modalClose()">Submit
     </button>
   </mat-dialog-actions>
 </form>

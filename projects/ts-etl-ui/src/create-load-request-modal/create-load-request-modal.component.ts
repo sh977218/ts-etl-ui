@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -19,8 +19,9 @@ import { roundToNearestMinutes } from 'date-fns/roundToNearestMinutes';
 import { map, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
-import { LoadRequest } from '../model/load-request';
+import { CreateLoadRequestsResponse, LoadRequest } from '../model/load-request';
 import { PropertyResponse } from '../model/property';
+import { AlertService } from '../service/alert-service';
 import { sourceFilePathValidator } from '../service/app.validator';
 import { ConstantService } from '../service/constant-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
@@ -101,9 +102,11 @@ export class CreateLoadRequestModalComponent {
   };
 
   constructor(
+    private alertService: AlertService,
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public existingLoadRequest: LoadRequest,
     public constantService: ConstantService,
+    private dialogRef: MatDialogRef<CreateLoadRequestModalComponent>
   ) {
     this.loadRequestCreationForm.get('requestType')?.valueChanges.subscribe(value => {
       if (value === 'Scheduled') {
@@ -139,5 +142,34 @@ export class CreateLoadRequestModalComponent {
     } else {
       this.CODE_SYSTEM_REQUIRED_SOURCE_FILE = this.constantService.CODE_SYSTEM_REQUIRED_SOURCE_FILE.get(codeSystemName) || [];
     }
+  }
+
+  modalClose() {
+    const url = this.existingLoadRequest?.opRequestSeq ?
+      `${environment.apiServer}/loadRequest/${this.existingLoadRequest.opRequestSeq}` :
+      `${environment.apiServer}/load-request`;
+
+    this.http.post<LoadRequest | CreateLoadRequestsResponse>(url, this.loadRequestCreationForm.getRawValue())
+      .pipe(
+        map(res => {
+          if ('result' in res) {
+            return res.result.data
+          } else {
+            return res.opRequestSeq;
+          }
+        }),
+        tap({
+          next: (opReqSeq) => {
+            const word = this.existingLoadRequest?.opRequestSeq ? 'edited' : 'created';
+            this.alertService.addAlert('info', `Request (ID: ${opReqSeq || this.existingLoadRequest.opRequestSeq}) ${word} successfully`);
+            this.dialogRef.close();
+          },
+        }),
+      )
+      .subscribe({
+        error: err => {
+          this.alertService.addAlert('error', err.error?.error);
+        }
+      });
   }
 }
