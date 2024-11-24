@@ -37,7 +37,7 @@ test('cancel load request', async ({ page, materialPage, createLoadRequestPage }
     await matDialog.getByRole('button', { name: 'Confirm' }).click();
     await matDialog.waitFor({ state: 'hidden' });
     await materialPage.checkAndCloseAlert(/Request \(ID: \d+\) deleted successfully/);
-    await expect(page.getByRole('cell', { name: 'Cancel' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Cancelled' })).toBeVisible();
   });
 
   await test.step('search for newly cancelled load request', async () => {

@@ -21,6 +21,7 @@ import { LoadComponentComponent } from '../load-component/load-component.compone
 import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadVersionReviewModalComponent } from '../load-version-review-modal/load-version-review-modal.component';
+import { LoadRequest } from '../model/load-request';
 import {
   LoadRequestDetailResponse,
   LoadRequestMessage,
@@ -31,7 +32,6 @@ import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { UserService } from '../service/user-service';
 import { easternTimeMaSortingDataAccessor } from '../utility/mat-sorting-data-accessor';
-import { LoadRequest } from '../model/load-request';
 
 export interface RowElement {
   label: string;
