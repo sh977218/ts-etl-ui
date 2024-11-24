@@ -19,7 +19,7 @@ import { roundToNearestMinutes } from 'date-fns/roundToNearestMinutes';
 import { map, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
-import { CreateLoadRequestsResponse, LoadRequest } from '../model/load-request';
+import { LoadRequest } from '../model/load-request';
 import { PropertyResponse } from '../model/property';
 import { AlertService } from '../service/alert-service';
 import { sourceFilePathValidator } from '../service/app.validator';
@@ -57,11 +57,11 @@ import { UserService } from '../service/user-service';
     EasternTimePipe,
     NgClass,
   ],
-  templateUrl: './create-load-request-modal.component.html',
-  styleUrl: './create-load-request-modal.component.scss',
+  templateUrl: './create-edit-load-request-modal.component.html',
+  styleUrl: './create-edit-load-request-modal.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
-export class CreateLoadRequestModalComponent {
+export class CreateEditLoadRequestModalComponent {
   userService: UserService = inject(UserService);
 
   CODE_SYSTEM_REQUIRED_SOURCE_FILE: string[] = [];
@@ -106,7 +106,7 @@ export class CreateLoadRequestModalComponent {
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public existingLoadRequest: LoadRequest,
     public constantService: ConstantService,
-    private dialogRef: MatDialogRef<CreateLoadRequestModalComponent>
+    private dialogRef: MatDialogRef<CreateEditLoadRequestModalComponent>,
   ) {
     this.loadRequestCreationForm.get('requestType')?.valueChanges.subscribe(value => {
       if (value === 'Scheduled') {
@@ -142,34 +142,5 @@ export class CreateLoadRequestModalComponent {
     } else {
       this.CODE_SYSTEM_REQUIRED_SOURCE_FILE = this.constantService.CODE_SYSTEM_REQUIRED_SOURCE_FILE.get(codeSystemName) || [];
     }
-  }
-
-  modalClose() {
-    const url = this.existingLoadRequest?.opRequestSeq ?
-      `${environment.apiServer}/loadRequest/${this.existingLoadRequest.opRequestSeq}` :
-      `${environment.apiServer}/load-request`;
-
-    this.http.post<LoadRequest | CreateLoadRequestsResponse>(url, this.loadRequestCreationForm.getRawValue())
-      .pipe(
-        map(res => {
-          if ('result' in res) {
-            return res.result.data
-          } else {
-            return res.opRequestSeq;
-          }
-        }),
-        tap({
-          next: (opReqSeq) => {
-            const word = this.existingLoadRequest?.opRequestSeq ? 'edited' : 'created';
-            this.alertService.addAlert('info', `Request (ID: ${opReqSeq || this.existingLoadRequest.opRequestSeq}) ${word} successfully`);
-            this.dialogRef.close();
-          },
-        }),
-      )
-      .subscribe({
-        error: err => {
-          this.alertService.addAlert('error', err.error?.error);
-        }
-      });
   }
 }

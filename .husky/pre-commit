@@ -1,1 +1,1 @@
-npx ng lint
+npx ng lint --fix

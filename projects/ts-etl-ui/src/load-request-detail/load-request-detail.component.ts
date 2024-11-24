@@ -10,10 +10,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { filter, map, shareReplay, switchMap } from 'rxjs';
+import { filter, map, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
+import {
+  CreateEditLoadRequestModalComponent,
+} from '../create-edit-load-request-modal/create-edit-load-request-modal.component';
 import { environment } from '../environments/environment';
 import { LoadComponentComponent } from '../load-component/load-component.component';
 import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
@@ -29,6 +31,7 @@ import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { UserService } from '../service/user-service';
 import { easternTimeMaSortingDataAccessor } from '../utility/mat-sorting-data-accessor';
+import { LoadRequest } from '../model/load-request';
 
 export interface RowElement {
   label: string;
@@ -111,11 +114,12 @@ export class LoadRequestDetailComponent {
   @ViewChild('loadRequestMessageList') sort!: MatSort;
 
   displayedColumns: string[] = ['key', 'value'];
-  messageColumns = ['type', 'tag', 'message', 'time'];
 
   user: User | null | undefined = undefined;
 
   dataSource = new MatTableDataSource<RowElement>([]);
+
+  reloadLoadRequest$ = new Subject();
 
   constructor(private http: HttpClient,
               private dialog: MatDialog,
@@ -171,17 +175,20 @@ export class LoadRequestDetailComponent {
     });
   }
 
-  loadRequest$ = this.activatedRoute.paramMap
-    .pipe(
-      map((params: Params) => {
-        return params['params']['requestId'];
-      }),
-      switchMap(requestId => {
-        return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`)
-          .pipe(map(res => res.result.data));
-      }),
-      shareReplay(1),
-    );
+  loadRequest$ = this.reloadLoadRequest$.pipe(
+    startWith(true),
+    filter(reload => !!reload),
+    switchMap(() => this.activatedRoute.paramMap
+      .pipe(
+        map((params: Params) => {
+          return params['params']['requestId'];
+        }),
+        switchMap(requestId => {
+          return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`)
+            .pipe(map(res => res.result.data));
+        }),
+        shareReplay(1),
+      )));
 
   isTime(key: string) {
     return ['requestTime', 'scheduledDate', 'creationTime', 'loadStartTime', 'loadEndTime'].includes(key);
@@ -198,17 +205,29 @@ export class LoadRequestDetailComponent {
       )
       .subscribe({
         next: () => {
+          this.reloadLoadRequest$.next(true);
           this.alertService.addAlert('info', `Request (ID: ${reqId}) deleted successfully`);
         },
       });
   }
 
   openEditDialog(loadRequestSummary: LoadRequestSummary) {
-    this.dialog.open(CreateLoadRequestModalComponent, {
+    this.dialog.open(CreateEditLoadRequestModalComponent, {
       width: '700px',
       data: loadRequestSummary,
     })
       .afterClosed()
+      .pipe(
+        filter(data => data),
+        switchMap((data) => this.http.post<LoadRequest>(`${environment.apiServer}/loadRequest/${loadRequestSummary.opRequestSeq}`, data),
+        ),
+        tap({
+          next: () => {
+            this.reloadLoadRequest$.next(true);
+            this.alertService.addAlert('info', `Request (ID: ${loadRequestSummary.opRequestSeq}) edited successfully`);
+          },
+          error: (err) => this.alertService.addAlert('error', err.error?.error),
+        }))
       .subscribe();
   }
 

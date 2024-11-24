@@ -29,12 +29,15 @@ import { assign } from 'lodash';
 import { default as _rollupMoment, Moment } from 'moment';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, Subject, switchMap, tap } from 'rxjs';
 
-import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
+import {
+  CreateEditLoadRequestModalComponent,
+} from '../create-edit-load-request-modal/create-edit-load-request-modal.component';
 import { environment } from '../environments/environment';
 import { LoadComponentComponent } from '../load-component/load-component.component';
 import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
 import { LoadRequestDetailComponent } from '../load-request-detail/load-request-detail.component';
 import {
+  CreateLoadRequestsResponse,
   FlatLoadRequestPayload,
   generateLoadRequestPayload,
   LoadRequest,
@@ -288,13 +291,22 @@ export class LoadRequestComponent implements AfterViewInit {
   };
 
   openCreateLoadRequestModal() {
-    this.dialog.open(CreateLoadRequestModalComponent, {
+    this.dialog.open(CreateEditLoadRequestModalComponent, {
       width: '700px',
     })
       .afterClosed()
       .pipe(
-        tap(() => this.reloadAllRequests$.next(true))
-      )
+        filter(data => data),
+        switchMap((lr) =>
+          this.http.post<CreateLoadRequestsResponse>(`${environment.apiServer}/load-request`, lr)),
+        tap({
+            next: (res) => {
+              this.reloadAllRequests$.next(true);
+              this.alertService.addAlert('info', `Request (ID: ${res.result.data}) created successfully`);
+            },
+            error: (err) => this.alertService.addAlert('error', err.error?.error),
+          },
+        ))
       .subscribe();
   }
 
