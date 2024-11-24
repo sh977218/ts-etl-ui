@@ -21,7 +21,6 @@ import { LoadComponentComponent } from '../load-component/load-component.compone
 import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
 import { LoadRequestMessageComponent } from '../load-request-message/load-request-message.component';
 import { LoadVersionReviewModalComponent } from '../load-version-review-modal/load-version-review-modal.component';
-import { LoadRequest } from '../model/load-request';
 import {
   LoadRequestDetailResponse,
   LoadRequestMessage,
@@ -32,6 +31,7 @@ import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { UserService } from '../service/user-service';
 import { easternTimeMaSortingDataAccessor } from '../utility/mat-sorting-data-accessor';
+import { LoadRequest } from '../model/load-request';
 
 export interface RowElement {
   label: string;
@@ -132,54 +132,50 @@ export class LoadRequestDetailComponent {
 
   loadRequest$ = this.reloadLoadRequest$
     .pipe(
-      filter(reload => reload),
       switchMap(() => {
         const requestId = this.activatedRoute.snapshot.paramMap.get('requestId');
         return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`)
-          .pipe(
-            map(res => {
-              const lr = res.result.data;
-              const loadRequestSummary = lr.loadRequestSummary;
-              return [...Object.keys(loadRequestSummary), 'loadElapsedTime', 'numberOfMessages']
-                .filter(k => !['_id', 'requesterUsername', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
-                .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
-                .reduce<string[]>((acc, key) => {
-                  acc.push(key);
-                  if (['creationTime'].includes(key)) {
-                    acc.push('spacer');
-                  }
-                  return acc;
-                }, [])
-                .map(key => {
-                  const result: RowElement = {
-                    /* istanbul ignore next */
-                    label: LABEL_MAPPING[key] || `something wrong about ${key}`,
-                    key,
-                    value: loadRequestSummary[key as keyof LoadRequestSummary],
-                  };
-
-                  if (key === 'spacer') {
-                    return {
-                      label: '',
-                      key: 'spacer',
-                      value: '',
-                    };
-                  }
-
-                  if (key === 'numberOfMessages') {
-                    result.value = lr.loadRequestSummary.loadRequestMessageList.length || 0;
-                  }
-
-                  if (key === 'loadElapsedTime') {
-                    result.value = new Date(lr.loadRequestSummary.loadEndTime).getTime() - new Date(lr.loadRequestSummary.loadStartTime).getTime();
-                  }
-
-                  return result;
-                });
-            }));
+          .pipe(map(res => res.result.data));
       }),
       tap({
-        next: (data) => {
+        next: (lr) => {
+          const loadRequestSummary = lr.loadRequestSummary;
+          const data = [...Object.keys(loadRequestSummary), 'loadElapsedTime', 'numberOfMessages']
+            .filter(k => !['_id', 'requesterUsername', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
+            .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
+            .reduce<string[]>((acc, key) => {
+              acc.push(key);
+              if (['creationTime'].includes(key)) {
+                acc.push('spacer');
+              }
+              return acc;
+            }, [])
+            .map(key => {
+              const result: RowElement = {
+                /* istanbul ignore next */
+                label: LABEL_MAPPING[key] || `something wrong about ${key}`,
+                key,
+                value: loadRequestSummary[key as keyof LoadRequestSummary],
+              };
+
+              if (key === 'spacer') {
+                return {
+                  label: '',
+                  key: 'spacer',
+                  value: '',
+                };
+              }
+
+              if (key === 'numberOfMessages') {
+                result.value = lr.loadRequestSummary.loadRequestMessageList.length || 0;
+              }
+
+              if (key === 'loadElapsedTime') {
+                result.value = new Date(lr.loadRequestSummary.loadEndTime).getTime() - new Date(lr.loadRequestSummary.loadStartTime).getTime();
+              }
+
+              return result;
+            });
           this.dataSource = new MatTableDataSource(data);
           this.dataSource.sort = this.sort;
           this.dataSource.sortingDataAccessor = easternTimeMaSortingDataAccessor;
