@@ -57,11 +57,11 @@ import { UserService } from '../service/user-service';
     EasternTimePipe,
     NgClass,
   ],
-  templateUrl: './create-load-request-modal.component.html',
-  styleUrl: './create-load-request-modal.component.scss',
+  templateUrl: './create-edit-load-request-modal.component.html',
+  styleUrl: './create-edit-load-request-modal.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
-export class CreateLoadRequestModalComponent {
+export class CreateEditLoadRequestModalComponent {
   userService: UserService = inject(UserService);
 
   CODE_SYSTEM_REQUIRED_SOURCE_FILE: string[] = [];
@@ -106,7 +106,7 @@ export class CreateLoadRequestModalComponent {
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public existingLoadRequest: LoadRequest,
     public constantService: ConstantService,
-    private dialogRef: MatDialogRef<CreateLoadRequestModalComponent>
+    private dialogRef: MatDialogRef<CreateEditLoadRequestModalComponent>,
   ) {
     this.loadRequestCreationForm.get('requestType')?.valueChanges.subscribe(value => {
       if (value === 'Scheduled') {
@@ -153,7 +153,7 @@ export class CreateLoadRequestModalComponent {
       .pipe(
         map(res => {
           if ('result' in res) {
-            return res.result.data
+            return res.result.data;
           } else {
             return res.opRequestSeq;
           }
@@ -169,7 +169,7 @@ export class CreateLoadRequestModalComponent {
       .subscribe({
         error: err => {
           this.alertService.addAlert('error', err.error?.error);
-        }
+        },
       });
   }
 }

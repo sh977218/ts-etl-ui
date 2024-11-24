@@ -13,7 +13,9 @@ import { ActivatedRoute, Params, RouterLink } from '@angular/router';
 import { filter, map, shareReplay, switchMap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { CreateLoadRequestModalComponent } from '../create-load-request-modal/create-load-request-modal.component';
+import {
+  CreateEditLoadRequestModalComponent,
+} from '../create-edit-load-request-modal/create-edit-load-request-modal.component';
 import { environment } from '../environments/environment';
 import { LoadComponentComponent } from '../load-component/load-component.component';
 import { LoadComponentMessageComponent } from '../load-component-message/load-component-message.component';
@@ -204,7 +206,7 @@ export class LoadRequestDetailComponent {
   }
 
   openEditDialog(loadRequestSummary: LoadRequestSummary) {
-    this.dialog.open(CreateLoadRequestModalComponent, {
+    this.dialog.open(CreateEditLoadRequestModalComponent, {
       width: '700px',
       data: loadRequestSummary,
     })
