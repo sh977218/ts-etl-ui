@@ -9,8 +9,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { filter, map, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { BehaviorSubject, filter, map, switchMap, tap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import {
@@ -119,7 +119,7 @@ export class LoadRequestDetailComponent {
 
   dataSource = new MatTableDataSource<RowElement>([]);
 
-  reloadLoadRequest$ = new Subject();
+  reloadLoadRequest$ = new BehaviorSubject(true);
 
   constructor(private http: HttpClient,
               private dialog: MatDialog,
@@ -128,67 +128,64 @@ export class LoadRequestDetailComponent {
               private userService: UserService,
   ) {
     userService.user$.subscribe(user => this.user = user);
-    this.loadRequest$.pipe(
-      map(lr => {
-
-        const loadRequestSummary = lr.loadRequestSummary;
-        return [...Object.keys(loadRequestSummary), 'loadElapsedTime', 'numberOfMessages']
-          .filter(k => !['_id', 'requesterUsername', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
-          .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
-          .reduce<string[]>((acc, key) => {
-            acc.push(key);
-            if (['creationTime'].includes(key)) {
-              acc.push('spacer');
-            }
-            return acc;
-          }, [])
-          .map(key => {
-            const result: RowElement = {
-              /* istanbul ignore next */
-              label: LABEL_MAPPING[key] || `something wrong about ${key}`,
-              key,
-              value: loadRequestSummary[key as keyof LoadRequestSummary],
-            };
-
-            if (key === 'spacer') {
-              return {
-                label: '',
-                key: 'spacer',
-                value: '',
-              };
-            }
-
-            if (key === 'numberOfMessages') {
-              result.value = lr.loadRequestSummary.loadRequestMessageList.length || 0;
-            }
-
-            if (key === 'loadElapsedTime') {
-              result.value = new Date(lr.loadRequestSummary.loadEndTime).getTime() - new Date(lr.loadRequestSummary.loadStartTime).getTime();
-            }
-
-            return result;
-          });
-      })).subscribe((data) => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSource.sort = this.sort;
-      this.dataSource.sortingDataAccessor = easternTimeMaSortingDataAccessor;
-    });
   }
 
-  loadRequest$ = this.reloadLoadRequest$.pipe(
-    startWith(true),
-    filter(reload => !!reload),
-    switchMap(() => this.activatedRoute.paramMap
-      .pipe(
-        map((params: Params) => {
-          return params['params']['requestId'];
-        }),
-        switchMap(requestId => {
-          return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`)
-            .pipe(map(res => res.result.data));
-        }),
-        shareReplay(1),
-      )));
+  loadRequest$ = this.reloadLoadRequest$
+    .pipe(
+      filter(reload => reload),
+      switchMap(() => {
+        const requestId = this.activatedRoute.snapshot.paramMap.get('requestId');
+        return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`)
+          .pipe(
+            map(res => {
+              const lr = res.result.data;
+              const loadRequestSummary = lr.loadRequestSummary;
+              return [...Object.keys(loadRequestSummary), 'loadElapsedTime', 'numberOfMessages']
+                .filter(k => !['_id', 'requesterUsername', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
+                .sort((a, b) => LABEL_SORT_ARRAY.indexOf(a) - LABEL_SORT_ARRAY.indexOf(b))
+                .reduce<string[]>((acc, key) => {
+                  acc.push(key);
+                  if (['creationTime'].includes(key)) {
+                    acc.push('spacer');
+                  }
+                  return acc;
+                }, [])
+                .map(key => {
+                  const result: RowElement = {
+                    /* istanbul ignore next */
+                    label: LABEL_MAPPING[key] || `something wrong about ${key}`,
+                    key,
+                    value: loadRequestSummary[key as keyof LoadRequestSummary],
+                  };
+
+                  if (key === 'spacer') {
+                    return {
+                      label: '',
+                      key: 'spacer',
+                      value: '',
+                    };
+                  }
+
+                  if (key === 'numberOfMessages') {
+                    result.value = lr.loadRequestSummary.loadRequestMessageList.length || 0;
+                  }
+
+                  if (key === 'loadElapsedTime') {
+                    result.value = new Date(lr.loadRequestSummary.loadEndTime).getTime() - new Date(lr.loadRequestSummary.loadStartTime).getTime();
+                  }
+
+                  return result;
+                });
+            }));
+      }),
+      tap({
+        next: (data) => {
+          this.dataSource = new MatTableDataSource(data);
+          this.dataSource.sort = this.sort;
+          this.dataSource.sortingDataAccessor = easternTimeMaSortingDataAccessor;
+        },
+      }),
+    );
 
   isTime(key: string) {
     return ['requestTime', 'scheduledDate', 'creationTime', 'loadStartTime', 'loadEndTime'].includes(key);
