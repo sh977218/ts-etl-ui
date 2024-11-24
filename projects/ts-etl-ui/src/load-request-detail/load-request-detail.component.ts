@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { filter, map, shareReplay, switchMap, tap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import {
@@ -125,7 +125,17 @@ export class LoadRequestDetailComponent {
               private userService: UserService,
   ) {
     userService.user$.subscribe(user => this.user = user);
-    this.loadRequest$.pipe(
+  }
+
+  loadRequest$ = this.activatedRoute.paramMap
+    .pipe(
+      map((params: Params) => {
+        return params['params']['requestId'];
+      }),
+      switchMap(requestId => {
+        return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`)
+          .pipe(map(res => res.result.data));
+      }),
       map(lr => {
 
         const loadRequestSummary = lr.loadRequestSummary;
@@ -172,19 +182,7 @@ export class LoadRequestDetailComponent {
           this.dataSource.sort = this.sort;
           this.dataSource.sortingDataAccessor = easternTimeMaSortingDataAccessor;
         },
-      })).subscribe();
-  }
-
-  loadRequest$ = this.activatedRoute.paramMap
-    .pipe(
-      map((params: Params) => {
-        return params['params']['requestId'];
       }),
-      switchMap(requestId => {
-        return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`)
-          .pipe(map(res => res.result.data));
-      }),
-      shareReplay(1),
     );
 
   isTime(key: string) {
