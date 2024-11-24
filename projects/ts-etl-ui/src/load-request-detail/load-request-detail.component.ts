@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { filter, map, shareReplay, switchMap } from 'rxjs';
+import { filter, map, shareReplay, switchMap, tap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import {
@@ -113,7 +113,6 @@ export class LoadRequestDetailComponent {
   @ViewChild('loadRequestMessageList') sort!: MatSort;
 
   displayedColumns: string[] = ['key', 'value'];
-  messageColumns = ['type', 'tag', 'message', 'time'];
 
   user: User | null | undefined = undefined;
 
@@ -166,11 +165,14 @@ export class LoadRequestDetailComponent {
 
             return result;
           });
-      })).subscribe((data) => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSource.sort = this.sort;
-      this.dataSource.sortingDataAccessor = easternTimeMaSortingDataAccessor;
-    });
+      }),
+      tap({
+        next: (data) => {
+          this.dataSource = new MatTableDataSource(data);
+          this.dataSource.sort = this.sort;
+          this.dataSource.sortingDataAccessor = easternTimeMaSortingDataAccessor;
+        },
+      })).subscribe();
   }
 
   loadRequest$ = this.activatedRoute.paramMap
