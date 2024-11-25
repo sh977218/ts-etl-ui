@@ -19,7 +19,7 @@ import { roundToNearestMinutes } from 'date-fns/roundToNearestMinutes';
 import { map, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
-import { LoadRequest } from '../model/load-request';
+import { CreateLoadRequestsResponse, LoadRequest } from '../model/load-request';
 import { PropertyResponse } from '../model/property';
 import { AlertService } from '../service/alert-service';
 import { sourceFilePathValidator } from '../service/app.validator';
@@ -142,5 +142,31 @@ export class CreateEditLoadRequestModalComponent {
     } else {
       this.CODE_SYSTEM_REQUIRED_SOURCE_FILE = this.constantService.CODE_SYSTEM_REQUIRED_SOURCE_FILE.get(codeSystemName) || [];
     }
+  }
+
+  modalClose() {
+    const url = this.existingLoadRequest?.opRequestSeq ?
+      `${environment.apiServer}/loadRequest/${this.existingLoadRequest.opRequestSeq}` :
+      `${environment.apiServer}/load-request`;
+
+    this.http.post<LoadRequest | CreateLoadRequestsResponse>(url, this.loadRequestCreationForm.getRawValue())
+      .pipe(
+        map(res => {
+          if ('result' in res) {
+            return res.result.data;
+          } else {
+            return res.opRequestSeq;
+          }
+        }),
+        tap({
+          next: (opReqSeq) => {
+            this.dialogRef.close(opReqSeq);
+          },
+          error: err => {
+            this.alertService.addAlert('error', err.error?.error);
+          },
+        }),
+      )
+      .subscribe();
   }
 }

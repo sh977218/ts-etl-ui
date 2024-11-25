@@ -31,7 +31,6 @@ import { AlertService } from '../service/alert-service';
 import { EasternTimePipe } from '../service/eastern-time.pipe';
 import { UserService } from '../service/user-service';
 import { easternTimeMaSortingDataAccessor } from '../utility/mat-sorting-data-accessor';
-import { LoadRequest } from '../model/load-request';
 
 export interface RowElement {
   label: string;
@@ -210,18 +209,12 @@ export class LoadRequestDetailComponent {
       data: loadRequestSummary,
     })
       .afterClosed()
-      .pipe(
-        filter(data => data),
-        switchMap((data) => this.http.post<LoadRequest>(`${environment.apiServer}/loadRequest/${loadRequestSummary.opRequestSeq}`, data),
-        ),
-        tap({
-          next: () => {
-            this.reloadLoadRequest$.next(true);
-            this.alertService.addAlert('info', `Request (ID: ${loadRequestSummary.opRequestSeq}) edited successfully`);
-          },
-          error: (err) => this.alertService.addAlert('error', err.error?.error),
-        }))
-      .subscribe();
+      .subscribe({
+        next: (opReqSeq) => {
+          this.reloadLoadRequest$.next(true);
+          this.alertService.addAlert('info', `Request (ID: ${opReqSeq}) edited successfully`);
+        },
+      });
   }
 
 
