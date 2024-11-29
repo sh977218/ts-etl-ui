@@ -100,7 +100,6 @@ export default defineConfig({
   webServer: [
     ...!process.env.NLM ? [
       {
-        // this is not async, no guarantee that test will start after reset DB
         command: process.env['CI'] ? `npm run start:coverage` : `npm run start`,
         port: 3000,
         reuseExistingServer: true,

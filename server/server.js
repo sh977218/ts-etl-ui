@@ -252,7 +252,7 @@ app.post('/api/load-request', async (req, res) => {
   if (loadRequest.sourceFilePath.includes('bad-folder')) {
     return res.status(400).send({
       isSuccess: false,
-      error: 'Specified Source File Path does not exist'
+      error: 'Specified Source File Path does not exist.',
     });
   }
 
