@@ -160,16 +160,13 @@ export class CreateEditLoadRequestModalComponent {
         }),
         tap({
           next: (opReqSeq) => {
-            const word = this.existingLoadRequest?.opRequestSeq ? 'edited' : 'created';
-            this.alertService.addAlert('info', `Request (ID: ${opReqSeq || this.existingLoadRequest.opRequestSeq}) ${word} successfully`);
-            this.dialogRef.close();
+            this.dialogRef.close(opReqSeq);
+          },
+          error: err => {
+            this.alertService.addAlert('error', err.error?.error);
           },
         }),
       )
-      .subscribe({
-        error: err => {
-          this.alertService.addAlert('error', err.error?.error);
-        },
-      });
+      .subscribe();
   }
 }

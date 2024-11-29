@@ -38,6 +38,7 @@ test('edit load request', async ({ page, materialPage, createLoadRequestPage }) 
     await matDialog.getByRole('button', { name: 'Submit' }).click();
     await matDialog.waitFor({ state: 'hidden' });
     await materialPage.checkAndCloseAlert(/Request \(ID: \d+\) edited successfully/);
+    await expect(page.getByRole('cell', { name: updatedLoadRequestType })).toBeVisible();
   });
 
   await test.step('search for newly edited load request', async () => {

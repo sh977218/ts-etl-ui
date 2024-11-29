@@ -9,8 +9,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { ActivatedRoute, Params, RouterLink } from '@angular/router';
-import { filter, map, switchMap, tap } from 'rxjs';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { BehaviorSubject, filter, map, switchMap, tap } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import {
@@ -118,6 +118,8 @@ export class LoadRequestDetailComponent {
 
   dataSource = new MatTableDataSource<RowElement>([]);
 
+  reloadLoadRequest$ = new BehaviorSubject(true);
+
   constructor(private http: HttpClient,
               private dialog: MatDialog,
               private activatedRoute: ActivatedRoute,
@@ -127,18 +129,15 @@ export class LoadRequestDetailComponent {
     userService.user$.subscribe(user => this.user = user);
   }
 
-  loadRequest$ = this.activatedRoute.paramMap
+  loadRequest$ = this.reloadLoadRequest$
     .pipe(
-      map((params: Params) => {
-        return params['params']['requestId'];
-      }),
-      switchMap(requestId => {
+      switchMap(() => {
+        const requestId = this.activatedRoute.snapshot.paramMap.get('requestId');
         return this.http.get<LoadRequestDetailResponse>(`${environment.apiServer}/load-request/${requestId}`)
           .pipe(map(res => res.result.data));
       }),
       tap({
         next: (lr) => {
-
           const loadRequestSummary = lr.loadRequestSummary;
           const data = [...Object.keys(loadRequestSummary), 'loadElapsedTime', 'numberOfMessages']
             .filter(k => !['_id', 'requesterUsername', 'version', 'loadRequestActivities', 'loadRequestMessages', 'availableDate', 'loadComponents'].includes(k))
@@ -198,6 +197,7 @@ export class LoadRequestDetailComponent {
       )
       .subscribe({
         next: () => {
+          this.reloadLoadRequest$.next(true);
           this.alertService.addAlert('info', `Request (ID: ${reqId}) deleted successfully`);
         },
       });
@@ -209,7 +209,12 @@ export class LoadRequestDetailComponent {
       data: loadRequestSummary,
     })
       .afterClosed()
-      .subscribe();
+      .subscribe({
+        next: (opReqSeq) => {
+          this.reloadLoadRequest$.next(true);
+          this.alertService.addAlert('info', `Request (ID: ${opReqSeq}) edited successfully`);
+        },
+      });
   }
 
 

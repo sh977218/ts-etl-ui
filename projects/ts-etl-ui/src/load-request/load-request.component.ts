@@ -295,7 +295,10 @@ export class LoadRequestComponent implements AfterViewInit {
     })
       .afterClosed()
       .pipe(
-        tap(() => this.reloadAllRequests$.next(true)),
+        tap((opReqSeq) => {
+          this.reloadAllRequests$.next(true);
+          this.alertService.addAlert('info', `Request (ID: ${opReqSeq}) created successfully`);
+        }),
       )
       .subscribe();
   }
