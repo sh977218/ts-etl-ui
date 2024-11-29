@@ -14,11 +14,15 @@ const newLoadRequest = {
 const updatedLoadRequestType = 'Emergency';
 
 test.use({ accountUsername: 'Peter', createLoadRequest: newLoadRequest });
-test.fixme('edit load request, "backend API is not implemented yet."', async ({
-                                                                                page,
-                                                                                materialPage,
-                                                                                createLoadRequestPage,
-                                                                              }) => {
+test('edit load request', async ({
+                                   page,
+                                   materialPage,
+                                   createLoadRequestPage,
+                                 }) => {
+  if (process.env.NLM) {
+    console.info(`"edit load request" test skipped, because backend API is not implemented yet.`);
+    test.fixme();
+  }
   const matDialog = materialPage.matDialog();
 
   await test.step('search for newly added load request', async () => {
