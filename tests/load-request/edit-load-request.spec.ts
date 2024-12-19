@@ -19,10 +19,6 @@ test('edit load request', async ({
                                    materialPage,
                                    createLoadRequestPage,
                                  }) => {
-  if (process.env.NLM) {
-    console.info(`"edit load request" test skipped, because backend API is not implemented yet.`);
-    test.fixme();
-  }
   const matDialog = materialPage.matDialog();
 
   await test.step('search for newly added load request', async () => {
