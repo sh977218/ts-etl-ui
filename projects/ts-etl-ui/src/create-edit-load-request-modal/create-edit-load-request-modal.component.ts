@@ -78,6 +78,8 @@ export class CreateEditLoadRequestModalComponent {
         value: new Date().toISOString(),
         disabled: true,
       }),
+      scheduledDate: new FormControl(undefined),
+      scheduledTime: new FormControl(undefined),
     },
   );
 
@@ -108,6 +110,9 @@ export class CreateEditLoadRequestModalComponent {
     public constantService: ConstantService,
     private dialogRef: MatDialogRef<CreateEditLoadRequestModalComponent>,
   ) {
+    if (this.existingLoadRequest) {
+      this.loadRequestCreationForm.patchValue(existingLoadRequest);
+    }
     this.loadRequestCreationForm.get('requestType')?.valueChanges.subscribe(value => {
       if (value === 'Scheduled') {
         this.form.addControl('scheduledDate', new FormControl<Date | undefined>(undefined, [Validators.required]));
@@ -117,9 +122,6 @@ export class CreateEditLoadRequestModalComponent {
         this.form.removeControl('scheduledTime');
       }
     });
-    if (this.existingLoadRequest) {
-      this.loadRequestCreationForm.patchValue(existingLoadRequest);
-    }
   }
 
   get form() {

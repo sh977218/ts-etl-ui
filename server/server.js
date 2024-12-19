@@ -351,6 +351,8 @@ app.get('/api/load-request/:opRequestSeq', async (req, res) => {
       'requester': lr.requester,
       'requesterUsername': lr.requesterUsername,
       'creationTime': lr.creationTime,
+      'scheduledDate': lr.scheduledDate,
+      'scheduledTime': lr.scheduledTime,
       'requestStatus': lr.requestStatus,
       'loadNumber': lr.loadNumber,
       'loadStatus': lr.versionStatus,

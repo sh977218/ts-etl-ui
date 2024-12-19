@@ -209,12 +209,14 @@ export class LoadRequestDetailComponent {
       data: loadRequestSummary,
     })
       .afterClosed()
-      .subscribe({
-        next: (opReqSeq) => {
-          this.reloadLoadRequest$.next(true);
-          this.alertService.addAlert('info', `Request (ID: ${opReqSeq}) edited successfully`);
-        },
-      });
+      .pipe(filter(result => !!result),
+        tap({
+          next: (opReqSeq) => {
+            this.reloadLoadRequest$.next(true);
+            this.alertService.addAlert('info', `Request (ID: ${opReqSeq}) edited successfully`);
+          },
+        }))
+      .subscribe();
   }
 
 
