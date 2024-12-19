@@ -16,7 +16,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { format, eachHourOfInterval, endOfDay } from 'date-fns';
 import { roundToNearestMinutes } from 'date-fns/roundToNearestMinutes';
-import { map, tap } from 'rxjs';
+import { map, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { CreateLoadRequestsResponse, LoadRequest } from '../model/load-request';
@@ -147,28 +147,33 @@ export class CreateEditLoadRequestModalComponent {
   }
 
   modalClose() {
-    const url = this.existingLoadRequest?.opRequestSeq ?
-      `${environment.apiServer}/loadRequest/${this.existingLoadRequest.opRequestSeq}` :
-      `${environment.apiServer}/load-request`;
-
-    this.http.post<LoadRequest | CreateLoadRequestsResponse>(url, this.loadRequestCreationForm.getRawValue())
-      .pipe(
-        map(res => {
-          if ('result' in res) {
-            return res.result.data;
-          } else {
-            return res.opRequestSeq;
-          }
-        }),
-        tap({
-          next: (opReqSeq) => {
-            this.dialogRef.close(opReqSeq);
-          },
-          error: err => {
-            this.alertService.addAlert('error', err.error?.error);
-          },
-        }),
-      )
-      .subscribe();
+    of(true).pipe(
+      switchMap(() => {
+        const url = this.existingLoadRequest?.opRequestSeq ?
+          `${environment.apiServer}/load-request/${this.existingLoadRequest.opRequestSeq}` :
+          `${environment.apiServer}/load-request`;
+        const apiRequest = this.existingLoadRequest?.opRequestSeq ?
+          this.http.put<LoadRequest | CreateLoadRequestsResponse>(url, this.loadRequestCreationForm.getRawValue()) :
+          this.http.post<LoadRequest | CreateLoadRequestsResponse>(url, this.loadRequestCreationForm.getRawValue());
+        return apiRequest
+          .pipe(
+            map(res => {
+              if ('result' in res) {
+                return res.result.data;
+              } else {
+                return res.opRequestSeq;
+              }
+            }),
+            tap({
+              next: (opReqSeq) => {
+                this.dialogRef.close(opReqSeq);
+              },
+              error: err => {
+                this.alertService.addAlert('error', err.error?.error);
+              },
+            }),
+          );
+      }),
+    ).subscribe();
   }
 }

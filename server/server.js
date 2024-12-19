@@ -276,7 +276,7 @@ app.post('/api/load-request', async (req, res) => {
 });
 
 //edit LR
-app.post('/api/loadRequest/:opRequestSeq', async (req, res) => {
+app.put('/api/load-request/:opRequestSeq', async (req, res) => {
   const newLoadRequest = req.body;
   const { loadRequestsCollection, loadVersionsCollection } = await mongoCollection();
   const loadRequest = await loadRequestsCollection.findOne({ opRequestSeq: +req.params.opRequestSeq });
